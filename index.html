@@ -3,36 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f7fb" />
+    <meta name="theme-color" content="#f4f6f8" />
     <meta name="description" content="Chi 的收藏管理" />
     <title>Chi 的收藏</title>
   </head>
   <body>
-    <div id="app-shell">
-      <header class="app-header">
-        <div>
-          <p class="eyebrow">CHI MERCH</p>
-          <h1>我的收藏</h1>
+    <div id="app-shell" class="site-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#/home" aria-label="Chi 的收藏首頁">
+          <span class="brand-mark">CHI</span>
+          <span class="brand-copy">
+            <strong>我的收藏</strong>
+            <span>MERCH COLLECTION</span>
+          </span>
+        </a>
+
+        <nav class="app-nav nav" aria-label="主要導覽">
+          <a class="nav-item" href="#/home"><span aria-hidden="true">⌂</span><span>首頁</span></a>
+          <a class="nav-item" href="#/collection"><span aria-hidden="true">▦</span><span>收藏</span></a>
+          <a class="nav-item" href="#/statistics"><span aria-hidden="true">◫</span><span>統計</span></a>
+          <a class="nav-item" href="#/management"><span aria-hidden="true">✎</span><span>管理</span></a>
+          <a class="nav-item" href="#/settings"><span aria-hidden="true">⚙</span><span>設定</span></a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span>CHI MERCH</span>
+          <span id="app-status" aria-live="polite">載入中…</span>
         </div>
-        <div id="app-status" aria-live="polite">載入中…</div>
-      </header>
+      </aside>
 
-      <nav class="app-nav" aria-label="主要導覽">
-        <a href="#/home">首頁</a>
-        <a href="#/collection">收藏</a>
-        <a href="#/statistics">統計</a>
-        <a href="#/management">管理</a>
-        <a href="#/settings">設定</a>
-      </nav>
+      <div class="main">
+        <header class="header">
+          <div>
+            <p class="eyebrow">CHI MERCH</p>
+            <h1>我的收藏</h1>
+            <p>收藏管理系統</p>
+          </div>
+          <div class="search-placeholder" aria-hidden="true">
+            <span>⌕</span>
+            <span>在收藏中搜尋…</span>
+          </div>
+        </header>
 
-      <main id="app" class="app-main">
-        <section class="hero-card">
-          <p class="eyebrow">COLLECTION</p>
-          <h2>收藏管理系統</h2>
-          <p>正在準備資料。即使 JavaScript 暫時沒有啟動，這個首頁仍然會保持可見。</p>
-          <a class="primary-link" href="#/collection">前往收藏</a>
-        </section>
-      </main>
+        <main id="app" class="content app-main">
+          <section class="hero page">
+            <div>
+              <p class="eyebrow">COLLECTION</p>
+              <h2>收藏<em>管理系統</em></h2>
+            </div>
+            <p>正在準備資料。即使 JavaScript 暫時沒有啟動，這個首頁仍然會保持可見。</p>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <span>Chi 的收藏</span>
+          <span>MERCH</span>
+        </footer>
+      </div>
     </div>
     <script type="module" src="/src/app.ts"></script>
   </body>
