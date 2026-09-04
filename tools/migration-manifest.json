@@ -1,0 +1,27 @@
+{
+  "sourceRepository": "tsai97216/merch-old",
+  "sourceRef": "main",
+  "targetRepository": "tsai97216/merch",
+  "targetRef": "main",
+  "works": [
+    "honkai-star-rail",
+    "genshin-impact",
+    "zenless-zone-zero",
+    "wuthering-waves"
+  ],
+  "expected": {
+    "workCount": 4,
+    "itemCount": 4,
+    "imageCount": 2,
+    "itemIds": [
+      "item-1788499886180-xm1w0h",
+      "item-1788500327137-hn6eyk",
+      "item-1788517921359-cozvvv",
+      "item-1788499604827-8xrmwb"
+    ],
+    "imageShas": [
+      "34fe984896a1baf9df56527a99b4e9121a95734e",
+      "53e570ae33c320b69a54ee5439af714cc7c4927e"
+    ]
+  }
+}
