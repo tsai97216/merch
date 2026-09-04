@@ -2,18 +2,21 @@ import './styles.css';
 import { createRouter } from './router';
 import { loadVersion } from './version';
 
-const validRoutes = new Set(['home', 'collection', 'statistics', 'management', 'settings']);
 const pages = new Map(
   [...document.querySelectorAll<HTMLElement>('[data-page]')].map((element) => [element.dataset.page ?? '', element]),
 );
 
 function renderRoute(route: string): void {
-  const page = validRoutes.has(route) ? route : '404';
+  const page = route === 'home' || route === 'collection' || route === 'statistics' || route === 'management' || route === 'settings'
+    ? route
+    : '404';
+
   for (const [id, element] of pages) {
     const active = id === page;
     element.hidden = !active;
     element.classList.toggle('is-active', active);
   }
+
   for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-route]')) {
     const active = link.dataset.route === page;
     link.classList.toggle('is-active', active);
