@@ -25,9 +25,9 @@
 - [x] 單一 Store：works / items / version / UI / loading / error
 - [x] Store subscribe
 - [x] Page 不持有自己的資料副本
-- [ ] Store state immutable 更新原則
-- [ ] Store 訂閱生命週期與取消訂閱
-- [ ] Data / UI state 邊界明確
+- [x] Store state immutable 更新原則
+- [x] Store 訂閱生命週期與取消訂閱
+- [x] Data / UI state 邊界明確
 
 ## 2. Data Migration
 - [x] 建立 migration script
@@ -52,35 +52,35 @@
 - [x] 不使用 `?v=version` / `?build=...` 等 cache hack
 
 ## 4. Router
-- [ ] Hash router
-- [ ] `#/home`
-- [ ] `#/collection`
-- [ ] `#/statistics`
-- [ ] `#/management`
-- [ ] `#/settings`
-- [ ] `#/item/:id`
+- [x] Hash router
+- [x] `#/home`
+- [x] `#/collection`
+- [x] `#/statistics`
+- [x] `#/management`
+- [x] `#/settings`
+- [x] `#/item/:id`
 - [ ] 重新整理可正常進入目前頁面
 - [ ] Back / Forward 正常
-- [ ] 404 頁面
-- [ ] malformed URL / decodeURIComponent 安全處理
-- [ ] 多餘 route segments 正確拒絕
+- [x] 404 頁面
+- [x] malformed URL / decodeURIComponent 安全處理
+- [x] 多餘 route segments 正確拒絕
 - [ ] route navigation 與 page render 解耦
 
 ## 5. UI System
-- [ ] 以 `merch-old` 為視覺與 UX 參考基準
-- [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
-- [ ] 整理 desktop / tablet / mobile breakpoint 規則
-- [ ] 整理頁面最大寬度、內容留白與主要 grid 規則
-- [ ] 整理 typography hierarchy 與字重規則
-- [ ] 整理 color / spacing / radius / shadow design tokens
-- [ ] 全站 layout
-- [ ] Desktop sidebar / navigation
-- [ ] Mobile navigation
-- [ ] Page header / eyebrow / section heading
+- [x] 以 `merch-old` 為視覺與 UX 參考基準
+- [x] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
+- [x] 整理 desktop / tablet / mobile breakpoint 規則
+- [x] 整理頁面最大寬度、內容留白與主要 grid 規則
+- [x] 整理 typography hierarchy 與字重規則
+- [x] 整理 color / spacing / radius / shadow design tokens
+- [x] 全站 layout
+- [x] Desktop sidebar / navigation
+- [x] Mobile navigation
+- [x] Page header / eyebrow / section heading
 - [ ] Button
-- [ ] Card
-- [ ] Panel
-- [ ] Badge / Status
+- [x] Card
+- [x] Panel
+- [x] Badge / Status
 - [ ] Input / Select / Textarea
 - [ ] Toolbar / Filter controls
 - [ ] Modal
@@ -88,19 +88,19 @@
 - [ ] Loading
 - [ ] Empty
 - [ ] Error
-- [ ] Notice / Alert
+- [x] Notice / Alert
 - [ ] Item card
 - [ ] Item list
 - [ ] Item detail
 - [ ] Image viewer
-- [ ] Focus-visible / keyboard interaction
-- [ ] Reduced-motion / animation fallback
-- [ ] DOM utility
+- [x] Focus-visible / keyboard interaction
+- [x] Reduced-motion / animation fallback
+- [x] DOM utility
 - [ ] Date utility
 - [ ] Format utility
-- [ ] 安全 DOM rendering
-- [ ] 統一 class naming / component styling 邊界
-- [ ] 避免 page-specific CSS 互相覆蓋
+- [x] 安全 DOM rendering
+- [x] 統一 class naming / component styling 邊界
+- [x] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
 - [ ] 總收藏數
