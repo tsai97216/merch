@@ -95,14 +95,18 @@ export function validateWorksFile(value: unknown): asserts value is WorksFile {
   works.forEach((work, index) => {
     const path = `works.json.works[${index}]`;
     requireObject(work, path);
-    for (const key of ['id', 'name', 'data']) {
-      requireString(work[key], `${path}.${key}`);
-    }
 
-    if (ids.has(work.id)) fail(`${path}.id`, '工作 ID 重複');
-    ids.add(work.id);
+    const id = work.id;
+    const name = work.name;
+    const data = work.data;
+    requireString(id, `${path}.id`);
+    requireString(name, `${path}.name`);
+    requireString(data, `${path}.data`);
 
-    if (!work.data.startsWith('data/') || !work.data.endsWith('/data.json')) {
+    if (ids.has(id)) fail(`${path}.id`, '工作 ID 重複');
+    ids.add(id);
+
+    if (!data.startsWith('data/') || !data.endsWith('/data.json')) {
       fail(`${path}.data`, '資料路徑格式無效');
     }
   });
@@ -111,36 +115,44 @@ export function validateWorksFile(value: unknown): asserts value is WorksFile {
 export function validateWorkData(value: unknown): asserts value is WorkData {
   requireObject(value, 'work data');
   requireNumber(value.schemaVersion, 'work data.schemaVersion');
+
   for (const key of ['work', 'name', 'updatedAt']) {
     requireString(value[key], `work data.${key}`);
   }
 
+  const workId = value.work;
   const items = value.items;
+  requireString(workId, 'work data.work');
   requireArray(items, 'work data.items');
 
   const ids = new Set<string>();
-  items.forEach((item, index) => {
-    validateItem(item, `work data.items[${index}]`);
-    if (item.workId !== value.work) {
-      fail(`work data.items[${index}].workId`, `必須等於 ${value.work}`);
+  items.forEach((rawItem, index) => {
+    const path = `work data.items[${index}]`;
+    validateItem(rawItem, path);
+    const item = rawItem;
+
+    if (item.workId !== workId) {
+      fail(`${path}.workId`, `必須等於 ${workId}`);
     }
     if (ids.has(item.id)) {
-      fail(`work data.items[${index}].id`, '項目 ID 重複');
+      fail(`${path}.id`, '項目 ID 重複');
     }
     ids.add(item.id);
 
     const covers = item.images.filter((image) => image.isCover);
     if (covers.length > 1) {
-      fail(`work data.items[${index}].images`, '最多只能有一張封面圖');
+      fail(`${path}.images`, '最多只能有一張封面圖');
     }
   });
 }
 
 export function validateVersion(value: unknown): asserts value is VersionInfo {
   requireObject(value, 'version.json');
-  requireString(value.version, 'version.json.version');
-  requireString(value.updatedAt, 'version.json.updatedAt');
-  if (!/^\d+\.\d+\.\d+$/.test(value.version)) {
+  const version = value.version;
+  const updatedAt = value.updatedAt;
+  requireString(version, 'version.json.version');
+  requireString(updatedAt, 'version.json.updatedAt');
+  if (!/^\d+\.\d+\.\d+$/.test(version)) {
     fail('version.json.version', '版本號必須符合 major.minor.patch');
   }
 }
