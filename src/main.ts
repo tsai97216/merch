@@ -1,22 +1,18 @@
 import './styles.css';
-import { createRouter } from './router';
+import { createRouter, type Route } from './router';
 import { loadVersion } from './version';
 
 const pages = new Map(
   [...document.querySelectorAll<HTMLElement>('[data-page]')].map((element) => [element.dataset.page ?? '', element]),
 );
 
-function renderRoute(route: string): void {
-  const page = route === 'home' || route === 'collection' || route === 'statistics' || route === 'management' || route === 'settings'
-    ? route
-    : '404';
-
+function renderRoute(route: Route): void {
+  const page = route.name === 'item' || route.name === 'not-found' ? '404' : route.name;
   for (const [id, element] of pages) {
     const active = id === page;
     element.hidden = !active;
     element.classList.toggle('is-active', active);
   }
-
   for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-route]')) {
     const active = link.dataset.route === page;
     link.classList.toggle('is-active', active);
