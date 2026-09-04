@@ -77,102 +77,102 @@
 - [x] Desktop sidebar / navigation
 - [x] Mobile navigation
 - [x] Page header / eyebrow / section heading
-- [ ] Button
+- [x] Button
 - [x] Card
 - [x] Panel
 - [x] Badge / Status
-- [ ] Input / Select / Textarea
-- [ ] Toolbar / Filter controls
-- [ ] Modal
+- [x] Input / Select / Textarea
+- [x] Toolbar / Filter controls
+- [x] Modal
 - [ ] Toast
-- [ ] Loading
-- [ ] Empty
-- [ ] Error
+- [x] Loading
+- [x] Empty
+- [x] Error
 - [x] Notice / Alert
-- [ ] Item card
-- [ ] Item list
-- [ ] Item detail
-- [ ] Image viewer
+- [x] Item card
+- [x] Item list
+- [x] Item detail
+- [x] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
 - [x] DOM utility
-- [ ] Date utility
-- [ ] Format utility
+- [x] Date utility
+- [x] Format utility
 - [x] 安全 DOM rendering
 - [x] 統一 class naming / component styling 邊界
 - [x] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
-- [ ] 總收藏數
-- [ ] 已收到
-- [ ] 預購中
-- [ ] 待到貨
-- [ ] 最近新增
-- [ ] 最近更新
-- [ ] 待處理事項
-- [ ] 即將到貨
-- [ ] 作品統計
-- [ ] 消費統計
-- [ ] 快速入口
+- [x] 總收藏數
+- [x] 已收到
+- [x] 預購中
+- [x] 待到貨
+- [x] 最近新增
+- [x] 最近更新
+- [x] 待處理事項
+- [x] 即將到貨
+- [x] 作品統計
+- [x] 消費統計
+- [x] 快速入口
 - [x] JS 失敗時仍能看到基本首頁
-- [ ] Home 資料區塊在空資料時仍保持合理排版
+- [x] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
 - [ ] 全部
-- [ ] 作品分類
-- [ ] 搜尋
-- [ ] Filter
-- [ ] Sort
-- [ ] 狀態篩選
-- [ ] 類別篩選
-- [ ] 角色篩選
-- [ ] 廠商篩選
-- [ ] 卡片顯示模式
-- [ ] 清單顯示模式
-- [ ] 記住卡片／清單選擇
-- [ ] 顯示封面
-- [ ] 顯示標題
-- [ ] 顯示作品
-- [ ] 顯示角色
-- [ ] 顯示類別
-- [ ] 顯示價格
-- [ ] 顯示狀態
-- [ ] 顯示預計到貨日期
-- [ ] 點擊進入詳細頁
+- [x] 作品分類
+- [x] 搜尋
+- [x] Filter
+- [x] Sort
+- [x] 狀態篩選
+- [x] 類別篩選
+- [x] 角色篩選
+- [x] 廠商篩選
+- [x] 卡片顯示模式
+- [x] 清單顯示模式
+- [x] 記住卡片／清單選擇
+- [x] 顯示封面
+- [x] 顯示標題
+- [x] 顯示作品
+- [x] 顯示角色
+- [x] 顯示類別
+- [x] 顯示價格
+- [x] 顯示狀態
+- [x] 顯示預計到貨日期
+- [x] 點擊進入詳細頁
 - [ ] 篩選條件組合正確
-- [ ] 搜尋／篩選／排序狀態與 Store 同步
-- [ ] 無結果 Empty State
-- [ ] 圖片載入失敗 fallback
-- [ ] 卡片與清單在手機版保持可用
+- [x] 搜尋／篩選／排序狀態與 Store 同步
+- [x] 無結果 Empty State
+- [x] 圖片載入失敗 fallback
+- [x] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
-- [ ] 完整基本資訊
-- [ ] 購買資訊
-- [ ] 發售資訊
-- [ ] 物流資訊
-- [ ] 售後資訊
-- [ ] 圖片展示
-- [ ] 圖片載入失敗 fallback
+- [x] 完整基本資訊
+- [x] 購買資訊
+- [x] 發售資訊
+- [x] 物流資訊
+- [x] 售後資訊
+- [x] 圖片展示
+- [x] 圖片載入失敗 fallback
 - [ ] 編輯
 - [ ] 刪除
-- [ ] 返回
-- [ ] 不存在的 Item 顯示 Not Found
-- [ ] Modal / Detail 狀態與 Router 狀態一致
-- [ ] 鍵盤關閉與 focus 管理
+- [x] 返回
+- [x] 不存在的 Item 顯示 Not Found
+- [x] Modal / Detail 狀態與 Router 狀態一致
+- [x] 鍵盤關閉與 focus 管理
 
 ## 9. Statistics
-- [ ] 按作品統計
+- [x] 按作品統計
 - [ ] 按類別統計
 - [ ] 按角色統計
 - [ ] 按廠商統計
 - [ ] 按狀態統計
-- [ ] 總消費
-- [ ] 各作品消費
+- [x] 總消費
+- [x] 各作品消費
 - [ ] 各月份消費／新增
-- [ ] 集中使用 Date utility
+- [x] 集中使用 Date utility
 - [ ] 空資料狀態
 - [ ] 統計計算與 UI rendering 分離
-- [ ] 金額／數量格式統一
+- [x] 金額／數量格式統一
 - [ ] 統計結果邊界案例驗證
 
 ## 10. Management
@@ -252,7 +252,7 @@
 - [ ] GitHub API 狀態
 - [ ] 重新載入資料
 - [ ] 同步狀態
-- [ ] 顯示版本
+- [x] 顯示版本
 - [ ] 清除本機設定
 - [ ] Diagnostics
 - [ ] 設定值儲存與讀取失敗處理
