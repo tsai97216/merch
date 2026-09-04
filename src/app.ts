@@ -106,7 +106,7 @@ appMount.addEventListener('keydown', (event) => { if (event.key !== 'Enter') ret
 window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && imageViewer) closeImageViewer(); });
 appMount.addEventListener('input', (event) => { if (event.target instanceof HTMLInputElement && event.target.dataset.collectionField === 'search') handleCollectionField(event.target); });
 appMount.addEventListener('change', (event) => { const target = event.target; if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) handleCollectionField(target); });
-store.subscribe(render); startRouter((nextRoute) => { route = nextRoute; render(); });
+store.subscribe(render); startRouter((nextRoute) => { closeImageViewer(); route = nextRoute; render(); });
 window.addEventListener('error', (event) => console.error('CHI MERCH runtime error', event.error ?? event.message));
 window.addEventListener('unhandledrejection', (event) => console.error('CHI MERCH unhandled rejection', event.reason));
 void store.load();
