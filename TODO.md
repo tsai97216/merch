@@ -114,7 +114,7 @@
 - [ ] 作品統計
 - [ ] 消費統計
 - [ ] 快速入口
-- [ ] JS 失敗時仍能看到基本首頁
+- [x] JS 失敗時仍能看到基本首頁
 - [ ] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
@@ -261,7 +261,7 @@
 ## 15. Security
 - [ ] GitHub Token 不進 frontend
 - [ ] Admin Secret 不 commit
-- [ ] 安全 DOM rendering
+- [x] 安全 DOM rendering
 - [ ] API path whitelist
 - [ ] Worker auth / method checks
 - [ ] XSS 防護
@@ -304,5 +304,5 @@
 - [ ] DNS / HTTPS
 - [ ] Mobile verification
 - [ ] Management verification
-- [ ] `merch-old` 保持不變
+- [x] `merch-old` 保持不變
 - [ ] 新站正式取代舊站
