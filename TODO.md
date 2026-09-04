@@ -1,7 +1,8 @@
 # merch 重寫 TODO
 
-> 此文件是本專案目前唯一的進度追蹤清單。每完成一個項目，就更新 `[ ]` → `[ ]` 並提交到 GitHub。
+> 此文件是本專案目前唯一的進度追蹤清單。每完成一個項目，就更新 `[ ]` → `[x]` 並提交到 GitHub。
 > 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`，可在備註補充目前進度。
+> UI/UX 與功能參考基準：`tsai97216/merch-old`。新架構重新實作，不直接複製舊版程式碼。
 
 ## 0. Project Foundation
 - [ ] 新 merch repo
@@ -67,7 +68,16 @@
 - [ ] route navigation 與 page render 解耦
 
 ## 5. UI System
-- [ ] 以 `merch-old` 為視覺與 UX 參考基準
+- [ ] **以 `merch-old` 為 UI/UX 與功能參考基準，整體視覺與操作體驗原則上保持高度一致**
+- [ ] 重現 `merch-old` 的整體 Layout、Sidebar、Navigation 與內容區配置
+- [ ] 重現 `merch-old` 的頁面 Header / eyebrow / section heading
+- [ ] 重現 `merch-old` 的 Card / Panel / Item Card / Item List 視覺語言
+- [ ] 重現 `merch-old` 的 Button / Badge / Status / Tag 狀態
+- [ ] 重現 `merch-old` 的 Input / Select / Textarea / Toolbar / Filter controls
+- [ ] 重現 `merch-old` 的 Modal / Toast / Notice / Alert
+- [ ] 重現 `merch-old` 的圖片展示與 Image Viewer 體驗
+- [ ] 重現 `merch-old` 的卡片／清單收藏切換體驗
+- [ ] 重現 `merch-old` 的 Dashboard / Collection / Detail / Statistics / Management / Settings 頁面結構
 - [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
 - [ ] 整理 desktop / tablet / mobile breakpoint 規則
 - [ ] 整理頁面最大寬度、內容留白與主要 grid 規則
