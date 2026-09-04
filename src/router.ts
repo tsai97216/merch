@@ -7,39 +7,38 @@ export type Route =
   | { name: 'item'; id: string }
   | { name: 'not-found' };
 
-const routes = new Set(['home', 'collection', 'statistics', 'management', 'settings']);
+const pageRoutes = new Set(['home', 'collection', 'statistics', 'management', 'settings']);
 
 function decodeSegment(value: string): string | null {
   try {
     const decoded = decodeURIComponent(value);
-    return decoded ? decoded : null;
+    return decoded.length ? decoded : null;
   } catch {
     return null;
   }
 }
 
 export function parseRoute(hash = window.location.hash): Route {
-  const raw = hash.replace(/^#\/?/, '');
-  const segments = raw.split('/');
+  const normalized = hash.replace(/^#\/?/, '');
+  const segments = normalized ? normalized.split('/') : [];
   const name = segments[0] ?? '';
 
-  if (routes.has(name) && segments.length === 1) {
-    return { name: name as Exclude<Route, { name: 'item' } | { name: 'not-found' }>['name'] };
-  }
-
+  if (!segments.length) return { name: 'home' };
+  if (pageRoutes.has(name) && segments.length === 1) return { name: name as 'home' | 'collection' | 'statistics' | 'management' | 'settings' };
   if (name === 'item' && segments.length === 2) {
     const id = decodeSegment(segments[1] ?? '');
     return id ? { name: 'item', id } : { name: 'not-found' };
   }
-
-  if (name === '' && segments.length === 1) return { name: 'home' };
   return { name: 'not-found' };
 }
 
 export function navigate(route: Route): void {
-  if (route.name === 'item') {
-    window.location.hash = `#/item/${encodeURIComponent(route.id)}`;
-    return;
-  }
-  window.location.hash = `#/${route.name}`;
+  window.location.hash = route.name === 'item' ? `#/item/${encodeURIComponent(route.id)}` : `#/${route.name}`;
+}
+
+export function startRouter(onChange: (route: Route) => void): () => void {
+  const handler = () => onChange(parseRoute());
+  window.addEventListener('hashchange', handler);
+  handler();
+  return () => window.removeEventListener('hashchange', handler);
 }
