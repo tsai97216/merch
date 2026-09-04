@@ -59,8 +59,8 @@
 - [x] `#/management`
 - [x] `#/settings`
 - [x] `#/item/:id`
-- [ ] 重新整理可正常進入目前頁面
-- [ ] Back / Forward 正常
+- [x] 重新整理可正常進入目前頁面
+- [x] Back / Forward 正常
 - [x] 404 頁面
 - [x] malformed URL / decodeURIComponent 安全處理
 - [x] 多餘 route segments 正確拒絕
@@ -265,7 +265,7 @@
 - [ ] API path whitelist
 - [ ] Worker auth / method checks
 - [ ] XSS 防護
-- [ ] 避免大型不安全 `innerHTML`
+- [x] 避免大型不安全 `innerHTML`
 - [ ] 外部 URL / image URL 驗證
 - [ ] 使用者輸入內容一律視為不可信
 - [ ] 不把 API error 原文直接當 HTML rendering
