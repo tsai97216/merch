@@ -16,11 +16,11 @@ const initialUI: UIState = {
   },
 };
 
-const state: AppState = {
+let state: AppState = {
   works: [],
   items: [],
   version: null,
-  ui: initialUI,
+  ui: structuredClone(initialUI),
   loading: true,
   error: null,
 };
@@ -38,6 +38,11 @@ function snapshot(): AppState {
 function notify(): void {
   const current = snapshot();
   for (const listener of listeners) listener(current);
+}
+
+function updateState(patch: Partial<AppState>): void {
+  state = { ...state, ...patch };
+  notify();
 }
 
 function validateDataset(works: Work[], items: MerchItem[]): void {
@@ -75,55 +80,54 @@ export const store = {
   },
 
   setCollectionUI(patch: Partial<CollectionUIState>): void {
-    state.ui = {
-      ...state.ui,
-      collection: {
-        ...state.ui.collection,
-        ...patch,
+    updateState({
+      ui: {
+        ...state.ui,
+        collection: {
+          ...state.ui.collection,
+          ...patch,
+        },
       },
-    };
-    notify();
+    });
   },
 
   setLoading(loading: boolean): void {
-    state.loading = loading;
-    notify();
+    updateState({ loading });
   },
 
   setError(error: string | null): void {
-    state.error = error;
-    notify();
+    updateState({ error });
   },
 
   setData(works: Work[], items: MerchItem[], version: Version): void {
     validateDataset(works, items);
-    state.works = clone(works);
-    state.items = clone(items);
-    state.version = clone(version);
-    state.error = null;
-    state.loading = false;
-    notify();
+    updateState({
+      works: clone(works),
+      items: clone(items),
+      version: clone(version),
+      error: null,
+      loading: false,
+    });
   },
 
   async load(): Promise<void> {
-    state.loading = true;
-    state.error = null;
-    notify();
+    updateState({ loading: true, error: null });
 
     try {
       const [worksFile, version] = await Promise.all([loadWorks(), loadVersion()]);
       const datasets = await Promise.all(worksFile.works.map((work) => loadWorkData(work.data)));
       const items = datasets.flatMap((dataset) => dataset.items);
       validateDataset(worksFile.works, items);
-      state.works = clone(worksFile.works);
-      state.items = clone(items);
-      state.version = clone(version);
-      state.error = null;
+      updateState({
+        works: clone(worksFile.works),
+        items: clone(items),
+        version: clone(version),
+        error: null,
+      });
     } catch (error) {
-      state.error = error instanceof Error ? error.message : '未知資料載入錯誤';
+      updateState({ error: error instanceof Error ? error.message : '未知資料載入錯誤' });
     } finally {
-      state.loading = false;
-      notify();
+      if (state.loading) updateState({ loading: false });
     }
   },
 
