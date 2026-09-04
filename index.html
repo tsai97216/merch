@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#356ae6">
+  <meta name="description" content="Chi 的動漫與遊戲周邊收藏資料庫">
+  <title>Chi MERCH</title>
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar" aria-label="主要導覽">
+      <div class="brand"><div class="brand-mark">CM</div><div><strong>Chi MERCH</strong><span>Personal Collection</span></div></div>
+      <nav class="nav">
+        <a href="#/home" data-route="home">首頁</a>
+        <a href="#/collection" data-route="collection">收藏</a>
+        <a href="#/statistics" data-route="statistics">統計</a>
+        <a href="#/management" data-route="management">管理</a>
+        <a href="#/settings" data-route="settings">設定</a>
+      </nav>
+      <div class="sidebar-footer"><span>MERCH DATABASE</span><span data-version>v1.0.0</span></div>
+    </aside>
+    <main class="main">
+      <div id="content" class="content">
+        <section class="page" data-page="home">
+          <div class="hero"><div><span class="eyebrow">01 / HOME</span><h1>我的收藏<br><em>Collection.</em></h1></div><p>收藏資料庫的總覽入口。</p></div>
+          <div class="stat-grid"><article class="stat-card"><span>總收藏</span><strong>0</strong><small>目前資料</small></article><article class="stat-card"><span>待到貨</span><strong>0</strong><small>目前資料</small></article><article class="stat-card"><span>本月花費</span><strong>NT$ 0</strong><small>目前資料</small></article><article class="stat-card"><span>總花費</span><strong>NT$ 0</strong><small>目前資料</small></article></div>
+          <section class="panel"><span class="panel-label">STATUS</span><h2>新架構已啟動</h2><p>目前先建立穩定的 TypeScript + Vite 基礎，之後再逐步恢復收藏資料與完整功能。</p></section>
+        </section>
+        <section class="page" data-page="collection"><div class="page-heading"><span class="eyebrow">02 / COLLECTION</span><h1>收藏</h1><p>收藏資料會在資料層完成後載入。</p></div><div class="empty-state">目前尚未載入收藏資料。</div></section>
+        <section class="page" data-page="statistics"><div class="page-heading"><span class="eyebrow">03 / STATISTICS</span><h1>統計</h1><p>收藏數量、花費與時間趨勢。</p></div><div class="empty-state">統計資料尚未載入。</div></section>
+        <section class="page" data-page="management"><div class="page-heading"><span class="eyebrow">04 / MANAGEMENT</span><h1>管理</h1><p>收藏與作品管理將在後續階段加入。</p></div><div class="notice">目前尚未啟用寫入功能。</div></section>
+        <section class="page" data-page="settings"><div class="page-heading"><span class="eyebrow">05 / SETTINGS</span><h1>設定</h1><p>網站與同步設定。</p></div><div class="empty-state">設定功能尚未載入。</div></section>
+        <section class="page" data-page="404"><div class="page-heading"><span class="eyebrow">404 / NOT FOUND</span><h1>找不到頁面</h1><p>這個網址沒有對應的頁面。</p></div></section>
+      </div>
+      <footer class="footer"><span>Chi MERCH</span><span>Personal Collection Database</span><span data-version>v1.0.0</span></footer>
+    </main>
+  </div>
+  <noscript><div class="noscript">此網站需要啟用 JavaScript 才能使用完整功能。</div></noscript>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
