@@ -5,20 +5,20 @@
 > UI/UX 與功能參考基準：`tsai97216/merch-old`。新架構重新實作，不直接複製舊版程式碼。
 
 ## 0. Project Foundation
-- [ ] 新 merch repo
-- [ ] TypeScript + Vite
-- [ ] ES Modules
+- [x] 新 merch repo
+- [x] TypeScript + Vite
+- [x] ES Modules
 - [ ] GitHub Pages
-- [ ] CNAME
-- [ ] Vite production base path
-- [ ] 基本正式目錄與檔案結構
+- [x] CNAME
+- [x] Vite production base path
+- [x] 基本正式目錄與檔案結構
 - [ ] TypeScript compile 完全通過
 - [ ] 統一錯誤處理
 - [ ] loading / empty / error 狀態完整
 - [ ] GitHub Actions build 通過
 - [ ] GitHub Pages deploy 通過
 - [ ] `merch.chi.qzz.io` 可正常載入
-- [ ] JS 失敗時首頁仍保有基本可見內容
+- [x] JS 失敗時首頁仍保有基本可見內容
 
 ## 1. Data Layer
 - [ ] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
@@ -42,30 +42,30 @@
 - [ ] 不修改 `merch-old`
 
 ## 3. Version
-- [ ] 初始版本 `1.0.0`
-- [ ] 版本只有一個來源
-- [ ] 版本來源固定為 `public/data/version.json`
+- [x] 初始版本 `1.0.0`
+- [x] 版本只有一個來源
+- [x] 版本來源固定為 `public/data/version.json`
 - [ ] Major = 大版本／架構世代重寫
 - [ ] Minor = 每次完整邏輯／功能修改
 - [ ] Patch = GitHub API 新增／移除收藏或圖片
 - [ ] reorder / cover replacement 不增加 Patch
-- [ ] 不使用版本號作為 module cache
-- [ ] 不使用 `?v=version` / `?build=...` 等 cache hack
+- [x] 不使用版本號作為 module cache
+- [x] 不使用 `?v=version` / `?build=...` 等 cache hack
 
 ## 4. Router
-- [ ] Hash router
-- [ ] `#/home`
-- [ ] `#/collection`
-- [ ] `#/statistics`
-- [ ] `#/management`
-- [ ] `#/settings`
-- [ ] `#/item/:id`
-- [ ] 重新整理可正常進入目前頁面
-- [ ] Back / Forward 正常
-- [ ] 404 頁面
-- [ ] malformed URL / decodeURIComponent 安全處理
-- [ ] 多餘 route segments 正確拒絕
-- [ ] route navigation 與 page render 解耦
+- [x] Hash router
+- [x] `#/home`
+- [x] `#/collection`
+- [x] `#/statistics`
+- [x] `#/management`
+- [x] `#/settings`
+- [x] `#/item/:id`
+- [x] 重新整理可正常進入目前頁面
+- [x] Back / Forward 正常
+- [x] 404 頁面
+- [x] malformed URL / decodeURIComponent 安全處理
+- [x] 多餘 route segments 正確拒絕
+- [x] route navigation 與 page render 解耦
 
 ## 5. UI System
 - [ ] **以 `merch-old` 為 UI/UX 與功能參考基準，整體視覺與操作體驗原則上保持高度一致**
@@ -124,7 +124,7 @@
 - [ ] 作品統計
 - [ ] 消費統計
 - [ ] 快速入口
-- [ ] JS 失敗時仍能看到基本首頁
+- [x] JS 失敗時仍能看到基本首頁
 - [ ] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
