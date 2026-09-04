@@ -5,6 +5,7 @@ import { renderCollection, renderHome, renderItem, renderPlaceholder, renderStat
 
 const mount = document.querySelector<HTMLElement>('#app');
 if (!mount) throw new Error('找不到 #app');
+const appMount = mount;
 
 let route: Route = parseRoute();
 let lastFocus: { field: string; selectionStart: number | null; selectionEnd: number | null } | null = null;
@@ -19,7 +20,7 @@ function captureFocus(): void {
 
 function restoreFocus(): void {
   if (!lastFocus) return;
-  const target = mount.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`[data-collection-field="${CSS.escape(lastFocus.field)}"]`);
+  const target = appMount.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`[data-collection-field="${CSS.escape(lastFocus.field)}"]`);
   if (!target) { lastFocus = null; return; }
   target.focus();
   if (target instanceof HTMLInputElement && lastFocus.selectionStart !== null && lastFocus.selectionEnd !== null) target.setSelectionRange(lastFocus.selectionStart, lastFocus.selectionEnd);
@@ -48,8 +49,8 @@ function errorScreen(message: string): HTMLElement {
 function render(): void {
   captureFocus();
   const state = store.getState();
-  if (state.loading) { mount.replaceChildren(loadingScreen()); return; }
-  if (state.error) { mount.replaceChildren(errorScreen(state.error)); return; }
+  if (state.loading) { appMount.replaceChildren(loadingScreen()); return; }
+  if (state.error) { appMount.replaceChildren(errorScreen(state.error)); return; }
   let page: HTMLElement;
   switch (route.name) {
     case 'home': page = renderHome(state); break;
@@ -60,7 +61,7 @@ function render(): void {
     case 'settings':
     case 'not-found': page = renderPlaceholder(state, route); break;
   }
-  mount.replaceChildren(page);
+  appMount.replaceChildren(page);
   restoreFocus();
 }
 
@@ -77,7 +78,7 @@ function handleCollectionField(target: HTMLInputElement | HTMLSelectElement): vo
   else if (field === 'sort') store.setCollectionUI({ sort: value });
 }
 
-mount.addEventListener('click', (event) => {
+appMount.addEventListener('click', (event) => {
   const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-action]') : null;
   if (!target) return;
   switch (target.dataset.action) {
@@ -89,17 +90,17 @@ mount.addEventListener('click', (event) => {
   }
 });
 
-mount.addEventListener('keydown', (event) => {
+appMount.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter') return;
   const target = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[data-action="open-item"]') : null;
   const id = target?.dataset.itemId;
   if (id) navigate({ name: 'item', id });
 });
 
-mount.addEventListener('input', (event) => {
+appMount.addEventListener('input', (event) => {
   if (event.target instanceof HTMLInputElement && event.target.dataset.collectionField === 'search') handleCollectionField(event.target);
 });
-mount.addEventListener('change', (event) => {
+appMount.addEventListener('change', (event) => {
   const target = event.target;
   if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) handleCollectionField(target);
 });
