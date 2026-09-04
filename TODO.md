@@ -1,7 +1,6 @@
 # merch 重寫 TODO
 
 > 此文件是本專案目前唯一的進度追蹤清單。每完成一個項目，就更新 `[ ]` → `[x]` 並提交到 GitHub。
->
 > 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`，可在備註補充目前進度。
 
 ## 0. Project Foundation
@@ -17,7 +16,7 @@
 - [x] loading / empty / error 狀態完整
 - [x] GitHub Actions build 通過
 - [x] GitHub Pages deploy 通過
-- [ ] `merch.chi.qzz.io` 可正常載入
+- [x] `merch.chi.qzz.io` 可正常載入
 - [x] JS 失敗時首頁仍保有基本可見內容
 
 ## 1. Data Layer
