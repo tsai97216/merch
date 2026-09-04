@@ -61,6 +61,8 @@
 - [ ] 404 頁面
 
 ## 5. UI System
+- [ ] 以 `merch-old` 為視覺與 UX 參考基準
+- [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
 - [ ] 全站 layout
 - [ ] Mobile / responsive
 - [ ] Button
