@@ -2,104 +2,55 @@ import { loadVersion, loadWorkData, loadWorks } from './data.ts';
 import type { AppState, CollectionUIState, MerchItem } from './types.ts';
 import { validateDataset } from './validation.ts';
 
-const UI_STORAGE_KEY = 'chi-merch:collection-ui';
+const STORAGE_KEY = 'chi-merch:collection-ui';
+const defaults: CollectionUIState = { viewMode:'card', search:'', status:'', category:'', character:'', manufacturer:'', workId:'', sort:'updated-desc' };
 
-const defaultCollectionUI: CollectionUIState = {
-  viewMode: 'card',
-  search: '',
-  status: '',
-  category: '',
-  character: '',
-  manufacturer: '',
-  workId: '',
-  sort: 'updated-desc',
-};
-
-function loadSavedUI(): CollectionUIState {
+function readUI(): CollectionUIState {
   try {
-    const raw = localStorage.getItem(UI_STORAGE_KEY);
-    if (!raw) return { ...defaultCollectionUI };
-    const parsed = JSON.parse(raw) as Partial<CollectionUIState>;
-    return {
-      ...defaultCollectionUI,
-      ...parsed,
-      viewMode: parsed.viewMode === 'list' ? 'list' : 'card',
-    };
-  } catch {
-    return { ...defaultCollectionUI };
-  }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { ...defaults };
+    const value = JSON.parse(raw) as Partial<CollectionUIState>;
+    return { ...defaults, ...value, viewMode:value.viewMode === 'list' ? 'list' : 'card' };
+  } catch { return { ...defaults }; }
 }
 
-function saveUI(ui: CollectionUIState): void {
-  try { localStorage.setItem(UI_STORAGE_KEY, JSON.stringify(ui)); } catch { /* storage may be unavailable */ }
-}
-
-const initialState: AppState = {
-  works: [],
-  items: [],
-  version: null,
-  ui: { collection: loadSavedUI() },
-  loading: true,
-  error: null,
-};
-
+const initial: AppState = { works:[], items:[], version:null, ui:{ collection:readUI() }, loading:true, error:null };
 export type Listener = (state: AppState) => void;
 
-function clone<T>(value: T): T {
-  return structuredClone(value);
-}
-
 export class Store {
-  private state: AppState = clone(initialState);
-  private readonly listeners = new Set<Listener>();
-  private loadRequest = 0;
+  private state: AppState = initial;
+  private listeners = new Set<Listener>();
+  private request = 0;
 
-  getState(): AppState { return clone(this.state); }
-
-  subscribe(listener: Listener): () => void {
-    this.listeners.add(listener);
-    listener(this.getState());
-    return () => this.listeners.delete(listener);
-  }
-
-  private update(mutator: (state: AppState) => void): void {
-    const next = clone(this.state);
-    mutator(next);
-    this.state = next;
-    for (const listener of this.listeners) listener(this.getState());
-  }
+  getState(): AppState { return this.state; }
+  subscribe(listener: Listener): () => void { this.listeners.add(listener); listener(this.state); return () => this.listeners.delete(listener); }
+  private emit(): void { for (const listener of this.listeners) listener(this.state); }
 
   setCollectionUI(patch: Partial<CollectionUIState>): void {
-    this.update((state) => Object.assign(state.ui.collection, patch));
-    saveUI(this.state.ui.collection);
+    this.state = { ...this.state, ui:{ collection:{ ...this.state.ui.collection, ...patch } } };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.ui.collection)); } catch { /* ignore storage failures */ }
+    this.emit();
   }
 
   async load(): Promise<void> {
-    const request = ++this.loadRequest;
-    this.update((state) => { state.loading = true; state.error = null; });
+    const request = ++this.request;
+    this.state = { ...this.state, loading:true, error:null };
+    this.emit();
     try {
       const [worksFile, version] = await Promise.all([loadWorks(), loadVersion()]);
-      const loaded = await Promise.all(worksFile.works.map(async (work) => loadWorkData(work.data)));
-      if (request !== this.loadRequest) return;
-      const items: MerchItem[] = loaded.flatMap((data) => data.items);
+      const datasets = await Promise.all(worksFile.works.map((work) => loadWorkData(work.data)));
+      if (request !== this.request) return;
+      const items: MerchItem[] = datasets.flatMap((d) => d.items);
       validateDataset(worksFile.works, items);
-      this.update((state) => {
-        state.works = worksFile.works;
-        state.items = items;
-        state.version = version;
-        state.loading = false;
-        state.error = null;
-      });
+      this.state = { ...this.state, works:worksFile.works, items, version, loading:false, error:null };
     } catch (error) {
-      if (request !== this.loadRequest) return;
-      const message = error instanceof Error ? error.message : '未知資料錯誤';
-      this.update((state) => { state.loading = false; state.error = message; });
+      if (request !== this.request) return;
+      this.state = { ...this.state, loading:false, error:error instanceof Error ? error.message : '資料載入失敗' };
     }
+    this.emit();
   }
 
-  findItem(id: string): MerchItem | undefined {
-    return this.state.items.find((item) => item.id === id);
-  }
+  findItem(id: string): MerchItem | undefined { return this.state.items.find((item) => item.id === id); }
 }
 
 export const store = new Store();
