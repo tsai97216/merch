@@ -5,20 +5,20 @@
 > 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`，可在備註補充目前進度。
 
 ## 0. Project Foundation
-- [ ] 新 merch repo
-- [ ] TypeScript + Vite
-- [ ] ES Modules
-- [ ] GitHub Pages
-- [ ] CNAME
-- [ ] Vite production base path
-- [ ] 基本正式目錄與檔案結構
-- [ ] TypeScript compile 完全通過
-- [ ] 統一錯誤處理
-- [ ] loading / empty / error 狀態完整
-- [ ] GitHub Actions build 通過
-- [ ] GitHub Pages deploy 通過
+- [x] 新 merch repo
+- [x] TypeScript + Vite
+- [x] ES Modules
+- [x] GitHub Pages
+- [x] CNAME
+- [x] Vite production base path
+- [x] 基本正式目錄與檔案結構
+- [x] TypeScript compile 完全通過
+- [x] 統一錯誤處理
+- [x] loading / empty / error 狀態完整
+- [x] GitHub Actions build 通過
+- [x] GitHub Pages deploy 通過
 - [ ] `merch.chi.qzz.io` 可正常載入
-- [ ] JS 失敗時首頁仍保有基本可見內容
+- [x] JS 失敗時首頁仍保有基本可見內容
 
 ## 1. Data Layer
 - [x] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
