@@ -38,15 +38,15 @@
 - [x] 不修改 `merch-old`
 
 ## 3. Version
-- [ ] 初始版本 `1.0.0`
-- [ ] 版本只有一個來源
-- [ ] 版本來源固定為 `public/data/version.json`
-- [ ] Major = 大版本／架構世代重寫
-- [ ] Minor = 每次完整邏輯／功能修改
-- [ ] Patch = GitHub API 新增／移除收藏或圖片
-- [ ] reorder / cover replacement 不增加 Patch
-- [ ] 不使用版本號作為 module cache
-- [ ] 不使用 `?v=version` / `?build=...` 等 cache hack
+- [x] 初始版本 `1.0.0`
+- [x] 版本只有一個來源
+- [x] 版本來源固定為 `public/data/version.json`
+- [x] Major = 大版本／架構世代重寫
+- [x] Minor = 每次完整邏輯／功能修改
+- [x] Patch = GitHub API 新增／移除收藏或圖片
+- [x] reorder / cover replacement 不增加 Patch
+- [x] 不使用版本號作為 module cache
+- [x] 不使用 `?v=version` / `?build=...` 等 cache hack
 
 ## 4. Router
 - [ ] Hash router
