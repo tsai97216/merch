@@ -14,8 +14,7 @@ function statusLabel(status: string): string { return STATUS_LABELS[status] ?? (
 function statusClass(status: string): string { return status === 'received' || status === '已收到' ? 'received' : status === 'preorder' || status === '預購中' ? 'preorder' : status === 'pending' || status === '待處理' ? 'pending' : ''; }
 function formatMoney(item: MerchItem): string { return Number.isFinite(item.purchase.price) ? formatCurrency(item.purchase.price, item.purchase.currency || 'TWD') : '未記錄價格'; }
 function cover(item: MerchItem): HTMLDivElement {
-  const box = el('div', 'item-cover');
-  const image = item.images.find((candidate) => candidate.isCover) ?? item.images[0];
+  const box = el('div', 'item-cover'); const image = item.images.find((candidate) => candidate.isCover) ?? item.images[0];
   if (!image) { box.textContent = 'NO IMAGE'; return box; }
   const img = document.createElement('img'); img.src = image.url; img.alt = image.alt || item.title; img.loading = 'lazy';
   img.addEventListener('error', () => box.replaceChildren(text('span', 'IMAGE UNAVAILABLE')), { once: true }); box.append(img); return box;
@@ -24,22 +23,27 @@ function shell(state: AppState, route: Route, content: HTMLElement): HTMLElement
   const root = el('div', 'site-shell'); const sidebar = el('aside', 'sidebar');
   const brand = document.createElement('a'); brand.className = 'brand'; brand.href = '#/'; brand.append(text('span', 'CHI', 'brand-mark'));
   const brandCopy = el('span', 'brand-copy'); brandCopy.append(text('strong', '我的收藏'), text('span', 'MERCH COLLECTION')); brand.append(brandCopy); sidebar.append(brand);
-  const nav = el('nav', 'nav');
-  const links: Array<[Route['name'], string, string]> = [['home', '⌂', '首頁'], ['collection', '▦', '收藏'], ['statistics', '◫', '統計'], ['management', '✎', '管理'], ['settings', '⚙', '設定']];
+  const nav = el('nav', 'nav'); const links: Array<[Route['name'], string, string]> = [['home', '⌂', '首頁'], ['collection', '▦', '收藏'], ['statistics', '◫', '統計'], ['management', '✎', '管理'], ['settings', '⚙', '設定']];
   for (const [name, icon, label] of links) { const link = document.createElement('a'); link.className = `nav-item${route.name === name ? ' active' : ''}`; link.href = `#/${name}`; link.setAttribute('aria-current', route.name === name ? 'page' : 'false'); link.append(text('span', icon), text('span', label)); nav.append(link); }
-  sidebar.append(nav); const footer = el('div', 'sidebar-footer'); footer.append(text('span', 'CHI MERCH'), text('span', state.version ? `v${state.version.version}` : '…')); sidebar.append(footer);
-  const main = el('div', 'main'); const header = el('header', 'header'); const headerCopy = el('div'); headerCopy.append(text('p', 'CHI MERCH', 'eyebrow'), text('h1', pageTitle(route)), text('p', pageDescription(route))); header.append(headerCopy);
-  if (route.name === 'collection') { const search = el('label', 'header-search'); search.append(text('span', '⌕')); const input = el('input') as HTMLInputElement; input.type = 'search'; input.placeholder = '在收藏中搜尋…'; input.value = state.ui.collection.search; input.dataset.collectionField = 'search'; input.setAttribute('aria-label', '搜尋收藏'); search.append(input); header.append(search); }
-  main.append(header); const contentRoot = el('main', 'content'); contentRoot.append(content); main.append(contentRoot); root.append(sidebar, main); return root;
+  sidebar.append(nav); const sideFooter = el('div', 'sidebar-footer'); sideFooter.append(text('span', 'CHI MERCH'), text('span', state.version ? `v${state.version.version}` : '…')); sidebar.append(sideFooter);
+  const main = el('main', 'main'); const contentRoot = el('div', 'content'); contentRoot.append(content); main.append(contentRoot);
+  const footer = el('footer', 'footer'); footer.append(text('span', 'Chi MERCH'), text('span', 'Personal Collection Database'), text('span', state.version ? `v${state.version.version}` : '…')); main.append(footer);
+  root.append(sidebar, main); return root;
 }
 function pageTitle(route: Route): string { switch (route.name) { case 'home': return '我的收藏'; case 'collection': return '收藏'; case 'statistics': return '統計'; case 'management': return '管理'; case 'settings': return '設定'; case 'item': return '收藏詳細'; default: return '找不到頁面'; } }
-function pageDescription(route: Route): string { switch (route.name) { case 'home': return '收藏管理系統'; case 'collection': return '瀏覽、搜尋與整理目前收藏。'; case 'statistics': return '快速掌握收藏規模與消費。'; case 'management': return '收藏與資料管理入口。'; case 'settings': return '網站與資料連線狀態。'; case 'item': return '查看單件收藏的完整資訊。'; default: return '目前路徑不存在。'; } }
 function heading(eyebrow: string, title: string, description = ''): HTMLElement { const wrap = el('div', 'page-heading'); const left = el('div'); left.append(text('p', eyebrow, 'eyebrow'), text('h2', title)); if (description) left.append(text('p', description)); wrap.append(left); return wrap; }
 function statCard(label: string, value: string, note: string): HTMLElement { const card = el('article', 'stat-card'); card.append(text('span', label), text('strong', value), text('small', note)); return card; }
 function stats(items: MerchItem[]): HTMLElement {
   const grid = el('div', 'stat-grid'); const received = items.filter((i) => statusClass(i.status) === 'received').length; const preorder = items.filter((i) => statusClass(i.status) === 'preorder').length; const pending = items.filter((i) => statusClass(i.status) === 'pending').length;
   const total = items.reduce((sum, i) => sum + (Number.isFinite(i.purchase.price) ? i.purchase.price : 0), 0);
   grid.append(statCard('總收藏', formatCount(items.length), '所有作品'), statCard('已收到', formatCount(received), '已完成到貨'), statCard('預購中', formatCount(preorder), '等待發售'), statCard('待處理', formatCount(pending), '尚未完成'), statCard('已記錄消費', formatCurrency(total), '依資料庫價格計算')); return grid;
+}
+function homeStats(items: MerchItem[]): HTMLElement {
+  const grid = el('div', 'stat-grid home-stat-grid'); const pending = items.filter((i) => statusClass(i.status) !== 'received' && Boolean(i.release.expectedDate)).length;
+  const now = new Date(); const month = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  const monthly = items.reduce((sum, i) => sum + (i.purchase.date?.startsWith(month) && Number.isFinite(i.purchase.price) ? i.purchase.price : 0), 0);
+  const total = items.reduce((sum, i) => sum + (Number.isFinite(i.purchase.price) ? i.purchase.price : 0), 0);
+  grid.append(statCard('總收藏', formatCount(items.length), '所有作品'), statCard('待到貨', formatCount(pending), '已有預計到貨日期'), statCard('本月花費', formatCurrency(monthly), '依購買日期計算'), statCard('總花費', formatCurrency(total), '依資料庫價格計算')); return grid;
 }
 function itemCard(item: MerchItem, workName: string): HTMLElement {
   const article = el('article', 'item-card'); article.tabIndex = 0; article.dataset.action = 'open-item'; article.dataset.itemId = item.id; article.append(cover(item));
@@ -61,24 +65,27 @@ function filterItems(items: MerchItem[], ui: AppState['ui']['collection']): Merc
 function selectOptions(select: HTMLSelectElement, values: Array<{ value: string; label: string }>, selected: string, allLabel: string): void { select.append(new Option(allLabel, '')); for (const option of values) select.append(new Option(option.label, option.value, false, option.value === selected)); }
 function unique(values: string[]): string[] { return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-Hant')); }
 function linkButton(label: string, href: string, primary = false): HTMLAnchorElement { const link = document.createElement('a'); link.className = `button${primary ? ' primary' : ''}`; link.href = href; link.textContent = label; return link; }
+function workBars(state: AppState): HTMLElement {
+  const bars = el('div', 'bars'); const counts = state.works.map((work) => ({ name: work.name, count: state.items.filter((item) => item.workId === work.id).length })); const max = Math.max(1, ...counts.map((entry) => entry.count));
+  for (const entry of counts) { const row = el('div', 'bar-row'); const line = el('div'); line.append(text('span', entry.name), text('b', formatCount(entry.count))); const bar = el('i'); bar.style.width = `${Math.max(4, entry.count / max * 100)}%`; row.append(line, bar); bars.append(row); }
+  if (!counts.length) bars.append(text('p', '目前沒有作品資料。', 'empty-copy')); return bars;
+}
+function characterRanking(state: AppState): HTMLElement {
+  const counts = new Map<string, number>(); for (const item of state.items) for (const character of item.characters) counts.set(character, (counts.get(character) ?? 0) + 1);
+  const ranking = el('ol', 'ranking'); const entries = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant')).slice(0, 5);
+  entries.forEach(([name, count], index) => ranking.append(el('li'))); const rows = [...ranking.children]; entries.forEach(([name, count], index) => { const row = rows[index]; row.replaceChildren(text('span', String(index + 1).padStart(2, '0')), text('strong', name), text('b', formatCount(count))); });
+  if (!entries.length) ranking.append(text('li', '目前沒有角色資料。', 'empty-copy')); return ranking;
+}
 
 export function renderHome(state: AppState): HTMLElement {
-  const page = el('section', 'page page-content'); const hero = el('section', 'hero'); const copy = el('div'); copy.append(text('p', 'COLLECTION', 'eyebrow'), text('h2', '收藏管理系統')); hero.append(copy, text('p', '把收藏、發售、物流與售後資訊集中在同一個地方。')); page.append(hero, stats(state.items));
-  const two = el('div', 'two-column'); const works = el('section', 'panel'); works.append(heading('WORKS', '作品', '目前資料集中的作品。')); const workList = el('div', 'simple-list');
-  for (const work of state.works) { const row = document.createElement('a'); row.className = 'simple-list-row'; row.href = '#/collection'; row.addEventListener('click', () => storeWorkFilter(work.id)); row.append(text('span', work.name), text('span', formatCount(state.items.filter((i) => i.workId === work.id).length), 'muted')); workList.append(row); }
-  works.append(workList);
-  const recent = el('section', 'panel'); recent.append(heading('RECENT', '最近更新')); const recentList = el('div', 'simple-list');
-  for (const item of [...state.items].sort((a, b) => toTimestamp(b.updatedAt) - toTimestamp(a.updatedAt)).slice(0, 5)) { const row = document.createElement('a'); row.className = 'simple-list-row'; row.href = `#/item/${encodeURIComponent(item.id)}`; row.append(text('span', item.title), text('span', formatDate(item.updatedAt), 'muted')); recentList.append(row); }
-  if (!state.items.length) recentList.append(text('p', '目前沒有收藏資料。', 'empty-copy')); recent.append(recentList); two.append(works, recent); page.append(two);
-  const lower = el('div', 'two-column');
-  const added = el('section', 'panel'); added.append(heading('RECENTLY ADDED', '最近新增')); const addedList = el('div', 'simple-list');
-  for (const item of [...state.items].sort((a, b) => toTimestamp(b.createdAt) - toTimestamp(a.createdAt)).slice(0, 5)) { const row = document.createElement('a'); row.className = 'simple-list-row'; row.href = `#/item/${encodeURIComponent(item.id)}`; row.append(text('span', item.title), text('span', formatDate(item.createdAt), 'muted')); addedList.append(row); }
-  if (!state.items.length) addedList.append(text('p', '目前沒有收藏資料。', 'empty-copy')); added.append(addedList);
-  const actionPanel = el('section', 'panel'); actionPanel.append(heading('QUICK ACCESS', '快速入口', '常用功能。')); const actions = el('div', 'quick-actions'); actions.append(linkButton('查看全部收藏', '#/collection', true), linkButton('查看統計', '#/statistics'));
-  const arriving = state.items.filter((i) => statusClass(i.status) !== 'received' && i.release.expectedDate).sort((a, b) => toTimestamp(a.release.expectedDate) - toTimestamp(b.release.expectedDate)).slice(0, 3);
-  if (arriving.length) { const list = el('div', 'simple-list'); list.append(text('p', '即將到貨', 'eyebrow')); for (const item of arriving) { const row = document.createElement('a'); row.className = 'simple-list-row'; row.href = `#/item/${encodeURIComponent(item.id)}`; row.append(text('span', item.title), text('span', formatDate(item.release.expectedDate), 'muted')); list.append(row); } actionPanel.append(list); }
-  const pending = state.items.filter((i) => statusClass(i.status) === 'pending'); if (pending.length) { const notice = el('div', 'notice'); notice.append(text('span', '待處理', 'notice-label'), text('span', `${pending.length} 件收藏需要留意。`)); actionPanel.append(notice); }
-  lower.append(added, actionPanel); page.append(lower); return shell(state, { name: 'home' }, page);
+  const page = el('section', 'page page-content'); const hero = el('section', 'hero'); const copy = el('div'); copy.append(text('p', 'COLLECTION', 'eyebrow'), text('h2', '我的收藏')); const accent = text('span', 'Collection.'); accent.className = 'home-hero-accent'; copy.querySelector('h2')?.append(document.createElement('br'), accent); hero.append(copy, text('p', '收藏資料庫的總覽入口。\n資料會在載入後由收藏資料庫填入。')); page.append(hero, homeStats(state.items));
+  const two = el('div', 'two-column'); const works = el('section', 'panel'); works.append((() => { const h = heading('BY WORK', '作品分布'); return h; })(), workBars(state));
+  const rankingPanel = el('section', 'panel'); rankingPanel.append(heading('CHARACTERS', '角色排行'), characterRanking(state)); two.append(works, rankingPanel); page.append(two);
+  const recent = el('section', 'section'); const recentHeading = el('div', 'section-heading'); const recentLeft = el('div'); recentLeft.append(text('p', 'RECENT', 'panel-label'), text('h3', '最近收藏')); recentHeading.append(recentLeft, (() => { const link = document.createElement('a'); link.href = '#/collection'; link.textContent = '查看全部  →'; return link; })()); recent.append(recentHeading);
+  const recentGrid = el('div', 'card-grid'); const workMap = new Map(state.works.map((work) => [work.id, work.name]));
+  for (const item of [...state.items].sort((a, b) => toTimestamp(b.updatedAt) - toTimestamp(a.updatedAt)).slice(0, 4)) recentGrid.append(itemCard(item, workMap.get(item.workId) ?? item.workId));
+  if (!state.items.length) recentGrid.append(text('div', '目前沒有收藏資料。', 'empty-state')); recent.append(recentGrid); page.append(recent);
+  return shell(state, { name: 'home' }, page);
 }
 
 let storeWorkFilter: (workId: string) => void = () => undefined;
