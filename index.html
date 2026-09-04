@@ -4,63 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f6f8" />
-    <meta name="description" content="Chi 的收藏管理" />
-    <title>Chi 的收藏</title>
+    <meta name="description" content="CHI MERCH 收藏管理系統" />
+    <title>CHI MERCH</title>
   </head>
   <body>
-    <div id="app-shell" class="site-shell">
-      <aside class="sidebar">
-        <a class="brand" href="#/home" aria-label="Chi 的收藏首頁">
-          <span class="brand-mark">CHI</span>
-          <span class="brand-copy">
-            <strong>我的收藏</strong>
-            <span>MERCH COLLECTION</span>
-          </span>
-        </a>
-
-        <nav class="app-nav nav" aria-label="主要導覽">
-          <a class="nav-item" href="#/home"><span aria-hidden="true">⌂</span><span>首頁</span></a>
-          <a class="nav-item" href="#/collection"><span aria-hidden="true">▦</span><span>收藏</span></a>
-          <a class="nav-item" href="#/statistics"><span aria-hidden="true">◫</span><span>統計</span></a>
-          <a class="nav-item" href="#/management"><span aria-hidden="true">✎</span><span>管理</span></a>
-          <a class="nav-item" href="#/settings"><span aria-hidden="true">⚙</span><span>設定</span></a>
-        </nav>
-
-        <div class="sidebar-footer">
-          <span>CHI MERCH</span>
-          <span id="app-status" aria-live="polite">載入中…</span>
-        </div>
-      </aside>
-
-      <div class="main">
-        <header class="header">
-          <div>
-            <p class="eyebrow">CHI MERCH</p>
-            <h1>我的收藏</h1>
-            <p>收藏管理系統</p>
-          </div>
-          <div class="search-placeholder" aria-hidden="true">
-            <span>⌕</span>
-            <span>在收藏中搜尋…</span>
-          </div>
-        </header>
-
-        <main id="app" class="content app-main">
-          <section class="hero page">
-            <div>
-              <p class="eyebrow">COLLECTION</p>
-              <h2>收藏<em>管理系統</em></h2>
-            </div>
-            <p>正在準備資料。即使 JavaScript 暫時沒有啟動，這個首頁仍然會保持可見。</p>
-          </section>
-        </main>
-
-        <footer class="footer">
-          <span>Chi 的收藏</span>
-          <span>MERCH</span>
-        </footer>
-      </div>
-    </div>
+    <noscript>
+      <main class="noscript-page">
+        <p class="eyebrow">CHI MERCH</p>
+        <h1>收藏管理系統</h1>
+        <p>此網站需要 JavaScript 才能載入收藏資料。</p>
+      </main>
+    </noscript>
+    <div id="app"></div>
     <script type="module" src="/src/app.ts"></script>
   </body>
 </html>
