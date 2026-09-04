@@ -1,4 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 
 interface Work { id: string; name: string; data: string }
@@ -17,6 +18,13 @@ async function readJson<T>(path: string): Promise<T> {
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
+}
+
+function gitBlobSha(buffer: Buffer): string {
+  return createHash('sha1')
+    .update(`blob ${buffer.length}\0`)
+    .update(buffer)
+    .digest('hex');
 }
 
 function validateWorks(source: WorksFile): void {
@@ -46,6 +54,18 @@ function validateData(data: WorkData, work: Work, itemIds: Set<string>, imageSha
   }
 }
 
+async function migrateImage(image: Image): Promise<void> {
+  const relativeSource = image.path.replace(/^data\//, 'data/');
+  const sourcePath = resolve(sourceRoot, relativeSource);
+  const targetPath = resolve(targetRoot, relativeSource);
+  const bytes = await readFile(sourcePath);
+  assert(gitBlobSha(bytes) === image.sha, `source image SHA mismatch: ${image.path}`);
+  await mkdir(resolve(targetPath, '..'), { recursive: true });
+  await copyFile(sourcePath, targetPath);
+  const copied = await readFile(targetPath);
+  assert(gitBlobSha(copied) === image.sha, `target image SHA mismatch: ${image.path}`);
+}
+
 async function main(): Promise<void> {
   const sourceWorks = await readJson<WorksFile>(resolve(sourceRoot, 'data/works.json'));
   validateWorks(sourceWorks);
@@ -53,11 +73,35 @@ async function main(): Promise<void> {
   const itemIds = new Set<string>();
   const imageShas = new Set<string>();
   const migrated: WorkData[] = [];
+  let imageCount = 0;
 
   for (const work of sourceWorks.works) {
     const data = await readJson<WorkData>(resolve(sourceRoot, work.data));
     validateData(data, work, itemIds, imageShas);
     migrated.push(data);
+
+    const targetDataPath = resolve(targetRoot, work.id, 'data.json');
+    await mkdir(resolve(targetDataPath, '..'), { recursive: true });
+    await writeFile(targetDataPath, `${JSON.stringify(data, null, 2)}\n`);
+
+    for (const item of data.items) {
+      for (const image of item.images) {
+        await migrateImage(image);
+        imageCount += 1;
+      }
+    }
+  }
+
+  const targetWorks = { schemaVersion: sourceWorks.schemaVersion, works: sourceWorks.works };
+  await mkdir(resolve(targetRoot, 'data'), { recursive: true });
+  await writeFile(resolve(targetRoot, 'works.json'), `${JSON.stringify(targetWorks, null, 2)}\n`);
+
+  const existingTargetWorks = await readJson<WorksFile>(resolve(targetRoot, 'works.json'));
+  assert(JSON.stringify(existingTargetWorks) === JSON.stringify(targetWorks), 'target works.json differs from source');
+
+  for (const data of migrated) {
+    const existing = await readJson<WorkData>(resolve(targetRoot, data.work, 'data.json'));
+    assert(JSON.stringify(existing) === JSON.stringify(data), `target data differs from source: ${data.work}`);
   }
 
   const result = {
@@ -67,20 +111,11 @@ async function main(): Promise<void> {
     targetRef: 'main',
     workCount: sourceWorks.works.length,
     itemCount: migrated.reduce((sum, data) => sum + data.items.length, 0),
-    imageCount: migrated.reduce((sum, data) => sum + data.items.reduce((sumImages, item) => sumImages + item.images.length, 0), 0),
+    imageCount,
     itemIds: [...itemIds],
     imageShas: [...imageShas],
     verified: true,
   };
-
-  const targetWorks = { schemaVersion: sourceWorks.schemaVersion, works: sourceWorks.works };
-  const existingTargetWorks = await readJson<WorksFile>(resolve(targetRoot, 'data/works.json'));
-  assert(JSON.stringify(existingTargetWorks) === JSON.stringify(targetWorks), 'target works.json differs from source');
-
-  for (const data of migrated) {
-    const existing = await readJson<WorkData>(resolve(targetRoot, data.work, 'data.json'));
-    assert(JSON.stringify(existing) === JSON.stringify(data), `target data differs from source: ${data.work}`);
-  }
 
   await writeFile(resolve(root, 'tools/migration-result.json'), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify(result, null, 2));
