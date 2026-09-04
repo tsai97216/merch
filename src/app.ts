@@ -7,8 +7,6 @@ const mount = document.querySelector<HTMLElement>('#app');
 if (!mount) throw new Error('找不到 #app');
 const appMount = mount;
 
-document.documentElement.dataset.chiMerchBooted = 'true';
-
 let route: Route = parseRoute();
 let lastFocus: { field: string; selectionStart: number | null; selectionEnd: number | null } | null = null;
 let imageViewer: HTMLElement | null = null;
@@ -81,10 +79,10 @@ function openImageViewer(url: string, alt: string): void {
 }
 
 function render(): void {
-  captureFocus(); const state = store.getState(); if (state.loading) { appMount.replaceChildren(loadingScreen()); return; } if (state.error) { appMount.replaceChildren(errorScreen(state.error)); return; }
+  captureFocus(); const state = store.getState(); if (state.loading) { appMount.replaceChildren(loadingScreen()); document.documentElement.dataset.chiMerchBooted = 'true'; return; } if (state.error) { appMount.replaceChildren(errorScreen(state.error)); document.documentElement.dataset.chiMerchBooted = 'true'; return; }
   let page: HTMLElement;
   switch (route.name) { case 'home': page = renderHome(state); break; case 'collection': page = renderCollection(state); break; case 'statistics': page = renderStatistics(state); break; case 'item': page = renderItem(state, route.id); break; case 'management': case 'settings': case 'not-found': page = renderPlaceholder(state, route); break; }
-  appMount.replaceChildren(page); restoreFocus();
+  appMount.replaceChildren(page); restoreFocus(); document.documentElement.dataset.chiMerchBooted = 'true';
 }
 function handleCollectionField(target: HTMLInputElement | HTMLSelectElement): void {
   const field = target.dataset.collectionField; if (!field) return; const value = target.value;
