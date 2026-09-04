@@ -21,11 +21,11 @@
 - [ ] JS 失敗時首頁仍保有基本可見內容
 
 ## 1. Data Layer
-- [ ] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
-- [ ] Schema validation
-- [ ] 單一 Store：works / items / version / UI / loading / error
-- [ ] Store subscribe
-- [ ] Page 不持有自己的資料副本
+- [x] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
+- [x] Schema validation
+- [x] 單一 Store：works / items / version / UI / loading / error
+- [x] Store subscribe
+- [x] Page 不持有自己的資料副本
 
 ## 2. Data Migration
 - [ ] 建立 migration script
