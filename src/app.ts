@@ -5,25 +5,40 @@ import { renderItem } from './pages/item.ts';
 import { renderManagement } from './pages/management.ts';
 import { renderSettings } from './pages/settings.ts';
 import { renderStatistics } from './pages/statistics.ts';
-import { parseRoute } from './router.ts';
+import { parseRoute, type Route } from './router.ts';
 import { store } from './store.ts';
 
 const appElement = document.querySelector<HTMLElement>('#app');
 const statusElement = document.querySelector<HTMLElement>('#app-status');
+const navigationElement = document.querySelector<HTMLElement>('.app-nav');
 
-if (!appElement || !statusElement) {
+if (!appElement || !statusElement || !navigationElement) {
   throw new Error('Application shell is incomplete.');
 }
 
 const app = appElement;
 const status = statusElement;
+const navigation = navigationElement;
 
 function setStatus(text: string): void {
   status.textContent = text;
 }
 
+function updateActiveNavigation(route: Route): void {
+  const currentName = route.name === 'item' ? 'collection' : route.name;
+  for (const link of navigation.querySelectorAll<HTMLAnchorElement>('a[href^="#/"]')) {
+    const target = link.getAttribute('href')?.replace(/^#\/?/, '').split('/')[0] ?? '';
+    const active = target === currentName;
+    if (active) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+}
+
 function render(): void {
   const state = store.getState();
+  const route = parseRoute();
+  updateActiveNavigation(route);
+
   if (state.loading) {
     setStatus('載入中…');
     return;
@@ -38,7 +53,6 @@ function render(): void {
   setStatus(state.version ? `v${state.version.version}` : '就緒');
 
   try {
-    const route = parseRoute();
     switch (route.name) {
       case 'home':
         renderHome(app);
@@ -59,7 +73,7 @@ function render(): void {
         renderItem(app, route.id);
         break;
       case 'not-found':
-        app.replaceChildren(message('找不到頁面', '請從上方導覽重新選擇。'));
+        app.replaceChildren(message('找不到頁面', '請從左側導覽重新選擇。'));
         break;
     }
   } catch (error) {
