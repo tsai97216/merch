@@ -1,4 +1,4 @@
-import type { MerchItem, VersionInfo, WorkData, WorksFile } from './types.ts';
+import type { MerchItem, VersionInfo, Work, WorkData, WorksFile } from './types.ts';
 
 export class DataValidationError extends Error {
   constructor(message: string) {
@@ -37,122 +37,78 @@ function requireArray(value: unknown, path: string): asserts value is unknown[] 
 
 function validateImage(value: unknown, path: string): void {
   requireObject(value, path);
-  for (const key of ['id', 'path', 'url', 'sha', 'alt']) {
-    requireString(value[key], `${path}.${key}`);
-  }
+  for (const key of ['id', 'path', 'url', 'sha', 'alt']) requireString(value[key], `${path}.${key}`);
   requireBoolean(value.isCover, `${path}.isCover`);
 }
 
 function validateItem(value: unknown, path: string): asserts value is MerchItem {
   requireObject(value, path);
+  for (const key of ['id', 'workId', 'title', 'series', 'category', 'manufacturer', 'status', 'description', 'notes', 'createdAt', 'updatedAt']) requireString(value[key], `${path}.${key}`);
+  requireArray(value.images, `${path}.images`);
+  value.images.forEach((image, index) => validateImage(image, `${path}.images[${index}]`));
+  requireArray(value.characters, `${path}.characters`);
+  value.characters.forEach((character, index) => requireString(character, `${path}.characters[${index}]`));
 
-  for (const key of ['id', 'workId', 'title', 'series', 'category', 'manufacturer', 'status', 'description', 'notes', 'createdAt', 'updatedAt']) {
-    requireString(value[key], `${path}.${key}`);
-  }
-
-  const images = value.images;
-  requireArray(images, `${path}.images`);
-  images.forEach((image, index) => validateImage(image, `${path}.images[${index}]`));
-
-  const characters = value.characters;
-  requireArray(characters, `${path}.characters`);
-  characters.forEach((character, index) => requireString(character, `${path}.characters[${index}]`));
-
-  const purchase = value.purchase;
-  requireObject(purchase, `${path}.purchase`);
-  requireNumber(purchase.price, `${path}.purchase.price`);
-  for (const key of ['currency', 'platform', 'date', 'url', 'orderId']) {
-    requireString(purchase[key], `${path}.purchase.${key}`);
-  }
-
-  const release = value.release;
-  requireObject(release, `${path}.release`);
-  for (const key of ['date', 'expectedDate', 'receivedDate']) {
-    requireString(release[key], `${path}.release.${key}`);
-  }
-
-  const shipping = value.shipping;
-  requireObject(shipping, `${path}.shipping`);
-  for (const key of ['status', 'method', 'trackingNumber', 'note']) {
-    requireString(shipping[key], `${path}.shipping.${key}`);
-  }
-
-  const afterSales = value.afterSales;
-  requireObject(afterSales, `${path}.afterSales`);
-  for (const key of ['status', 'note', 'updatedAt']) {
-    requireString(afterSales[key], `${path}.afterSales.${key}`);
-  }
+  requireObject(value.purchase, `${path}.purchase`);
+  requireNumber(value.purchase.price, `${path}.purchase.price`);
+  for (const key of ['currency', 'platform', 'date', 'url', 'orderId']) requireString(value.purchase[key], `${path}.purchase.${key}`);
+  requireObject(value.release, `${path}.release`);
+  for (const key of ['date', 'expectedDate', 'receivedDate']) requireString(value.release[key], `${path}.release.${key}`);
+  requireObject(value.shipping, `${path}.shipping`);
+  for (const key of ['status', 'method', 'trackingNumber', 'note']) requireString(value.shipping[key], `${path}.shipping.${key}`);
+  requireObject(value.afterSales, `${path}.afterSales`);
+  for (const key of ['status', 'note', 'updatedAt']) requireString(value.afterSales[key], `${path}.afterSales.${key}`);
 }
 
 export function validateWorksFile(value: unknown): asserts value is WorksFile {
   requireObject(value, 'works.json');
   requireNumber(value.schemaVersion, 'works.json.schemaVersion');
-
-  const works = value.works;
-  requireArray(works, 'works.json.works');
-
+  requireArray(value.works, 'works.json.works');
   const ids = new Set<string>();
-  works.forEach((work, index) => {
+  value.works.forEach((work, index) => {
     const path = `works.json.works[${index}]`;
     requireObject(work, path);
-
-    const id = work.id;
-    const name = work.name;
-    const data = work.data;
-    requireString(id, `${path}.id`);
-    requireString(name, `${path}.name`);
-    requireString(data, `${path}.data`);
-
-    if (ids.has(id)) fail(`${path}.id`, '工作 ID 重複');
-    ids.add(id);
-
-    if (!data.startsWith('data/') || !data.endsWith('/data.json')) {
-      fail(`${path}.data`, '資料路徑格式無效');
-    }
+    requireString(work.id, `${path}.id`); requireString(work.name, `${path}.name`); requireString(work.data, `${path}.data`);
+    if (ids.has(work.id)) fail(`${path}.id`, '工作 ID 重複');
+    ids.add(work.id);
+    if (!work.data.startsWith('data/') || !work.data.endsWith('/data.json')) fail(`${path}.data`, '資料路徑格式無效');
   });
 }
 
 export function validateWorkData(value: unknown): asserts value is WorkData {
   requireObject(value, 'work data');
   requireNumber(value.schemaVersion, 'work data.schemaVersion');
-
-  for (const key of ['work', 'name', 'updatedAt']) {
-    requireString(value[key], `work data.${key}`);
-  }
-
-  const workId = value.work;
-  const items = value.items;
-  requireString(workId, 'work data.work');
-  requireArray(items, 'work data.items');
-
+  for (const key of ['work', 'name', 'updatedAt']) requireString(value[key], `work data.${key}`);
+  requireArray(value.items, 'work data.items');
   const ids = new Set<string>();
-  items.forEach((rawItem, index) => {
+  value.items.forEach((rawItem, index) => {
     const path = `work data.items[${index}]`;
     validateItem(rawItem, path);
-    const item = rawItem;
-
-    if (item.workId !== workId) {
-      fail(`${path}.workId`, `必須等於 ${workId}`);
-    }
-    if (ids.has(item.id)) {
-      fail(`${path}.id`, '項目 ID 重複');
-    }
-    ids.add(item.id);
-
-    const covers = item.images.filter((image) => image.isCover);
-    if (covers.length > 1) {
-      fail(`${path}.images`, '最多只能有一張封面圖');
-    }
+    if (rawItem.workId !== value.work) fail(`${path}.workId`, `必須等於 ${value.work}`);
+    if (ids.has(rawItem.id)) fail(`${path}.id`, '項目 ID 重複');
+    ids.add(rawItem.id);
+    if (rawItem.images.filter((image) => image.isCover).length > 1) fail(`${path}.images`, '最多只能有一張封面圖');
   });
 }
 
 export function validateVersion(value: unknown): asserts value is VersionInfo {
   requireObject(value, 'version.json');
-  const version = value.version;
-  const updatedAt = value.updatedAt;
-  requireString(version, 'version.json.version');
-  requireString(updatedAt, 'version.json.updatedAt');
-  if (!/^\d+\.\d+\.\d+$/.test(version)) {
-    fail('version.json.version', '版本號必須符合 major.minor.patch');
+  requireString(value.version, 'version.json.version');
+  requireString(value.updatedAt, 'version.json.updatedAt');
+  if (!/^\d+\.\d+\.\d+$/.test(value.version)) fail('version.json.version', '版本號必須符合 major.minor.patch');
+}
+
+export function validateDataset(works: Work[], items: MerchItem[]): void {
+  const workIds = new Set(works.map((work) => work.id));
+  const itemIds = new Set<string>();
+  const imageShas = new Set<string>();
+  for (const item of items) {
+    if (!workIds.has(item.workId)) fail(`item.${item.id}.workId`, '指向不存在的作品');
+    if (itemIds.has(item.id)) fail(`item.${item.id}`, '項目 ID 重複');
+    itemIds.add(item.id);
+    for (const image of item.images) {
+      if (imageShas.has(image.sha)) fail(`image.${image.id}.sha`, '圖片 SHA 重複');
+      imageShas.add(image.sha);
+    }
   }
 }
