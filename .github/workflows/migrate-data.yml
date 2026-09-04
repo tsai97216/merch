@@ -25,7 +25,7 @@ jobs:
         with:
           repository: tsai97216/merch-old
           ref: main
-          path: ../merch-old
+          path: merch-old
 
       - name: Install dependencies
         run: npm install
