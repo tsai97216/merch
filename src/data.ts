@@ -1,3 +1,0 @@
-import type { AppData, MerchItem, Work, Version } from "./types.ts";
-async function json<T>(path:string):Promise<T>{const r=await fetch(new URL("data/"+path.replace(/^\/+/, ""),location.href),{cache:"no-store"});if(!r.ok)throw new Error(path+" HTTP "+r.status);return await r.json() as T}
-export async function loadAppData():Promise<AppData>{const wf=await json<{schemaVersion:number;works:Work[]}>("works.json");const version=await json<Version>("version.json");const ds=await Promise.all(wf.works.map(w=>json<{items:MerchItem[]}>(w.data)));return {works:wf.works,items:ds.flatMap(d=>d.items),version};}
