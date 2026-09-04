@@ -1,4 +1,5 @@
 export type ItemStatus = 'received' | 'pending' | 'preorder' | string;
+export type CollectionViewMode = 'card' | 'list';
 
 export interface ImageAsset {
   id: string;
@@ -76,15 +77,33 @@ export interface WorkData {
   items: MerchItem[];
 }
 
-export interface VersionInfo {
+export interface Version {
   version: string;
   updatedAt: string;
+}
+
+export type VersionInfo = Version;
+
+export interface CollectionUIState {
+  viewMode: CollectionViewMode;
+  search: string;
+  status: string;
+  category: string;
+  character: string;
+  manufacturer: string;
+  workId: string;
+  sort: string;
+}
+
+export interface UIState {
+  collection: CollectionUIState;
 }
 
 export interface AppState {
   works: Work[];
   items: MerchItem[];
-  version: VersionInfo | null;
+  version: Version | null;
+  ui: UIState;
   loading: boolean;
   error: string | null;
 }
