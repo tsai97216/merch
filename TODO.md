@@ -27,15 +27,15 @@
 - [x] Page 不持有自己的資料副本
 
 ## 2. Data Migration
-- [ ] 建立 migration script
-- [ ] 遷移四個作品
-- [ ] 遷移目前四個收藏品
-- [ ] 保留原 ID
-- [ ] 保留 purchase / release / shipping / after-sales / image metadata
-- [ ] 檢查 null / 格式
-- [ ] 檢查重複 image SHA
-- [ ] 完成遷移前後驗證
-- [ ] 不修改 `merch-old`
+- [x] 建立 migration script
+- [x] 遷移四個作品
+- [x] 遷移目前四個收藏品
+- [x] 保留原 ID
+- [x] 保留 purchase / release / shipping / after-sales / image metadata
+- [x] 檢查 null / 格式
+- [x] 檢查重複 image SHA
+- [x] 完成遷移前後驗證
+- [x] 不修改 `merch-old`
 
 ## 3. Version
 - [ ] 初始版本 `1.0.0`
