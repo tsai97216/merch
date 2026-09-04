@@ -44,16 +44,9 @@
           message.className = 'boot-error';
           message.textContent = text;
         };
-        window.addEventListener('error', (event) => {
-          if (event.error || event.message) showError(`網站啟動失敗：${event.message || event.error?.message || '未知錯誤'}`);
-        });
-        window.addEventListener('unhandledrejection', (event) => {
-          const reason = event.reason instanceof Error ? event.reason.message : String(event.reason ?? '未知錯誤');
-          showError(`網站啟動失敗：${reason}`);
-        });
         window.setTimeout(() => {
           if (document.documentElement.dataset.chiMerchBooted !== 'true') {
-            showError('網站啟動逾時。請重新整理頁面；若仍然空白，這個錯誤畫面會保留給我們排查。');
+            showError('網站啟動逾時。請重新整理頁面；若仍然空白，請檢查主程式載入狀態。');
           }
         }, 10000);
       })();
