@@ -1,5 +1,0 @@
-export interface ImageAsset{id:string;path:string;url:string;sha:string;alt:string;isCover:boolean}
-export interface MerchItem{id:string;images:ImageAsset[];workId:string;title:string;series:string;characters:string[];category:string;manufacturer:string;status:string;description:string;notes:string;purchase:{price:number;currency:string;platform:string;date:string;url:string;orderId:string};release:{date:string;expectedDate:string;receivedDate:string};shipping:{status:string;method:string;trackingNumber:string;note:string};afterSales:{status:string;note:string;updatedAt:string};createdAt:string;updatedAt:string}
-export interface Work{id:string;name:string;data:string}
-export interface Version{version:string;updatedAt:string}
-export interface AppData{works:Work[];items:MerchItem[];version:Version}
