@@ -9,7 +9,7 @@ interface Item { id: string; workId: string; images: Image[]; [key: string]: unk
 interface WorkData { schemaVersion: number; work: string; name: string; updatedAt: string; items: Item[] }
 
 const root = resolve(import.meta.dirname, '..');
-const sourceRoot = resolve(root, '..', 'merch-old');
+const sourceRoot = resolve(root, 'merch-old');
 const targetRoot = resolve(root, 'public', 'data');
 
 async function readJson<T>(path: string): Promise<T> {
