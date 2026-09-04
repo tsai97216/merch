@@ -8,12 +8,15 @@ import { renderStatistics } from './pages/statistics.ts';
 import { parseRoute } from './router.ts';
 import { store } from './store.ts';
 
-const app = document.querySelector<HTMLElement>('#app');
-const status = document.querySelector<HTMLElement>('#app-status');
+const appElement = document.querySelector<HTMLElement>('#app');
+const statusElement = document.querySelector<HTMLElement>('#app-status');
 
-if (!app || !status) {
+if (!appElement || !statusElement) {
   throw new Error('Application shell is incomplete.');
 }
+
+const app = appElement;
+const status = statusElement;
 
 function setStatus(text: string): void {
   status.textContent = text;
@@ -37,13 +40,27 @@ function render(): void {
   try {
     const route = parseRoute();
     switch (route.name) {
-      case 'home': renderHome(app); break;
-      case 'collection': renderCollection(app); break;
-      case 'statistics': renderStatistics(app); break;
-      case 'management': renderManagement(app); break;
-      case 'settings': renderSettings(app); break;
-      case 'item': renderItem(app, route.id); break;
-      case 'not-found': app.replaceChildren(message('找不到頁面', '請從上方導覽重新選擇。')); break;
+      case 'home':
+        renderHome(app);
+        break;
+      case 'collection':
+        renderCollection(app);
+        break;
+      case 'statistics':
+        renderStatistics(app);
+        break;
+      case 'management':
+        renderManagement(app);
+        break;
+      case 'settings':
+        renderSettings(app);
+        break;
+      case 'item':
+        renderItem(app, route.id);
+        break;
+      case 'not-found':
+        app.replaceChildren(message('找不到頁面', '請從上方導覽重新選擇。'));
+        break;
     }
   } catch (error) {
     const detail = error instanceof Error ? error.message : '頁面發生未知錯誤。';
