@@ -10,7 +10,7 @@ interface WorkData { schemaVersion: number; work: string; name: string; updatedA
 
 const root = resolve(import.meta.dirname, '..');
 const sourceRoot = resolve(root, '..', 'merch-old');
-const targetRoot = resolve(root, 'public');
+const targetRoot = resolve(root, 'public', 'data');
 
 async function readJson<T>(path: string): Promise<T> {
   return JSON.parse(await readFile(path, 'utf8')) as T;
@@ -55,9 +55,9 @@ function validateData(data: WorkData, work: Work, itemIds: Set<string>, imageSha
 }
 
 async function migrateImage(image: Image): Promise<void> {
-  const relativeSource = image.path.replace(/^data\//, 'data/');
-  const sourcePath = resolve(sourceRoot, relativeSource);
-  const targetPath = resolve(targetRoot, relativeSource);
+  const relativePath = image.path.replace(/^data\//, '');
+  const sourcePath = resolve(sourceRoot, image.path);
+  const targetPath = resolve(targetRoot, relativePath);
   const bytes = await readFile(sourcePath);
   assert(gitBlobSha(bytes) === image.sha, `source image SHA mismatch: ${image.path}`);
   await mkdir(resolve(targetPath, '..'), { recursive: true });
@@ -80,7 +80,8 @@ async function main(): Promise<void> {
     validateData(data, work, itemIds, imageShas);
     migrated.push(data);
 
-    const targetDataPath = resolve(targetRoot, work.id, 'data.json');
+    const relativeDataPath = work.data.replace(/^data\//, '');
+    const targetDataPath = resolve(targetRoot, relativeDataPath);
     await mkdir(resolve(targetDataPath, '..'), { recursive: true });
     await writeFile(targetDataPath, `${JSON.stringify(data, null, 2)}\n`);
 
@@ -93,7 +94,7 @@ async function main(): Promise<void> {
   }
 
   const targetWorks = { schemaVersion: sourceWorks.schemaVersion, works: sourceWorks.works };
-  await mkdir(resolve(targetRoot, 'data'), { recursive: true });
+  await mkdir(targetRoot, { recursive: true });
   await writeFile(resolve(targetRoot, 'works.json'), `${JSON.stringify(targetWorks, null, 2)}\n`);
 
   const existingTargetWorks = await readJson<WorksFile>(resolve(targetRoot, 'works.json'));
