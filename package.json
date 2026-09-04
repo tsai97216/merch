@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "migrate": "tsx tools/migrate-old-data.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   }
