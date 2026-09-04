@@ -1,14 +1,7 @@
 import './styles.css';
 import { navigate, parseRoute, startRouter, type Route } from './router.ts';
 import { store } from './store.ts';
-import {
-  renderCollection,
-  renderHome,
-  renderItem,
-  renderPlaceholder,
-  renderStatistics,
-  setHomeWorkFilterHandler,
-} from './view.ts';
+import { renderCollection, renderHome, renderItem, renderPlaceholder, renderStatistics, setHomeWorkFilterHandler } from './view.ts';
 
 const mount = document.querySelector<HTMLElement>('#app');
 if (!mount) throw new Error('找不到 #app');
@@ -32,12 +25,8 @@ function captureFocus(): void {
 
 function restoreFocus(): void {
   if (!lastFocus) return;
-  const selector = `[data-collection-field="${CSS.escape(lastFocus.field)}"]`;
-  const target = mount.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(selector);
-  if (!target) {
-    lastFocus = null;
-    return;
-  }
+  const target = mount.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`[data-collection-field="${CSS.escape(lastFocus.field)}"]`);
+  if (!target) { lastFocus = null; return; }
   target.focus();
   if (target instanceof HTMLInputElement && lastFocus.start !== null && lastFocus.end !== null) {
     target.setSelectionRange(lastFocus.start, lastFocus.end);
@@ -83,13 +72,11 @@ function openImageViewer(url: string, alt: string): void {
   if (!url) return;
   closeImageViewer();
   previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-
   const overlay = document.createElement('div');
   overlay.className = 'image-modal';
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
   overlay.setAttribute('aria-label', '圖片檢視器');
-
   const panel = document.createElement('div');
   panel.className = 'image-modal-panel';
   const close = document.createElement('button');
@@ -98,7 +85,6 @@ function openImageViewer(url: string, alt: string): void {
   close.dataset.action = 'close-image';
   close.setAttribute('aria-label', '關閉圖片檢視器');
   close.textContent = '關閉';
-
   const image = document.createElement('img');
   image.src = url;
   image.alt = alt || '收藏圖片';
@@ -108,7 +94,6 @@ function openImageViewer(url: string, alt: string): void {
     fallback.textContent = '圖片載入失敗。';
     image.replaceWith(fallback);
   }, { once: true });
-
   panel.append(close, image);
   overlay.append(panel);
   overlay.addEventListener('click', (event) => {
@@ -123,13 +108,11 @@ function openImageViewer(url: string, alt: string): void {
 function render(): void {
   captureFocus();
   const state = store.getState();
-
   if (state.loading) {
     mount.replaceChildren(stateScreen('載入收藏中', '正在讀取作品與收藏資料。'));
     document.documentElement.dataset.chiMerchBooted = 'true';
     return;
   }
-
   if (state.error) {
     mount.replaceChildren(stateScreen('資料載入失敗', state.error, true));
     document.documentElement.dataset.chiMerchBooted = 'true';
@@ -144,11 +127,8 @@ function render(): void {
     case 'item': page = renderItem(state, route.id); break;
     case 'management':
     case 'settings':
-    case 'not-found':
-      page = renderPlaceholder(state, route);
-      break;
+    case 'not-found': page = renderPlaceholder(state, route); break;
   }
-
   mount.replaceChildren(page);
   restoreFocus();
   document.documentElement.dataset.chiMerchBooted = 'true';
@@ -157,18 +137,15 @@ function render(): void {
 function updateCollectionField(target: HTMLInputElement | HTMLSelectElement): void {
   const field = target.dataset.collectionField;
   if (!field) return;
-  const value = target.value;
-  const patch = {
-    search: field === 'search' ? value : undefined,
-    status: field === 'status' ? value : undefined,
-    category: field === 'category' ? value : undefined,
-    character: field === 'character' ? value : undefined,
-    manufacturer: field === 'manufacturer' ? value : undefined,
-    workId: field === 'workId' ? value : undefined,
-    sort: field === 'sort' ? value : undefined,
-  };
-  const cleanPatch = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== undefined));
-  store.setCollectionUI(cleanPatch);
+  switch (field) {
+    case 'search': store.setCollectionUI({ search: target.value }); break;
+    case 'status': store.setCollectionUI({ status: target.value }); break;
+    case 'category': store.setCollectionUI({ category: target.value }); break;
+    case 'character': store.setCollectionUI({ character: target.value }); break;
+    case 'manufacturer': store.setCollectionUI({ manufacturer: target.value }); break;
+    case 'workId': store.setCollectionUI({ workId: target.value }); break;
+    case 'sort': store.setCollectionUI({ sort: target.value }); break;
+  }
 }
 
 setHomeWorkFilterHandler((workId) => {
@@ -177,14 +154,11 @@ setHomeWorkFilterHandler((workId) => {
 });
 
 mount.addEventListener('click', (event) => {
-  const element = event.target instanceof Element
-    ? event.target.closest<HTMLElement>('[data-action]')
-    : null;
-  if (!element) return;
-
-  switch (element.dataset.action) {
+  const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-action]') : null;
+  if (!target) return;
+  switch (target.dataset.action) {
     case 'open-item': {
-      const id = element.dataset.itemId;
+      const id = target.dataset.itemId;
       if (id) navigate({ name: 'item', id });
       break;
     }
@@ -192,16 +166,14 @@ mount.addEventListener('click', (event) => {
     case 'view-list': store.setCollectionUI({ viewMode: 'list' }); break;
     case 'back-collection': navigate({ name: 'collection' }); break;
     case 'retry': void store.load(); break;
-    case 'view-image': openImageViewer(element.dataset.imageUrl ?? '', element.dataset.imageAlt ?? ''); break;
+    case 'view-image': openImageViewer(target.dataset.imageUrl ?? '', target.dataset.imageAlt ?? ''); break;
     case 'close-image': closeImageViewer(); break;
   }
 });
 
 mount.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter' && event.key !== ' ') return;
-  const target = event.target instanceof HTMLElement
-    ? event.target.closest<HTMLElement>('[data-action="open-item"]')
-    : null;
+  const target = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[data-action="open-item"]') : null;
   const id = target?.dataset.itemId;
   if (!id) return;
   event.preventDefault();
@@ -209,16 +181,12 @@ mount.addEventListener('keydown', (event) => {
 });
 
 mount.addEventListener('input', (event) => {
-  if (event.target instanceof HTMLInputElement && event.target.dataset.collectionField === 'search') {
-    updateCollectionField(event.target);
-  }
+  if (event.target instanceof HTMLInputElement && event.target.dataset.collectionField === 'search') updateCollectionField(event.target);
 });
 
 mount.addEventListener('change', (event) => {
   const target = event.target;
-  if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) {
-    updateCollectionField(target);
-  }
+  if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) updateCollectionField(target);
 });
 
 window.addEventListener('keydown', (event) => {
