@@ -7,6 +7,8 @@ const mount = document.querySelector<HTMLElement>('#app');
 if (!mount) throw new Error('找不到 #app');
 const appMount = mount;
 
+document.documentElement.dataset.chiMerchBooted = 'true';
+
 let route: Route = parseRoute();
 let lastFocus: { field: string; selectionStart: number | null; selectionEnd: number | null } | null = null;
 let imageViewer: HTMLElement | null = null;
@@ -35,8 +37,7 @@ function loadingScreen(): HTMLElement {
   copy.append(eyebrow, title, message); section.append(copy); return section;
 }
 function errorScreen(message: string): HTMLElement {
-  const section = document.createElement('section'); section.className = 'state-screen'; const copy = document.createElement('div'); copy.className = 'state-copy';
-  const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'DATA ERROR'; const title = document.createElement('h1'); title.textContent = '資料載入失敗'; const detail = document.createElement('p'); detail.textContent = message;
+  const section = document.createElement('section'); section.className = 'state-screen'; const copy = document.createElement('div'); copy.className = 'state-copy'; const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'DATA ERROR'; const title = document.createElement('h1'); title.textContent = '資料載入失敗'; const detail = document.createElement('p'); detail.textContent = message;
   const retry = document.createElement('button'); retry.className = 'button primary'; retry.type = 'button'; retry.dataset.action = 'retry'; retry.textContent = '重新載入'; copy.append(eyebrow, title, detail, retry); section.append(copy); return section;
 }
 
