@@ -25,6 +25,9 @@
 - [x] 單一 Store：works / items / version / UI / loading / error
 - [x] Store subscribe
 - [x] Page 不持有自己的資料副本
+- [ ] Store state immutable 更新原則
+- [ ] Store 訂閱生命週期與取消訂閱
+- [ ] Data / UI state 邊界明確
 
 ## 2. Data Migration
 - [x] 建立 migration script
@@ -59,28 +62,45 @@
 - [ ] 重新整理可正常進入目前頁面
 - [ ] Back / Forward 正常
 - [ ] 404 頁面
+- [ ] malformed URL / decodeURIComponent 安全處理
+- [ ] 多餘 route segments 正確拒絕
+- [ ] route navigation 與 page render 解耦
 
 ## 5. UI System
 - [ ] 以 `merch-old` 為視覺與 UX 參考基準
 - [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
+- [ ] 整理 desktop / tablet / mobile breakpoint 規則
+- [ ] 整理頁面最大寬度、內容留白與主要 grid 規則
+- [ ] 整理 typography hierarchy 與字重規則
+- [ ] 整理 color / spacing / radius / shadow design tokens
 - [ ] 全站 layout
-- [ ] Mobile / responsive
+- [ ] Desktop sidebar / navigation
+- [ ] Mobile navigation
+- [ ] Page header / eyebrow / section heading
 - [ ] Button
 - [ ] Card
-- [ ] Badge
+- [ ] Panel
+- [ ] Badge / Status
+- [ ] Input / Select / Textarea
+- [ ] Toolbar / Filter controls
 - [ ] Modal
 - [ ] Toast
 - [ ] Loading
 - [ ] Empty
 - [ ] Error
+- [ ] Notice / Alert
 - [ ] Item card
 - [ ] Item list
 - [ ] Item detail
 - [ ] Image viewer
+- [ ] Focus-visible / keyboard interaction
+- [ ] Reduced-motion / animation fallback
 - [ ] DOM utility
 - [ ] Date utility
 - [ ] Format utility
 - [ ] 安全 DOM rendering
+- [ ] 統一 class naming / component styling 邊界
+- [ ] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
 - [ ] 總收藏數
@@ -95,6 +115,7 @@
 - [ ] 消費統計
 - [ ] 快速入口
 - [ ] JS 失敗時仍能看到基本首頁
+- [ ] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
 - [ ] 全部
@@ -118,6 +139,11 @@
 - [ ] 顯示狀態
 - [ ] 顯示預計到貨日期
 - [ ] 點擊進入詳細頁
+- [ ] 篩選條件組合正確
+- [ ] 搜尋／篩選／排序狀態與 Store 同步
+- [ ] 無結果 Empty State
+- [ ] 圖片載入失敗 fallback
+- [ ] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
 - [ ] 完整基本資訊
@@ -126,9 +152,13 @@
 - [ ] 物流資訊
 - [ ] 售後資訊
 - [ ] 圖片展示
+- [ ] 圖片載入失敗 fallback
 - [ ] 編輯
 - [ ] 刪除
 - [ ] 返回
+- [ ] 不存在的 Item 顯示 Not Found
+- [ ] Modal / Detail 狀態與 Router 狀態一致
+- [ ] 鍵盤關閉與 focus 管理
 
 ## 9. Statistics
 - [ ] 按作品統計
@@ -141,6 +171,9 @@
 - [ ] 各月份消費／新增
 - [ ] 集中使用 Date utility
 - [ ] 空資料狀態
+- [ ] 統計計算與 UI rendering 分離
+- [ ] 金額／數量格式統一
+- [ ] 統計結果邊界案例驗證
 
 ## 10. Management
 - [ ] 收藏 CRUD
@@ -151,6 +184,10 @@
 - [ ] 作品管理新增
 - [ ] 作品管理編輯
 - [ ] 作品管理移除
+- [ ] 表單編輯狀態不因重新 render 遺失
+- [ ] 新增／編輯表單完整欄位
+- [ ] 必填欄位與格式錯誤清楚提示
+- [ ] 重複 ID / 重複資料安全處理
 
 ## 11. GitHub API / Worker
 - [ ] API layer
@@ -168,6 +205,10 @@
 - [ ] path whitelist
 - [ ] 統一 API errors
 - [ ] UI 不直接組 GitHub REST API request
+- [ ] API timeout / network failure handling
+- [ ] CORS / allowed origin
+- [ ] request payload validation
+- [ ] response schema validation
 
 ## 12. Write Consistency
 - [ ] validate
@@ -178,6 +219,9 @@
 - [ ] 跨作品移動避免 half-success
 - [ ] SHA / optimistic concurrency
 - [ ] 成功後再處理版本更新
+- [ ] concurrent write conflict 清楚提示
+- [ ] 版本更新失敗時定義 rollback / recovery 策略
+- [ ] 不讓部分成功留下不一致資料
 
 ## 13. Image Management
 - [ ] JPG / PNG / WebP / GIF
@@ -196,6 +240,10 @@
 - [ ] cover replacement 不增加 Patch
 - [ ] duplicate SHA 處理
 - [ ] 上傳失敗 rollback
+- [ ] image path / URL 正規化
+- [ ] MIME type / extension 驗證
+- [ ] 空圖片／破損圖片 fallback
+- [ ] 圖片排序結果與 metadata 一致
 
 ## 14. Settings
 - [ ] Admin Secret 設定
@@ -207,6 +255,8 @@
 - [ ] 顯示版本
 - [ ] 清除本機設定
 - [ ] Diagnostics
+- [ ] 設定值儲存與讀取失敗處理
+- [ ] 敏感設定不顯示明文
 
 ## 15. Security
 - [ ] GitHub Token 不進 frontend
@@ -216,6 +266,10 @@
 - [ ] Worker auth / method checks
 - [ ] XSS 防護
 - [ ] 避免大型不安全 `innerHTML`
+- [ ] 外部 URL / image URL 驗證
+- [ ] 使用者輸入內容一律視為不可信
+- [ ] 不把 API error 原文直接當 HTML rendering
+- [ ] sensitive data 不進 console / diagnostics
 
 ## 16. Testing
 - [ ] Data tests
@@ -224,6 +278,9 @@
 - [ ] Statistics tests
 - [ ] CRUD tests
 - [ ] Image tests
+- [ ] Router tests
+- [ ] UI state tests
+- [ ] Error boundary tests
 - [ ] Chrome
 - [ ] Safari
 - [ ] iPhone
@@ -232,6 +289,9 @@
 - [ ] JS failure
 - [ ] Network failure
 - [ ] API failure
+- [ ] Empty data
+- [ ] malformed data
+- [ ] concurrent write conflict
 
 ## 17. Final Switch
 - [ ] Data verification
