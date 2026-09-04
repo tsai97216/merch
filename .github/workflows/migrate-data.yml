@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   migrate:
-    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message != 'data: migrate merch-old collection and images'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout merch
