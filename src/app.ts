@@ -1,115 +1,131 @@
 import './styles.css';
-import { renderCollection } from './pages/collection.ts';
-import { renderHome } from './pages/home.ts';
-import { renderItem } from './pages/item.ts';
-import { renderManagement } from './pages/management.ts';
-import { renderSettings } from './pages/settings.ts';
-import { renderStatistics } from './pages/statistics.ts';
-import { parseRoute, type Route } from './router.ts';
+import { navigate, parseRoute, startRouter, type Route } from './router.ts';
 import { store } from './store.ts';
+import { renderCollection, renderHome, renderItem, renderPlaceholder, renderStatistics } from './view.ts';
 
-const appElement = document.querySelector<HTMLElement>('#app');
-const statusElement = document.querySelector<HTMLElement>('#app-status');
-const navigationElement = document.querySelector<HTMLElement>('.app-nav');
+const mount = document.querySelector<HTMLElement>('#app');
+if (!mount) throw new Error('找不到 #app');
 
-if (!appElement || !statusElement || !navigationElement) {
-  throw new Error('Application shell is incomplete.');
+let route: Route = parseRoute();
+let unsubscribeStore: (() => void) | undefined;
+let stopRouter: (() => void) | undefined;
+let lastFocus: { field: string; selectionStart: number | null; selectionEnd: number | null } | null = null;
+
+function captureFocus(): void {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLInputElement || active instanceof HTMLSelectElement || active instanceof HTMLTextAreaElement)) return;
+  const field = active.dataset.collectionField;
+  if (!field) return;
+  lastFocus = { field, selectionStart: active instanceof HTMLInputElement ? active.selectionStart : null, selectionEnd: active instanceof HTMLInputElement ? active.selectionEnd : null };
 }
 
-const app = appElement;
-const status = statusElement;
-const navigation = navigationElement;
-
-function setStatus(text: string): void {
-  status.textContent = text;
-}
-
-function updateActiveNavigation(route: Route): void {
-  const currentName = route.name === 'item' ? 'collection' : route.name;
-  for (const link of navigation.querySelectorAll<HTMLAnchorElement>('a[href^="#/"]')) {
-    const target = link.getAttribute('href')?.replace(/^#\/?/, '').split('/')[0] ?? '';
-    const active = target === currentName;
-    if (active) link.setAttribute('aria-current', 'page');
-    else link.removeAttribute('aria-current');
-  }
+function restoreFocus(): void {
+  if (!lastFocus) return;
+  const selector = `[data-collection-field="${CSS.escape(lastFocus.field)}"]`;
+  const target = mount.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(selector);
+  if (!target) { lastFocus = null; return; }
+  target.focus();
+  if (target instanceof HTMLInputElement && lastFocus.selectionStart !== null && lastFocus.selectionEnd !== null) target.setSelectionRange(lastFocus.selectionStart, lastFocus.selectionEnd);
+  lastFocus = null;
 }
 
 function render(): void {
+  captureFocus();
   const state = store.getState();
-  const route = parseRoute();
-  updateActiveNavigation(route);
-
   if (state.loading) {
-    setStatus('載入中…');
+    mount.replaceChildren(loadingScreen());
     return;
   }
-
   if (state.error) {
-    setStatus('資料載入失敗');
-    app.replaceChildren(message('資料暫時無法載入', state.error, '重新載入資料', () => void store.load()));
+    mount.replaceChildren(errorScreen(state.error));
     return;
   }
 
-  setStatus(state.version ? `v${state.version.version}` : '就緒');
-
-  try {
-    switch (route.name) {
-      case 'home':
-        renderHome(app);
-        break;
-      case 'collection':
-        renderCollection(app);
-        break;
-      case 'statistics':
-        renderStatistics(app);
-        break;
-      case 'management':
-        renderManagement(app);
-        break;
-      case 'settings':
-        renderSettings(app);
-        break;
-      case 'item':
-        renderItem(app, route.id);
-        break;
-      case 'not-found':
-        app.replaceChildren(message('找不到頁面', '請從左側導覽重新選擇。'));
-        break;
-    }
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : '頁面發生未知錯誤。';
-    setStatus('頁面錯誤');
-    app.replaceChildren(message('這個頁面暫時無法顯示', detail));
-    console.error(error);
+  let page: HTMLElement;
+  switch (route.name) {
+    case 'home': page = renderHome(state); break;
+    case 'collection': page = renderCollection(state); break;
+    case 'statistics': page = renderStatistics(state); break;
+    case 'item': page = renderItem(state, route.id); break;
+    case 'management':
+    case 'settings':
+    case 'not-found': page = renderPlaceholder(state, route); break;
   }
+  mount.replaceChildren(page);
+  restoreFocus();
 }
 
-function message(title: string, detail: string, actionLabel?: string, action?: () => void): HTMLElement {
-  const section = document.createElement('section');
-  section.className = 'page-content';
-  const panel = document.createElement('div');
-  panel.className = 'panel';
-  const heading = document.createElement('h2');
-  heading.textContent = title;
-  const text = document.createElement('p');
-  text.className = 'muted';
-  text.textContent = detail;
-  panel.append(heading, text);
-
-  if (actionLabel && action) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'primary-button';
-    button.textContent = actionLabel;
-    button.addEventListener('click', action);
-    panel.append(button);
-  }
-
-  section.append(panel);
-  return section;
+function loadingScreen(): HTMLElement {
+  const section = document.createElement('section'); section.className = 'state-screen';
+  const copy = document.createElement('div'); copy.className = 'state-copy';
+  const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'CHI MERCH';
+  const title = document.createElement('h1'); title.textContent = '載入收藏中';
+  const message = document.createElement('p'); message.textContent = '正在讀取作品與收藏資料。';
+  copy.append(eyebrow, title, message); section.append(copy); return copy.parentElement!;
 }
 
-window.addEventListener('hashchange', render);
-store.subscribe(render);
+function errorScreen(message: string): HTMLElement {
+  const section = document.createElement('section'); section.className = 'state-screen';
+  const copy = document.createElement('div'); copy.className = 'state-copy';
+  const eyebrow = document.createElement('p'); eyebrow.className = 'eyebrow'; eyebrow.textContent = 'DATA ERROR';
+  const title = document.createElement('h1'); title.textContent = '資料載入失敗';
+  const detail = document.createElement('p'); detail.textContent = message;
+  const retry = document.createElement('button'); retry.className = 'button primary'; retry.type = 'button'; retry.dataset.action = 'retry'; retry.textContent = '重新載入';
+  copy.append(eyebrow, title, detail, retry); section.append(copy); return section;
+}
 
+function handleCollectionField(target: HTMLInputElement | HTMLSelectElement): void {
+  const field = target.dataset.collectionField;
+  if (!field) return;
+  if (field === 'search') store.setCollectionUI({ search: target.value });
+  else if (field === 'status') store.setCollectionUI({ status: target.value });
+  else if (field === 'category') store.setCollectionUI({ category: target.value });
+  else if (field === 'character') store.setCollectionUI({ character: target.value });
+  else if (field === 'manufacturer') store.setCollectionUI({ manufacturer: target.value });
+  else if (field === 'workId') store.setCollectionUI({ workId: target.value });
+  else if (field === 'sort') store.setCollectionUI({ sort: target.value });
+}
+
+mount.addEventListener('click', (event) => {
+  const target = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-action]') : null;
+  if (!target) return;
+  const action = target.dataset.action;
+  if (action === 'open-item') {
+    const id = target.dataset.itemId;
+    if (id) navigate({ name: 'item', id });
+  } else if (action === 'view-card') store.setCollectionUI({ viewMode: 'card' });
+  else if (action === 'view-list') store.setCollectionUI({ viewMode: 'list' });
+  else if (action === 'back-collection') navigate({ name: 'collection' });
+  else if (action === 'retry') store.load();
+});
+
+mount.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter') return;
+  const target = event.target instanceof HTMLElement ? event.target.closest<HTMLElement>('[data-action="open-item"]') : null;
+  const id = target?.dataset.itemId;
+  if (id) navigate({ name: 'item', id });
+});
+
+mount.addEventListener('input', (event) => {
+  const target = event.target;
+  if (target instanceof HTMLInputElement && target.dataset.collectionField === 'search') handleCollectionField(target);
+});
+
+mount.addEventListener('change', (event) => {
+  const target = event.target;
+  if (target instanceof HTMLInputElement || target instanceof HTMLSelectElement) handleCollectionField(target);
+});
+
+unsubscribeStore = store.subscribe(() => render());
+stopRouter = startRouter((nextRoute) => { route = nextRoute; render(); });
+
+window.addEventListener('error', (event) => {
+  console.error('CHI MERCH runtime error', event.error ?? event.message);
+});
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('CHI MERCH unhandled rejection', event.reason);
+});
+
+void unsubscribeStore;
+void stopRouter;
 void store.load();
