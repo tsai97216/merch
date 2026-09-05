@@ -14,13 +14,36 @@ function goToCollectionSearch(query: string) {
   }, 0);
 }
 
+function getSearchTarget(target: HTMLElement): HTMLElement | null {
+  const explicit = target.closest<HTMLElement>('[data-search-query]');
+  if (explicit) return explicit;
+
+  const character = target.closest<HTMLElement>('#character-ranking li');
+  if (character) return character.querySelector('strong');
+
+  const workBar = target.closest<HTMLElement>('#work-bars .bar-row');
+  if (workBar) return workBar.querySelector('span');
+
+  const workStat = target.closest<HTMLElement>('#work-statistics .bar-row');
+  if (workStat) return workStat.querySelector('span');
+
+  const category = target.closest<HTMLElement>('#category-list > div');
+  if (category) return category.querySelector('span');
+
+  return null;
+}
+
 function installCrossNavigation() {
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement | null;
-    const clickable = target?.closest<HTMLElement>('[data-search-query]');
-    if (!clickable) return;
-    const query = clickable.dataset.searchQuery;
-    if (!query) return;
+    if (!target) return;
+
+    const searchTarget = getSearchTarget(target);
+    if (!searchTarget) return;
+
+    const query = searchTarget.dataset.searchQuery || searchTarget.textContent || '';
+    if (!normalizeSearch(query)) return;
+
     event.preventDefault();
     event.stopPropagation();
     goToCollectionSearch(query);
