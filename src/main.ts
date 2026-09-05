@@ -21,20 +21,26 @@ function getItemIdParts(item: Item) {
 function itemSearchText(item: Item): string {
   const parsed = getItemIdParts(item);
   const idParts = parsed ? [parsed.workCode, parsed.categoryCode, `${parsed.workCode}${parsed.categoryCode}`, String(parsed.sequence).padStart(3, '0')] : [];
-  return [item.id, ...idParts, item.title, item.workName, item.category, item.manufacturer, ...(item.characters || []), item.notes].filter(Boolean).join(' ').toLowerCase();
+  return [item.id, ...idParts, item.title, item.workName, item.category, item.manufacturer, ...(item.characters || []), item.notes, statusText(item.status), item.status].filter(Boolean).join(' ').toLowerCase();
+}
+
+function splitSearchQuery(query: string): string[] {
+  return query.trim().toLowerCase().split(/[\s,，、]+/).map((term) => term.trim()).filter(Boolean);
 }
 
 function matchesItemQuery(item: Item, query: string): boolean {
-  if (!query) return true;
-  const normalized = query.trim().toLowerCase();
+  const terms = splitSearchQuery(query);
+  if (!terms.length) return true;
+  const searchText = itemSearchText(item);
   const parsed = getItemIdParts(item);
-  if (parsed) {
+  if (terms.length === 1 && parsed) {
+    const normalized = terms[0];
     const exactId = item.id.toLowerCase() === normalized;
     const groupKey = `${parsed.workCode}${parsed.categoryCode}`.toLowerCase();
     const workKey = parsed.workCode.toLowerCase();
     if (exactId || groupKey === normalized || workKey === normalized) return true;
   }
-  return itemSearchText(item).includes(normalized);
+  return terms.every((term) => searchText.includes(term));
 }
 
 function itemCard(item: Item, compact = false): string {
@@ -111,7 +117,7 @@ function renderStatistics(store: MerchStore) {
 let detailModal: HTMLElement | null = null; let detailUnderlyingRoute = 'collection';
 function ensureDetailModal() {
   if (detailModal) return detailModal; const modal = document.createElement('div'); modal.className = 'item-detail-modal'; modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-detail-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="item-detail-title"><button type="button" class="item-detail-close" aria-label="關閉" data-detail-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-header"><div class="item-detail-image" id="item-detail-image">IMAGE</div><div class="item-detail-heading"><span class="eyebrow">ITEM DETAIL</span><h2 id="item-detail-title"></h2><p id="item-detail-subtitle"></p><div id="item-detail-status"></div></div></div><div class="item-detail-grid"><section><span class="detail-label">基本資訊</span><dl><div><dt>作品</dt><dd id="detail-work"></dd></div><div><dt>角色</dt><dd id="detail-character"></dd></div><div><dt>類型</dt><dd id="detail-type"></dd></div><div><dt>製造商</dt><dd id="detail-manufacturer"></dd></div></dl></section><section><span class="detail-label">購買資訊</span><dl><div><dt>單價</dt><dd id="detail-price"></dd></div><div><dt>數量</dt><dd id="detail-quantity"></dd></div><div><dt>合計</dt><dd id="detail-total-price"></dd></div><div><dt>平台</dt><dd id="detail-platform"></dd></div><div><dt>購買日期</dt><dd id="detail-purchase-date"></dd></div></dl></section><section><span class="detail-label">發售與到貨</span><dl><div><dt>發售日期</dt><dd id="detail-release-date"></dd></div><div><dt>收到日期</dt><dd id="detail-received-date"></dd></div><div><dt>物流方式</dt><dd id="detail-shipping"></dd></div></dl></section><section><span class="detail-label">售後</span><dl><div><dt>狀態</dt><dd id="detail-after-sales"></dd></div></dl></section></div><section class="item-detail-text"><div><span class="detail-label">商品描述</span><p id="detail-description"></p></div><div><span class="detail-label">備註</span><p id="detail-notes"></p></div></section><div class="item-detail-footer"><span>建立：<b id="detail-created"></b></span><span>更新：<b id="detail-updated"></b></span></div></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-detail-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="item-detail-title"><button type="button" class="item-detail-close" aria-label="關閉" data-detail-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-header"><div class="item-detail-image" id="item-detail-image">IMAGE</div><div class="item-detail-heading"><span class="eyebrow">ITEM DETAIL</span><h2 id="item-detail-title"></h2><p id="item-detail-subtitle"></p><div id="item-detail-status"></div></div></div><div class="item-detail-grid"><section><span class="detail-label">基本資訊</span><dl><div><dt>作品</dt><dd id="detail-work"></dd></div><div><dt>角色</dt><dd id="detail-character"></dd></div><div><dt>類型</dt><dd id="detail-type"></dd></div><div><dt>製造商</dt><dd id="detail-manufacturer"></dd></div></dl></section><section><span class="detail-label">購買資訊</span><dl><div><dt>單價</dt><dd id="detail-price"></dd></div><div><dt>數量</dt><dd id="detail-quantity"></dd></div><div><dt>合計</dt><dd id="detail-total-price"></dd></div><div><dt>平台</dt><dd id="detail-platform"></dd></div><div><dt>購買日期</dt><dd id="detail-purchase-date"></dd></div></dl></section><section><span class="detail-label">發售與到貨</span><dl><div><dt>發售日期</dt><dd id="detail-release-date"></dd></div><div><dt>收到日期</dt><dd id="detail-received-date"></dd></div><div><dt>物流方式</dt><dd id="detail-shipping"></dd></div></dl></section><section><span class="detail-label">售後</span><dl><div><span class="detail-label">售後</span><dd id="detail-after-sales"></dd></div></dl></section></div><section class="item-detail-text"><div><span class="detail-label">商品描述</span><p id="detail-description"></p></div><div><span class="detail-label">備註</span><p id="detail-notes"></p></div></section><div class="item-detail-footer"><span>建立：<b id="detail-created"></b></span><span>更新：<b id="detail-updated"></b></span></div></section>`;
   document.body.appendChild(modal); modal.querySelectorAll('[data-detail-close]').forEach((node) => node.addEventListener('click', closeDetailModal)); document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && detailModal && !detailModal.hidden) closeDetailModal(); }); detailModal = modal; return modal;
 }
 function setDetailText(modal: HTMLElement, id: string, value: unknown) { const node = modal.querySelector<HTMLElement>(`#${id}`); if (node) node.textContent = value == null || value === '' ? '—' : String(value); }
