@@ -52,7 +52,6 @@ function roleRanking(items: Item[]): string {
 function monthBars(items: Item[]): string {
   const year = new Date().getFullYear();
   const months: Array<{ month: number; count: number; spending: number }> = Array.from({ length: 12 }, (_, index) => ({ month: index + 1, count: 0, spending: 0 }));
-
   items.forEach((item) => {
     const raw = item.purchase?.date || item.createdAt;
     if (!raw) return;
@@ -63,64 +62,65 @@ function monthBars(items: Item[]): string {
     current.count += quantityOf(item);
     current.spending += valueOf(item);
   });
-
   const max = Math.max(1, ...months.map((value) => value.spending));
-  return `<div class="month-chart" aria-label="${year} 年各月份統計">${months.map((value) => {
-    const height = value.spending ? Math.max(6, value.spending / max * 100) : 0;
-    const label = String(value.month).padStart(2, '0');
-    return `<div class="month-chart-column"><div class="month-chart-value">${value.spending ? money(value.spending) : '0'}</div><div class="month-chart-track"><i style="height:${height}%"></i></div><strong>${label}月</strong><span>${value.count} 件</span></div>`;
-  }).join('')}</div>`;
+  return `<div class="month-chart" aria-label="${year} 年各月份統計">${months.map((value) => { const height = value.spending ? Math.max(6, value.spending / max * 100) : 0; const label = String(value.month).padStart(2, '0'); return `<div class="month-chart-column"><div class="month-chart-value">${value.spending ? money(value.spending) : '0'}</div><div class="month-chart-track"><i style="height:${height}%"></i></div><strong>${label}月</strong><span>${value.count} 件</span></div>`; }).join('')}</div>`;
+}
+
+let cachedData: { works: WorkIndex[]; items: Item[] } | null = null;
+let renderToken = 0;
+
+function renderWithData(data: { works: WorkIndex[]; items: Item[] }) {
+  const page = document.querySelector<HTMLElement>('[data-page="statistics"]');
+  if (!page || location.hash.replace(/^#\//, '').split('/')[0] !== 'statistics') return;
+  const { works, items } = data;
+  const workNames = new Map(works.map((work) => [work.code, work.name]));
+  const workCounts = new Map<string, number>();
+  const categoryCounts = new Map<string, number>();
+  items.forEach((item) => {
+    const code = item.id.match(/^([A-Za-z]+)[A-Za-z]\d+$/)?.[1] || item.workName || '其他';
+    workCounts.set(code, (workCounts.get(code) || 0) + quantityOf(item));
+    const category = item.category || '其他';
+    categoryCounts.set(category, (categoryCounts.get(category) || 0) + quantityOf(item));
+  });
+  const workHost = document.querySelector<HTMLElement>('#work-statistics');
+  if (workHost) {
+    const entries: Array<[string, number]> = [...workCounts.entries()].map(([code, count]): [string, number] => [workNames.get(code) || code, count]).sort((a, b) => b[1] - a[1]);
+    workHost.innerHTML = pieChart(entries, '作品統計');
+  }
+  const categoryHost = document.querySelector<HTMLElement>('#category-list');
+  if (categoryHost) {
+    const entries: Array<[string, number]> = [...categoryCounts.entries()].map(([name, count]): [string, number] => [name, count]).sort((a, b) => b[1] - a[1]);
+    categoryHost.innerHTML = pieChart(entries, '類型分布');
+  }
+  let breakdown = page.querySelector<HTMLElement>('#statistics-breakdown');
+  if (!breakdown) {
+    breakdown = document.createElement('div');
+    breakdown.id = 'statistics-breakdown';
+    breakdown.className = 'statistics-breakdown';
+    page.appendChild(breakdown);
+  }
+  breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel()}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
 }
 
 async function renderEnhancedStatistics() {
-  const page = document.querySelector<HTMLElement>('[data-page="statistics"]');
-  if (!page) return;
-  try {
-    const { works, items } = await loadItems();
-    const workNames = new Map(works.map((work) => [work.code, work.name]));
-    const workCounts = new Map<string, number>();
-    const categoryCounts = new Map<string, number>();
-    items.forEach((item) => {
-      const code = item.id.match(/^([A-Za-z]+)[A-Za-z]\d+$/)?.[1] || item.workName || '其他';
-      workCounts.set(code, (workCounts.get(code) || 0) + quantityOf(item));
-      const category = item.category || '其他';
-      categoryCounts.set(category, (categoryCounts.get(category) || 0) + quantityOf(item));
-    });
-
-    const workHost = document.querySelector<HTMLElement>('#work-statistics');
-    if (workHost) {
-      const entries: Array<[string, number]> = [...workCounts.entries()]
-        .map(([code, count]): [string, number] => [workNames.get(code) || code, count])
-        .sort((a, b) => b[1] - a[1]);
-      workHost.innerHTML = pieChart(entries, '作品統計');
-    }
-    const categoryHost = document.querySelector<HTMLElement>('#category-list');
-    if (categoryHost) {
-      const entries: Array<[string, number]> = [...categoryCounts.entries()]
-        .map(([name, count]): [string, number] => [name, count])
-        .sort((a, b) => b[1] - a[1]);
-      categoryHost.innerHTML = pieChart(entries, '類型分布');
-    }
-
-    let breakdown = page.querySelector<HTMLElement>('#statistics-breakdown');
-    if (!breakdown) {
-      breakdown = document.createElement('div');
-      breakdown.id = 'statistics-breakdown';
-      breakdown.className = 'statistics-breakdown';
-      page.appendChild(breakdown);
-    }
-    breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel()}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
-  } catch (error) {
-    console.error('[statistics-enhancement]', error);
-  }
+  if (!cachedData) cachedData = await loadItems();
+  renderWithData(cachedData);
 }
 
-function yearLabel(): string {
-  return `${new Date().getFullYear()} 年 `;
+function scheduleRender() {
+  const token = ++renderToken;
+  void renderEnhancedStatistics().then(() => {
+    if (token !== renderToken) return;
+    // main.ts also renders the two statistics hosts. Re-apply the enhanced charts
+    // for a short settling window so async store initialization cannot overwrite them.
+    [0, 100, 250, 500, 1000].forEach((delay) => window.setTimeout(() => {
+      if (token === renderToken) renderWithData(cachedData as { works: WorkIndex[]; items: Item[] });
+    }, delay));
+  }).catch((error) => console.error('[statistics-enhancement]', error));
 }
 
 function sync() {
-  if (location.hash.replace(/^#\//, '').split('/')[0] === 'statistics') void renderEnhancedStatistics();
+  if (location.hash.replace(/^#\//, '').split('/')[0] === 'statistics') scheduleRender();
 }
 
 window.addEventListener('hashchange', sync);
