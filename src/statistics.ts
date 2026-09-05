@@ -60,7 +60,7 @@ function aggregate(items: Item[]): Chart[] {
     {
       id:'monthly-spending', title:'每月消費趨勢', description:'以今年 12 個月份完整呈現消費；沒有資料的月份也會明確顯示為 0。', type:'bar',
       rows:monthlyEntries.map(([label,row])=>({label:monthLabel(label),value:row.spend})), details:monthlyDetails, format:'money',
-      summary:[['有消費月份',`${monthlyEntries.length} 個月`],['最高月份',topMonth ? monthLabel(topMonth[0]) : '無資料'],['最高月消費',topMonth ? money(topMonth[1].spend) : 'NT$ 0'],['月均消費',money(averageMonth)]].map(([label,value])=>({label,value}))
+      summary:[['有消費月份',`${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`],['最高月份',topMonth ? monthLabel(topMonth[0]) : '無資料'],['最高月消費',topMonth ? money(topMonth[1].spend) : 'NT$ 0'],['月均消費',money(averageMonth)]].map(([label,value])=>({label,value}))
     },
     {
       id:'work-count', title:'作品收藏數量', description:'看哪些作品收藏最多，數量依每筆資料的 quantity 加總。', type:'bar',
@@ -105,7 +105,7 @@ function donutSvg(chart: Chart, width: number, height: number, large: boolean): 
 }
 
 function detailTable(chart: Chart): string {
-  return `<div class="statistics-data"><div class="statistics-data-head"><span>完整資料</span><span>${chart.details.length} 筆</span></div><div class="statistics-data-table"><div class="statistics-data-table-row statistics-data-table-header"><span>項目</span><span>數量</span><span>${isMoney ? '消費' : '消費'}</span><span>占比</span><span>補充</span></div>${chart.details.map((row)=>`<div class="statistics-data-table-row"><strong>${escapeHtml(row.label)}</strong><span>${row.quantity} 件</span><span>${escapeHtml(money(row.spend))}</span><span>${percent(row.share)}</span><span>${escapeHtml(row.extra || '')}</span></div>`).join('') || '<div class="empty-state">目前沒有資料</div>'}</div></div>`;
+  return `<div class="statistics-data"><div class="statistics-data-head"><span>完整資料</span><span>${chart.details.length} 筆</span></div><div class="statistics-data-table"><div class="statistics-data-table-row statistics-data-table-header"><span>項目</span><span>數量</span><span>消費</span><span>占比</span><span>補充</span></div>${chart.details.map((row)=>`<div class="statistics-data-table-row"><strong>${escapeHtml(row.label)}</strong><span>${row.quantity} 件</span><span>${escapeHtml(money(row.spend))}</span><span>${percent(row.share)}</span><span>${escapeHtml(row.extra || '')}</span></div>`).join('') || '<div class="empty-state">目前沒有資料</div>'}</div></div>`;
 }
 
 function openDetail(chart: Chart): void {
