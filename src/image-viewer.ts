@@ -31,10 +31,10 @@ function ensureViewer(): HTMLElement {
     const focusable = [
       viewer.querySelector<HTMLButtonElement>('.image-viewer-close'),
       viewer.querySelector<HTMLImageElement>('#image-viewer-image'),
-    ].filter((node): node is HTMLElement => !!node && !node.hidden);
-    if (!focusable.length) return;
+    ].filter((node): node is HTMLButtonElement | HTMLImageElement => Boolean(node) && !node.hidden);
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
+    if (!first || !last) return;
     if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
       last.focus();
