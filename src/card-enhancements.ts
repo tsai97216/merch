@@ -13,7 +13,7 @@ function normalizeCard(card: Element): void {
   if (!price || price.dataset.quantityFormatted === 'true') return;
 
   const text = price.textContent?.trim() || '';
-  const match = text.match(/^(NT\\$\\s*[\\d,]+)\\s*[×x]\\s*(\\d+)\\s*=.*$/i);
+  const match = text.match(/^(NT\$\s*[\d,]+)\s*[×x]\s*(\d+)\s*=.*$/i);
   if (!match) return;
 
   price.textContent = '';
