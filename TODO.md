@@ -94,16 +94,16 @@
 - [ ] Card
 - [ ] Panel
 - [ ] Badge / Status
-- [ ] Input / Select / Textarea
-- [ ] Toolbar / Filter controls
+- [x] Input / Select / Textarea
+- [x] Toolbar / Filter controls
 - [ ] Modal
 - [ ] Toast
 - [x] Loading
 - [x] Empty
 - [x] Error
 - [x] Notice / Alert
-- [ ] Item card
-- [ ] Item list
+- [x] Item card
+- [x] Item list
 - [ ] Item detail
 - [ ] Image viewer
 - [x] Focus-visible / keyboard interaction
@@ -139,16 +139,16 @@
 - [x] 全部
 - [x] 作品分類
 - [x] 搜尋
-- [ ] 搜尋支援狀態文字：`預購中`、`待到貨`、`已收到` 等使用者可見狀態
-- [ ] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
-- [ ] 多詞條支援空白、`,`、`，`、`、` 等常見分隔方式
-- [ ] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
+- [x] 搜尋支援狀態文字：`預購中`、`待到貨`、`已收到` 等使用者可見狀態
+- [x] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
+- [x] 多詞條支援空白、`,`、`，`、`、` 等常見分隔方式
+- [x] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
 - [x] Filter
 - [x] Sort
 - [x] 狀態篩選
-- [ ] 類別篩選
-- [ ] 角色篩選
-- [ ] 廠商篩選
+- [x] 類別篩選
+- [x] 角色篩選
+- [x] 廠商篩選
 - [x] 卡片顯示模式
 - [x] 清單顯示模式
 - [x] 記住卡片／清單選擇
@@ -161,13 +161,13 @@
 - [x] 顯示數量
 - [x] 顯示多件商品的單價 × 數量與合計價值
 - [x] 顯示狀態
-- [ ] 顯示預計到貨日期
+- [x] 顯示預計到貨日期
 - [x] 點擊進入詳細頁
 - [x] 篩選條件組合正確
 - [x] 搜尋／篩選／排序狀態與 Store 同步
 - [x] 無結果 Empty State
 - [x] 圖片載入失敗 fallback
-- [ ] 卡片與清單在手機版保持可用
+- [x] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
 - [x] 完整基本資訊
