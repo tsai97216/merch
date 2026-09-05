@@ -108,7 +108,7 @@
 - [x] Item card
 - [x] Item list
 - [x] Item detail 基本顯示
-- [ ] Image viewer
+- [x] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
 - [ ] DOM utility
@@ -265,8 +265,8 @@
 - [ ] 第一張作為預設封面
 - [ ] 封面替換不改變圖片陣列順序
 - [ ] 圖片新增／刪除／排序
-- [ ] Image viewer
-- [ ] 圖片 fallback
+- [x] Image viewer
+- [x] 圖片 fallback
 - [ ] SHA duplicate check
 
 ## 14. Quality / Validation
@@ -284,12 +284,12 @@
 - [ ] GitHub Pages deployment test
 
 ## 15. Final Polish
-- [ ] Desktop layout 精修
-- [ ] Mobile layout 精修
-- [ ] Statistics mobile 精修
-- [ ] Management mobile 精修
-- [ ] Settings mobile 精修
-- [ ] Page title / heading alignment 精修
+- [x] Desktop layout 精修
+- [x] Mobile layout 精修
+- [x] Statistics mobile 精修
+- [x] Management mobile 精修
+- [x] Settings mobile 精修
+- [x] Page title / heading alignment 精修
 - [ ] 全站 spacing consistency
 - [ ] 全站 typography consistency
 - [ ] 全站 component state consistency
