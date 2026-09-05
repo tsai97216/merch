@@ -33,6 +33,12 @@ function getSearchTarget(target: HTMLElement): HTMLElement | null {
   return null;
 }
 
+function hideReceivedBadges(root: ParentNode = document) {
+  root.querySelectorAll<HTMLElement>('.item-card .badge').forEach((badge) => {
+    if (badge.textContent?.trim() === '已收到') badge.remove();
+  });
+}
+
 function installCrossNavigation() {
   document.addEventListener('click', (event) => {
     const target = event.target as HTMLElement | null;
@@ -48,6 +54,10 @@ function installCrossNavigation() {
     event.stopPropagation();
     goToCollectionSearch(query);
   }, true);
+
+  hideReceivedBadges();
+  const observer = new MutationObserver(() => hideReceivedBadges());
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 installCrossNavigation();
