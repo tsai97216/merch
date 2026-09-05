@@ -27,7 +27,6 @@ export type Release = {
 export type Shipping = {
   status?: string;
   method?: string;
-  trackingNumber?: string;
   note?: string;
 };
 
