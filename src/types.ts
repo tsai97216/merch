@@ -60,12 +60,14 @@ export type Item = {
 export type Work = {
   id: string;
   name: string;
+  code: string;
   items: Item[];
 };
 
 export type WorksIndexEntry = {
   id: string;
   name: string;
+  code: string;
   data: string;
 };
 
