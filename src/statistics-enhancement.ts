@@ -101,7 +101,7 @@ function renderWithData(data: { works: WorkIndex[]; items: Item[] }) {
     page.appendChild(breakdown);
   }
   const yearLabel = `${new Date().getFullYear()} 年`;
-  breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
+  breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><h2>${yearLabel}各月份統計</h2></div></div>${monthBars(items)}</section>`;
 }
 
 async function renderEnhancedStatistics() {
