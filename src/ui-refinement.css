@@ -14,6 +14,23 @@
 .management-copy{max-width:68ch;color:var(--muted);line-height:1.75}
 .management-panel h2{margin-top:0}
 .management-panel .notice{margin-top:18px}
+
+/* Shared component polish: keep the merch-old visual language consistent across pages. */
+.page-heading,
+.hero{max-width:100%}
+.page-heading h1,
+.hero h1{letter-spacing:-.045em}
+.panel-heading,
+.section-heading{min-height:34px}
+.panel-heading .panel-label,
+.section-heading .panel-label{display:block}
+.stat-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.stat-card:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(30,40,60,.08);border-color:#d9dee7}
+.button{transition:transform .18s ease,opacity .18s ease,box-shadow .18s ease}
+.button:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(30,40,60,.12)}
+.button:focus-visible{outline:3px solid rgba(53,106,230,.22);outline-offset:2px}
+.panel h2,.section h2{letter-spacing:-.02em}
+
 @media(max-width:700px){
   .page-heading{width:100%;min-width:0}
   .page-heading > div{width:100%}
@@ -34,6 +51,10 @@
   .management-panel{padding:18px 15px}
   .management-panel h2{font-size:18px;margin-bottom:8px}
   .management-copy{font-size:12px;line-height:1.8}
+  .page-heading,.hero{overflow:hidden}
+  .page-heading h1,.hero h1{max-width:100%}
+  .panel-heading,.section-heading{min-height:0}
+  .stat-card:hover,.button:hover{transform:none;box-shadow:none}
 }
 @media(max-width:380px){
   .settings-list{grid-template-columns:76px minmax(0,1fr)}
