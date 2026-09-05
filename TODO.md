@@ -105,18 +105,18 @@
 - [ ] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
-- [x] DOM utility
-- [x] Date utility
-- [x] Format utility
+- [ ] DOM utility
+- [ ] Date utility
+- [ ] Format utility
 - [x] 安全 DOM rendering
 - [x] 統一 class naming / component styling 邊界
 - [x] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
 - [x] 總收藏數
-- [x] 已收到
-- [x] 預購中
-- [x] 待到貨
+- [ ] 已收到
+- [ ] 預購中
+- [ ] 待到貨
 - [x] 最近新增
 - [ ] 最近更新
 - [ ] 待處理事項
@@ -147,13 +147,13 @@
 - [x] 顯示類別
 - [x] 顯示價格
 - [x] 顯示狀態
-- [x] 顯示預計到貨日期
+- [ ] 顯示預計到貨日期
 - [x] 點擊進入詳細頁
 - [x] 篩選條件組合正確
 - [x] 搜尋／篩選／排序狀態與 Store 同步
 - [x] 無結果 Empty State
 - [x] 圖片載入失敗 fallback
-- [x] 卡片與清單在手機版保持可用
+- [ ] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
 - [x] 完整基本資訊
@@ -173,13 +173,13 @@
 ## 9. Statistics
 - [x] 按作品統計
 - [x] 按類別統計
-- [x] 按角色統計
+- [ ] 按角色統計
 - [ ] 按廠商統計
-- [x] 按狀態統計
+- [ ] 按狀態統計
 - [x] 總消費
 - [ ] 各作品消費
 - [ ] 各月份消費／新增
-- [x] 集中使用 Date utility
+- [ ] 集中使用 Date utility
 - [x] 空資料狀態
 - [ ] 統計計算與 UI rendering 分離
 - [x] 金額／數量格式統一
@@ -277,7 +277,7 @@
 - [x] XSS 防護
 - [ ] 避免大型不安全 `innerHTML`
 - [ ] 外部 URL / image URL 驗證
-- [x] 使用者輸入內容一律視為不可信
+- [ ] 使用者輸入內容一律視為不可信
 - [ ] 不把 API error 原文直接當 HTML rendering
 - [ ] sensitive data 不進 console / diagnostics
 
@@ -288,19 +288,19 @@
 - [ ] Statistics tests
 - [ ] CRUD tests
 - [ ] Image tests
-- [x] Router tests
-- [x] UI state tests
+- [ ] Router tests
+- [ ] UI state tests
 - [ ] Error boundary tests
 - [ ] Chrome
 - [ ] Safari
-- [x] iPhone
-- [x] iPad
-- [x] Desktop
+- [ ] iPhone
+- [ ] iPad
+- [ ] Desktop
 - [x] JS failure
 - [ ] Network failure
 - [ ] API failure
-- [x] Empty data
-- [x] malformed data
+- [ ] Empty data
+- [ ] malformed data
 - [ ] concurrent write conflict
 
 ## 17. Final Switch
