@@ -9,6 +9,7 @@ import type {
   WorksIndexEntry,
 } from './types';
 import { defaultUiState } from './types';
+import { parseItemId } from './item-id';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
 
@@ -30,17 +31,29 @@ function validateWorksIndex(value: unknown): WorksIndex {
     if (typeof entry.id !== 'string' || !entry.id) throw new Error(`works[${index}].id 無效`);
     if (typeof entry.name !== 'string' || !entry.name) throw new Error(`works[${index}].name 無效`);
     if (typeof entry.data !== 'string' || !entry.data || entry.data.includes('..')) throw new Error(`works[${index}].data 無效`);
+    if (!/^[A-Z]{2,3}$/.test(entry.name)) throw new Error(`works[${index}].name 必須是 2～3 碼大寫作品代碼`);
     return { id: entry.id, name: entry.name, data: entry.data };
+  });
+
+  const workCodes = new Set<string>();
+  works.forEach((work) => {
+    if (workCodes.has(work.name)) throw new Error(`works.json 存在重複作品代碼：${work.name}`);
+    workCodes.add(work.name);
   });
 
   return { schemaVersion: 1, works };
 }
 
-function validateItem(value: unknown, label: string): Item {
+function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
   assertRecord(value, label);
   if (typeof value.id !== 'string' || !value.id) throw new Error(`${label}.id 無效`);
   if (typeof value.title !== 'string' || !value.title) throw new Error(`${label}.title 無效`);
   if (typeof value.status !== 'string' || !value.status) throw new Error(`${label}.status 無效`);
+
+  const id = parseItemId(value.id);
+  if (!id) throw new Error(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
+  if (id.workCode !== work.name) throw new Error(`${label}.id 作品代碼 ${id.workCode} 與資料作品 ${work.name} 不一致`);
+
   if (value.characters !== undefined && (!Array.isArray(value.characters) || value.characters.some((x) => typeof x !== 'string'))) {
     throw new Error(`${label}.characters 格式無效`);
   }
@@ -54,11 +67,19 @@ function validateWorkPayload(value: unknown, label: string, work: WorksIndexEntr
   assertRecord(value, label);
   if (value.schemaVersion !== undefined && value.schemaVersion !== 1) throw new Error(`${label} schemaVersion 不支援`);
   if (!Array.isArray(value.items)) throw new Error(`${label}.items 必須是陣列`);
-  const items = value.items.map((item, index) => validateItem(item, `${label}.items[${index}]`));
+  const items = value.items.map((item, index) => validateItem(item, `${label}.items[${index}]`, work));
   const ids = new Set<string>();
+  const groups = new Set<string>();
   items.forEach((item) => {
     if (ids.has(item.id)) throw new Error(`${label} 存在重複 Item ID：${item.id}`);
     ids.add(item.id);
+
+    const parsed = parseItemId(item.id);
+    if (parsed) {
+      const groupKey = `${parsed.workCode}${parsed.categoryCode}${parsed.sequence}`;
+      if (groups.has(groupKey)) throw new Error(`${label} 存在重複永久流水號：${item.id}`);
+      groups.add(groupKey);
+    }
   });
   return { schemaVersion: 1, work: { id: work.id, name: work.name }, items };
 }
@@ -152,6 +173,12 @@ export async function loadStore(): Promise<MerchStore> {
       if (!response.ok) throw new Error(`${entry.data} ${response.status}`);
       const payload = validateWorkPayload(await response.json(), entry.data, entry);
       return { id: entry.id, name: entry.name, items: payload.items } satisfies Work;
+    }));
+
+    const allIds = new Set<string>();
+    works.forEach((work) => work.items.forEach((item) => {
+      if (allIds.has(item.id)) throw new Error(`所有作品存在重複 Item ID：${item.id}`);
+      allIds.add(item.id);
     }));
 
     const versionResponse = await fetch('./data/version.json', { cache: 'no-store' });
