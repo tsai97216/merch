@@ -31,13 +31,11 @@ function renderHome(store: MerchStore) {
   const month = items.filter((i) => { const d = new Date(i.purchase?.date || ''); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(); }).reduce((s, i) => s + Number(i.purchase?.price || 0), 0);
   const set = (key: string, value: string) => { const e = $<HTMLElement>(`[data-home="${key}"]`); if (e) e.textContent = value; };
   set('total', String(total)); set('received', String(received)); set('preorder', String(preorder)); set('pending', String(pending)); set('month', money(month)); set('spending', money(spending));
-
   const bars = $('#work-bars');
   if (bars) bars.innerHTML = works.map((w) => `<div class="bar-row"><span>${escapeHtml(w.name)}</span><div><i style="width:${total ? Math.max(4, w.items.length / total * 100) : 4}%"></i></div><b>${w.items.length}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
   const recent = $('#recent-items');
   if (recent) recent.innerHTML = [...items].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))).slice(0, 4).map((i) => itemCard(i, true)).join('') || '<div class="empty-state">目前沒有收藏</div>';
   $$('.item-card', recent || document).forEach((card) => card.addEventListener('click', () => location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`));
-
   const rank = $('#character-ranking');
   const counts = new Map<string, number>();
   items.forEach((i) => (i.characters || []).forEach((c) => counts.set(c, (counts.get(c) || 0) + 1)));
@@ -107,7 +105,27 @@ function setupCollection(store: MerchStore) {
   $$('.view-button').forEach((button) => button.addEventListener('click', () => store.setUi({ collectionView: button.dataset.view === 'list' ? 'list' : 'cards' })));
 }
 
+function setupSidebarToggle() {
+  const sidebar = $('.sidebar') as HTMLElement | null;
+  const button = $('#sidebar-toggle') as HTMLButtonElement | null;
+  if (!sidebar || !button) return;
+  const key = 'chi-merch-sidebar-collapsed';
+  const setCollapsed = (collapsed: boolean) => {
+    sidebar.classList.toggle('is-collapsed', collapsed);
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+    button.setAttribute('aria-label', collapsed ? '展開側邊欄' : '收合側邊欄');
+    button.title = collapsed ? '展開側邊欄' : '收合側邊欄';
+    button.innerHTML = '<i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i>';
+    try { localStorage.setItem(key, collapsed ? '1' : '0'); } catch {}
+  };
+  let collapsed = false;
+  try { collapsed = localStorage.getItem(key) === '1'; } catch {}
+  setCollapsed(collapsed);
+  button.addEventListener('click', () => setCollapsed(!sidebar.classList.contains('is-collapsed')));
+}
+
 async function boot() {
+  setupSidebarToggle();
   const router = createRouter({ onNavigate: (route) => {
     $$('.page').forEach((page) => {
       const active = page.getAttribute('data-page') === route.name || (route.name === 'item' && page.getAttribute('data-page') === 'detail') || (route.name === 'not-found' && page.getAttribute('data-page') === '404');
@@ -115,7 +133,6 @@ async function boot() {
       page.classList.toggle('is-active', active);
     });
     $$('.nav a').forEach((a) => a.classList.toggle('is-active', a.dataset.route === route.name));
-
     const recentSection = $('#recent-section');
     const recentItems = $('#recent-items');
     const isHome = route.name === 'home';
