@@ -8,13 +8,13 @@
 - [x] 新 merch repo
 - [x] TypeScript + Vite
 - [x] ES Modules
-- [ ] GitHub Pages
+- [x] GitHub Pages
 - [x] CNAME
 - [x] Vite production base path
 - [x] 基本正式目錄與檔案結構
 - [ ] TypeScript compile 完全通過
 - [ ] 統一錯誤處理
-- [ ] loading / empty / error 狀態完整
+- [x] loading / empty / error 狀態完整
 - [ ] GitHub Actions build 通過
 - [ ] GitHub Pages deploy 通過
 - [ ] `merch.chi.qzz.io` 可正常載入
@@ -23,30 +23,30 @@
 ## 1. Data Layer
 - [ ] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
 - [ ] Schema validation
-- [ ] 單一 Store：works / items / version / UI / loading / error
-- [ ] Store subscribe
-- [ ] Page 不持有自己的資料副本
-- [ ] Store state immutable 更新原則
-- [ ] Store 訂閱生命週期與取消訂閱
-- [ ] Data / UI state 邊界明確
+- [x] 單一 Store：works / items / version / UI / loading / error
+- [x] Store subscribe
+- [x] Page 不持有自己的資料副本
+- [x] Store state immutable 更新原則
+- [x] Store 訂閱生命週期與取消訂閱
+- [x] Data / UI state 邊界明確
 
 ## 2. Data Migration
 - [ ] 建立 migration script
-- [ ] 遷移四個作品
-- [ ] 遷移目前四個收藏品
-- [ ] 保留原 ID
-- [ ] 保留 purchase / release / shipping / after-sales / image metadata
-- [ ] 檢查 null / 格式
+- [x] 遷移四個作品
+- [x] 遷移目前四個收藏品
+- [x] 保留原 ID
+- [x] 保留 purchase / release / shipping / after-sales / image metadata
+- [x] 檢查 null / 格式
 - [ ] 檢查重複 image SHA
 - [ ] 完成遷移前後驗證
-- [ ] 不修改 `merch-old`
+- [x] 不修改 `merch-old`
 
 ## 3. Version
 - [x] 初始版本 `1.0.0`
 - [x] 版本只有一個來源
 - [x] 版本來源固定為 `public/data/version.json`
 - [ ] Major = 大版本／架構世代重寫
-- [ ] Minor = 每次完整邏輯／功能修改
+- [x] Minor = 每次完整邏輯／功能修改
 - [ ] Patch = GitHub API 新增／移除收藏或圖片
 - [ ] reorder / cover replacement 不增加 Patch
 - [x] 不使用版本號作為 module cache
@@ -68,121 +68,121 @@
 - [x] route navigation 與 page render 解耦
 
 ## 5. UI System
-- [ ] **以 `merch-old` 為 UI/UX 與功能參考基準，整體視覺與操作體驗原則上保持高度一致**
-- [ ] 重現 `merch-old` 的整體 Layout、Sidebar、Navigation 與內容區配置
-- [ ] 重現 `merch-old` 的頁面 Header / eyebrow / section heading
-- [ ] 重現 `merch-old` 的 Card / Panel / Item Card / Item List 視覺語言
-- [ ] 重現 `merch-old` 的 Button / Badge / Status / Tag 狀態
-- [ ] 重現 `merch-old` 的 Input / Select / Textarea / Toolbar / Filter controls
+- [x] **以 `merch-old` 為 UI/UX 與功能參考基準，整體視覺與操作體驗原則上保持高度一致**
+- [x] 重現 `merch-old` 的整體 Layout、Sidebar、Navigation 與內容區配置
+- [x] 重現 `merch-old` 的頁面 Header / eyebrow / section heading
+- [x] 重現 `merch-old` 的 Card / Panel / Item Card / Item List 視覺語言
+- [x] 重現 `merch-old` 的 Button / Badge / Status / Tag 狀態
+- [x] 重現 `merch-old` 的 Input / Select / Textarea / Toolbar / Filter controls
 - [ ] 重現 `merch-old` 的 Modal / Toast / Notice / Alert
-- [ ] 重現 `merch-old` 的圖片展示與 Image Viewer 體驗
-- [ ] 重現 `merch-old` 的卡片／清單收藏切換體驗
-- [ ] 重現 `merch-old` 的 Dashboard / Collection / Detail / Statistics / Management / Settings 頁面結構
+- [x] 重現 `merch-old` 的圖片展示與 Image Viewer 體驗
+- [x] 重現 `merch-old` 的卡片／清單收藏切換體驗
+- [x] 重現 `merch-old` 的 Dashboard / Collection / Detail / Statistics / Management / Settings 頁面結構
 - [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
-- [ ] 整理 desktop / tablet / mobile breakpoint 規則
-- [ ] 整理頁面最大寬度、內容留白與主要 grid 規則
-- [ ] 整理 typography hierarchy 與字重規則
-- [ ] 整理 color / spacing / radius / shadow design tokens
-- [ ] 全站 layout
-- [ ] Desktop sidebar / navigation
-- [ ] Mobile navigation
-- [ ] Page header / eyebrow / section heading
-- [ ] Button
-- [ ] Card
-- [ ] Panel
-- [ ] Badge / Status
-- [ ] Input / Select / Textarea
-- [ ] Toolbar / Filter controls
+- [x] 整理 desktop / tablet / mobile breakpoint 規則
+- [x] 整理頁面最大寬度、內容留白與主要 grid 規則
+- [x] 整理 typography hierarchy 與字重規則
+- [x] 整理 color / spacing / radius / shadow design tokens
+- [x] 全站 layout
+- [x] Desktop sidebar / navigation
+- [x] Mobile navigation
+- [x] Page header / eyebrow / section heading
+- [x] Button
+- [x] Card
+- [x] Panel
+- [x] Badge / Status
+- [x] Input / Select / Textarea
+- [x] Toolbar / Filter controls
 - [ ] Modal
 - [ ] Toast
-- [ ] Loading
-- [ ] Empty
-- [ ] Error
-- [ ] Notice / Alert
-- [ ] Item card
-- [ ] Item list
-- [ ] Item detail
-- [ ] Image viewer
-- [ ] Focus-visible / keyboard interaction
-- [ ] Reduced-motion / animation fallback
-- [ ] DOM utility
-- [ ] Date utility
-- [ ] Format utility
-- [ ] 安全 DOM rendering
-- [ ] 統一 class naming / component styling 邊界
-- [ ] 避免 page-specific CSS 互相覆蓋
+- [x] Loading
+- [x] Empty
+- [x] Error
+- [x] Notice / Alert
+- [x] Item card
+- [x] Item list
+- [x] Item detail
+- [x] Image viewer
+- [x] Focus-visible / keyboard interaction
+- [x] Reduced-motion / animation fallback
+- [x] DOM utility
+- [x] Date utility
+- [x] Format utility
+- [x] 安全 DOM rendering
+- [x] 統一 class naming / component styling 邊界
+- [x] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
-- [ ] 總收藏數
-- [ ] 已收到
-- [ ] 預購中
-- [ ] 待到貨
-- [ ] 最近新增
+- [x] 總收藏數
+- [x] 已收到
+- [x] 預購中
+- [x] 待到貨
+- [x] 最近新增
 - [ ] 最近更新
 - [ ] 待處理事項
 - [ ] 即將到貨
-- [ ] 作品統計
-- [ ] 消費統計
-- [ ] 快速入口
+- [x] 作品統計
+- [x] 消費統計
+- [x] 快速入口
 - [x] JS 失敗時仍能看到基本首頁
-- [ ] Home 資料區塊在空資料時仍保持合理排版
+- [x] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
-- [ ] 全部
-- [ ] 作品分類
-- [ ] 搜尋
-- [ ] Filter
-- [ ] Sort
-- [ ] 狀態篩選
-- [ ] 類別篩選
+- [x] 全部
+- [x] 作品分類
+- [x] 搜尋
+- [x] Filter
+- [x] Sort
+- [x] 狀態篩選
+- [x] 類別篩選
 - [ ] 角色篩選
-- [ ] 廠商篩選
-- [ ] 卡片顯示模式
-- [ ] 清單顯示模式
-- [ ] 記住卡片／清單選擇
-- [ ] 顯示封面
-- [ ] 顯示標題
-- [ ] 顯示作品
-- [ ] 顯示角色
-- [ ] 顯示類別
-- [ ] 顯示價格
-- [ ] 顯示狀態
-- [ ] 顯示預計到貨日期
-- [ ] 點擊進入詳細頁
-- [ ] 篩選條件組合正確
-- [ ] 搜尋／篩選／排序狀態與 Store 同步
-- [ ] 無結果 Empty State
-- [ ] 圖片載入失敗 fallback
-- [ ] 卡片與清單在手機版保持可用
+- [x] 廠商篩選
+- [x] 卡片顯示模式
+- [x] 清單顯示模式
+- [x] 記住卡片／清單選擇
+- [x] 顯示封面
+- [x] 顯示標題
+- [x] 顯示作品
+- [x] 顯示角色
+- [x] 顯示類別
+- [x] 顯示價格
+- [x] 顯示狀態
+- [x] 顯示預計到貨日期
+- [x] 點擊進入詳細頁
+- [x] 篩選條件組合正確
+- [x] 搜尋／篩選／排序狀態與 Store 同步
+- [x] 無結果 Empty State
+- [x] 圖片載入失敗 fallback
+- [x] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
-- [ ] 完整基本資訊
-- [ ] 購買資訊
-- [ ] 發售資訊
-- [ ] 物流資訊
-- [ ] 售後資訊
-- [ ] 圖片展示
-- [ ] 圖片載入失敗 fallback
+- [x] 完整基本資訊
+- [x] 購買資訊
+- [x] 發售資訊
+- [x] 物流資訊
+- [x] 售後資訊
+- [x] 圖片展示
+- [x] 圖片載入失敗 fallback
 - [ ] 編輯
 - [ ] 刪除
-- [ ] 返回
-- [ ] 不存在的 Item 顯示 Not Found
-- [ ] Modal / Detail 狀態與 Router 狀態一致
+- [x] 返回
+- [x] 不存在的 Item 顯示 Not Found
+- [x] Modal / Detail 狀態與 Router 狀態一致
 - [ ] 鍵盤關閉與 focus 管理
 
 ## 9. Statistics
-- [ ] 按作品統計
-- [ ] 按類別統計
+- [x] 按作品統計
+- [x] 按類別統計
 - [ ] 按角色統計
 - [ ] 按廠商統計
-- [ ] 按狀態統計
-- [ ] 總消費
-- [ ] 各作品消費
+- [x] 按狀態統計
+- [x] 總消費
+- [x] 各作品消費
 - [ ] 各月份消費／新增
 - [ ] 集中使用 Date utility
-- [ ] 空資料狀態
-- [ ] 統計計算與 UI rendering 分離
-- [ ] 金額／數量格式統一
+- [x] 空資料狀態
+- [x] 統計計算與 UI rendering 分離
+- [x] 金額／數量格式統一
 - [ ] 統計結果邊界案例驗證
 
 ## 10. Management
@@ -237,9 +237,9 @@
 - [ ] JPG / PNG / WebP / GIF
 - [ ] 單張 <= 10 MB
 - [ ] 多圖上傳
-- [ ] image ID
-- [ ] image metadata
-- [ ] 第一張圖片作為封面
+- [x] image ID
+- [x] image metadata
+- [x] 第一張圖片作為封面
 - [ ] 設定封面
 - [ ] 刪除圖片
 - [ ] 重新排序
@@ -252,34 +252,34 @@
 - [ ] 上傳失敗 rollback
 - [ ] image path / URL 正規化
 - [ ] MIME type / extension 驗證
-- [ ] 空圖片／破損圖片 fallback
-- [ ] 圖片排序結果與 metadata 一致
+- [x] 空圖片／破損圖片 fallback
+- [x] 圖片排序結果與 metadata 一致
 
 ## 14. Settings
 - [ ] Admin Secret 設定
 - [ ] 登入狀態
 - [ ] Worker 連線狀態
 - [ ] GitHub API 狀態
-- [ ] 重新載入資料
+- [x] 重新載入資料
 - [ ] 同步狀態
-- [ ] 顯示版本
+- [x] 顯示版本
 - [ ] 清除本機設定
 - [ ] Diagnostics
 - [ ] 設定值儲存與讀取失敗處理
 - [ ] 敏感設定不顯示明文
 
 ## 15. Security
-- [ ] GitHub Token 不進 frontend
-- [ ] Admin Secret 不 commit
-- [ ] 安全 DOM rendering
+- [x] GitHub Token 不進 frontend
+- [x] Admin Secret 不 commit
+- [x] 安全 DOM rendering
 - [ ] API path whitelist
 - [ ] Worker auth / method checks
-- [ ] XSS 防護
-- [ ] 避免大型不安全 `innerHTML`
-- [ ] 外部 URL / image URL 驗證
-- [ ] 使用者輸入內容一律視為不可信
-- [ ] 不把 API error 原文直接當 HTML rendering
-- [ ] sensitive data 不進 console / diagnostics
+- [x] XSS 防護
+- [x] 避免大型不安全 `innerHTML`
+- [x] 外部 URL / image URL 驗證
+- [x] 使用者輸入內容一律視為不可信
+- [x] 不把 API error 原文直接當 HTML rendering
+- [x] sensitive data 不進 console / diagnostics
 
 ## 16. Testing
 - [ ] Data tests
@@ -296,10 +296,10 @@
 - [ ] iPhone
 - [ ] iPad
 - [ ] Desktop
-- [ ] JS failure
+- [x] JS failure
 - [ ] Network failure
 - [ ] API failure
-- [ ] Empty data
+- [x] Empty data
 - [ ] malformed data
 - [ ] concurrent write conflict
 
@@ -314,5 +314,5 @@
 - [ ] DNS / HTTPS
 - [ ] Mobile verification
 - [ ] Management verification
-- [ ] `merch-old` 保持不變
+- [x] `merch-old` 保持不變
 - [ ] 新站正式取代舊站
