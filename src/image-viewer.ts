@@ -28,10 +28,13 @@ function ensureViewer(): HTMLElement {
       return;
     }
     if (event.key !== 'Tab') return;
-    const focusable = [
-      viewer.querySelector<HTMLButtonElement>('.image-viewer-close'),
-      viewer.querySelector<HTMLImageElement>('#image-viewer-image'),
-    ].filter((node): node is HTMLButtonElement | HTMLImageElement => Boolean(node) && !node.hidden);
+
+    const closeButton = viewer.querySelector<HTMLButtonElement>('.image-viewer-close');
+    const image = viewer.querySelector<HTMLImageElement>('#image-viewer-image');
+    const focusable: Array<HTMLButtonElement | HTMLImageElement> = [];
+    if (closeButton && !closeButton.hidden) focusable.push(closeButton);
+    if (image && !image.hidden) focusable.push(image);
+
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
     if (!first || !last) return;
