@@ -22,6 +22,9 @@
 
 ## 1. Data Layer
 - [x] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
+- [x] Item quantity type
+- [x] Quantity validation：大於等於 1 的整數
+- [x] 舊資料缺少 quantity 時預設為 1
 - [x] Schema validation
 - [x] 單一 Store：works / items / version / UI / loading / error
 - [x] Store subscribe
@@ -126,6 +129,8 @@
 - [x] 快速入口
 - [x] JS 失敗時仍能看到基本首頁
 - [x] Home 資料區塊在空資料時仍保持合理排版
+- [x] Home 數量統計依 quantity 加總
+- [x] Home 消費統計依單價 × quantity 計算
 
 ## 7. Collection
 - [x] 全部
@@ -146,6 +151,8 @@
 - [x] 顯示角色
 - [x] 顯示類別
 - [x] 顯示價格
+- [x] 顯示數量
+- [x] 顯示多件商品的單價 × 數量與合計價值
 - [x] 顯示狀態
 - [ ] 顯示預計到貨日期
 - [x] 點擊進入詳細頁
@@ -158,6 +165,9 @@
 ## 8. Item Detail
 - [x] 完整基本資訊
 - [x] 購買資訊
+- [x] 顯示單價
+- [x] 顯示數量
+- [x] 顯示數量加權後合計價值
 - [x] 發售資訊
 - [x] 物流資訊
 - [x] 售後資訊
@@ -177,6 +187,9 @@
 - [ ] 按廠商統計
 - [ ] 按狀態統計
 - [x] 總消費
+- [x] 總數量統計依 quantity 加總
+- [x] 作品數量統計依 quantity 加總
+- [x] 類別數量統計依 quantity 加總
 - [ ] 各作品消費
 - [ ] 各月份消費／新增
 - [ ] 集中使用 Date utility
@@ -198,6 +211,7 @@
 - [ ] 新增／編輯表單完整欄位
 - [ ] 必填欄位與格式錯誤清楚提示
 - [ ] 重複 ID / 重複資料安全處理
+- [ ] 新增／編輯表單支援 quantity
 
 ## 11. GitHub API / Worker
 - [ ] API layer
