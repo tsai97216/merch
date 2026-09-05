@@ -39,8 +39,7 @@ function getQueryForTarget(target: HTMLElement): string {
   if (explicit != null) return explicit;
   if (target.matches('.stat-card')) {
     const label = target.querySelector('span')?.textContent?.trim() || '';
-    if (label === '待到貨') return '待到貨';
-    return '';
+    return label === '待到貨' ? '待到貨' : '';
   }
   return target.textContent || '';
 }
