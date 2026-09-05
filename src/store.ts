@@ -45,7 +45,6 @@ function validateWorksIndex(value: unknown): WorksIndex {
 }
 
 function normalizeQuantity(value: unknown, label: string): number {
-  // 舊資料沒有 quantity 時視為持有 1 件，避免既有收藏無法載入。
   if (value === undefined) return 1;
   if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) {
     throw new Error(`${label}.quantity 必須是大於等於 1 的整數`);
@@ -110,6 +109,9 @@ function readSavedUi(): UiState {
       collectionQuery: typeof parsed.collectionQuery === 'string' ? parsed.collectionQuery : '',
       collectionStatus: typeof parsed.collectionStatus === 'string' ? parsed.collectionStatus : 'all',
       collectionWork: typeof parsed.collectionWork === 'string' ? parsed.collectionWork : 'all',
+      collectionCategory: typeof parsed.collectionCategory === 'string' ? parsed.collectionCategory : 'all',
+      collectionCharacter: typeof parsed.collectionCharacter === 'string' ? parsed.collectionCharacter : 'all',
+      collectionManufacturer: typeof parsed.collectionManufacturer === 'string' ? parsed.collectionManufacturer : 'all',
       collectionSort: parsed.collectionSort === 'title' || parsed.collectionSort === 'price' ? parsed.collectionSort : 'created',
     };
   } catch {
