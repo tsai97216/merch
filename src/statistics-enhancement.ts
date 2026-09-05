@@ -32,14 +32,15 @@ function pieChart(entries: Array<[string, number]>, title: string): string {
     const large = next - angle > Math.PI ? 1 : 0;
     const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
     const x2 = cx + r * Math.cos(next), y2 = cy + r * Math.sin(next);
+    const query = esc(name);
     const path = entries.length === 1
-      ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${palette[index % palette.length]}"/>`
-      : `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${palette[index % palette.length]}"/>`;
+      ? `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${palette[index % palette.length]}" data-search-query="${query}"/>`
+      : `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z" fill="${palette[index % palette.length]}" data-search-query="${query}"/>`;
     angle = next;
     const percent = Math.round(value / total * 100);
     return { name, value, percent, path, color: palette[index % palette.length] };
   });
-  return `<div class="stat-pie-wrap"><div class="stat-pie" aria-label="${esc(title)}"><svg viewBox="0 0 160 160" role="img" aria-label="${esc(title)}">${slices.map((slice) => slice.path).join('')}<circle cx="80" cy="80" r="31" fill="white"/></svg><div class="stat-pie-center"><strong>${total}</strong><span>件</span></div></div><div class="stat-pie-legend">${slices.map(({ name, value, percent, color }) => `<div class="stat-pie-legend-row" data-search-query="${esc(name)}"><i style="background:${color}"></i><span>${esc(name)}</span><b>${value} · ${percent}%</b></div>`).join('')}</div></div>`;
+  return `<div class="stat-pie-wrap"><div class="stat-pie" aria-label="${esc(title)}"><svg viewBox="0 0 160 160" role="img" aria-label="${esc(title)}">${slices.map((slice) => slice.path).join('')}<circle cx="80" cy="80" r="31" fill="white" pointer-events="none"/></svg><div class="stat-pie-center"><strong>${total}</strong><span>件</span></div></div><div class="stat-pie-legend">${slices.map(({ name, value, percent, color }) => `<div class="stat-pie-legend-row" data-search-query="${esc(name)}"><i style="background:${color}"></i><span>${esc(name)}</span><b>${value} · ${percent}%</b></div>`).join('')}</div></div>`;
 }
 
 function roleRanking(items: Item[]): string {
