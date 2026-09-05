@@ -115,6 +115,12 @@ async function boot() {
       page.classList.toggle('is-active', active);
     });
     $$('.nav a').forEach((a) => a.classList.toggle('is-active', a.dataset.route === route.name));
+
+    const recentSection = $('#recent-section');
+    const recentItems = $('#recent-items');
+    const isHome = route.name === 'home';
+    if (recentSection) recentSection.toggleAttribute('hidden', !isHome);
+    if (!isHome && recentItems) recentItems.replaceChildren();
   }});
   router.start();
 
