@@ -60,7 +60,7 @@ function renderCollection(store: MerchStore) {
   let filtered = items
     .filter((i) => matchesItemQuery(i, query))
     .filter((i) => ui.collectionStatus === 'all' || i.status === ui.collectionStatus)
-    .filter((i) => ui.collectionWork === 'all' || getItemIdParts(i)?.workCode === (store.snapshot.works.find((w) => w.id === ui.collectionWork)?.name || ui.collectionWork));
+    .filter((i) => ui.collectionWork === 'all' || getItemIdParts(i)?.workCode === (store.snapshot.works.find((w) => w.id === ui.collectionWork)?.code || ui.collectionWork));
   filtered = [...filtered].sort((a, b) => ui.collectionSort === 'price' ? Number(b.purchase?.price || 0) - Number(a.purchase?.price || 0) : ui.collectionSort === 'title' ? a.title.localeCompare(b.title, 'zh-Hant') : String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   host.innerHTML = filtered.map((i) => itemCard(i)).join('') || '<div class="empty-state wide">沒有符合條件的收藏</div>'; host.classList.toggle('list-mode', ui.collectionView === 'list');
   const count = $('#collection-count'); if (count) count.textContent = `${filtered.length} ITEMS`; $$('.item-card', host).forEach((card) => card.addEventListener('click', () => location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`));
@@ -68,7 +68,7 @@ function renderCollection(store: MerchStore) {
 }
 
 function renderStatistics(store: MerchStore) {
-  const { items } = store.snapshot; const total = items.length; const pending = items.filter((i) => i.status !== 'received').length; const spending = items.reduce((s, i) => s + Number(i.purchase?.price || 0), 0);
+  const { items, works } = store.snapshot; const total = items.length; const pending = items.filter((i) => i.status !== 'received').length; const spending = items.reduce((s, i) => s + Number(i.purchase?.price || 0), 0);
   const set = (k: string, v: string) => { const e = $<HTMLElement>(`[data-stat="${k}"]`); if (e) e.textContent = v; }; set('total', String(total)); set('pending', String(pending)); set('spending', money(spending));
 
   const cats = new Map<string, { code: string; name: string; count: number }>();
@@ -80,8 +80,9 @@ function renderStatistics(store: MerchStore) {
     cats.set(code, { code, name: current?.name || name, count: (current?.count || 0) + 1 });
   });
   const legend = $('#category-list');
-  if (legend) legend.innerHTML = [...cats.values()].sort((a, b) => b.count - a.count).map(({ code, name, count }) => `<div><span>${escapeHtml(code)} · ${escapeHtml(name)}</span><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+  if (legend) legend.innerHTML = [...cats.values()].sort((a, b) => b.count - a.count).map(({ name, count }) => `<div><span>${escapeHtml(name)}</span><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
 
+  const workNames = new Map(works.map((work) => [work.code, work.name]));
   const workCounts = new Map<string, number>();
   items.forEach((item) => {
     const code = getItemIdParts(item)?.workCode || item.workName || 'UNKNOWN';
@@ -90,7 +91,7 @@ function renderStatistics(store: MerchStore) {
   const workStats = $('#work-statistics');
   if (workStats) {
     const max = Math.max(1, ...workCounts.values());
-    workStats.innerHTML = [...workCounts.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => `<div class="bar-row"><span>${escapeHtml(code)}</span><div><i style="width:${Math.max(4, count / max * 100)}%"></i></div><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+    workStats.innerHTML = [...workCounts.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => `<div class="bar-row"><span>${escapeHtml(workNames.get(code) || code)}</span><div><i style="width:${Math.max(4, count / max * 100)}%"></i></div><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
   }
 }
 
