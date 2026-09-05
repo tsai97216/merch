@@ -13,7 +13,7 @@
 - [x] CNAME
 - [x] Vite production base path
 - [x] 基本正式目錄與檔案結構
-- [ ] 統一錯誤處理
+- [x] 統一錯誤處理
 - [x] loading / empty / error 狀態完整
 - [x] GitHub Actions build 通過
 - [x] GitHub Pages deploy 通過
@@ -256,43 +256,43 @@
 - [ ] 先取得最新 remote state
 - [ ] 建立新 state
 - [ ] PUT 成功後才更新 Store
-- [ ] 失敗寫入不產生假 UI 狀態
+- [ ] 寫入失敗不污染 Store
+- [ ] concurrent write protection
+- [ ] stale state detection
+- [ ] write operation error recovery
 
 ## 13. Image Management
-- [ ] 多圖片資料結構完整
-- [ ] JPG / PNG / WebP / GIF
-- [ ] 單張 ≤ 10MB
-- [ ] 第一張作為預設封面
-- [ ] 封面替換不改變圖片陣列順序
-- [ ] 圖片新增／刪除／排序
-- [x] Image viewer
-- [x] 圖片 fallback
-- [ ] SHA duplicate check
+- [ ] Image upload
+- [ ] Image replace
+- [ ] Image delete
+- [ ] Cover image control
+- [ ] Image ordering
+- [ ] orphan image cleanup
+- [ ] SHA / filename consistency
+- [ ] Image write failure recovery
 
-## 14. Quality / Validation
-- [ ] TypeScript strict errors = 0
-- [ ] production build
-- [ ] desktop smoke test
-- [ ] mobile smoke test
-- [ ] router smoke test
-- [ ] collection search/filter/sort test
-- [ ] quantity edge cases
-- [ ] malformed data test
-- [ ] image error test
-- [ ] API failure test
-- [ ] refresh / back / forward test
-- [ ] GitHub Pages deployment test
+## 14. Verification
+- [ ] TypeScript build
+- [ ] Desktop smoke test
+- [ ] Mobile smoke test
+- [ ] Router smoke test
+- [ ] Collection search/filter/sort test
+- [ ] Detail test
+- [ ] Statistics test
+- [ ] Management test
+- [ ] GitHub API write test
+- [ ] Image management test
+- [ ] Empty / error / loading test
+- [ ] Data integrity verification
+- [ ] Production deploy verification
 
 ## 15. Final Polish
-- [ ] Desktop layout 精修
-- [ ] Mobile layout 精修
-- [ ] Statistics mobile 精修
-- [ ] Management mobile 精修
-- [ ] Settings mobile 精修
-- [ ] Page title / heading alignment 精修
-- [ ] 全站 spacing consistency
-- [ ] 全站 typography consistency
-- [ ] 全站 component state consistency
-- [ ] Accessibility review
-- [ ] Performance review
-- [ ] 最終與 `merch-old` UI/UX 對照
+- [ ] 全站 desktop UI 精修
+- [ ] 全站 tablet UI 精修
+- [ ] 全站 mobile UI 精修
+- [ ] Desktop Statistics / Management / Settings 排版檢查
+- [ ] Mobile Statistics / Management / Settings 排版檢查
+- [ ] 全站 spacing / typography / alignment 最終檢查
+- [ ] 全站互動狀態最終檢查
+- [ ] 全站 accessibility 最終檢查
+- [ ] 最終 production smoke test
