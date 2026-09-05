@@ -10,6 +10,7 @@ import type {
 } from './types';
 import { defaultUiState } from './types';
 import { parseItemId } from './item-id';
+import { dataError, httpError, toAppError } from './error';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
 
@@ -18,26 +19,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function assertRecord(value: unknown, label: string): asserts value is Record<string, unknown> {
-  if (!isRecord(value)) throw new Error(`${label} 必須是物件`);
+  if (!isRecord(value)) throw dataError(`${label} 必須是物件`);
 }
 
 function validateWorksIndex(value: unknown): WorksIndex {
   assertRecord(value, 'works.json');
-  if (value.schemaVersion !== 1) throw new Error('works.json schemaVersion 不支援');
-  if (!Array.isArray(value.works)) throw new Error('works.json works 必須是陣列');
+  if (value.schemaVersion !== 1) throw dataError('works.json schemaVersion 不支援');
+  if (!Array.isArray(value.works)) throw dataError('works.json works 必須是陣列');
 
   const works: WorksIndexEntry[] = value.works.map((entry, index) => {
     assertRecord(entry, `works[${index}]`);
-    if (typeof entry.id !== 'string' || !entry.id) throw new Error(`works[${index}].id 無效`);
-    if (typeof entry.name !== 'string' || !entry.name) throw new Error(`works[${index}].name 無效`);
-    if (typeof entry.code !== 'string' || !/^[A-Z]{2,3}$/.test(entry.code)) throw new Error(`works[${index}].code 必須是 2～3 碼大寫作品代碼`);
-    if (typeof entry.data !== 'string' || !entry.data || entry.data.includes('..')) throw new Error(`works[${index}].data 無效`);
+    if (typeof entry.id !== 'string' || !entry.id) throw dataError(`works[${index}].id 無效`);
+    if (typeof entry.name !== 'string' || !entry.name) throw dataError(`works[${index}].name 無效`);
+    if (typeof entry.code !== 'string' || !/^[A-Z]{2,3}$/.test(entry.code)) throw dataError(`works[${index}].code 必須是 2～3 碼大寫作品代碼`);
+    if (typeof entry.data !== 'string' || !entry.data || entry.data.includes('..')) throw dataError(`works[${index}].data 無效`);
     return { id: entry.id, name: entry.name, code: entry.code, data: entry.data };
   });
 
   const workCodes = new Set<string>();
   works.forEach((work) => {
-    if (workCodes.has(work.code)) throw new Error(`works.json 存在重複作品代碼：${work.code}`);
+    if (workCodes.has(work.code)) throw dataError(`works.json 存在重複作品代碼：${work.code}`);
     workCodes.add(work.code);
   });
 
@@ -47,26 +48,26 @@ function validateWorksIndex(value: unknown): WorksIndex {
 function normalizeQuantity(value: unknown, label: string): number {
   if (value === undefined) return 1;
   if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) {
-    throw new Error(`${label}.quantity 必須是大於等於 1 的整數`);
+    throw dataError(`${label}.quantity 必須是大於等於 1 的整數`);
   }
   return value;
 }
 
 function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
   assertRecord(value, label);
-  if (typeof value.id !== 'string' || !value.id) throw new Error(`${label}.id 無效`);
-  if (typeof value.title !== 'string' || !value.title) throw new Error(`${label}.title 無效`);
-  if (typeof value.status !== 'string' || !value.status) throw new Error(`${label}.status 無效`);
+  if (typeof value.id !== 'string' || !value.id) throw dataError(`${label}.id 無效`);
+  if (typeof value.title !== 'string' || !value.title) throw dataError(`${label}.title 無效`);
+  if (typeof value.status !== 'string' || !value.status) throw dataError(`${label}.status 無效`);
 
   const id = parseItemId(value.id);
-  if (!id) throw new Error(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
-  if (id.workCode !== work.code) throw new Error(`${label}.id 作品代碼 ${id.workCode} 與資料作品 ${work.code} 不一致`);
+  if (!id) throw dataError(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
+  if (id.workCode !== work.code) throw dataError(`${label}.id 作品代碼 ${id.workCode} 與資料作品 ${work.code} 不一致`);
 
   if (value.characters !== undefined && (!Array.isArray(value.characters) || value.characters.some((x) => typeof x !== 'string'))) {
-    throw new Error(`${label}.characters 格式無效`);
+    throw dataError(`${label}.characters 格式無效`);
   }
   if (value.images !== undefined && (!Array.isArray(value.images) || value.images.some((x) => !isRecord(x) || typeof x.id !== 'string'))) {
-    throw new Error(`${label}.images 格式無效`);
+    throw dataError(`${label}.images 格式無效`);
   }
 
   return { ...(value as unknown as Item), quantity: normalizeQuantity(value.quantity, label) };
@@ -74,19 +75,19 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
 
 function validateWorkPayload(value: unknown, label: string, work: WorksIndexEntry): WorkPayload {
   assertRecord(value, label);
-  if (value.schemaVersion !== undefined && value.schemaVersion !== 1) throw new Error(`${label} schemaVersion 不支援`);
-  if (!Array.isArray(value.items)) throw new Error(`${label}.items 必須是陣列`);
+  if (value.schemaVersion !== undefined && value.schemaVersion !== 1) throw dataError(`${label} schemaVersion 不支援`);
+  if (!Array.isArray(value.items)) throw dataError(`${label}.items 必須是陣列`);
   const items = value.items.map((item, index) => validateItem(item, `${label}.items[${index}]`, work));
   const ids = new Set<string>();
   const groups = new Set<string>();
   items.forEach((item) => {
-    if (ids.has(item.id)) throw new Error(`${label} 存在重複 Item ID：${item.id}`);
+    if (ids.has(item.id)) throw dataError(`${label} 存在重複 Item ID：${item.id}`);
     ids.add(item.id);
 
     const parsed = parseItemId(item.id);
     if (parsed) {
       const groupKey = `${parsed.workCode}${parsed.categoryCode}${parsed.sequence}`;
-      if (groups.has(groupKey)) throw new Error(`${label} 存在重複永久流水號：${item.id}`);
+      if (groups.has(groupKey)) throw dataError(`${label} 存在重複永久流水號：${item.id}`);
       groups.add(groupKey);
     }
   });
@@ -95,7 +96,7 @@ function validateWorkPayload(value: unknown, label: string, work: WorksIndexEntr
 
 function validateVersion(value: unknown): VersionData {
   assertRecord(value, 'version.json');
-  if (typeof value.version !== 'string' || !VERSION_RE.test(value.version)) throw new Error('version.json version 格式無效');
+  if (typeof value.version !== 'string' || !VERSION_RE.test(value.version)) throw dataError('version.json version 格式無效');
   return { version: value.version };
 }
 
@@ -199,30 +200,30 @@ export async function loadStore(): Promise<MerchStore> {
 
   try {
     const indexResponse = await fetch('./data/works.json', { cache: 'no-store' });
-    if (!indexResponse.ok) throw new Error(`works.json ${indexResponse.status}`);
+    if (!indexResponse.ok) throw httpError('works.json', indexResponse.status);
     const index = validateWorksIndex(await indexResponse.json());
 
     const works = await Promise.all(index.works.map(async (entry) => {
       const response = await fetch(`./${entry.data}`, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`${entry.data} ${response.status}`);
+      if (!response.ok) throw httpError(entry.data, response.status);
       const payload = validateWorkPayload(await response.json(), entry.data, entry);
       return { id: entry.id, name: entry.name, code: entry.code, items: payload.items } satisfies Work;
     }));
 
     const allIds = new Set<string>();
     works.forEach((work) => work.items.forEach((item) => {
-      if (allIds.has(item.id)) throw new Error(`所有作品存在重複 Item ID：${item.id}`);
+      if (allIds.has(item.id)) throw dataError(`所有作品存在重複 Item ID：${item.id}`);
       allIds.add(item.id);
     }));
 
     const versionResponse = await fetch('./data/version.json', { cache: 'no-store' });
-    if (!versionResponse.ok) throw new Error(`version.json ${versionResponse.status}`);
+    if (!versionResponse.ok) throw httpError('version.json', versionResponse.status);
     const version = validateVersion(await versionResponse.json()).version;
     store.replaceData(works, version);
     return store;
   } catch (error) {
-    const message = error instanceof Error ? error.message : '資料載入失敗';
-    store.setError(message);
-    throw Object.assign(new Error(message), { store });
+    const appError = toAppError(error, '資料載入失敗');
+    store.setError(appError.message);
+    throw Object.assign(new Error(appError.message), { store, code: appError.code, cause: appError.cause });
   }
 }
