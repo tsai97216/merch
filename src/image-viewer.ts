@@ -2,16 +2,6 @@ import './image-viewer.css';
 
 let viewer: HTMLElement | null = null;
 
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>\"']/g, (char) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '\"': '&quot;',
-    "'": '&#39;'
-  }[char] as string));
-}
-
 function ensureViewer(): HTMLElement {
   if (viewer) return viewer;
 
@@ -68,5 +58,3 @@ document.addEventListener('keydown', (event) => {
   event.preventDefault();
   openViewer(image);
 });
-
-void escapeHtml;
