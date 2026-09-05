@@ -53,7 +53,38 @@ function itemCard(item: Item, compact = false): string {
   const src = image?.url || image?.path || '';
   const quantity = quantityOf(item);
   const unitPrice = item.purchase?.price;
-  return `<article class="item-card ${compact ? 'compact':''}" data-item-id="${escapeHtml(item.id)}"><div class="item-media">${src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(image?.alt || item.title)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('image-fallback')">` : '<span class="image-placeholder">NO IMAGE</span>'}</div><div class="item-body"><div class="item-top"><span class="badge">${escapeHtml(statusText(item.status))}</span><span class="muted">${escapeHtml(item.category || '未分類')}</span></div><h3>${escapeHtml(item.title)}</h3><p class="item-work">${escapeHtml(item.workName || '')}${item.characters?.length ? ` · ${escapeHtml(item.characters.join('、'))}` : ''}</p><div class="item-bottom"><strong>${money(unitPrice)}${quantity > 1 ? ` <small class="quantity-mark">×${quantity}</small>` : ''}</strong><span>${escapeHtml(item.manufacturer || '')}</span></div></div></article>`;
+  const expected = item.release?.expectedDate;
+  return `<article class="item-card ${compact ? 'compact':''}" data-item-id="${escapeHtml(item.id)}" tabindex="0" role="button" aria-label="查看 ${escapeHtml(item.title)} 詳情"><div class="item-media">${src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(image?.alt || item.title)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('image-fallback')">` : '<span class="image-placeholder">NO IMAGE</span>'}</div><div class="item-body"><div class="item-top"><span class="badge">${escapeHtml(statusText(item.status))}</span><span class="muted">${escapeHtml(item.category || '未分類')}</span></div><h3>${escapeHtml(item.title)}</h3><p class="item-work">${escapeHtml(item.workName || '')}${item.characters?.length ? ` · ${escapeHtml(item.characters.join('、'))}` : ''}</p><div class="item-bottom"><strong>${money(unitPrice)}${quantity > 1 ? ` <small class="quantity-mark">×${quantity}</small>` : ''}</strong><span>${escapeHtml(item.manufacturer || '')}</span></div>${item.status !== 'received' && expected ? `<small class="expected-arrival">預計到貨 ${escapeHtml(dateText(expected))}</small>` : ''}</div></article>`;
+}
+
+function bindItemCards(root: ParentNode = document) {
+  $$('.item-card', root).forEach((card) => {
+    const open = () => { location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`; };
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } });
+  });
+}
+
+function optionList(items: Item[], valueOf: (item: Item) => string | undefined): string[] {
+  return [...new Set(items.flatMap((item) => {
+    const value = valueOf(item);
+    return value ? [value] : [];
+  }))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+}
+
+function setSelectOptions(id: string, allLabel: string, values: string[], selected: string) {
+  const select = $<HTMLSelectElement>(`#${id}`);
+  if (!select) return;
+  const options = [`<option value="all">${escapeHtml(allLabel)}</option>`, ...values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)].join('');
+  select.innerHTML = options;
+  select.value = values.includes(selected) ? selected : 'all';
+}
+
+function syncDynamicCollectionOptions(store: MerchStore) {
+  const { items, ui } = store.snapshot;
+  setSelectOptions('filter-category', '全部類型', optionList(items, (item) => item.category), ui.collectionCategory);
+  setSelectOptions('filter-character', '全部角色', optionList(items, (item) => item.characters?.join('、')), ui.collectionCharacter);
+  setSelectOptions('filter-manufacturer', '全部廠商', optionList(items, (item) => item.manufacturer), ui.collectionManufacturer);
 }
 
 function renderHome(store: MerchStore) {
@@ -68,22 +99,30 @@ function renderHome(store: MerchStore) {
   const set = (key: string, value: string) => { const e = $<HTMLElement>(`[data-home="${key}"]`); if (e) e.textContent = value; };
   set('total', String(total)); set('received', String(received)); set('preorder', String(preorder)); set('pending', String(pending)); set('month', money(month)); set('spending', money(spending));
   const bars = $('#work-bars');
-  if (bars) bars.innerHTML = works.map((w) => { const count = w.items.reduce((sum, item) => sum + quantityOf(item), 0); return `<div class="bar-row"><span>${escapeHtml(w.name)}</span><div><i style="width:${total ? Math.max(4, count / total * 100) : 4}%"></i></div><b>${count}</b></div>`; }).join('') || '<div class="empty-state">目前沒有資料</div>';
+  if (bars) bars.innerHTML = works.map((w) => { const count = w.items.reduce((sum, item) => sum + quantityOf(item), 0); return `<div class="bar-row" data-search-query="${escapeHtml(w.name)}"><span>${escapeHtml(w.name)}</span><div><i style="width:${total ? Math.max(4, count / total * 100) : 4}%"></i></div><b>${count}</b></div>`; }).join('') || '<div class="empty-state">目前沒有資料</div>';
   const recent = $('#recent-items'); if (recent) recent.innerHTML = [...items].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))).slice(0, 4).map((i) => itemCard(i, true)).join('') || '<div class="empty-state">目前沒有收藏</div>';
-  $$('.item-card', recent || document).forEach((card) => card.addEventListener('click', () => location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`));
+  bindItemCards(recent || document);
   const rank = $('#character-ranking'); const counts = new Map<string, number>(); items.forEach((i) => (i.characters || []).forEach((c) => counts.set(c, (counts.get(c) || 0) + quantityOf(i))));
-  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5); if (rank) rank.innerHTML = top.length ? top.map(([c, n], idx) => `<li><span>${idx + 1}</span><strong>${escapeHtml(c)}</strong><b>${n}</b></li>`).join('') : '<li class="empty-state">目前沒有資料</li>';
+  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5); if (rank) rank.innerHTML = top.length ? top.map(([c, n], idx) => `<li><span>${idx + 1}</span><strong data-search-query="${escapeHtml(c)}">${escapeHtml(c)}</strong><b>${n}</b></li>`).join('') : '<li class="empty-state">目前沒有資料</li>';
 }
 
 function renderCollection(store: MerchStore) {
-  const host = $('#collection-items'); if (!host) return; const { items, ui } = store.snapshot; const query = ui.collectionQuery.trim().toLowerCase();
+  const host = $('#collection-items'); if (!host) return;
+  const { items, ui } = store.snapshot;
+  const query = ui.collectionQuery.trim().toLowerCase();
+  const workCode = ui.collectionWork === 'all' ? 'all' : (store.snapshot.works.find((w) => w.id === ui.collectionWork)?.code || ui.collectionWork);
   let filtered = items
     .filter((i) => matchesItemQuery(i, query))
     .filter((i) => ui.collectionStatus === 'all' || i.status === ui.collectionStatus)
-    .filter((i) => ui.collectionWork === 'all' || getItemIdParts(i)?.workCode === (store.snapshot.works.find((w) => w.id === ui.collectionWork)?.code || ui.collectionWork));
+    .filter((i) => workCode === 'all' || getItemIdParts(i)?.workCode === workCode)
+    .filter((i) => ui.collectionCategory === 'all' || i.category === ui.collectionCategory)
+    .filter((i) => ui.collectionCharacter === 'all' || (i.characters || []).includes(ui.collectionCharacter))
+    .filter((i) => ui.collectionManufacturer === 'all' || i.manufacturer === ui.collectionManufacturer);
   filtered = [...filtered].sort((a, b) => ui.collectionSort === 'price' ? Number(b.purchase?.price || 0) - Number(a.purchase?.price || 0) : ui.collectionSort === 'title' ? a.title.localeCompare(b.title, 'zh-Hant') : String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-  host.innerHTML = filtered.map((i) => itemCard(i)).join('') || '<div class="empty-state wide">沒有符合條件的收藏</div>'; host.classList.toggle('list-mode', ui.collectionView === 'list');
-  const count = $('#collection-count'); if (count) count.textContent = `${filtered.reduce((sum, item) => sum + quantityOf(item), 0)} ITEMS`; $$('.item-card', host).forEach((card) => card.addEventListener('click', () => location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`));
+  host.innerHTML = filtered.map((i) => itemCard(i)).join('') || '<div class="empty-state wide">沒有符合條件的收藏</div>';
+  host.classList.toggle('list-mode', ui.collectionView === 'list');
+  bindItemCards(host);
+  const count = $('#collection-count'); if (count) count.textContent = `${filtered.reduce((sum, item) => sum + quantityOf(item), 0)} ITEMS`;
   $$('.view-button').forEach((button) => { const active = button.dataset.view === ui.collectionView; button.classList.toggle('is-active', active); button.setAttribute('aria-pressed', String(active)); });
 }
 
@@ -103,7 +142,7 @@ function renderStatistics(store: MerchStore) {
     cats.set(code, { code, name: current?.name || name, count: (current?.count || 0) + quantityOf(item) });
   });
   const legend = $('#category-list');
-  if (legend) legend.innerHTML = [...cats.values()].sort((a, b) => b.count - a.count).map(({ name, count }) => `<div><span>${escapeHtml(name)}</span><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+  if (legend) legend.innerHTML = [...cats.values()].sort((a, b) => b.count - a.count).map(({ name, count }) => `<div data-search-query="${escapeHtml(name)}"><span>${escapeHtml(name)}</span><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
 
   const workNames = new Map(works.map((work) => [work.code, work.name]));
   const workCounts = new Map<string, number>();
@@ -114,7 +153,7 @@ function renderStatistics(store: MerchStore) {
   const workStats = $('#work-statistics');
   if (workStats) {
     const max = Math.max(1, ...workCounts.values());
-    workStats.innerHTML = [...workCounts.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => `<div class="bar-row"><span>${escapeHtml(workNames.get(code) || code)}</span><div><i style="width:${Math.max(4, count / max * 100)}%"></i></div><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+    workStats.innerHTML = [...workCounts.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => `<div class="bar-row" data-search-query="${escapeHtml(workNames.get(code) || code)}"><span>${escapeHtml(workNames.get(code) || code)}</span><div><i style="width:${Math.max(4, count / max * 100)}%"></i></div><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
   }
 }
 
@@ -135,8 +174,18 @@ function renderDetail(store: MerchStore, id: string) {
   modal.hidden = false; document.body.classList.add('detail-modal-open');
 }
 
-function syncCollectionControls(store: MerchStore) { const { ui } = store.snapshot; const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null; if (search) search.value = ui.collectionQuery; if (work) work.value = ui.collectionWork; if (status) status.value = ui.collectionStatus; if (sort) sort.value = ui.collectionSort; }
-function setupCollection(store: MerchStore) { const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null; search?.addEventListener('input', () => store.setUi({ collectionQuery: search.value })); work?.addEventListener('change', () => store.setUi({ collectionWork: work.value })); status?.addEventListener('change', () => store.setUi({ collectionStatus: status.value })); sort?.addEventListener('change', () => store.setUi({ collectionSort: sort.value as 'created' | 'title' | 'price' })); $$('.view-button').forEach((button) => button.addEventListener('click', () => store.setUi({ collectionView: button.dataset.view === 'list' ? 'list' : 'cards' }))); }
+function syncCollectionControls(store: MerchStore) { const { ui } = store.snapshot; const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const category = $('#filter-category') as HTMLSelectElement | null; const character = $('#filter-character') as HTMLSelectElement | null; const manufacturer = $('#filter-manufacturer') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null; if (search) search.value = ui.collectionQuery; if (work) work.value = ui.collectionWork; if (status) status.value = ui.collectionStatus; if (category) category.value = ui.collectionCategory; if (character) character.value = ui.collectionCharacter; if (manufacturer) manufacturer.value = ui.collectionManufacturer; if (sort) sort.value = ui.collectionSort; }
+function setupCollection(store: MerchStore) {
+  const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const category = $('#filter-category') as HTMLSelectElement | null; const character = $('#filter-character') as HTMLSelectElement | null; const manufacturer = $('#filter-manufacturer') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null;
+  search?.addEventListener('input', () => store.setUi({ collectionQuery: search.value }));
+  work?.addEventListener('change', () => store.setUi({ collectionWork: work.value }));
+  status?.addEventListener('change', () => store.setUi({ collectionStatus: status.value }));
+  category?.addEventListener('change', () => store.setUi({ collectionCategory: category.value }));
+  character?.addEventListener('change', () => store.setUi({ collectionCharacter: character.value }));
+  manufacturer?.addEventListener('change', () => store.setUi({ collectionManufacturer: manufacturer.value }));
+  sort?.addEventListener('change', () => store.setUi({ collectionSort: sort.value as 'created' | 'title' | 'price' }));
+  $$('.view-button').forEach((button) => button.addEventListener('click', () => store.setUi({ collectionView: button.dataset.view === 'list' ? 'list' : 'cards' })));
+}
 function setupSidebarToggle() { const sidebar = $('.sidebar') as HTMLElement | null; const button = $('#sidebar-toggle') as HTMLButtonElement | null; if (!sidebar || !button) return; const key = 'chi-merch-sidebar-collapsed'; const setCollapsed = (collapsed: boolean) => { sidebar.classList.toggle('is-collapsed', collapsed); document.body.classList.toggle('sidebar-collapsed', collapsed); button.setAttribute('aria-label', collapsed ? '展開側邊欄' : '收合側邊欄'); button.title = collapsed ? '展開側邊欄' : '收合側邊欄'; button.innerHTML = '<i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i>'; try { localStorage.setItem(key, collapsed ? '1' : '0'); } catch {} }; let collapsed = false; try { collapsed = localStorage.getItem(key) === '1'; } catch {} setCollapsed(collapsed); button.addEventListener('click', () => setCollapsed(!sidebar.classList.contains('is-collapsed'))); }
 
 async function boot() {
@@ -148,6 +197,6 @@ async function boot() {
     visiblePage = route.name; if (detailModal) { detailModal.hidden = true; document.body.classList.remove('detail-modal-open'); }
     $$('.page').forEach((page) => { const active = page.getAttribute('data-page') === route.name; page.toggleAttribute('hidden', !active); page.classList.toggle('is-active', active); }); $$('.nav a').forEach((a) => a.classList.toggle('is-active', a.dataset.route === route.name)); const recentSection = $('#recent-section'); if (recentSection) recentSection.toggleAttribute('hidden', route.name !== 'home');
   }});
-  try { const store = await loadStore(); storeRef = store; document.documentElement.dataset.dataReady = 'true'; $$('.version').forEach((e) => e.textContent = `v${store.snapshot.version}`); syncCollectionControls(store); renderHome(store); renderCollection(store); renderStatistics(store); setupCollection(store); store.subscribe(() => { renderHome(store); renderCollection(store); renderStatistics(store); }); router.start(); } catch (error) { console.error(error); const e = $('#global-error'); if (e) { e.hidden = false; e.innerHTML = `<strong>資料載入失敗</strong><p>${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}</p>`; } }
+  try { const store = await loadStore(); storeRef = store; document.documentElement.dataset.dataReady = 'true'; syncDynamicCollectionOptions(store); syncCollectionControls(store); renderHome(store); renderCollection(store); renderStatistics(store); setupCollection(store); store.subscribe(() => { syncDynamicCollectionOptions(store); syncCollectionControls(store); renderHome(store); renderCollection(store); renderStatistics(store); }); router.start(); } catch (error) { console.error(error); const e = $('#global-error'); if (e) { e.hidden = false; e.innerHTML = `<strong>資料載入失敗</strong><p>${escapeHtml(error instanceof Error ? error.message : 'Unknown error')}</p>`; } }
 }
 boot();
