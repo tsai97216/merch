@@ -2,6 +2,7 @@ import './styles.css';
 import './item-detail-modal.css';
 import { createRouter } from './router';
 import { loadStore, MerchStore } from './store';
+import { parseItemId } from './item-id';
 import type { Item } from './types';
 
 const $ = <T extends Element>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector);
@@ -10,6 +11,29 @@ const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\"']/g, 
 const money = (n?: number) => n == null ? '—' : `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n))}`;
 const statusText = (s: string) => ({ received:'已收到', preorder:'預購中', pending:'待到貨' } as Record<string,string>)[s] || s || '未設定';
 const dateText = (s?: string) => s ? new Date(s).toLocaleDateString('zh-TW') : '—';
+
+function getItemIdParts(item: Item) {
+  return parseItemId(item.id);
+}
+
+function itemSearchText(item: Item): string {
+  const parsed = getItemIdParts(item);
+  const idParts = parsed ? [parsed.workCode, parsed.categoryCode, `${parsed.workCode}${parsed.categoryCode}`, String(parsed.sequence).padStart(3, '0')] : [];
+  return [item.id, ...idParts, item.title, item.workName, item.category, item.manufacturer, ...(item.characters || []), item.notes].filter(Boolean).join(' ').toLowerCase();
+}
+
+function matchesItemQuery(item: Item, query: string): boolean {
+  if (!query) return true;
+  const normalized = query.trim().toLowerCase();
+  const parsed = getItemIdParts(item);
+  if (parsed) {
+    const exactId = item.id.toLowerCase() === normalized;
+    const groupKey = `${parsed.workCode}${parsed.categoryCode}`.toLowerCase();
+    const workKey = parsed.workCode.toLowerCase();
+    if (exactId || groupKey === normalized || workKey === normalized) return true;
+  }
+  return itemSearchText(item).includes(normalized);
+}
 
 function itemCard(item: Item, compact = false): string {
   const image = item.images?.find((i) => i.isCover) || item.images?.[0];
@@ -33,7 +57,10 @@ function renderHome(store: MerchStore) {
 
 function renderCollection(store: MerchStore) {
   const host = $('#collection-items'); if (!host) return; const { items, ui } = store.snapshot; const query = ui.collectionQuery.trim().toLowerCase();
-  let filtered = items.filter((i) => !query || [i.title, i.workName, i.category, i.manufacturer, ...(i.characters || []), i.notes].join(' ').toLowerCase().includes(query)).filter((i) => ui.collectionStatus === 'all' || i.status === ui.collectionStatus).filter((i) => ui.collectionWork === 'all' || i.workId === ui.collectionWork);
+  let filtered = items
+    .filter((i) => matchesItemQuery(i, query))
+    .filter((i) => ui.collectionStatus === 'all' || i.status === ui.collectionStatus)
+    .filter((i) => ui.collectionWork === 'all' || getItemIdParts(i)?.workCode === (store.snapshot.works.find((w) => w.id === ui.collectionWork)?.name || ui.collectionWork));
   filtered = [...filtered].sort((a, b) => ui.collectionSort === 'price' ? Number(b.purchase?.price || 0) - Number(a.purchase?.price || 0) : ui.collectionSort === 'title' ? a.title.localeCompare(b.title, 'zh-Hant') : String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   host.innerHTML = filtered.map((i) => itemCard(i)).join('') || '<div class="empty-state wide">沒有符合條件的收藏</div>'; host.classList.toggle('list-mode', ui.collectionView === 'list');
   const count = $('#collection-count'); if (count) count.textContent = `${filtered.length} ITEMS`; $$('.item-card', host).forEach((card) => card.addEventListener('click', () => location.hash = `#/item/${encodeURIComponent(card.getAttribute('data-item-id') || '')}`));
@@ -41,11 +68,30 @@ function renderCollection(store: MerchStore) {
 }
 
 function renderStatistics(store: MerchStore) {
-  const { items, works } = store.snapshot; const total = items.length; const pending = items.filter((i) => i.status !== 'received').length; const spending = items.reduce((s, i) => s + Number(i.purchase?.price || 0), 0);
+  const { items } = store.snapshot; const total = items.length; const pending = items.filter((i) => i.status !== 'received').length; const spending = items.reduce((s, i) => s + Number(i.purchase?.price || 0), 0);
   const set = (k: string, v: string) => { const e = $<HTMLElement>(`[data-stat="${k}"]`); if (e) e.textContent = v; }; set('total', String(total)); set('pending', String(pending)); set('spending', money(spending));
-  const cats = new Map<string, number>(); items.forEach((i) => cats.set(i.category || '未分類', (cats.get(i.category || '未分類') || 0) + 1)); const legend = $('#category-list');
-  if (legend) legend.innerHTML = [...cats.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div><span>${escapeHtml(k)}</span><b>${v}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
-  const workStats = $('#work-statistics'); if (workStats) workStats.innerHTML = works.map((w) => `<div class="bar-row"><span>${escapeHtml(w.name)}</span><div><i style="width:${total ? Math.max(4, w.items.length / total * 100) : 4}%"></i></div><b>${w.items.length}</b></div>`).join('');
+
+  const cats = new Map<string, { code: string; name: string; count: number }>();
+  items.forEach((item) => {
+    const parsed = getItemIdParts(item);
+    const code = parsed?.categoryCode || 'o';
+    const name = item.category || '其他';
+    const current = cats.get(code);
+    cats.set(code, { code, name: current?.name || name, count: (current?.count || 0) + 1 });
+  });
+  const legend = $('#category-list');
+  if (legend) legend.innerHTML = [...cats.values()].sort((a, b) => b.count - a.count).map(({ code, name, count }) => `<div><span>${escapeHtml(code)} · ${escapeHtml(name)}</span><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+
+  const workCounts = new Map<string, number>();
+  items.forEach((item) => {
+    const code = getItemIdParts(item)?.workCode || item.workName || 'UNKNOWN';
+    workCounts.set(code, (workCounts.get(code) || 0) + 1);
+  });
+  const workStats = $('#work-statistics');
+  if (workStats) {
+    const max = Math.max(1, ...workCounts.values());
+    workStats.innerHTML = [...workCounts.entries()].sort((a, b) => b[1] - a[1]).map(([code, count]) => `<div class="bar-row"><span>${escapeHtml(code)}</span><div><i style="width:${Math.max(4, count / max * 100)}%"></i></div><b>${count}</b></div>`).join('') || '<div class="empty-state">目前沒有資料</div>';
+  }
 }
 
 let detailModal: HTMLElement | null = null; let detailUnderlyingRoute = 'collection';
