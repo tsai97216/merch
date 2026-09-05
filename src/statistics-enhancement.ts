@@ -84,9 +84,19 @@ async function renderEnhancedStatistics() {
     });
 
     const workHost = document.querySelector<HTMLElement>('#work-statistics');
-    if (workHost) workHost.innerHTML = pieChart([...workCounts.entries()].map(([code, count]) => [workNames.get(code) || code, count]).sort((a, b) => b[1] - a[1]), '作品統計');
+    if (workHost) {
+      const entries: Array<[string, number]> = [...workCounts.entries()]
+        .map(([code, count]): [string, number] => [workNames.get(code) || code, count])
+        .sort((a, b) => b[1] - a[1]);
+      workHost.innerHTML = pieChart(entries, '作品統計');
+    }
     const categoryHost = document.querySelector<HTMLElement>('#category-list');
-    if (categoryHost) categoryHost.innerHTML = pieChart([...categoryCounts.entries()].sort((a, b) => b[1] - a[1]), '類型分布');
+    if (categoryHost) {
+      const entries: Array<[string, number]> = [...categoryCounts.entries()]
+        .map(([name, count]): [string, number] => [name, count])
+        .sort((a, b) => b[1] - a[1]);
+      categoryHost.innerHTML = pieChart(entries, '類型分布');
+    }
 
     let breakdown = page.querySelector<HTMLElement>('#statistics-breakdown');
     if (!breakdown) {
