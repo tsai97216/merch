@@ -12,7 +12,7 @@ const percent = (n: number) => `${n.toFixed(1)}%`;
 
 type Row = { label: string; value: number };
 type DetailRow = { label: string; quantity: number; spend: number; share: number; extra?: string };
-type Chart = { id: string; title: string; description: string; type: 'bar' | 'line' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[] };
+type Chart = { id: string; title: string; description: string; type: 'bar' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[] };
 
 type WorkAggregate = { quantity: number; spend: number };
 
@@ -34,7 +34,8 @@ function aggregate(items: Item[]): Chart[] {
   const workSpendEntries = sorted(workSpend);
   const workCountEntries = [...workCount.entries()].sort((a,b) => b[1].quantity - a[1].quantity || b[1].spend - a[1].spend || a[0].localeCompare(b[0], 'zh-Hant'));
   const categoryEntries = [...categoryCount.entries()].sort((a,b) => b[1].quantity - a[1].quantity || b[1].spend - a[1].spend || a[0].localeCompare(b[0], 'zh-Hant'));
-  const monthlyEntries = [...monthly.entries()].sort((a,b) => a[0].localeCompare(b[0]));
+  const currentYear = new Date().getFullYear();
+  const monthlyEntries: [string, WorkAggregate][] = Array.from({length:12}, (_,i) => { const key = `${currentYear}-${String(i+1).padStart(2,'0')}`; return [key, monthly.get(key) || {quantity:0, spend:0}]; });
 
   const monthlyDetails: DetailRow[] = [];
   let cumulative = 0;
@@ -48,7 +49,7 @@ function aggregate(items: Item[]): Chart[] {
   const makeRows = (entries: [string, WorkAggregate][], field: 'spend' | 'quantity'): Row[] => entries.map(([label, row]) => ({ label, value: field === 'spend' ? row.spend : row.quantity }));
   const topWork = workSpendEntries[0];
   const topMonth = monthlyEntries.reduce<[string, WorkAggregate] | undefined>((best, current) => !best || current[1].spend > best[1].spend ? current : best, undefined);
-  const averageMonth = monthlyEntries.length ? totalSpend / monthlyEntries.length : 0;
+  const averageMonth = totalSpend / 12;
 
   return [
     {
@@ -57,7 +58,7 @@ function aggregate(items: Item[]): Chart[] {
       summary:[['總消費',money(totalSpend)],['最高作品',topWork?.[0] || '無資料'],['最高作品消費',topWork ? money(topWork[1].spend) : 'NT$ 0'],['作品數',String(workSpendEntries.length)]].map(([label,value])=>({label,value}))
     },
     {
-      id:'monthly-spending', title:'每月消費趨勢', description:'依購買日期追蹤每月消費，詳細視圖同時列出數量、占比與累計金額。', type:'line',
+      id:'monthly-spending', title:'每月消費趨勢', description:'以今年 12 個月份完整呈現消費；沒有資料的月份也會明確顯示為 0。', type:'bar',
       rows:monthlyEntries.map(([label,row])=>({label:monthLabel(label),value:row.spend})), details:monthlyDetails, format:'money',
       summary:[['有消費月份',`${monthlyEntries.length} 個月`],['最高月份',topMonth ? monthLabel(topMonth[0]) : '無資料'],['最高月消費',topMonth ? money(topMonth[1].spend) : 'NT$ 0'],['月均消費',money(averageMonth)]].map(([label,value])=>({label,value}))
     },
@@ -67,7 +68,7 @@ function aggregate(items: Item[]): Chart[] {
       summary:[['總收藏',`${totalQuantity} 件`],['作品種類',`${workCountEntries.length} 個`],['最多收藏作品',workCountEntries[0]?.[0] || '無資料'],['最多作品數量',workCountEntries[0] ? `${workCountEntries[0][1].quantity} 件` : '0 件']].map(([label,value])=>({label,value}))
     },
     {
-      id:'category-count', title:'類別收藏數量', description:'用最容易辨識比例的方式查看各類別收藏分布。', type:'donut',
+      id:'category-count', title:'類別收藏數量', description:'以圓餅圖呈現各類別收藏占比，詳細視圖提供完整數量與比例。', type:'donut',
       rows:makeRows(categoryEntries, 'quantity'), details:detail(categoryEntries, totalQuantity, (row) => `消費 ${money(row.spend)}`), format:'count',
       summary:[['總收藏',`${totalQuantity} 件`],['類別數',`${categoryEntries.length} 類`],['主要類別',categoryEntries[0]?.[0] || '無資料'],['主要類別占比',categoryEntries[0] ? percent(categoryEntries[0][1].quantity / Math.max(totalQuantity,1) * 100) : '0%']].map(([label,value])=>({label,value}))
     },
@@ -75,17 +76,16 @@ function aggregate(items: Item[]): Chart[] {
 }
 
 function chartSvg(chart: Chart, large = false): string {
-  const width = large ? 960 : 640, height = large ? 420 : 245;
+  const width = large ? 1100 : 760, height = large ? 520 : 330;
   if (!chart.rows.length) return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${width/2}" y="${height/2}" text-anchor="middle" class="chart-empty">目前沒有足夠資料</text></svg>`;
   if (chart.type === 'donut') return donutSvg(chart, width, height, large);
-  if (chart.type === 'bar') return barSvg(chart, width, height, large);
-  return lineSvg(chart, width, height, large);
+  return barSvg(chart, width, height, large);
 }
 
 function barSvg(chart: Chart, width: number, height: number, large: boolean): string {
-  const left = large ? 205 : 150, right = 75, top = 26, bottom = 20, plotW = width-left-right, plotH = height-top-bottom, max = Math.max(...chart.rows.map((r) => r.value), 0);
-  const gap = large ? 12 : 8, rowH = Math.max(25, (plotH-gap*Math.max(0,chart.rows.length-1))/chart.rows.length), barH = Math.min(rowH-5, large ? 22 : 18);
-  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}">${chart.rows.map((r,i) => { const y=top+i*(rowH+gap), barW=max?Math.max(2,r.value/max*(plotW-15)):0, text=chart.format==='money'?money(r.value):`${r.value} 件`; return `<g class="chart-bar" tabindex="0"><text x="${left-12}" y="${y+barH/2+4}" text-anchor="end">${escapeHtml(r.label)}</text><rect x="${left}" y="${y}" width="${plotW}" height="${barH}" rx="9" class="chart-track"/><rect x="${left}" y="${y}" width="${barW}" height="${barH}" rx="9" class="chart-fill"/><text x="${Math.min(width-right,left+barW+8)}" y="${y+barH/2+4}" class="chart-value">${escapeHtml(text)}</text><title>${escapeHtml(r.label)}：${escapeHtml(text)}</title></g>`; }).join('')}</svg>`;
+  const left = large ? 230 : 175, right = 95, top = 30, bottom = 42, plotW = width-left-right, plotH = height-top-bottom, max = Math.max(...chart.rows.map((r) => r.value), 0);
+  const gap = large ? 12 : 10, rowH = Math.max(25, (plotH-gap*Math.max(0,chart.rows.length-1))/chart.rows.length), barH = Math.min(rowH-5, large ? 30 : 24);
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}">${chart.rows.map((r,i) => { const y=top+i*(rowH+gap), barW=max?Math.max(r.value === 0 ? 0 : 2,r.value/max*(plotW-15)):0, text=chart.format==='money'?money(r.value):`${r.value} 件`; return `<g class="chart-bar" tabindex="0"><text x="${left-12}" y="${y+barH/2+4}" text-anchor="end">${escapeHtml(r.label)}</text><rect x="${left}" y="${y}" width="${plotW}" height="${barH}" rx="9" class="chart-track"/><rect x="${left}" y="${y}" width="${barW}" height="${barH}" rx="9" class="chart-fill"/><text x="${Math.min(width-right,left+barW+8)}" y="${y+barH/2+4}" class="chart-value">${escapeHtml(text)}</text><title>${escapeHtml(r.label)}：${escapeHtml(text)}</title></g>`; }).join('')}</svg>`;
 }
 
 function lineSvg(chart: Chart, width: number, height: number, large: boolean): string {
@@ -97,15 +97,14 @@ function lineSvg(chart: Chart, width: number, height: number, large: boolean): s
 }
 
 function donutSvg(chart: Chart, width: number, height: number, large: boolean): string {
-  const cx=large?270:205, cy=height/2, radius=large?145:78, inner=large?88:49, total=chart.rows.reduce((s,r)=>s+r.value,0)||1;
+  const cx=large?300:240, cy=height/2, radius=large?175:112, inner=large?105:68, total=chart.rows.reduce((s,r)=>s+r.value,0)||1;
   let angle=-Math.PI/2;
   const arcs=chart.rows.map((r,i)=>{const start=angle, end=angle+r.value/total*Math.PI*2; angle=end; const largeArc=end-start>Math.PI?1:0; const p1=[cx+radius*Math.cos(start),cy+radius*Math.sin(start)],p2=[cx+radius*Math.cos(end),cy+radius*Math.sin(end)],q1=[cx+inner*Math.cos(end),cy+inner*Math.sin(end)],q2=[cx+inner*Math.cos(start),cy+inner*Math.sin(start)]; const d=`M ${p1[0]} ${p1[1]} A ${radius} ${radius} 0 ${largeArc} 1 ${p2[0]} ${p2[1]} L ${q1[0]} ${q1[1]} A ${inner} ${inner} 0 ${largeArc} 0 ${q2[0]} ${q2[1]} Z`; return `<path d="${d}" class="donut-segment donut-${i%6}" tabindex="0"><title>${escapeHtml(r.label)}：${r.value} 件（${percent(r.value/total*100)}）</title></path>`; }).join('');
-  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?530:365}" cy="${35+i*30}" r="6" class="donut-dot donut-${i%6}"/><text x="${large?545:380}" y="${39+i*30}">${escapeHtml(r.label)} · ${r.value} 件 · ${percent(r.value/total*100)}</text></g>`).join('');
+  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?600:470}" cy="${35+i*30}" r="6" class="donut-dot donut-${i%6}"/><text x="${large?615:485}" y="${39+i*30}">${escapeHtml(r.label)} · ${r.value} 件 · ${percent(r.value/total*100)}</text></g>`).join('');
   return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}">${arcs}<text x="${cx}" y="${cy-5}" text-anchor="middle" class="donut-total">${total}</text><text x="${cx}" y="${cy+18}" text-anchor="middle" class="donut-caption">收藏</text>${legend}</svg>`;
 }
 
 function detailTable(chart: Chart): string {
-  const isMoney = chart.id === 'work-spending' || chart.id === 'monthly-spending';
   return `<div class="statistics-data"><div class="statistics-data-head"><span>完整資料</span><span>${chart.details.length} 筆</span></div><div class="statistics-data-table"><div class="statistics-data-table-row statistics-data-table-header"><span>項目</span><span>數量</span><span>${isMoney ? '消費' : '消費'}</span><span>占比</span><span>補充</span></div>${chart.details.map((row)=>`<div class="statistics-data-table-row"><strong>${escapeHtml(row.label)}</strong><span>${row.quantity} 件</span><span>${escapeHtml(money(row.spend))}</span><span>${percent(row.share)}</span><span>${escapeHtml(row.extra || '')}</span></div>`).join('') || '<div class="empty-state">目前沒有資料</div>'}</div></div>`;
 }
 
