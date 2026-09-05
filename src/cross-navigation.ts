@@ -2,8 +2,6 @@ const normalizeSearch = (value: string) => value.trim();
 
 function goToCollectionSearch(query: string) {
   const normalized = normalizeSearch(query);
-  if (!normalized) return;
-
   location.hash = '#/collection';
   window.setTimeout(() => {
     const input = document.querySelector<HTMLInputElement>('#collection-search');
@@ -17,6 +15,13 @@ function goToCollectionSearch(query: string) {
 function getSearchTarget(target: HTMLElement): HTMLElement | null {
   const explicit = target.closest<HTMLElement>('[data-search-query]');
   if (explicit) return explicit;
+
+  const homeStat = target.closest<HTMLElement>('.page[data-page="home"] .stat-card');
+  if (homeStat) {
+    const label = homeStat.querySelector('span')?.textContent?.trim() || '';
+    if (label === '總收藏') return homeStat;
+    if (label === '待到貨') return homeStat;
+  }
 
   const character = target.closest<HTMLElement>('#character-ranking li');
   if (character) return character.querySelector('strong');
@@ -33,6 +38,17 @@ function getSearchTarget(target: HTMLElement): HTMLElement | null {
   return null;
 }
 
+function getQueryForTarget(target: HTMLElement): string {
+  const explicit = target.dataset.searchQuery;
+  if (explicit != null) return explicit;
+  if (target.matches('.stat-card')) {
+    const label = target.querySelector('span')?.textContent?.trim() || '';
+    if (label === '待到貨') return '待到貨';
+    if (label === '總收藏') return '';
+  }
+  return target.textContent || '';
+}
+
 function hideReceivedBadges(root: ParentNode = document) {
   root.querySelectorAll<HTMLElement>('.item-card .badge').forEach((badge) => {
     if (badge.textContent?.trim() === '已收到') badge.remove();
@@ -47,9 +63,7 @@ function installCrossNavigation() {
     const searchTarget = getSearchTarget(target);
     if (!searchTarget) return;
 
-    const query = searchTarget.dataset.searchQuery || searchTarget.textContent || '';
-    if (!normalizeSearch(query)) return;
-
+    const query = getQueryForTarget(searchTarget);
     event.preventDefault();
     event.stopPropagation();
     goToCollectionSearch(query);
