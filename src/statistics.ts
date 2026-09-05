@@ -12,7 +12,7 @@ const percent = (n: number) => `${n.toFixed(1)}%`;
 
 type Row = { label: string; value: number };
 type DetailRow = { label: string; quantity: number; spend: number; share: number; extra?: string };
-type Chart = { id: string; title: string; description: string; type: 'bar' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[] };
+type Chart = { id: string; title: string; description: string; largeType: 'bar' | 'donut'; smallType: 'bar' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[] };
 
 type WorkAggregate = { quantity: number; spend: number };
 
@@ -53,22 +53,22 @@ function aggregate(items: Item[]): Chart[] {
 
   return [
     {
-      id:'work-spending', title:'作品消費排行', description:'看每個作品實際投入多少預算，並可進一步查看收藏數與消費占比。', type:'bar',
+      id:'work-spending', title:'作品消費排行', description:'看每個作品實際投入多少預算，並可進一步查看收藏數與消費占比。', largeType:'bar', smallType:'donut',
       rows:makeRows(workSpendEntries, 'spend'), details:detail(workSpendEntries, totalSpend), format:'money',
       summary:[['總消費',money(totalSpend)],['最高作品',topWork?.[0] || '無資料'],['最高作品消費',topWork ? money(topWork[1].spend) : 'NT$ 0'],['作品數',String(workSpendEntries.length)]].map(([label,value])=>({label,value}))
     },
     {
-      id:'monthly-spending', title:'每月消費趨勢', description:'以今年 12 個月份完整呈現消費；沒有資料的月份也會明確顯示為 0。', type:'bar',
+      id:'monthly-spending', title:'每月消費趨勢', description:'以今年 12 個月份完整呈現消費；沒有資料的月份也會明確顯示為 0。', largeType:'bar', smallType:'bar',
       rows:monthlyEntries.map(([label,row])=>({label:monthLabel(label),value:row.spend})), details:monthlyDetails, format:'money',
       summary:[['有消費月份',`${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`],['最高月份',topMonth ? monthLabel(topMonth[0]) : '無資料'],['最高月消費',topMonth ? money(topMonth[1].spend) : 'NT$ 0'],['月均消費',money(averageMonth)]].map(([label,value])=>({label,value}))
     },
     {
-      id:'work-count', title:'作品收藏數量', description:'看哪些作品收藏最多，數量依每筆資料的 quantity 加總。', type:'bar',
+      id:'work-count', title:'作品收藏數量', description:'看哪些作品收藏最多，數量依每筆資料的 quantity 加總。', largeType:'bar', smallType:'donut',
       rows:makeRows(workCountEntries, 'quantity'), details:detail(workCountEntries, totalQuantity, (row) => `消費 ${money(row.spend)}`), format:'count',
       summary:[['總收藏',`${totalQuantity} 件`],['作品種類',`${workCountEntries.length} 個`],['最多收藏作品',workCountEntries[0]?.[0] || '無資料'],['最多作品數量',workCountEntries[0] ? `${workCountEntries[0][1].quantity} 件` : '0 件']].map(([label,value])=>({label,value}))
     },
     {
-      id:'category-count', title:'類別收藏數量', description:'以圓餅圖呈現各類別收藏占比，詳細視圖提供完整數量與比例。', type:'donut',
+      id:'category-count', title:'類別收藏數量', description:'以圓餅圖呈現各類別收藏占比，詳細視圖提供完整數量與比例。', largeType:'donut', smallType:'donut',
       rows:makeRows(categoryEntries, 'quantity'), details:detail(categoryEntries, totalQuantity, (row) => `消費 ${money(row.spend)}`), format:'count',
       summary:[['總收藏',`${totalQuantity} 件`],['類別數',`${categoryEntries.length} 類`],['主要類別',categoryEntries[0]?.[0] || '無資料'],['主要類別占比',categoryEntries[0] ? percent(categoryEntries[0][1].quantity / Math.max(totalQuantity,1) * 100) : '0%']].map(([label,value])=>({label,value}))
     },
@@ -76,9 +76,10 @@ function aggregate(items: Item[]): Chart[] {
 }
 
 function chartSvg(chart: Chart, large = false): string {
+  const type = large ? chart.largeType : chart.smallType;
   const width = large ? 1100 : 760, height = large ? 520 : 330;
   if (!chart.rows.length) return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${width/2}" y="${height/2}" text-anchor="middle" class="chart-empty">目前沒有足夠資料</text></svg>`;
-  if (chart.type === 'donut') return donutSvg(chart, width, height, large);
+  if (type === 'donut') return donutSvg(chart, width, height, large);
   return barSvg(chart, width, height, large);
 }
 
