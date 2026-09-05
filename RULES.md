@@ -115,6 +115,14 @@
 - UI 顯示單價時仍可顯示原始單價，但若數量大於 1，應讓使用者知道實際數量與該項合計價值。
 - 新增或修改數量功能時，必須同步檢查 type、schema validation、Store、既有資料相容性、Collection、Detail、Dashboard、Statistics 與後續 Management CRUD。
 
+### 7.1 Quantity Validation
+
+- 所有進入 Store 的 Item 都必須經過同一套 quantity validation / normalization。
+- 不得使用 `quantity || 1` 這類會把非法值靜默轉成合法值的寫法取代正式驗證。
+- 缺少 quantity 的舊資料可以相容性預設為 `1`。
+- 已存在但格式錯誤的 quantity 不應被無條件當成 `1`。
+- 新增、編輯、載入、migration、API response 都必須遵守相同 quantity 規則。
+
 ## 8. Search / 搜尋規則
 
 - 搜尋是 Collection 的核心功能之一。
@@ -180,6 +188,10 @@
 - Store 是資料與 UI state 的主要來源。
 - Page 不持有自己的資料副本。
 - State 更新採 immutable 原則。
+- Store state 應視為唯讀資料，不得讓呼叫端直接修改 nested array / object。
+- `Object.freeze()` 若使用，只能視為輔助保護，不可視為完整 immutable 保證。
+- 若 nested data 會被修改，必須透過 Store 的更新方法建立新的 array / object。
+- 不要在 Page、rendering 或 utility 中直接修改 Store state。
 - Store 必須維持 subscribe / unsubscribe 生命週期。
 - 新增資料欄位時，至少檢查：type、schema、Store、migration、rendering、既有資料相容性。
 - 不要只修改 UI 而忘記 data validation。
@@ -189,9 +201,12 @@
 ## 12. Rendering / DOM / XSS
 
 - 使用者輸入、API 資料與外部資料一律視為不可信。
-- 優先使用安全 DOM rendering 與既有 escape / utility。
+- 優先使用安全 DOM rendering、DOM API、`textContent` 與既有安全 utility。
 - 不要把未處理的外部字串直接塞入 `innerHTML`。
 - 如果必須使用 `innerHTML`，所有外部／使用者資料必須先經過適當 escaping / sanitization。
+- 主要 UI 應由主要 rendering logic 直接產生正確的最終 DOM 結構。
+- 不應依賴第二層 DOM 掃描、regex 或其他 post-processing 來修補主要 rendering。
+- 不使用 MutationObserver 進行 UI 狀態、搜尋、排序或資料顯示後處理。
 - 動態元素需要互動時優先使用事件 delegation。
 - 不要在每次 render 重複新增相同 document listener。
 - 外部 URL、圖片 URL、API error 原文都不能直接當可信 HTML。
@@ -258,120 +273,63 @@
 
 - CRUD 功能必須有表單 validation。
 - 新增／編輯不可產生重複 ID 或破壞既有資料。
-- 刪除需要確認。
-- 成功與失敗都應提供明確提示。
-- 表單重新 render 不應任意遺失使用者尚未提交的編輯狀態。
-- 寫入前先驗證資料，寫入成功後才更新 Store。
-- 不允許前端在 API 寫入失敗後假裝資料已成功保存。
-- Item 新增／編輯表單完成後必須支援 `quantity`，並驗證為大於等於 1 的整數。
+- 編輯表單應保留使用者輸入狀態，不因無關 render 遺失。
+- 刪除必須有明確確認流程。
+- 成功與失敗都必須有使用者可理解的回饋。
 
 ## 17. GitHub API / Worker
 
-- Frontend 不應直接持有 GitHub Token。
-- GitHub 寫入應經過既定 API / Worker layer。
-- API path 必須有 whitelist。
-- Request payload 必須 validation。
-- Response 必須 schema validation。
-- API timeout、network failure、CORS、auth failure 都要有清楚處理。
-- UI 不直接散落組 GitHub REST API request 的程式碼。
-- Secret / Token 不得 commit，也不可輸出到 console。
+- Frontend 不得保存或暴露 GitHub Token。
+- GitHub 寫入必須經 API / Worker layer。
+- API layer 必須限制可操作 path。
+- API 必須驗證 HTTP method、認證資訊與 request payload。
+- API response 在進入 Store 前必須驗證 schema。
+- API error 不得直接把 GitHub 原始 HTML / response body 當 UI。
+- API 必須處理 timeout、network failure、CORS 與認證失敗。
+- Worker Secret / GitHub Token 不得進入 frontend bundle。
+- GET / PUT / DELETE 等操作必須與實際資料模型一致。
 
-## 18. Write Consistency / 寫入一致性
+## 18. Write Consistency
 
-標準流程：
+GitHub 寫入流程固定為：
 
-`取得最新 remote state → validate → 建立新 state → 寫入 → 成功後更新 Store → 成功後處理版本更新`
+`validate → fetch latest remote state → build new state → write remote → update Store → handle version`
 
-規則：
-
-- 寫入失敗不能產生假 UI 狀態。
-- 不要用舊 remote state 覆蓋較新的資料。
-- 多步驟寫入要考慮 half-success 與 rollback / recovery。
-- SHA / optimistic concurrency 要避免互相覆蓋。
-- concurrent write conflict 必須清楚提示。
-- 版本更新失敗時要有明確 recovery 策略。
-- 不讓部分成功留下資料不一致狀態。
+- 寫入前必須重新取得最新 remote state，避免以過期 Store 覆蓋他人或其他操作的更新。
+- 所有 request payload 必須先 validation。
+- Remote write 成功前不得更新 Store 成為「假成功」狀態。
+- Remote write 失敗時維持原 Store state，並顯示可理解的失敗提示。
+- Version 必須依第 3 節規則處理。
+- 涉及圖片寫入時必須額外遵守 Image Management 規則。
 
 ## 19. Image Management
 
-- 支援 JPG / PNG / WebP / GIF 時，要同步驗證 MIME type 與 extension。
-- 單張圖片大小上限依既定規格處理，目前為 <= 10 MB。
-- 第一張圖片可作為預設封面。
-- 設定封面、刪除圖片、重新排序都不能破壞 image metadata。
-- 新增圖片：Patch +1。
-- 刪除圖片：Patch +1。
-- reorder：不增加 Patch。
-- cover replacement：不增加 Patch。
-- duplicate SHA 要有明確處理規則。
-- 上傳失敗必須 rollback，不可留下半完成 metadata。
-- 刪除封面後要有自動選擇下一張的規則。
+- 支援 JPG / PNG / WebP / GIF。
+- 單張圖片不得超過 10MB。
+- 第一張圖片為預設封面。
+- 新增／刪除圖片會增加 Patch。
+- 圖片 reorder 不增加 Patch。
+- cover replacement 不增加 Patch。
+- 圖片新增前應檢查 duplicate SHA。
+- 圖片寫入必須處理 SHA mismatch 與 rollback。
+- 刪除目前封面後，必須自動選擇有效的新封面。
+- 外部圖片 URL 必須經 validation。
 
-## 20. Security
+## 20. TODO / 完成判定
 
-- GitHub Token 不進 frontend。
-- Admin Secret 不 commit。
-- 所有使用者輸入都視為不可信。
-- 防止 XSS。
-- API path whitelist。
-- Worker auth / method checks。
-- 外部 URL / image URL 驗證。
-- 不把 API error 原文直接當 HTML rendering。
-- sensitive data 不進 console / diagnostics。
-- 不要因為「只是管理頁」就降低安全要求。
+- TODO `[x]` 代表功能已實際完成並可由目前架構正常使用，不代表「已有部分程式碼」。
+- 若功能只有部分完成，維持 `[ ]`。
+- 若程式碼存在但與目前 rendering、Store、Router 或 UI 流程沒有真正接通，不得勾選完成。
+- 掃描發現既有 `[x]` 與實際狀態不一致時，應優先修正 TODO 狀態，而不是為了維持進度硬將功能視為完成。
+- UI 功能完成必須同時考慮 Desktop、Tablet、Mobile。
+- 涉及跨模組功能時，必須確認完整流程，而不是只確認單一模組存在。
+- 已否決或禁止使用的方案不應作為 TODO 待辦項目；應記錄於本 RULES.md。
 
-## 21. Testing
+## 21. Rendering Architecture
 
-修改功能後，至少根據變更範圍檢查：
-
-- TypeScript compile。
-- Build。
-- Router。
-- Data / schema。
-- 搜尋。
-- 相關 UI interaction。
-- Loading / Empty / Error。
-- Mobile layout。
-- JS failure。
-- Network / API failure（若該功能涉及 API）。
-
-若新增統計：至少測試正常資料、空資料、單一項目、quantity > 1、加權金額與點擊搜尋轉跳。
-
-若新增 CRUD：至少測試 validation、成功、失敗、重複資料、quantity 邊界與重新整理後資料一致性。
-
-## 22. TODO.md
-
-- `TODO.md` 是專案進度追蹤清單。
-- 實際完成才勾 `[x]`。
-- 只完成部分時維持 `[ ]`，可補充備註。
-- 完成功能後要檢查是否有對應 TODO 項目需要更新。
-- 不可為了讓進度看起來漂亮而提前勾選。
-- TODO 是「完成狀態」，RULES 是「怎麼做」，兩者不要混用。
-
-## 23. 新增功能標準流程
-
-新增功能時依序檢查：
-
-1. **需求**：功能真正要解決什麼問題？
-2. **既有規則**：RULES.md 是否已有相關規則？
-3. **參考**：`merch-old` 是否已有相同 UX？
-4. **資料**：是否需要 type / schema / migration？
-5. **Store**：是否需要新的 state 或 action？
-6. **Router**：是否涉及新 route 或跨頁跳轉？
-7. **搜尋**：是否應整合搜尋？
-8. **統計**：若是統計／排名／摘要，是否需要點擊搜尋？
-9. **數量**：若涉及收藏件數或金額，是否需要 `quantity` 加權？
-10. **UI**：Desktop / Tablet / Mobile 是否都可用？
-11. **狀態**：Loading / Empty / Error 是否完整？
-12. **安全**：是否有使用者輸入、外部 URL 或 HTML rendering？
-13. **版本**：是否需要 Minor / Patch？
-14. **TODO**：是否完成對應項目？
-15. **RULES**：這次是否產生值得長期記住的新規則？
-16. **驗證**：TypeScript / Build / 實際功能是否通過？
-
-## 24. 規則維護
-
-- 本文件是持續累積的專案規格，不是一次性文件。
-- 發現容易重複出錯的寫法、確立新的資料規則、UI 行為或跨頁互動時，應補進本文件。
-- 如果新需求與既有規則衝突，先確認需求，再同步修改 RULES.md 與程式。
-- 修改程式但不更新已失效的規則，會讓下一次修改重新踩坑，因此應避免。
-- 規則應描述「之後怎麼做」，而不是只描述「這次做了什麼」。
+- 主要 rendering 與資料模型、Store、Router 的責任應清楚分離。
+- 主要 UI 應由主要 rendering logic 直接產生正確結果。
+- 不應透過第二層 DOM 掃描、MutationObserver 或事後 regex 處理來補足主要 UI。
+- 若既有 enhancement module 與主要 rendering 結構不一致，優先修正主要 rendering 或移除無必要的 enhancement layer。
+- 不為了維持舊有 workaround 而增加更多 DOM post-processing。
+- 新增 UI 功能時，優先讓 rendering 一次產生可直接使用的最終 DOM。
