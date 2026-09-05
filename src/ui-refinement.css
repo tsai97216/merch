@@ -1,4 +1,4 @@
-/* UI refinement: stabilize desktop headings and improve mobile statistics / management / settings. */
+/* Shared UI refinement layer. Keep page components stable and consistent with merch-old. */
 .page-heading > div,
 .hero > div,
 .panel-heading > div,
@@ -15,15 +15,11 @@
 .management-panel h2{margin-top:0}
 .management-panel .notice{margin-top:18px}
 
-/* Shared component polish: keep the merch-old visual language consistent across pages. */
-.page-heading,
-.hero{max-width:100%}
-.page-heading h1,
-.hero h1{letter-spacing:-.045em}
-.panel-heading,
-.section-heading{min-height:34px}
-.panel-heading .panel-label,
-.section-heading .panel-label{display:block}
+/* Shared component polish */
+.page-heading,.hero{max-width:100%}
+.page-heading h1,.hero h1{letter-spacing:-.045em}
+.panel-heading,.section-heading{min-height:34px}
+.panel-heading .panel-label,.section-heading .panel-label{display:block}
 .stat-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
 .stat-card:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(30,40,60,.08);border-color:#d9dee7}
 .button{transition:transform .18s ease,opacity .18s ease,box-shadow .18s ease}
@@ -31,7 +27,7 @@
 .button:focus-visible{outline:3px solid rgba(53,106,230,.22);outline-offset:2px}
 .panel h2,.section h2{letter-spacing:-.02em}
 
-/* Card alignment: preserve the 1.35.0 visual design while reserving stable text zones. */
+/* Stable item-card text zones, preserving the existing 1.35.0 visual language. */
 .item-body{display:flex;flex-direction:column;min-width:0}
 .item-top{flex:0 0 24px;min-height:24px}
 .item-card h3{flex:0 0 calc(1.4em * 2);min-height:calc(1.4em * 2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
@@ -52,12 +48,10 @@
   .panel-heading{width:100%;min-width:0}
   .panel-heading h2{overflow-wrap:anywhere}
   .settings-list{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}
-  .settings-list dt,
-  .settings-list dd{padding:12px 0;border-bottom:1px solid var(--line)}
+  .settings-list dt,.settings-list dd{padding:12px 0;border-bottom:1px solid var(--line)}
   .settings-list dt{padding-right:10px}
   .settings-list dd{text-align:right}
-  .settings-list dt:nth-last-of-type(-n+1),
-  .settings-list dd:nth-last-of-type(-n+1){border-bottom:0}
+  .settings-list dt:nth-last-of-type(-n+1),.settings-list dd:nth-last-of-type(-n+1){border-bottom:0}
   .management-panel{padding:18px 15px}
   .management-panel h2{font-size:18px;margin-bottom:8px}
   .management-copy{font-size:12px;line-height:1.8}
