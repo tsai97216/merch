@@ -1,0 +1,42 @@
+/* UI refinement: stabilize desktop headings and improve mobile statistics / management / settings. */
+.page-heading > div,
+.hero > div,
+.panel-heading > div,
+.section-heading > div{min-width:0}
+.page-heading h1,
+.hero h1{overflow-wrap:anywhere;word-break:break-word}
+.page-heading p{max-width:60ch}
+.settings-list{margin:0}
+.settings-list dt,
+.settings-list dd{margin:0}
+.settings-list dt{color:var(--muted);font-size:12px}
+.settings-list dd{font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.management-copy{max-width:68ch;color:var(--muted);line-height:1.75}
+.management-panel h2{margin-top:0}
+.management-panel .notice{margin-top:18px}
+@media(max-width:700px){
+  .page-heading{width:100%;min-width:0}
+  .page-heading > div{width:100%}
+  .page-heading h1{font-size:34px;line-height:1.15}
+  .hero h1{font-size:38px}
+  .stat-grid{width:100%}
+  .stat-card{min-width:0;overflow:hidden}
+  .stat-card strong{overflow-wrap:anywhere;word-break:break-word}
+  .panel-heading{width:100%;min-width:0}
+  .panel-heading h2{overflow-wrap:anywhere}
+  .settings-list{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}
+  .settings-list dt,
+  .settings-list dd{padding:12px 0;border-bottom:1px solid var(--line)}
+  .settings-list dt{padding-right:10px}
+  .settings-list dd{text-align:right}
+  .settings-list dt:nth-last-of-type(-n+1),
+  .settings-list dd:nth-last-of-type(-n+1){border-bottom:0}
+  .management-panel{padding:18px 15px}
+  .management-panel h2{font-size:18px;margin-bottom:8px}
+  .management-copy{font-size:12px;line-height:1.8}
+}
+@media(max-width:380px){
+  .settings-list{grid-template-columns:76px minmax(0,1fr)}
+  .settings-list dt,.settings-list dd{font-size:11px}
+  .stat-card strong{font-size:20px}
+}
