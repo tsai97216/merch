@@ -99,7 +99,23 @@
 - 新增類型時，必須同步更新 `public/data/categories.json`、相關 type / validation、ID 規則、搜尋與 UI 顯示。
 - 類型的顯示名稱應保持使用者友善，不要在一般 UI 直接顯示內部 code。
 
-## 7. Search / 搜尋規則
+## 7. Item Quantity / 數量
+
+- `Item` 代表一種收藏資料，不代表固定只有一個實物。
+- 同一款、同一版本、同一規格、同一收藏資料的複數實物，使用同一個 Item ID，以 `quantity` 記錄實際持有件數。
+- 只有在角色、版本／圖樣、尺寸、附贈內容或其他收藏資料本身不同時，才建立新的 Item ID。
+- `quantity` 必須是大於等於 1 的整數。
+- 舊資料沒有 `quantity` 時，載入時視為 `1`，不可因此讓既有資料失效。
+- **收藏品種類數** = Item 記錄筆數。
+- **實際周邊數量** = 所有 Item 的 `quantity` 總和。
+- 單項實際價值 = `purchase.price × quantity`。
+- 總消費 = 所有 Item 的 `purchase.price × quantity` 加總。
+- 按作品、類別、角色、廠商、狀態等統計「數量」時，一律加總 `quantity`，不能只計算 Item 筆數。
+- 若統計明確描述「種類」，才使用 Item 筆數。
+- UI 顯示單價時仍可顯示原始單價，但若數量大於 1，應讓使用者知道實際數量與該項合計價值。
+- 新增或修改數量功能時，必須同步檢查 type、schema validation、Store、既有資料相容性、Collection、Detail、Dashboard、Statistics 與後續 Management CRUD。
+
+## 8. Search / 搜尋規則
 
 - 搜尋是 Collection 的核心功能之一。
 - 搜尋文字應能與使用者看到的名稱、角色、作品、類型、廠商、Item ID 等既有可搜尋資料一致。
@@ -108,9 +124,9 @@
 - 搜尋無結果時維持既有 Empty State。
 - 搜尋、Filter、Sort 與顯示模式不可各自維護互相矛盾的資料狀態。
 
-## 8. 跨頁搜尋轉跳規則
+## 9. 跨頁搜尋轉跳規則
 
-### 8.1 核心規則
+### 9.1 核心規則
 
 **任何可以代表搜尋條件的統計、排名、摘要或 Dashboard 項目，只要使用者點擊後可以合理查看對應收藏，就必須提供搜尋轉跳。**
 
@@ -118,14 +134,14 @@
 
 `點擊項目 → Collection → 帶入搜尋條件 → 顯示對應結果`
 
-### 8.2 目前既有行為
+### 9.2 目前既有行為
 
 - 主頁「角色排名」點角色名稱 → `#/collection` → 搜尋該角色。
 - 主頁「作品統計」點作品名稱 → `#/collection` → 搜尋該作品。
 - 統計頁「作品」點作品名稱 → `#/collection` → 搜尋該作品。
 - 統計頁「類型」點類型名稱 → `#/collection` → 搜尋該類型。
 
-### 8.3 未來新增統計時
+### 9.3 未來新增統計時
 
 - 角色統計／排名 → 點角色 → 搜尋角色。
 - 廠商統計 → 點廠商 → 搜尋廠商。
@@ -133,7 +149,7 @@
 - 作品消費統計 → 若項目代表單一作品 → 點作品 → 搜尋作品。
 - 其他可以唯一或合理對應收藏的統計 → 原則上提供搜尋轉跳。
 
-### 8.4 實作規則
+### 9.4 實作規則
 
 - 目前跨頁搜尋邏輯集中於 `src/cross-navigation.ts`。
 - 動態 rendering 的統計／排名元素優先使用事件 delegation，不要每次 render 都重新綁定大量 listener。
@@ -142,7 +158,7 @@
 - 搜尋 query 優先使用使用者看到且搜尋系統可識別的值。
 - 如果一個統計項目需要複合條件才能準確表示，不能只塞一個模糊文字當 query，應設計相應的 Filter / query state。
 
-## 9. Router / Navigation
+## 10. Router / Navigation
 
 - 使用 Hash Router。
 - 既有主要 route：
@@ -159,7 +175,7 @@
 - Route navigation 與 page rendering 應保持解耦。
 - 從其他頁面跳 Collection 搜尋時，Router 與搜尋狀態都必須正確更新。
 
-## 10. Data / Store
+## 11. Data / Store
 
 - Store 是資料與 UI state 的主要來源。
 - Page 不持有自己的資料副本。
@@ -170,7 +186,7 @@
 - API 回傳資料進 Store 前要先驗證 schema。
 - 不可信資料不能直接假設為合法資料。
 
-## 11. Rendering / DOM / XSS
+## 12. Rendering / DOM / XSS
 
 - 使用者輸入、API 資料與外部資料一律視為不可信。
 - 優先使用安全 DOM rendering 與既有 escape / utility。
@@ -180,7 +196,7 @@
 - 不要在每次 render 重複新增相同 document listener。
 - 外部 URL、圖片 URL、API error 原文都不能直接當可信 HTML。
 
-## 12. Loading / Empty / Error
+## 13. Loading / Empty / Error
 
 每個資料驅動區塊都要考慮至少三種狀態：
 
@@ -196,7 +212,7 @@
 - JS 載入失敗時，首頁仍應保有基本可見內容。
 - 新增頁面或資料區塊時不要只處理正常資料狀態。
 
-## 13. Collection
+## 14. Collection
 
 - 支援：全部、作品分類、搜尋、Filter、Sort、狀態篩選。
 - 卡片／清單顯示模式需可切換並記住使用者選擇。
@@ -207,8 +223,9 @@
 - 圖片載入失敗使用 fallback。
 - 未完成的類別／角色／廠商 Filter 不可假裝已完成。
 - 新增 Filter 時要檢查與搜尋、Sort、URL / Store state 的互動。
+- 顯示數量時使用 `quantity`；Item 筆數與實際持有件數是不同概念。
 
-## 14. Statistics / 統計
+## 15. Statistics / 統計
 
 目前已存在：
 
@@ -216,19 +233,28 @@
 - 按類別統計。
 - 總消費。
 
+統計計算規則：
+
+- 所有「數量」統計預設代表實際持有件數，使用 `Σ quantity`。
+- 所有消費統計使用 `Σ(purchase.price × quantity)`。
+- Item 筆數只有在統計明確表示「收藏品種類數」時才使用。
+- 若同一 Item 的 quantity > 1，不可在數量統計中只算 1。
+
 未來新增統計時：
 
 1. 先定義統計資料來源與計算方式。
-2. 再決定 UI rendering。
-3. 若統計項目對應收藏集合，加入搜尋轉跳。
-4. 確認空資料、單一資料、零值與異常值。
-5. 確認手機版排版。
-6. 必要時將計算邏輯與 UI rendering 分離。
-7. 更新 TODO.md 與本 RULES.md。
+2. 明確區分「種類數」與「實際件數」。
+3. 消費統計確認是否需要 `price × quantity`。
+4. 再決定 UI rendering。
+5. 若統計項目對應收藏集合，加入搜尋轉跳。
+6. 確認空資料、單一資料、零值與異常值。
+7. 確認手機版排版。
+8. 必要時將計算邏輯與 UI rendering 分離。
+9. 更新 TODO.md 與本 RULES.md。
 
 **統計數字本身不是完成條件，互動行為也屬於功能的一部分。**
 
-## 15. Management / CRUD
+## 16. Management / CRUD
 
 - CRUD 功能必須有表單 validation。
 - 新增／編輯不可產生重複 ID 或破壞既有資料。
@@ -237,8 +263,9 @@
 - 表單重新 render 不應任意遺失使用者尚未提交的編輯狀態。
 - 寫入前先驗證資料，寫入成功後才更新 Store。
 - 不允許前端在 API 寫入失敗後假裝資料已成功保存。
+- Item 新增／編輯表單完成後必須支援 `quantity`，並驗證為大於等於 1 的整數。
 
-## 16. GitHub API / Worker
+## 17. GitHub API / Worker
 
 - Frontend 不應直接持有 GitHub Token。
 - GitHub 寫入應經過既定 API / Worker layer。
@@ -249,7 +276,7 @@
 - UI 不直接散落組 GitHub REST API request 的程式碼。
 - Secret / Token 不得 commit，也不可輸出到 console。
 
-## 17. Write Consistency / 寫入一致性
+## 18. Write Consistency / 寫入一致性
 
 標準流程：
 
@@ -265,7 +292,7 @@
 - 版本更新失敗時要有明確 recovery 策略。
 - 不讓部分成功留下資料不一致狀態。
 
-## 18. Image Management
+## 19. Image Management
 
 - 支援 JPG / PNG / WebP / GIF 時，要同步驗證 MIME type 與 extension。
 - 單張圖片大小上限依既定規格處理，目前為 <= 10 MB。
@@ -279,7 +306,7 @@
 - 上傳失敗必須 rollback，不可留下半完成 metadata。
 - 刪除封面後要有自動選擇下一張的規則。
 
-## 19. Security
+## 20. Security
 
 - GitHub Token 不進 frontend。
 - Admin Secret 不 commit。
@@ -292,7 +319,7 @@
 - sensitive data 不進 console / diagnostics。
 - 不要因為「只是管理頁」就降低安全要求。
 
-## 20. Testing
+## 21. Testing
 
 修改功能後，至少根據變更範圍檢查：
 
@@ -307,11 +334,11 @@
 - JS failure。
 - Network / API failure（若該功能涉及 API）。
 
-若新增統計：至少測試正常資料、空資料、單一項目與點擊搜尋轉跳。
+若新增統計：至少測試正常資料、空資料、單一項目、quantity > 1、加權金額與點擊搜尋轉跳。
 
-若新增 CRUD：至少測試 validation、成功、失敗、重複資料與重新整理後資料一致性。
+若新增 CRUD：至少測試 validation、成功、失敗、重複資料、quantity 邊界與重新整理後資料一致性。
 
-## 21. TODO.md
+## 22. TODO.md
 
 - `TODO.md` 是專案進度追蹤清單。
 - 實際完成才勾 `[x]`。
@@ -320,7 +347,7 @@
 - 不可為了讓進度看起來漂亮而提前勾選。
 - TODO 是「完成狀態」，RULES 是「怎麼做」，兩者不要混用。
 
-## 22. 新增功能標準流程
+## 23. 新增功能標準流程
 
 新增功能時依序檢查：
 
@@ -332,15 +359,16 @@
 6. **Router**：是否涉及新 route 或跨頁跳轉？
 7. **搜尋**：是否應整合搜尋？
 8. **統計**：若是統計／排名／摘要，是否需要點擊搜尋？
-9. **UI**：Desktop / Tablet / Mobile 是否都可用？
-10. **狀態**：Loading / Empty / Error 是否完整？
-11. **安全**：是否有使用者輸入、外部 URL 或 HTML rendering？
-12. **版本**：是否需要 Minor / Patch？
-13. **TODO**：是否完成對應項目？
-14. **RULES**：這次是否產生值得長期記住的新規則？
-15. **驗證**：TypeScript / Build / 實際功能是否通過？
+9. **數量**：若涉及收藏件數或金額，是否需要 `quantity` 加權？
+10. **UI**：Desktop / Tablet / Mobile 是否都可用？
+11. **狀態**：Loading / Empty / Error 是否完整？
+12. **安全**：是否有使用者輸入、外部 URL 或 HTML rendering？
+13. **版本**：是否需要 Minor / Patch？
+14. **TODO**：是否完成對應項目？
+15. **RULES**：這次是否產生值得長期記住的新規則？
+16. **驗證**：TypeScript / Build / 實際功能是否通過？
 
-## 23. 規則維護
+## 24. 規則維護
 
 - 本文件是持續累積的專案規格，不是一次性文件。
 - 發現容易重複出錯的寫法、確立新的資料規則、UI 行為或跨頁互動時，應補進本文件。
