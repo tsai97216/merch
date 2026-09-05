@@ -1,8 +1,9 @@
 # merch 重寫 TODO
 
 > 此文件是本專案目前唯一的進度追蹤清單。每完成一個項目，就更新 `[ ]` → `[x]` 並提交到 GitHub。
-> 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`，可在備註補充目前進度。
+> 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`。
 > UI/UX 與功能參考基準：`tsai97216/merch-old`。新架構重新實作，不直接複製舊版程式碼。
+> 已明確否決／不再實作的需求以刪除線保留，避免之後重複加回。
 
 ## 0. Project Foundation
 - [x] 新 merch repo
@@ -54,6 +55,7 @@
 - [x] reorder / cover replacement 不增加 Patch
 - [x] 不使用版本號作為 module cache
 - [x] 不使用 `?v=version` / `?build=...` 等 cache hack
+- [x] UI 版本顯示統一由 `version.json` 提供
 
 ## 4. Router
 - [x] Hash router
@@ -79,7 +81,7 @@
 - [ ] 重現 `merch-old` 的 Input / Select / Textarea / Toolbar / Filter controls
 - [ ] 重現 `merch-old` 的 Modal / Toast / Notice / Alert
 - [ ] 重現 `merch-old` 的圖片展示與 Image Viewer 體驗
-- [ ] 重現 `merch-old` 的卡片／清單收藏切換體驗
+- [x] 重現 `merch-old` 的卡片／清單收藏切換體驗
 - [ ] 重現 `merch-old` 的 Dashboard / Collection / Detail / Statistics / Management / Settings 頁面結構
 - [ ] 整理 `merch-old` 視覺規格：配色／字體／間距／圓角／陰影／元件狀態
 - [x] 整理 desktop / tablet / mobile breakpoint 規則
@@ -104,7 +106,7 @@
 - [x] Notice / Alert
 - [x] Item card
 - [x] Item list
-- [ ] Item detail
+- [x] Item detail 基本顯示
 - [ ] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
@@ -114,12 +116,15 @@
 - [x] 安全 DOM rendering
 - [x] 統一 class naming / component styling 邊界
 - [x] 避免 page-specific CSS 互相覆蓋
+- [x] 收藏卡片「已收到」隱藏文字但保留版面空間
+- [x] 周邊詳細資訊「已收到」隱藏文字但保留版面空間
+- [ ] ~~使用 MutationObserver 進行搜尋／狀態顯示後處理~~（已否決，不再使用）
 
 ## 6. Dashboard / Home
 - [x] 總收藏數
-- [ ] 已收到
-- [ ] 預購中
-- [ ] 待到貨
+- [ ] ~~已收到獨立統計方塊~~（已否決）
+- [ ] ~~預購中獨立統計方塊~~（已否決）
+- [x] 待到貨（合併 `pending + preorder`）
 - [x] 最近新增
 - [ ] 最近更新
 - [ ] 待處理事項
@@ -140,6 +145,9 @@
 - [x] 作品分類
 - [x] 搜尋
 - [x] 搜尋支援狀態文字：`預購中`、`待到貨`、`已收到` 等使用者可見狀態
+- [x] `待到貨` 搜尋結果包含 `pending + preorder`
+- [x] `預購中` 搜尋仍可單獨命中 preorder
+- [x] `已收到` 搜尋仍可單獨命中 received
 - [x] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
 - [x] 多詞條支援空白、`,`、`，`、`、` 等常見分隔方式
 - [x] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
@@ -147,8 +155,11 @@
 - [x] Sort
 - [x] 狀態篩選
 - [x] 類別篩選
+- [x] 搜尋下方只保留「類型／狀態」可見篩選
 - [x] 角色條件可透過搜尋
 - [x] 廠商條件可透過搜尋
+- [x] ~~排序使用下拉選單~~（已否決，改為按鈕式排序）
+- [x] 排序改為按鈕式控制
 - [x] 卡片顯示模式
 - [x] 清單顯示模式
 - [x] 記住卡片／清單選擇
@@ -186,6 +197,7 @@
 - [x] 不存在的 Item 顯示 Not Found
 - [x] Modal / Detail 狀態與 Router 狀態一致
 - [x] 鍵盤關閉與 focus 管理
+- [x] 「已收到」狀態徽章隱藏文字並保留空間
 
 ## 9. Statistics
 - [x] 按作品統計
@@ -337,3 +349,15 @@
 - [ ] Management verification
 - [x] `merch-old` 保持不變
 - [ ] 新站正式取代舊站
+
+## 已否決需求紀錄
+以下需求不是待辦事項，僅保留作為防止未來誤加回的紀錄：
+- ~~首頁「已收到」獨立統計方塊~~
+- ~~首頁「預購中」獨立統計方塊~~
+- ~~將 `pending` 與 `preorder` 在資料層合併成單一狀態~~（資料層保留原狀態，只有首頁統計、篩選與「待到貨」搜尋合併）
+- ~~收藏卡片直接移除「已收到」元素造成高度改變~~（只隱藏文字，保留版面空間）
+- ~~詳細資訊直接移除「已收到」狀態區塊造成高度改變~~（只隱藏文字，保留版面空間）
+- ~~搜尋下方顯示作品／角色／廠商三個可見選擇器~~
+- ~~排序使用選單式 `<select>`~~
+- ~~使用 MutationObserver 進行 UI 後處理~~
+- ~~版本號分散硬編碼於多個地方~~
