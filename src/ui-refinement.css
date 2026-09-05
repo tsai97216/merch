@@ -31,6 +31,16 @@
 .button:focus-visible{outline:3px solid rgba(53,106,230,.22);outline-offset:2px}
 .panel h2,.section h2{letter-spacing:-.02em}
 
+/* Card alignment: preserve the 1.35.0 visual design while reserving stable text zones. */
+.item-body{display:flex;flex-direction:column;min-width:0}
+.item-top{flex:0 0 24px;min-height:24px}
+.item-card h3{flex:0 0 calc(1.4em * 2);min-height:calc(1.4em * 2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.item-work{flex:0 0 1.5em;min-height:1.5em}
+.item-bottom{margin-top:auto;min-width:0}
+.item-bottom strong,.item-bottom span{min-width:0}
+.quantity-mark{color:var(--muted);font-weight:inherit}
+.expected-arrival{display:block;min-height:1.4em;margin-top:6px;color:var(--muted);font-size:10px;line-height:1.4}
+
 @media(max-width:700px){
   .page-heading{width:100%;min-width:0}
   .page-heading > div{width:100%}
