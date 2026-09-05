@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "works": [
+    {"id":"honkai-star-rail","name":"HSR","data":"data/works/honkai-star-rail.json"},
+    {"id":"genshin-impact","name":"GI","data":"data/works/genshin-impact.json"},
+    {"id":"zenless-zone-zero","name":"ZZZ","data":"data/works/zenless-zone-zero.json"},
+    {"id":"wuthering-waves","name":"WW","data":"data/works/wuthering-waves.json"}
+  ]
+}
