@@ -50,22 +50,29 @@ function roleRanking(items: Item[]): string {
 }
 
 function monthBars(items: Item[]): string {
-  const months = new Map<string, { count: number; spending: number }>();
+  const now = new Date();
+  const year = now.getFullYear();
+  const months: Array<{ month: string; count: number; spending: number }> = Array.from({ length: 12 }, (_, index) => ({
+    month: `${year}-${String(index + 1).padStart(2, '0')}`,
+    count: 0,
+    spending: 0
+  }));
+  const monthMap = new Map(months.map((entry) => [entry.month, entry]));
+
   items.forEach((item) => {
     const raw = item.purchase?.date || item.createdAt;
     if (!raw) return;
     const date = new Date(raw);
-    if (Number.isNaN(date.getTime())) return;
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    const current = months.get(key) || { count: 0, spending: 0 };
+    if (Number.isNaN(date.getTime()) || date.getFullYear() !== year) return;
+    const key = `${year}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const current = monthMap.get(key);
+    if (!current) return;
     current.count += quantityOf(item);
     current.spending += valueOf(item);
-    months.set(key, current);
   });
-  const entries = [...months.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  if (!entries.length) return '<div class="stat-empty">目前沒有資料</div>';
-  const max = Math.max(1, ...entries.map(([, value]) => value.spending));
-  return `<div class="month-bars">${entries.map(([month, value]) => `<div class="month-bar-row"><div class="month-bar-meta"><span>${esc(month)}</span><b>${value.count} 件 · ${money(value.spending)}</b></div><div class="month-bar-track"><i style="width:${Math.max(value.spending ? 5 : 0, value.spending / max * 100)}%"></i></div></div>`).join('')}</div>`;
+
+  const max = Math.max(1, ...months.map((value) => value.spending));
+  return `<div class="month-bars">${months.map((value) => `<div class="month-bar-row"><div class="month-bar-meta"><span>${esc(value.month)}</span><b>${value.count} 件 · ${money(value.spending)}</b></div><div class="month-bar-track"><i style="width:${value.spending ? Math.max(5, value.spending / max * 100) : 0}%"></i></div></div>`).join('')}</div>`;
 }
 
 async function renderEnhancedStatistics() {
@@ -105,10 +112,14 @@ async function renderEnhancedStatistics() {
       breakdown.className = 'statistics-breakdown';
       page.appendChild(breakdown);
     }
-    breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>各月份統計</h2><p>依購買日期統計數量與消費。</p></div></div>${monthBars(items)}</section>`;
+    breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel()}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
   } catch (error) {
     console.error('[statistics-enhancement]', error);
   }
+}
+
+function yearLabel(): string {
+  return `${new Date().getFullYear()} 年 `;
 }
 
 function sync() {
