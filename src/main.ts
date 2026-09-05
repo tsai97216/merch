@@ -1,5 +1,6 @@
 import './styles.css';
 import './item-detail-modal.css';
+import './collection.css';
 import { createRouter } from './router';
 import { loadStore, MerchStore } from './store';
 import { parseItemId } from './item-id';
@@ -14,9 +15,7 @@ const dateText = (s?: string) => s ? new Date(s).toLocaleDateString('zh-TW') : '
 const quantityOf = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
 const itemValue = (item: Item) => Number(item.purchase?.price || 0) * quantityOf(item);
 
-function getItemIdParts(item: Item) {
-  return parseItemId(item.id);
-}
+function getItemIdParts(item: Item) { return parseItemId(item.id); }
 
 function itemSearchText(item: Item): string {
   const parsed = getItemIdParts(item);
@@ -24,9 +23,7 @@ function itemSearchText(item: Item): string {
   return [item.id, ...idParts, item.title, item.workName, item.category, item.manufacturer, ...(item.characters || []), item.notes, statusText(item.status), item.status].filter(Boolean).join(' ').toLowerCase();
 }
 
-function splitSearchQuery(query: string): string[] {
-  return query.trim().toLowerCase().split(/[\s,，、]+/).map((term) => term.trim()).filter(Boolean);
-}
+function splitSearchQuery(query: string): string[] { return query.trim().toLowerCase().split(/[\s,，、]+/).map((term) => term.trim()).filter(Boolean); }
 
 function matchesItemQuery(item: Item, query: string): boolean {
   const terms = splitSearchQuery(query);
@@ -65,9 +62,10 @@ function bindItemCards(root: ParentNode = document) {
   });
 }
 
-function optionList(items: Item[], valueOf: (item: Item) => string | undefined): string[] {
+function optionList(items: Item[], valueOf: (item: Item) => string | string[] | undefined): string[] {
   return [...new Set(items.flatMap((item) => {
     const value = valueOf(item);
+    if (Array.isArray(value)) return value.filter(Boolean);
     return value ? [value] : [];
   }))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
 }
@@ -75,15 +73,14 @@ function optionList(items: Item[], valueOf: (item: Item) => string | undefined):
 function setSelectOptions(id: string, allLabel: string, values: string[], selected: string) {
   const select = $<HTMLSelectElement>(`#${id}`);
   if (!select) return;
-  const options = [`<option value="all">${escapeHtml(allLabel)}</option>`, ...values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)].join('');
-  select.innerHTML = options;
+  select.innerHTML = [`<option value="all">${escapeHtml(allLabel)}</option>`, ...values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)].join('');
   select.value = values.includes(selected) ? selected : 'all';
 }
 
 function syncDynamicCollectionOptions(store: MerchStore) {
   const { items, ui } = store.snapshot;
   setSelectOptions('filter-category', '全部類型', optionList(items, (item) => item.category), ui.collectionCategory);
-  setSelectOptions('filter-character', '全部角色', optionList(items, (item) => item.characters?.join('、')), ui.collectionCharacter);
+  setSelectOptions('filter-character', '全部角色', optionList(items, (item) => item.characters), ui.collectionCharacter);
   setSelectOptions('filter-manufacturer', '全部廠商', optionList(items, (item) => item.manufacturer), ui.collectionManufacturer);
 }
 
@@ -177,13 +174,7 @@ function renderDetail(store: MerchStore, id: string) {
 function syncCollectionControls(store: MerchStore) { const { ui } = store.snapshot; const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const category = $('#filter-category') as HTMLSelectElement | null; const character = $('#filter-character') as HTMLSelectElement | null; const manufacturer = $('#filter-manufacturer') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null; if (search) search.value = ui.collectionQuery; if (work) work.value = ui.collectionWork; if (status) status.value = ui.collectionStatus; if (category) category.value = ui.collectionCategory; if (character) character.value = ui.collectionCharacter; if (manufacturer) manufacturer.value = ui.collectionManufacturer; if (sort) sort.value = ui.collectionSort; }
 function setupCollection(store: MerchStore) {
   const search = $('#collection-search') as HTMLInputElement | null; const work = $('#filter-work') as HTMLSelectElement | null; const status = $('#filter-status') as HTMLSelectElement | null; const category = $('#filter-category') as HTMLSelectElement | null; const character = $('#filter-character') as HTMLSelectElement | null; const manufacturer = $('#filter-manufacturer') as HTMLSelectElement | null; const sort = $('#sort') as HTMLSelectElement | null;
-  search?.addEventListener('input', () => store.setUi({ collectionQuery: search.value }));
-  work?.addEventListener('change', () => store.setUi({ collectionWork: work.value }));
-  status?.addEventListener('change', () => store.setUi({ collectionStatus: status.value }));
-  category?.addEventListener('change', () => store.setUi({ collectionCategory: category.value }));
-  character?.addEventListener('change', () => store.setUi({ collectionCharacter: character.value }));
-  manufacturer?.addEventListener('change', () => store.setUi({ collectionManufacturer: manufacturer.value }));
-  sort?.addEventListener('change', () => store.setUi({ collectionSort: sort.value as 'created' | 'title' | 'price' }));
+  search?.addEventListener('input', () => store.setUi({ collectionQuery: search.value })); work?.addEventListener('change', () => store.setUi({ collectionWork: work.value })); status?.addEventListener('change', () => store.setUi({ collectionStatus: status.value })); category?.addEventListener('change', () => store.setUi({ collectionCategory: category.value })); character?.addEventListener('change', () => store.setUi({ collectionCharacter: character.value })); manufacturer?.addEventListener('change', () => store.setUi({ collectionManufacturer: manufacturer.value })); sort?.addEventListener('change', () => store.setUi({ collectionSort: sort.value as 'created' | 'title' | 'price' }));
   $$('.view-button').forEach((button) => button.addEventListener('click', () => store.setUi({ collectionView: button.dataset.view === 'list' ? 'list' : 'cards' })));
 }
 function setupSidebarToggle() { const sidebar = $('.sidebar') as HTMLElement | null; const button = $('#sidebar-toggle') as HTMLButtonElement | null; if (!sidebar || !button) return; const key = 'chi-merch-sidebar-collapsed'; const setCollapsed = (collapsed: boolean) => { sidebar.classList.toggle('is-collapsed', collapsed); document.body.classList.toggle('sidebar-collapsed', collapsed); button.setAttribute('aria-label', collapsed ? '展開側邊欄' : '收合側邊欄'); button.title = collapsed ? '展開側邊欄' : '收合側邊欄'; button.innerHTML = '<i class="fa-solid fa-grip-lines-vertical" aria-hidden="true"></i>'; try { localStorage.setItem(key, collapsed ? '1' : '0'); } catch {} }; let collapsed = false; try { collapsed = localStorage.getItem(key) === '1'; } catch {} setCollapsed(collapsed); button.addEventListener('click', () => setCollapsed(!sidebar.classList.contains('is-collapsed'))); }
