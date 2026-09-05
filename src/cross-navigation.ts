@@ -17,11 +17,7 @@ function getSearchTarget(target: HTMLElement): HTMLElement | null {
   if (explicit) return explicit;
 
   const homeStat = target.closest<HTMLElement>('.page[data-page="home"] .stat-card');
-  if (homeStat) {
-    const label = homeStat.querySelector('span')?.textContent?.trim() || '';
-    if (label === '總收藏') return homeStat;
-    if (label === '待到貨') return homeStat;
-  }
+  if (homeStat) return homeStat;
 
   const character = target.closest<HTMLElement>('#character-ranking li');
   if (character) return character.querySelector('strong');
@@ -44,15 +40,11 @@ function getQueryForTarget(target: HTMLElement): string {
   if (target.matches('.stat-card')) {
     const label = target.querySelector('span')?.textContent?.trim() || '';
     if (label === '待到貨') return '待到貨';
-    if (label === '總收藏') return '';
+    if (label === '已收到') return '已收到';
+    if (label === '預購中') return '預購中';
+    return '';
   }
   return target.textContent || '';
-}
-
-function hideReceivedBadges(root: ParentNode = document) {
-  root.querySelectorAll<HTMLElement>('.item-card .badge').forEach((badge) => {
-    if (badge.textContent?.trim() === '已收到') badge.remove();
-  });
 }
 
 function installCrossNavigation() {
@@ -68,10 +60,6 @@ function installCrossNavigation() {
     event.stopPropagation();
     goToCollectionSearch(query);
   }, true);
-
-  hideReceivedBadges();
-  const observer = new MutationObserver(() => hideReceivedBadges());
-  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 installCrossNavigation();
