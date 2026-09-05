@@ -21,14 +21,14 @@
 - [x] JS 失敗時首頁仍保有基本可見內容
 
 ## 1. Data Layer
-- [ ] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
-- [ ] Schema validation
-- [ ] 單一 Store：works / items / version / UI / loading / error
-- [ ] Store subscribe
-- [ ] Page 不持有自己的資料副本
-- [ ] Store state immutable 更新原則
-- [ ] Store 訂閱生命週期與取消訂閱
-- [ ] Data / UI state 邊界明確
+- [x] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
+- [x] Schema validation
+- [x] 單一 Store：works / items / version / UI / loading / error
+- [x] Store subscribe
+- [x] Page 不持有自己的資料副本
+- [x] Store state immutable 更新原則
+- [x] Store 訂閱生命週期與取消訂閱
+- [x] Data / UI state 邊界明確
 
 ## 2. Data Migration
 - [ ] 建立 migration script
@@ -45,10 +45,10 @@
 - [x] 初始版本 `1.0.0`
 - [x] 版本只有一個來源
 - [x] 版本來源固定為 `public/data/version.json`
-- [ ] Major = 大版本／架構世代重寫
-- [ ] Minor = 每次完整邏輯／功能修改
-- [ ] Patch = GitHub API 新增／移除收藏或圖片
-- [ ] reorder / cover replacement 不增加 Patch
+- [x] Major = 大版本／架構世代重寫
+- [x] Minor = 每次完整邏輯／功能修改
+- [x] Patch = GitHub API 新增／移除收藏或圖片
+- [x] reorder / cover replacement 不增加 Patch
 - [x] 不使用版本號作為 module cache
 - [x] 不使用 `?v=version` / `?build=...` 等 cache hack
 
@@ -105,84 +105,84 @@
 - [ ] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
-- [ ] DOM utility
-- [ ] Date utility
-- [ ] Format utility
-- [ ] 安全 DOM rendering
+- [x] DOM utility
+- [x] Date utility
+- [x] Format utility
+- [x] 安全 DOM rendering
 - [x] 統一 class naming / component styling 邊界
 - [x] 避免 page-specific CSS 互相覆蓋
 
 ## 6. Dashboard / Home
-- [ ] 總收藏數
-- [ ] 已收到
-- [ ] 預購中
-- [ ] 待到貨
-- [ ] 最近新增
+- [x] 總收藏數
+- [x] 已收到
+- [x] 預購中
+- [x] 待到貨
+- [x] 最近新增
 - [ ] 最近更新
 - [ ] 待處理事項
 - [ ] 即將到貨
-- [ ] 作品統計
-- [ ] 消費統計
-- [ ] 快速入口
+- [x] 作品統計
+- [x] 消費統計
+- [x] 快速入口
 - [x] JS 失敗時仍能看到基本首頁
 - [x] Home 資料區塊在空資料時仍保持合理排版
 
 ## 7. Collection
-- [ ] 全部
-- [ ] 作品分類
-- [ ] 搜尋
-- [ ] Filter
-- [ ] Sort
-- [ ] 狀態篩選
+- [x] 全部
+- [x] 作品分類
+- [x] 搜尋
+- [x] Filter
+- [x] Sort
+- [x] 狀態篩選
 - [ ] 類別篩選
 - [ ] 角色篩選
 - [ ] 廠商篩選
-- [ ] 卡片顯示模式
-- [ ] 清單顯示模式
-- [ ] 記住卡片／清單選擇
-- [ ] 顯示封面
-- [ ] 顯示標題
-- [ ] 顯示作品
-- [ ] 顯示角色
-- [ ] 顯示類別
-- [ ] 顯示價格
-- [ ] 顯示狀態
-- [ ] 顯示預計到貨日期
-- [ ] 點擊進入詳細頁
-- [ ] 篩選條件組合正確
-- [ ] 搜尋／篩選／排序狀態與 Store 同步
-- [ ] 無結果 Empty State
-- [ ] 圖片載入失敗 fallback
-- [ ] 卡片與清單在手機版保持可用
+- [x] 卡片顯示模式
+- [x] 清單顯示模式
+- [x] 記住卡片／清單選擇
+- [x] 顯示封面
+- [x] 顯示標題
+- [x] 顯示作品
+- [x] 顯示角色
+- [x] 顯示類別
+- [x] 顯示價格
+- [x] 顯示狀態
+- [x] 顯示預計到貨日期
+- [x] 點擊進入詳細頁
+- [x] 篩選條件組合正確
+- [x] 搜尋／篩選／排序狀態與 Store 同步
+- [x] 無結果 Empty State
+- [x] 圖片載入失敗 fallback
+- [x] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
-- [ ] 完整基本資訊
-- [ ] 購買資訊
-- [ ] 發售資訊
-- [ ] 物流資訊
-- [ ] 售後資訊
-- [ ] 圖片展示
-- [ ] 圖片載入失敗 fallback
+- [x] 完整基本資訊
+- [x] 購買資訊
+- [x] 發售資訊
+- [x] 物流資訊
+- [x] 售後資訊
+- [x] 圖片展示
+- [x] 圖片載入失敗 fallback
 - [ ] 編輯
 - [ ] 刪除
-- [ ] 返回
-- [ ] 不存在的 Item 顯示 Not Found
-- [ ] Modal / Detail 狀態與 Router 狀態一致
+- [x] 返回
+- [x] 不存在的 Item 顯示 Not Found
+- [x] Modal / Detail 狀態與 Router 狀態一致
 - [ ] 鍵盤關閉與 focus 管理
 
 ## 9. Statistics
-- [ ] 按作品統計
-- [ ] 按類別統計
-- [ ] 按角色統計
+- [x] 按作品統計
+- [x] 按類別統計
+- [x] 按角色統計
 - [ ] 按廠商統計
-- [ ] 按狀態統計
-- [ ] 總消費
+- [x] 按狀態統計
+- [x] 總消費
 - [ ] 各作品消費
 - [ ] 各月份消費／新增
-- [ ] 集中使用 Date utility
-- [ ] 空資料狀態
+- [x] 集中使用 Date utility
+- [x] 空資料狀態
 - [ ] 統計計算與 UI rendering 分離
-- [ ] 金額／數量格式統一
+- [x] 金額／數量格式統一
 - [ ] 統計結果邊界案例驗證
 
 ## 10. Management
@@ -252,7 +252,7 @@
 - [ ] 上傳失敗 rollback
 - [ ] image path / URL 正規化
 - [ ] MIME type / extension 驗證
-- [ ] 空圖片／破損圖片 fallback
+- [x] 空圖片／破損圖片 fallback
 - [ ] 圖片排序結果與 metadata 一致
 
 ## 14. Settings
@@ -271,13 +271,13 @@
 ## 15. Security
 - [ ] GitHub Token 不進 frontend
 - [ ] Admin Secret 不 commit
-- [ ] 安全 DOM rendering
+- [x] 安全 DOM rendering
 - [ ] API path whitelist
 - [ ] Worker auth / method checks
-- [ ] XSS 防護
+- [x] XSS 防護
 - [ ] 避免大型不安全 `innerHTML`
 - [ ] 外部 URL / image URL 驗證
-- [ ] 使用者輸入內容一律視為不可信
+- [x] 使用者輸入內容一律視為不可信
 - [ ] 不把 API error 原文直接當 HTML rendering
 - [ ] sensitive data 不進 console / diagnostics
 
@@ -288,19 +288,19 @@
 - [ ] Statistics tests
 - [ ] CRUD tests
 - [ ] Image tests
-- [ ] Router tests
-- [ ] UI state tests
+- [x] Router tests
+- [x] UI state tests
 - [ ] Error boundary tests
 - [ ] Chrome
 - [ ] Safari
-- [ ] iPhone
-- [ ] iPad
-- [ ] Desktop
+- [x] iPhone
+- [x] iPad
+- [x] Desktop
 - [x] JS failure
 - [ ] Network failure
 - [ ] API failure
 - [x] Empty data
-- [ ] malformed data
+- [x] malformed data
 - [ ] concurrent write conflict
 
 ## 17. Final Switch
