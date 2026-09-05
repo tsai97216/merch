@@ -41,17 +41,14 @@ function chartSvg(chart: Chart, large = false): string {
   return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><line x1="${left}" y1="${top+plotH}" x2="${left+plotW}" y2="${top+plotH}" class="chart-axis"/><path d="${path}" class="chart-line"/>${points.map((p)=>`<g class="chart-point" tabindex="0"><circle cx="${p.x}" cy="${p.y}" r="${large?7:5}"/><text x="${p.x}" y="${height-19}" text-anchor="middle">${escapeHtml(p.label)}</text><title>${escapeHtml(p.label)}：${escapeHtml(money(p.value))}</title></g>`).join('')}</svg>`;
 }
 
-function table(chart: Chart): string {
-  return `<div class="statistics-data"><div class="statistics-data-head"><span>詳細數據</span><span>${chart.rows.length} 筆</span></div><div class="statistics-data-list">${chart.rows.map((r)=>`<div class="statistics-data-row"><strong>${escapeHtml(r.label)}</strong><span>${chart.format==='money'?escapeHtml(money(r.value)):`${r.value} 件`}</span></div>`).join('')||'<div class="empty-state">目前沒有資料</div>'}</div></div>`;
-}
+function table(chart: Chart): string { return `<div class="statistics-data"><div class="statistics-data-head"><span>詳細數據</span><span>${chart.rows.length} 筆</span></div><div class="statistics-data-list">${chart.rows.map((r)=>`<div class="statistics-data-row"><strong>${escapeHtml(r.label)}</strong><span>${chart.format==='money'?escapeHtml(money(r.value)):`${r.value} 件`}</span></div>`).join('')||'<div class="empty-state">目前沒有資料</div>'}</div></div>`; }
 
 function openDetail(chart: Chart): void {
   const modal=document.createElement('div'); modal.className='statistics-detail'; modal.innerHTML=`<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="statistics-detail-title"><header class="statistics-detail-header"><div><span class="eyebrow">STATISTICS DETAIL</span><h2 id="statistics-detail-title">${escapeHtml(chart.title)}</h2><p>${escapeHtml(chart.description)}</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細統計"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header><div class="statistics-large-chart">${chartSvg(chart,true)}</div>${table(chart)}</section>`;
   document.body.appendChild(modal); document.body.classList.add('statistics-detail-open');
-  const close=()=>{modal.remove();document.body.classList.remove('statistics-detail-open');};
-  modal.querySelectorAll('[data-stat-close]').forEach((node)=>node.addEventListener('click',close));
-  const keydown=(event: KeyboardEvent)=>{if(event.key==='Escape')close();}; document.addEventListener('keydown',keydown,{once:false}); modal.addEventListener('remove',()=>document.removeEventListener('keydown',keydown));
-  modal.tabIndex=-1; modal.focus();
+  const close=()=>{modal.remove();document.body.classList.remove('statistics-detail-open');document.removeEventListener('keydown',keydown);};
+  const keydown=(event: KeyboardEvent)=>{if(event.key==='Escape')close();};
+  modal.querySelectorAll('[data-stat-close]').forEach((node)=>node.addEventListener('click',close)); document.addEventListener('keydown',keydown); modal.tabIndex=-1; modal.focus();
 }
 
 function render(charts: Chart[]): void {
