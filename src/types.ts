@@ -45,7 +45,6 @@ export type Item = {
   characters?: string[];
   category?: string;
   manufacturer?: string;
-  /** 實際持有件數；同款複數實物共用同一個 Item ID。 */
   quantity: number;
   status: ItemStatus;
   description?: string;
@@ -93,6 +92,9 @@ export type UiState = {
   collectionQuery: string;
   collectionStatus: string;
   collectionWork: string;
+  collectionCategory: string;
+  collectionCharacter: string;
+  collectionManufacturer: string;
   collectionSort: 'created' | 'title' | 'price';
 };
 
@@ -110,5 +112,8 @@ export const defaultUiState: UiState = {
   collectionQuery: '',
   collectionStatus: 'all',
   collectionWork: 'all',
+  collectionCategory: 'all',
+  collectionCharacter: 'all',
+  collectionManufacturer: 'all',
   collectionSort: 'created',
 };
