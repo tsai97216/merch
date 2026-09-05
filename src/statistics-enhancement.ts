@@ -99,7 +99,8 @@ function renderWithData(data: { works: WorkIndex[]; items: Item[] }) {
     breakdown.className = 'statistics-breakdown';
     page.appendChild(breakdown);
   }
-  breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel()}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
+  const yearLabel = `${new Date().getFullYear()} 年`;
+  breakdown.innerHTML = `<section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">CHARACTERS</span><h2>角色排行</h2></div></div>${roleRanking(items)}</section><section class="panel stat-breakdown-panel"><div class="panel-heading"><div><span class="panel-label">MONTHLY</span><h2>${yearLabel}各月份統計</h2><p>顯示今年 1 月至 12 月的收藏數量與消費。</p></div></div>${monthBars(items)}</section>`;
 }
 
 async function renderEnhancedStatistics() {
@@ -111,8 +112,6 @@ function scheduleRender() {
   const token = ++renderToken;
   void renderEnhancedStatistics().then(() => {
     if (token !== renderToken) return;
-    // main.ts also renders the two statistics hosts. Re-apply the enhanced charts
-    // for a short settling window so async store initialization cannot overwrite them.
     [0, 100, 250, 500, 1000].forEach((delay) => window.setTimeout(() => {
       if (token === renderToken) renderWithData(cachedData as { works: WorkIndex[]; items: Item[] });
     }, delay));
