@@ -99,6 +99,25 @@ function validateVersion(value: unknown): VersionData {
   return { version: value.version };
 }
 
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === 'object' && !Object.isFrozen(value)) {
+    Reflect.ownKeys(value as object).forEach((key) => {
+      const child = (value as Record<PropertyKey, unknown>)[key];
+      if (child && typeof child === 'object') deepFreeze(child);
+    });
+    Object.freeze(value);
+  }
+  return value;
+}
+
+function cloneAndFreeze<T>(value: T): T {
+  return deepFreeze(structuredClone(value));
+}
+
+function normalizeStoreItem(item: Item, label: string): Item {
+  return { ...item, quantity: normalizeQuantity(item.quantity, label) };
+}
+
 function readSavedUi(): UiState {
   try {
     const raw = localStorage.getItem('merch-ui');
@@ -124,7 +143,7 @@ export class MerchStore {
   private listeners = new Set<(state: StoreState) => void>();
 
   constructor(state: StoreState) {
-    this.state = Object.freeze({ ...state, works: [...state.works], items: [...state.items], ui: { ...state.ui } });
+    this.state = cloneAndFreeze(state);
   }
 
   get snapshot(): StoreState {
@@ -138,7 +157,7 @@ export class MerchStore {
 
   setUi(patch: Partial<UiState>): void {
     const ui = { ...this.state.ui, ...patch };
-    this.state = Object.freeze({ ...this.state, ui });
+    this.state = cloneAndFreeze({ ...this.state, ui });
     try { localStorage.setItem('merch-ui', JSON.stringify(ui)); } catch { /* local persistence is optional */ }
     this.emit();
   }
@@ -146,20 +165,20 @@ export class MerchStore {
   replaceData(works: Work[], version: string): void {
     const normalizedWorks = works.map((work) => ({
       ...work,
-      items: work.items.map((item) => ({ ...item, quantity: item.quantity || 1 })),
+      items: work.items.map((item, index) => normalizeStoreItem(item, `${work.name}.items[${index}]`)),
     }));
     const items = normalizedWorks.flatMap((work) => work.items.map((item) => ({ ...item, workId: work.id, workName: work.name })));
-    this.state = Object.freeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null });
+    this.state = cloneAndFreeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null });
     this.emit();
   }
 
   setLoading(loading: boolean): void {
-    this.state = Object.freeze({ ...this.state, loading });
+    this.state = cloneAndFreeze({ ...this.state, loading });
     this.emit();
   }
 
   setError(error: string | null): void {
-    this.state = Object.freeze({ ...this.state, error, loading: false });
+    this.state = cloneAndFreeze({ ...this.state, error, loading: false });
     this.emit();
   }
 
