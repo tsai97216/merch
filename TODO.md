@@ -29,9 +29,9 @@
 - [x] 單一 Store：works / items / version / UI / loading / error
 - [x] Store subscribe
 - [x] Page 不持有自己的資料副本
-- [ ] Store state immutable 更新原則
-- [ ] 統一所有 quantity 進入 Store 前的 normalization / validation
-- [ ] Store 不以 `quantity || 1` 取代正式 quantity validation
+- [x] Store state immutable 更新原則
+- [x] 統一所有 quantity 進入 Store 前的 normalization / validation
+- [x] Store 不以 `quantity || 1` 取代正式 quantity validation
 - [x] Store 訂閱生命週期與取消訂閱
 - [x] Data / UI state 邊界明確
 
@@ -119,9 +119,9 @@
 - [x] 避免 page-specific CSS 互相覆蓋
 - [x] 收藏卡片「已收到」隱藏文字但保留版面空間
 - [x] 周邊詳細資訊「已收到」隱藏文字但保留版面空間
-- [ ] 主要 rendering 與 enhancement module 結構一致
-- [ ] 移除 MutationObserver 相關實作
-- [ ] 移除不再需要的 rendering workaround
+- [x] 主要 rendering 與 enhancement module 結構一致
+- [x] 移除 MutationObserver 相關實作
+- [x] 移除不再需要的 rendering workaround
 
 ## 6. Dashboard / Home
 - [x] 總收藏數
@@ -166,7 +166,7 @@
 - [x] 顯示類別
 - [x] 顯示價格
 - [x] 顯示數量
-- [ ] 顯示多件商品的單價 × 數量與合計價值
+- [x] 顯示多件商品的單價 × 數量與合計價值
 - [x] 顯示狀態
 - [x] 顯示預計到貨日期
 - [x] 點擊進入詳細頁
