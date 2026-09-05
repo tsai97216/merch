@@ -1,3 +1,5 @@
+import './card-enhancements.css';
+
 function normalizeCard(card: Element): void {
   const top = card.querySelector<HTMLElement>('.item-top');
   if (top) {
