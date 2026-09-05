@@ -84,7 +84,7 @@
 - [x] 整理 typography hierarchy 與字重規則
 - [x] 整理 color / spacing / radius / shadow design tokens
 - [ ] 全站 layout
-- [ ] Desktop sidebar / navigation
+- [x] Desktop sidebar / navigation
 - [ ] Mobile navigation
 - [ ] Page header / eyebrow / section heading
 - [ ] Button
