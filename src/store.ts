@@ -44,6 +44,15 @@ function validateWorksIndex(value: unknown): WorksIndex {
   return { schemaVersion: 1, works };
 }
 
+function normalizeQuantity(value: unknown, label: string): number {
+  // 舊資料沒有 quantity 時視為持有 1 件，避免既有收藏無法載入。
+  if (value === undefined) return 1;
+  if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) {
+    throw new Error(`${label}.quantity 必須是大於等於 1 的整數`);
+  }
+  return value;
+}
+
 function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
   assertRecord(value, label);
   if (typeof value.id !== 'string' || !value.id) throw new Error(`${label}.id 無效`);
@@ -60,7 +69,8 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
   if (value.images !== undefined && (!Array.isArray(value.images) || value.images.some((x) => !isRecord(x) || typeof x.id !== 'string'))) {
     throw new Error(`${label}.images 格式無效`);
   }
-  return value as unknown as Item;
+
+  return { ...(value as unknown as Item), quantity: normalizeQuantity(value.quantity, label) };
 }
 
 function validateWorkPayload(value: unknown, label: string, work: WorksIndexEntry): WorkPayload {
@@ -132,7 +142,10 @@ export class MerchStore {
   }
 
   replaceData(works: Work[], version: string): void {
-    const normalizedWorks = works.map((work) => ({ ...work, items: work.items.map((item) => ({ ...item })) }));
+    const normalizedWorks = works.map((work) => ({
+      ...work,
+      items: work.items.map((item) => ({ ...item, quantity: item.quantity || 1 })),
+    }));
     const items = normalizedWorks.flatMap((work) => work.items.map((item) => ({ ...item, workId: work.id, workName: work.name })));
     this.state = Object.freeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null });
     this.emit();
