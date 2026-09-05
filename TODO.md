@@ -36,7 +36,7 @@
 - [x] Data / UI state 邊界明確
 
 ## 2. Data Migration
-- [ ] 建立 migration script
+- [x] 建立 migration script
 - [x] 遷移四個作品
 - [x] 遷移目前四個收藏品
 - [x] 保留原 ID
