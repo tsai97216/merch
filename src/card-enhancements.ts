@@ -5,7 +5,7 @@ function normalizeCard(card: Element): void {
   if (top) {
     const category = top.querySelector<HTMLElement>('.muted');
     const status = top.querySelector<HTMLElement>('.badge');
-    if (category && status) {
+    if (category && status && (category.nextElementSibling !== status || status.previousElementSibling !== category)) {
       top.append(category, status);
       top.classList.add('card-meta-row');
     }
