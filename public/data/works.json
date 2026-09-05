@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "works": [
-    {"id":"honkai-star-rail","name":"崩壞：星穹鐵道","data":"data/works/honkai-star-rail.json"},
-    {"id":"genshin-impact","name":"原神","data":"data/works/genshin-impact.json"},
-    {"id":"zenless-zone-zero","name":"絕區零","data":"data/works/zenless-zone-zero.json"},
-    {"id":"wuthering-waves","name":"鳴潮","data":"data/works/wuthering-waves.json"}
+    {"id":"honkai-star-rail","name":"HSR","data":"data/works/honkai-star-rail.json"},
+    {"id":"genshin-impact","name":"GI","data":"data/works/genshin-impact.json"},
+    {"id":"zenless-zone-zero","name":"ZZZ","data":"data/works/zenless-zone-zero.json"},
+    {"id":"wuthering-waves","name":"WW","data":"data/works/wuthering-waves.json"}
   ]
 }
