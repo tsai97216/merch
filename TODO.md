@@ -88,7 +88,7 @@
 - [x] 整理 color / spacing / radius / shadow design tokens
 - [ ] 全站 layout
 - [x] Desktop sidebar / navigation
-- [ ] Mobile navigation
+- [x] Mobile navigation
 - [ ] Page header / eyebrow / section heading
 - [ ] Button
 - [ ] Card
@@ -147,8 +147,8 @@
 - [x] Sort
 - [x] 狀態篩選
 - [x] 類別篩選
-- [ ] 角色篩選（目前改為透過搜尋）
-- [ ] 廠商篩選（目前改為透過搜尋）
+- [x] 角色條件可透過搜尋
+- [x] 廠商條件可透過搜尋
 - [x] 卡片顯示模式
 - [x] 清單顯示模式
 - [x] 記住卡片／清單選擇
