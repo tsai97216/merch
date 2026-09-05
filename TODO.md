@@ -185,7 +185,7 @@
 - [x] 返回
 - [x] 不存在的 Item 顯示 Not Found
 - [x] Modal / Detail 狀態與 Router 狀態一致
-- [ ] 鍵盤關閉與 focus 管理
+- [x] 鍵盤關閉與 focus 管理
 
 ## 9. Statistics
 - [x] 按作品統計
