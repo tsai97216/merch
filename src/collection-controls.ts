@@ -50,6 +50,23 @@ function setupCollectionControls(): void {
 
   sort.addEventListener('change', syncSortButtons);
   syncSortButtons();
+
+  const search = document.querySelector<HTMLInputElement>('#collection-search');
+  const clear = document.querySelector<HTMLButtonElement>('#collection-search-clear');
+  if (search && clear && clear.dataset.bound !== '1') {
+    clear.dataset.bound = '1';
+    const syncClearButton = () => {
+      clear.hidden = search.value.length === 0;
+    };
+    clear.addEventListener('click', () => {
+      if (!search.value) return;
+      search.value = '';
+      search.dispatchEvent(new Event('input', { bubbles: true }));
+      search.focus();
+    });
+    search.addEventListener('input', syncClearButton);
+    syncClearButton();
+  }
 }
 
 if (document.readyState === 'loading') {
