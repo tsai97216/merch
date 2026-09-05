@@ -50,29 +50,26 @@ function roleRanking(items: Item[]): string {
 }
 
 function monthBars(items: Item[]): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const months: Array<{ month: string; count: number; spending: number }> = Array.from({ length: 12 }, (_, index) => ({
-    month: `${year}-${String(index + 1).padStart(2, '0')}`,
-    count: 0,
-    spending: 0
-  }));
-  const monthMap = new Map(months.map((entry) => [entry.month, entry]));
+  const year = new Date().getFullYear();
+  const months: Array<{ month: number; count: number; spending: number }> = Array.from({ length: 12 }, (_, index) => ({ month: index + 1, count: 0, spending: 0 }));
 
   items.forEach((item) => {
     const raw = item.purchase?.date || item.createdAt;
     if (!raw) return;
     const date = new Date(raw);
     if (Number.isNaN(date.getTime()) || date.getFullYear() !== year) return;
-    const key = `${year}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    const current = monthMap.get(key);
+    const current = months[date.getMonth()];
     if (!current) return;
     current.count += quantityOf(item);
     current.spending += valueOf(item);
   });
 
   const max = Math.max(1, ...months.map((value) => value.spending));
-  return `<div class="month-bars">${months.map((value) => `<div class="month-bar-row"><div class="month-bar-meta"><span>${esc(value.month)}</span><b>${value.count} 件 · ${money(value.spending)}</b></div><div class="month-bar-track"><i style="width:${value.spending ? Math.max(5, value.spending / max * 100) : 0}%"></i></div></div>`).join('')}</div>`;
+  return `<div class="month-chart" aria-label="${year} 年各月份統計">${months.map((value) => {
+    const height = value.spending ? Math.max(6, value.spending / max * 100) : 0;
+    const label = String(value.month).padStart(2, '0');
+    return `<div class="month-chart-column"><div class="month-chart-value">${value.spending ? money(value.spending) : '0'}</div><div class="month-chart-track"><i style="height:${height}%"></i></div><strong>${label}月</strong><span>${value.count} 件</span></div>`;
+  }).join('')}</div>`;
 }
 
 async function renderEnhancedStatistics() {
