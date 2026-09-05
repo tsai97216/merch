@@ -9,7 +9,7 @@ const $$ = <T extends Element>(selector: string, root: ParentNode = document) =>
 const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;', "'":'&#39;' }[c] as string));
 const money = (n?: number) => `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n || 0))}`;
 const statusText = (s: string) => ({ received:'已收到', preorder:'預購中', pending:'待到貨' } as Record<string,string>)[s] || s || '未設定';
-const dateText = (s?: string) => s ? new Date(s).toLocaleDateString('zh-TW') : '未設定';
+const dateText = (s?: string) => s ? new Date(s).toLocaleDateString('zh-TW') : '—';
 
 function itemCard(item: Item, compact = false): string {
   const image = item.images?.find((i) => i.isCover) || item.images?.[0];
@@ -77,8 +77,29 @@ function renderDetail(store: MerchStore, id: string) {
   const item = store.snapshot.items.find((i) => i.id === id);
   const page = $('#detail'); if (!page) return;
   if (!item) { page.innerHTML = '<div class="page-heading"><span class="eyebrow">404 / ITEM</span><h1>找不到收藏</h1><p>這個收藏不存在或已被移除。</p><a class="button" href="#/collection">返回收藏</a></div>'; return; }
-  const images = (item.images || []).map((im) => `<img src="${escapeHtml(im.url || im.path || '')}" alt="${escapeHtml(im.alt || item.title)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('image-fallback')">`).join('');
-  page.innerHTML = `<div class="page-heading"><a class="back-link" href="#/collection">← 返回收藏</a><span class="eyebrow">ITEM DETAIL</span><h1>${escapeHtml(item.title)}</h1><p>${escapeHtml(item.workName || '')} · ${escapeHtml(item.characters?.join('、') || '')}</p></div><div class="detail-grid"><section class="panel image-viewer">${images || '<div class="image-placeholder large">NO IMAGE</div>'}</section><section class="panel detail-info"><span class="badge">${escapeHtml(statusText(item.status))}</span><h2>${escapeHtml(item.category || '未分類')}</h2><dl><dt>廠商</dt><dd>${escapeHtml(item.manufacturer || '未設定')}</dd><dt>價格</dt><dd>${money(item.purchase?.price)}</dd><dt>購買日期</dt><dd>${dateText(item.purchase?.date)}</dd><dt>發售日期</dt><dd>${dateText(item.release?.date)}</dd><dt>預計到貨</dt><dd>${dateText(item.release?.expectedDate)}</dd><dt>收到日期</dt><dd>${dateText(item.release?.receivedDate)}</dd><dt>物流</dt><dd>${escapeHtml(item.shipping?.method || '未設定')}</dd><dt>物流狀態</dt><dd>${escapeHtml(item.shipping?.status || '未設定')}</dd><dt>售後</dt><dd>${escapeHtml(item.afterSales?.note || '無')}</dd></dl></section></div>`;
+
+  const cover = item.images?.find((image) => image.isCover) || item.images?.[0];
+  const imageSrc = cover?.url || cover?.path || '';
+  const characters = item.characters?.join('、') || '—';
+  const releaseDate = item.release?.date || item.release?.expectedDate;
+  const shipping = item.shipping?.method || item.shipping?.status || '—';
+  const afterSales = item.afterSales?.status || item.afterSales?.note || '—';
+
+  page.innerHTML = `<div class="item-detail-shell">
+    <div class="item-detail-topbar"><a class="back-link" href="#/collection">← 返回收藏</a><span class="eyebrow">ITEM DETAIL</span></div>
+    <section class="item-detail-header">
+      <div class="item-detail-image">${imageSrc ? `<img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(cover?.alt || item.title)}" onerror="this.style.display='none';this.parentElement.classList.add('image-fallback')">` : '<span class="image-placeholder">IMAGE</span>'}</div>
+      <div class="item-detail-heading"><span class="eyebrow">${escapeHtml(item.category || 'COLLECTION')}</span><h1>${escapeHtml(item.title)}</h1><p>${escapeHtml(item.workName || item.series || '—')} · ${escapeHtml(characters)}</p><div><span class="badge">${escapeHtml(statusText(item.status))}</span></div></div>
+    </section>
+    <div class="item-detail-grid">
+      <section><span class="detail-label">基本資訊</span><dl><div><dt>作品</dt><dd>${escapeHtml(item.workName || item.series || '—')}</dd></div><div><dt>角色</dt><dd>${escapeHtml(characters)}</dd></div><div><dt>類型</dt><dd>${escapeHtml(item.category || '—')}</dd></div><div><dt>製造商</dt><dd>${escapeHtml(item.manufacturer || '—')}</dd></div></dl></section>
+      <section><span class="detail-label">購買資訊</span><dl><div><dt>價格</dt><dd>${money(item.purchase?.price)}</dd></div><div><dt>平台</dt><dd>${escapeHtml(item.purchase?.platform || '—')}</dd></div><div><dt>購買日期</dt><dd>${dateText(item.purchase?.date)}</dd></div></dl></section>
+      <section><span class="detail-label">發售與到貨</span><dl><div><dt>發售日期</dt><dd>${dateText(releaseDate)}</dd></div><div><dt>收到日期</dt><dd>${dateText(item.release?.receivedDate)}</dd></div><div><dt>物流方式</dt><dd>${escapeHtml(shipping)}</dd></div><div><dt>物流單號</dt><dd>${escapeHtml(item.shipping?.trackingNumber || '—')}</dd></div></dl></section>
+      <section><span class="detail-label">售後</span><dl><div><dt>狀態</dt><dd>${escapeHtml(afterSales)}</dd></div></dl></section>
+    </div>
+    <section class="item-detail-text"><div><span class="detail-label">商品描述</span><p>${escapeHtml(item.description || '—')}</p></div><div><span class="detail-label">備註</span><p>${escapeHtml(item.notes || '—')}</p></div></section>
+    <div class="item-detail-footer"><span>建立：<b>${escapeHtml(dateText(item.createdAt))}</b></span><span>更新：<b>${escapeHtml(dateText(item.updatedAt))}</b></span></div>
+  </div>`;
 }
 
 function syncCollectionControls(store: MerchStore) {
