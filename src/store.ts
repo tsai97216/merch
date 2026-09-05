@@ -30,15 +30,15 @@ function validateWorksIndex(value: unknown): WorksIndex {
     assertRecord(entry, `works[${index}]`);
     if (typeof entry.id !== 'string' || !entry.id) throw new Error(`works[${index}].id 無效`);
     if (typeof entry.name !== 'string' || !entry.name) throw new Error(`works[${index}].name 無效`);
+    if (typeof entry.code !== 'string' || !/^[A-Z]{2,3}$/.test(entry.code)) throw new Error(`works[${index}].code 必須是 2～3 碼大寫作品代碼`);
     if (typeof entry.data !== 'string' || !entry.data || entry.data.includes('..')) throw new Error(`works[${index}].data 無效`);
-    if (!/^[A-Z]{2,3}$/.test(entry.name)) throw new Error(`works[${index}].name 必須是 2～3 碼大寫作品代碼`);
-    return { id: entry.id, name: entry.name, data: entry.data };
+    return { id: entry.id, name: entry.name, code: entry.code, data: entry.data };
   });
 
   const workCodes = new Set<string>();
   works.forEach((work) => {
-    if (workCodes.has(work.name)) throw new Error(`works.json 存在重複作品代碼：${work.name}`);
-    workCodes.add(work.name);
+    if (workCodes.has(work.code)) throw new Error(`works.json 存在重複作品代碼：${work.code}`);
+    workCodes.add(work.code);
   });
 
   return { schemaVersion: 1, works };
@@ -52,7 +52,7 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
 
   const id = parseItemId(value.id);
   if (!id) throw new Error(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
-  if (id.workCode !== work.name) throw new Error(`${label}.id 作品代碼 ${id.workCode} 與資料作品 ${work.name} 不一致`);
+  if (id.workCode !== work.code) throw new Error(`${label}.id 作品代碼 ${id.workCode} 與資料作品 ${work.code} 不一致`);
 
   if (value.characters !== undefined && (!Array.isArray(value.characters) || value.characters.some((x) => typeof x !== 'string'))) {
     throw new Error(`${label}.characters 格式無效`);
@@ -172,7 +172,7 @@ export async function loadStore(): Promise<MerchStore> {
       const response = await fetch(`./${entry.data}`, { cache: 'no-store' });
       if (!response.ok) throw new Error(`${entry.data} ${response.status}`);
       const payload = validateWorkPayload(await response.json(), entry.data, entry);
-      return { id: entry.id, name: entry.name, items: payload.items } satisfies Work;
+      return { id: entry.id, name: entry.name, code: entry.code, items: payload.items } satisfies Work;
     }));
 
     const allIds = new Set<string>();
