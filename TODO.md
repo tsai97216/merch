@@ -122,6 +122,8 @@
 - [x] 主要 rendering 與 enhancement module 結構一致
 - [x] 移除 MutationObserver 相關實作
 - [x] 移除不再需要的 rendering workaround
+- [x] 收藏卡片文字區塊固定高度，避免狀態標籤與多行商品名稱造成卡片內容錯位
+- [x] 收藏卡片價格數量標記 `×N` 使用與廠商相同的灰色文字
 
 ## 6. Dashboard / Home
 - [x] 總收藏數
@@ -261,38 +263,36 @@
 - [ ] JPG / PNG / WebP / GIF
 - [ ] 單張 ≤ 10MB
 - [ ] 第一張作為預設封面
-- [ ] 新增圖片
-- [ ] 刪除圖片
-- [ ] 圖片排序
-- [ ] 更換封面
-- [ ] duplicate SHA 檢查
-- [ ] SHA mismatch / rollback handling
-- [ ] 刪除封面後自動選擇新封面
-- [ ] 圖片 URL validation
+- [ ] 封面替換不改變圖片陣列順序
+- [ ] 圖片新增／刪除／排序
+- [ ] Image viewer
+- [ ] 圖片 fallback
+- [ ] SHA duplicate check
 
-## 14. Security / Robustness
-- [ ] 外部 URL validation
-- [ ] 圖片 URL validation
-- [ ] 使用者輸入 validation
-- [ ] API error 不直接輸出原始 HTML
-- [ ] API response schema validation
-- [ ] GitHub Token 不進 frontend bundle
-- [ ] Worker Secret 不暴露
-- [ ] 所有寫入 API path whitelist
-- [ ] API method / auth checks
-- [ ] 大型 rendering 避免不必要 innerHTML
-- [ ] 不可信資料完整 escaping / sanitization
-
-## 15. Testing / Verification
-- [ ] TypeScript compile
+## 14. Quality / Validation
+- [ ] TypeScript strict errors = 0
 - [ ] production build
-- [ ] Router route matrix
-- [ ] Collection search / filter / sort matrix
+- [ ] desktop smoke test
+- [ ] mobile smoke test
+- [ ] router smoke test
+- [ ] collection search/filter/sort test
 - [ ] quantity edge cases
-- [ ] Statistics edge cases
-- [ ] image edge cases
-- [ ] mobile layout verification
-- [ ] desktop layout verification
-- [ ] API failure verification
-- [ ] malformed / malicious input verification
-- [ ] regression verification against `merch-old`
+- [ ] malformed data test
+- [ ] image error test
+- [ ] API failure test
+- [ ] refresh / back / forward test
+- [ ] GitHub Pages deployment test
+
+## 15. Final Polish
+- [ ] Desktop layout 精修
+- [ ] Mobile layout 精修
+- [ ] Statistics mobile 精修
+- [ ] Management mobile 精修
+- [ ] Settings mobile 精修
+- [ ] Page title / heading alignment 精修
+- [ ] 全站 spacing consistency
+- [ ] 全站 typography consistency
+- [ ] 全站 component state consistency
+- [ ] Accessibility review
+- [ ] Performance review
+- [ ] 最終與 `merch-old` UI/UX 對照
