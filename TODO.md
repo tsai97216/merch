@@ -284,12 +284,12 @@
 - [ ] GitHub Pages deployment test
 
 ## 15. Final Polish
-- [x] Desktop layout 精修
-- [x] Mobile layout 精修
-- [x] Statistics mobile 精修
-- [x] Management mobile 精修
-- [x] Settings mobile 精修
-- [x] Page title / heading alignment 精修
+- [ ] Desktop layout 精修
+- [ ] Mobile layout 精修
+- [ ] Statistics mobile 精修
+- [ ] Management mobile 精修
+- [ ] Settings mobile 精修
+- [ ] Page title / heading alignment 精修
 - [ ] 全站 spacing consistency
 - [ ] 全站 typography consistency
 - [ ] 全站 component state consistency
