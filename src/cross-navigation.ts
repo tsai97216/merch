@@ -25,12 +25,6 @@ function getSearchTarget(target: HTMLElement): HTMLElement | null {
   const workBar = target.closest<HTMLElement>('#work-bars .bar-row');
   if (workBar) return workBar.querySelector('span');
 
-  const workStat = target.closest<HTMLElement>('#work-statistics .bar-row');
-  if (workStat) return workStat.querySelector('span');
-
-  const category = target.closest<HTMLElement>('#category-list > div');
-  if (category) return category.querySelector('span');
-
   return null;
 }
 
