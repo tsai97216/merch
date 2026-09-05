@@ -40,8 +40,6 @@ function getQueryForTarget(target: HTMLElement): string {
   if (target.matches('.stat-card')) {
     const label = target.querySelector('span')?.textContent?.trim() || '';
     if (label === '待到貨') return '待到貨';
-    if (label === '已收到') return '已收到';
-    if (label === '預購中') return '預購中';
     return '';
   }
   return target.textContent || '';
@@ -56,6 +54,7 @@ function installCrossNavigation() {
     if (!searchTarget) return;
 
     const query = getQueryForTarget(searchTarget);
+    if (!query) return;
     event.preventDefault();
     event.stopPropagation();
     goToCollectionSearch(query);
