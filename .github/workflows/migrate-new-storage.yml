@@ -38,6 +38,9 @@ jobs:
       - name: Verify staging data
         run: node scripts/verify-new-data.mjs data-migrated
 
+      - name: Compare legacy and migrated data
+        run: node scripts/verify-migration.mjs public/data data-migrated
+
       - name: Switch data root after verification
         shell: bash
         run: |
