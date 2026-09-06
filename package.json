@@ -1,12 +1,13 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.99.12",
+  "version": "1.99.13",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "verify": "node scripts/verify-data.mjs",
+    "verify:statistics": "node scripts/verify-statistics-date.mjs",
     "preview": "vite preview"
   },
   "devDependencies": {
