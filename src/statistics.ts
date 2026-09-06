@@ -1,5 +1,5 @@
 import './statistics.css';
-import { loadStore } from './store';
+import { getStore, type MerchStore } from './store';
 import { aggregateStatistics, type Chart } from './statistics-data';
 import { currentYear } from './utils/date';
 import { escapeHtml, qs, qsa } from './utils/dom';
@@ -58,5 +58,18 @@ function render(charts: Chart[]): void {
   qsa<HTMLElement>('[data-chart-id]', host).forEach((button)=>button.addEventListener('click',()=>{const chart=charts.find((item)=>item.id===button.dataset.chartId);if(chart)openDetail(chart);}));
 }
 
-async function boot(): Promise<void> { const host=qs<HTMLElement>('#statistics-charts'); if(!host)return; try { const store=await loadStore(); render(aggregateStatistics(store.snapshot.items)); } catch { host.innerHTML='<div class="empty-state wide">統計資料載入失敗</div>'; } }
+let unsubscribe: (() => void) | null = null;
+
+function mount(store: MerchStore): void {
+  unsubscribe?.();
+  const renderCurrent = () => render(aggregateStatistics(store.snapshot.items));
+  renderCurrent();
+  unsubscribe = store.subscribe(renderCurrent);
+}
+
+async function boot(): Promise<void> {
+  const host=qs<HTMLElement>('#statistics-charts'); if(!host)return;
+  try { mount(await getStore()); }
+  catch { host.innerHTML='<div class="empty-state wide">統計資料載入失敗</div>'; }
+}
 void boot();
