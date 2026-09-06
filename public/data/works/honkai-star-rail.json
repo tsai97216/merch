@@ -34,17 +34,17 @@
         "receivedDate": "2026-09-14"
       },
       "shipping": {
-        "status": "received",
+        "status": "已收貨",
         "method": "集運",
         "trackingNumber": ""
       },
       "afterSales": {
-        "status": "pending",
+        "status": "處理中",
         "note": "待換貨",
         "updatedAt": "2026-09-04T05:31:26.180Z"
       },
       "createdAt": "2026-09-04T05:31:26.180Z",
-      "updatedAt": "2026-09-06T15:49:11.315Z",
+      "updatedAt": "2026-09-06T15:57:32.754Z",
       "quantity": 1,
       "series": "春日手信"
     },
