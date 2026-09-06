@@ -1,8 +1,9 @@
-import { loadStore } from './store';
+import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
 import { escapeHtml, qs } from './utils/dom';
 
-let items: Item[] = [];
+let storeRef: MerchStore | null = null;
+let unsubscribe: (() => void) | null = null;
 let selectedId = '';
 let pickerWork = '';
 let pickerCategory = '';
@@ -40,6 +41,7 @@ const fields: Record<string, (item: Item) => string> = {
 };
 
 const get = (id: string) => (qs<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? '').trim();
+const allItems = (): Item[] => storeRef?.snapshot.items ?? [];
 function workOf(item: Item): string { return item.workName ?? ''; }
 function categoryOf(item: Item): string { return item.category ?? '未分類'; }
 function serialOf(item: Item): string { return item.id.match(/(\d+)$/)?.[1] ?? ''; }
@@ -61,19 +63,14 @@ function fill(item: Item) {
 function searchItems(): Item[] {
   const query = searchQuery.trim().toLocaleLowerCase();
   if (!query) return [];
-  return items.filter(item => [
-    item.id,
-    item.title,
-    workOf(item),
-    categoryOf(item),
-    item.series,
-    item.manufacturer,
+  return allItems().filter(item => [
+    item.id, item.title, workOf(item), categoryOf(item), item.series, item.manufacturer,
     ...(item.characters ?? []),
   ].filter(Boolean).join(' ').toLocaleLowerCase().includes(query)).slice(0, 30);
 }
 
 function pickerItems(): Item[] {
-  return items.filter(item => workOf(item) === pickerWork && categoryOf(item) === pickerCategory);
+  return allItems().filter(item => workOf(item) === pickerWork && categoryOf(item) === pickerCategory);
 }
 
 function renderSearchResults() {
@@ -81,25 +78,22 @@ function renderSearchResults() {
   const datalist = qs<HTMLDataListElement>('#management-search-options');
   if (datalist) datalist.innerHTML = results.map(x => `<option value="${escapeHtml(pickerValue(x))}"></option>`).join('');
   const count = qs<HTMLElement>('#management-search-count');
-  if (count) count.textContent = searchQuery ? `找到 ${results.length} 筆` : `共 ${items.length} 筆收藏`;
+  if (count) count.textContent = searchQuery ? `找到 ${results.length} 筆` : `共 ${allItems().length} 筆收藏`;
 }
 
 function render() {
   const root = qs<HTMLElement>('#management-root');
-  if (!root) return;
-
+  if (!root || !storeRef) return;
+  const items = allItems();
   const current = items.find(x => x.id === selectedId) ?? items[0];
   if (current && !pickerWork) fill(current);
 
   const works = unique(items.map(workOf));
   if (!pickerWork || !works.includes(pickerWork)) pickerWork = workOf(current ?? items[0]);
-
   const categories = unique(items.filter(x => workOf(x) === pickerWork).map(categoryOf));
   if (!pickerCategory || !categories.includes(pickerCategory)) pickerCategory = categories[0] ?? '';
-
   const matching = pickerItems();
   if (!pickerSerial || !matching.some(x => serialOf(x) === pickerSerial)) pickerSerial = serialOf(matching[0]) || '';
-
   const selectedPickerItem = matching.find(x => serialOf(x) === pickerSerial) ?? current;
   if (selectedPickerItem) selectedId = selectedPickerItem.id;
   const formItem = selectedPickerItem ?? current;
@@ -130,23 +124,9 @@ function render() {
   if (categorySelect) categorySelect.value = pickerCategory;
   if (serialSelect) serialSelect.value = pickerSerial;
 
-  workSelect?.addEventListener('change', () => {
-    pickerWork = workSelect.value;
-    pickerCategory = '';
-    pickerSerial = '';
-    render();
-  });
-  categorySelect?.addEventListener('change', () => {
-    pickerCategory = categorySelect.value;
-    pickerSerial = '';
-    render();
-  });
-  serialSelect?.addEventListener('change', () => {
-    pickerSerial = serialSelect.value;
-    const next = pickerItems().find(x => serialOf(x) === pickerSerial);
-    if (next) fill(next);
-    render();
-  });
+  workSelect?.addEventListener('change', () => { pickerWork = workSelect.value; pickerCategory = ''; pickerSerial = ''; render(); });
+  categorySelect?.addEventListener('change', () => { pickerCategory = categorySelect.value; pickerSerial = ''; render(); });
+  serialSelect?.addEventListener('change', () => { pickerSerial = serialSelect.value; const next = pickerItems().find(x => serialOf(x) === pickerSerial); if (next) fill(next); render(); });
 
   const search = qs<HTMLInputElement>('#management-item-search');
   search?.addEventListener('input', () => {
@@ -154,20 +134,12 @@ function render() {
     renderSearchResults();
     const normalized = search.value.trim();
     const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized);
-    if (next) {
-      fill(next);
-      searchQuery = '';
-      render();
-    }
+    if (next) { fill(next); searchQuery = ''; render(); }
   });
 
   qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => {
-    const next = items.find(x => x.id === selectedId);
-    if (next) {
-      fill(next);
-      searchQuery = '';
-      render();
-    }
+    const next = allItems().find(x => x.id === selectedId);
+    if (next) { fill(next); searchQuery = ''; render(); }
   });
 
   qs<HTMLFormElement>('#management-form')?.addEventListener('submit', e => {
@@ -180,21 +152,21 @@ function render() {
     if (!title) errors.push('標題為必填欄位。');
     if (!Number.isInteger(quantity) || quantity < 1) errors.push('數量必須是大於等於 1 的整數。');
     if (price && (!Number.isFinite(Number(price)) || Number(price) < 0)) errors.push('價格必須是大於等於 0 的數字。');
-    if (url) {
-      try { new URL(url); } catch { errors.push('商品網址格式無效。'); }
-    }
+    if (url) { try { new URL(url); } catch { errors.push('商品網址格式無效。'); } }
     const box = qs<HTMLElement>('#management-errors');
     if (!box) return;
     box.hidden = false;
     box.classList.toggle('is-success', errors.length === 0);
     box.innerHTML = errors.length
       ? `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`
-      : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub.';
+      : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub。';
   });
 }
 
-void loadStore().then(store => {
-  items = store.snapshot.items;
+void getStore().then((store) => {
+  storeRef = store;
+  unsubscribe?.();
+  unsubscribe = store.subscribe(() => render());
   render();
 }).catch(() => {
   const root = qs<HTMLElement>('#management-root');
