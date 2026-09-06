@@ -1,3 +1,4 @@
+import './toast.css';
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
 import { escapeHtml, qs } from './utils/dom';
@@ -64,15 +65,10 @@ function fill(item: Item) {
 function searchItems(): Item[] {
   const query = searchQuery.trim().toLocaleLowerCase();
   if (!query) return [];
-  return allItems().filter(item => [
-    item.id, item.title, workOf(item), categoryOf(item), item.series, item.manufacturer,
-    ...(item.characters ?? []),
-  ].filter(Boolean).join(' ').toLocaleLowerCase().includes(query)).slice(0, 30);
+  return allItems().filter(item => [item.id, item.title, workOf(item), categoryOf(item), item.series, item.manufacturer, ...(item.characters ?? [])].filter(Boolean).join(' ').toLocaleLowerCase().includes(query)).slice(0, 30);
 }
 
-function pickerItems(): Item[] {
-  return allItems().filter(item => workOf(item) === pickerWork && categoryOf(item) === pickerCategory);
-}
+function pickerItems(): Item[] { return allItems().filter(item => workOf(item) === pickerWork && categoryOf(item) === pickerCategory); }
 
 function renderSearchResults() {
   const results = searchItems();
@@ -104,17 +100,7 @@ function render() {
   const serialOptions = matching.map(x => `<option value="${escapeHtml(serialOf(x))}">${escapeHtml(serialOf(x).padStart(3, '0'))} · ${escapeHtml(x.title)}</option>`).join('');
   const searchOptions = searchResults.map(x => `<option value="${escapeHtml(pickerValue(x))}"></option>`).join('');
 
-  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid">
-  <label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label>
-  <label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label>
-  <label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label>
-  </div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div>
-  <form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid">
-  <label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div>
-  <div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div>
-  <div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div>
-  <div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div>
-  <div class="management-actions"><button class="button" type="submit">驗證表單</button><button class="button secondary" type="button" id="management-reset">還原</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
+  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid"><label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label><label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label><label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label></div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div><form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid"><label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div><div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div><div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div><div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div><div class="management-actions"><button class="button" type="submit">驗證表單</button><button class="button secondary" type="button" id="management-reset">還原</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
 
   if (formItem) fill(formItem);
   const workSelect = qs<HTMLSelectElement>('#management-picker-work');
@@ -123,24 +109,13 @@ function render() {
   if (workSelect) workSelect.value = pickerWork;
   if (categorySelect) categorySelect.value = pickerCategory;
   if (serialSelect) serialSelect.value = pickerSerial;
-
   workSelect?.addEventListener('change', () => { pickerWork = workSelect.value; pickerCategory = ''; pickerSerial = ''; render(); });
   categorySelect?.addEventListener('change', () => { pickerCategory = categorySelect.value; pickerSerial = ''; render(); });
   serialSelect?.addEventListener('change', () => { pickerSerial = serialSelect.value; const next = pickerItems().find(x => serialOf(x) === pickerSerial); if (next) fill(next); render(); });
 
   const search = qs<HTMLInputElement>('#management-item-search');
-  search?.addEventListener('input', () => {
-    searchQuery = search.value;
-    renderSearchResults();
-    const normalized = search.value.trim();
-    const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized);
-    if (next) { fill(next); searchQuery = ''; render(); }
-  });
-
-  qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => {
-    const next = allItems().find(x => x.id === selectedId);
-    if (next) { fill(next); searchQuery = ''; render(); }
-  });
+  search?.addEventListener('input', () => { searchQuery = search.value; renderSearchResults(); const normalized = search.value.trim(); const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized); if (next) { fill(next); searchQuery = ''; render(); } });
+  qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => { const next = allItems().find(x => x.id === selectedId); if (next) { fill(next); searchQuery = ''; render(); } });
 
   qs<HTMLFormElement>('#management-form')?.addEventListener('submit', e => {
     e.preventDefault();
@@ -157,9 +132,7 @@ function render() {
     if (!box) return;
     box.hidden = false;
     box.classList.toggle('is-success', errors.length === 0);
-    box.innerHTML = errors.length
-      ? `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`
-      : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub。';
+    box.innerHTML = errors.length ? `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>` : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub。';
     showToast(errors.length ? '表單驗證失敗，請檢查欄位。' : '表單驗證通過。', errors.length ? 'error' : 'success');
   });
 }
