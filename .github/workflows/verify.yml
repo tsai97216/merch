@@ -42,6 +42,8 @@ jobs:
         run: npm run verify:migration
       - name: Verify Item schema contract
         run: npm run verify:schema
+      - name: Verify legacy runtime fields are absent
+        run: npm run verify:legacy-fields
       - name: Verify category contract
         run: npm run verify:category
       - name: Verify image contract
