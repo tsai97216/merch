@@ -15,6 +15,7 @@ export function aggregateStatistics(items: Item[]): Chart[] {
   const workCount = new Map<string, WorkAggregate>();
   const categoryCount = new Map<string, WorkAggregate>();
   const monthly = new Map<string, WorkAggregate>();
+  const monthlyAdded = new Map<string, WorkAggregate>();
   const add = (map: Map<string, WorkAggregate>, key: string, row: WorkAggregate) => {
     const old = map.get(key) || { quantity: 0, spend: 0 };
     map.set(key, { quantity: old.quantity + row.quantity, spend: old.spend + row.spend });
@@ -27,6 +28,8 @@ export function aggregateStatistics(items: Item[]): Chart[] {
     add(categoryCount, item.category || '未分類', row);
     const month = monthKey(item.purchase?.date);
     if (month) add(monthly, month, row);
+    const createdMonth = monthKey(item.createdAt);
+    if (createdMonth) add(monthlyAdded, createdMonth, row);
   });
 
   const totalSpend = [...workSpend.values()].reduce((sum, row) => sum + row.spend, 0);
@@ -44,6 +47,10 @@ export function aggregateStatistics(items: Item[]): Chart[] {
     const key = `${year}-${String(i + 1).padStart(2, '0')}`;
     return [key, monthly.get(key) || { quantity: 0, spend: 0 }];
   });
+  const monthlyAddedEntries: [string, WorkAggregate][] = Array.from({ length: 12 }, (_, i) => {
+    const key = `${year}-${String(i + 1).padStart(2, '0')}`;
+    return [key, monthlyAdded.get(key) || { quantity: 0, spend: 0 }];
+  });
 
   let cumulative = 0;
   const monthlyDetails: DetailRow[] = monthlyEntries.map(([key, row], index) => {
@@ -52,9 +59,16 @@ export function aggregateStatistics(items: Item[]): Chart[] {
     const delta = previous ? `${row.spend >= previous ? '+' : ''}${formatPercent((row.spend - previous) / previous * 100)} vs 上月` : '首筆月份';
     return { label: monthLabel(key), quantity: row.quantity, spend: row.spend, share: totalSpend ? row.spend / totalSpend * 100 : 0, extra: `${formatMoney(cumulative)} 累計 · ${delta}` };
   });
+  const totalAddedQuantity = monthlyAddedEntries.reduce((sum, [, row]) => sum + row.quantity, 0);
+  const monthlyAddedDetails: DetailRow[] = monthlyAddedEntries.map(([key, row], index) => {
+    const previous = index ? monthlyAddedEntries[index - 1][1].quantity : 0;
+    const delta = previous ? `${row.quantity >= previous ? '+' : ''}${formatPercent((row.quantity - previous) / previous * 100)} vs 上月` : '首筆月份';
+    return { label: monthLabel(key), quantity: row.quantity, spend: row.spend, share: totalAddedQuantity ? row.quantity / totalAddedQuantity * 100 : 0, extra: `${formatQuantity(row.quantity)} 件新增 · ${delta}` };
+  });
 
   const topWork = workSpendEntries[0];
   const topMonth = monthlyEntries.reduce<[string, WorkAggregate] | undefined>((best, current) => !best || current[1].spend > best[1].spend ? current : best, undefined);
+  const topAddedMonth = monthlyAddedEntries.reduce<[string, WorkAggregate] | undefined>((best, current) => !best || current[1].quantity > best[1].quantity ? current : best, undefined);
   const averageMonth = totalSpend / 12;
 
   return [
@@ -67,6 +81,11 @@ export function aggregateStatistics(items: Item[]): Chart[] {
       id: 'monthly-spending', title: '每月消費趨勢', description: '以今年 12 個月份完整呈現消費；沒有資料的月份也會明確顯示為 0。', largeType: 'bar', smallType: 'bar',
       rows: monthlyEntries.map(([label, row]) => ({ label: monthLabel(label), value: row.spend })), details: monthlyDetails, format: 'money',
       summary: [['有消費月份', `${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`], ['最高月份', topMonth ? monthLabel(topMonth[0]) : '無資料'], ['最高月消費', topMonth ? formatMoney(topMonth[1].spend) : 'NT$ 0'], ['月均消費', formatMoney(averageMonth)]].map(([label, value]) => ({ label, value }))
+    },
+    {
+      id: 'monthly-added', title: '每月新增收藏', description: '以收藏建立時間統計今年每個月份新增的收藏數量，沒有資料的月份也會顯示為 0。', largeType: 'bar', smallType: 'bar',
+      rows: monthlyAddedEntries.map(([label, row]) => ({ label: monthLabel(label), value: row.quantity })), details: monthlyAddedDetails, format: 'count',
+      summary: [['今年新增', formatQuantity(totalAddedQuantity)], ['最高月份', topAddedMonth ? monthLabel(topAddedMonth[0]) : '無資料'], ['最高月新增', topAddedMonth ? formatQuantity(topAddedMonth[1].quantity) : '0 件'], ['有新增月份', `${monthlyAddedEntries.filter(([,r]) => r.quantity > 0).length} 個月`]].map(([label, value]) => ({ label, value }))
     },
     {
       id: 'work-count', title: '作品收藏數量', description: '看哪些作品收藏最多，數量依每筆資料的 quantity 加總。', largeType: 'bar', smallType: 'donut',
