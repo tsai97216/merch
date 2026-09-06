@@ -4,6 +4,7 @@ import { dataError } from './error';
 type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; message?: string } };
 type ApiData = Pick<StoreState, 'works' | 'version'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
+type AuthStatus = { authenticated: boolean };
 
 const meta = import.meta as ImportMetaWithEnv;
 const API_BASE = (meta.env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
@@ -42,9 +43,17 @@ function validateData(data: unknown): ApiData {
   return { works: value.works as Work[], version: value.version };
 }
 
+function validateAuthStatus(data: unknown): AuthStatus {
+  if (!data || typeof data !== 'object' || typeof (data as { authenticated?: unknown }).authenticated !== 'boolean') {
+    throw dataError('API 驗證狀態格式無效。');
+  }
+  return data as AuthStatus;
+}
+
 export async function getRemoteData(): Promise<ApiData> { return validateData(await request('/data')); }
 export async function putItem(item: Item): Promise<ApiData> { return validateData(await request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item }) })); }
 export async function deleteItem(id: string): Promise<ApiData> { return validateData(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); }
+export async function getAuthStatus(): Promise<AuthStatus> { return validateAuthStatus(await request('/auth/status')); }
 export function hasAdminSecret(): boolean { return Boolean(authToken()); }
 export function setAdminSecret(value: string): void { try { if (value.trim()) sessionStorage.setItem('merch-admin-secret', value.trim()); else sessionStorage.removeItem('merch-admin-secret'); } catch { throw dataError('無法儲存管理驗證資訊。'); } }
 export function clearAdminSecret(): void { try { sessionStorage.removeItem('merch-admin-secret'); } catch { /* optional */ } }
