@@ -6,9 +6,9 @@ export type ImageMeta = {
   file: string;
   alt?: string;
   isCover?: boolean;
-  /** Optional content hash retained for future integrity verification. */
+  /** Optional content hash retained for integrity verification. */
   sha?: string;
-  /** Runtime compatibility for legacy image records. Never persisted by new storage. */
+  /** Runtime compatibility for image records returned by older API responses. Never persisted by new storage. */
   url?: string;
   path?: string;
 };
@@ -51,14 +51,8 @@ export type PersistedItem = {
 
 /** Runtime-only fields. These must never be written to data.json. */
 export type RuntimeItemFields = {
+  /** Human-readable work name injected by Store for UI rendering. */
   workName?: string;
-  /** @deprecated Use arrival.expectedDate / arrival.receivedDate. */
-  release?: { date?: string; expectedDate?: string; receivedDate?: string };
-  /** @deprecated Shipping is no longer part of the Item schema. */
-  shipping?: { method?: string; status?: string };
-  /** @deprecated Legacy timestamps retained only while old UI sorting is migrated. */
-  createdAt?: string;
-  updatedAt?: string;
 };
 
 /** UI Item. Persistence/API boundaries must use PersistedItem. */
