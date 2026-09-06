@@ -84,7 +84,7 @@
 - [x] `預購中` 搜尋仍可單獨命中 preorder
 - [x] `已收到` 搜尋仍可單獨命中 received
 - [x] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
-- [x] 多詞條支援空白、`,`、`，`、` 等常見分隔方式
+- [x] 多詞條支援空白、`,`、`，` 等常見分隔方式
 - [x] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
 - [x] Filter
 - [x] Sort
@@ -179,6 +179,7 @@
 - [x] 必填欄位與格式錯誤清楚提示
 - [x] 重複 ID / 重複資料安全處理
 - [x] 新增／編輯表單支援 quantity
+- [ ] 分類規則：亞克力是材質，不應作為獨立商品類型；新商品應依實際商品型態（如立牌）分類
 
 ## 11. GitHub API / Worker
 - [x] API layer
@@ -200,6 +201,7 @@
 - [x] CORS / allowed origin
 - [x] request payload validation
 - [x] response schema validation
+- [ ] Worker GitHub Token 實際寫入權限驗證與部署後驗證
 
 ## 12. Write Consistency
 - [x] validate
