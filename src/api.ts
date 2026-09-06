@@ -3,8 +3,10 @@ import { dataError } from './error';
 
 type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; message?: string } };
 type ApiData = Pick<StoreState, 'works' | 'version'>;
+type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 
-const API_BASE = (import.meta.env.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
+const meta = import.meta as ImportMetaWithEnv;
+const API_BASE = (meta.env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_TIMEOUT_MS = 12_000;
 
 function endpoint(path: string): string { return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`; }
