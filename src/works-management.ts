@@ -1,0 +1,127 @@
+import './works-management.css';
+import { createWork, deleteWork, getRemoteData, updateWork } from './api';
+import { getStore, type MerchStore } from './store';
+import { escapeHtml, qs } from './utils/dom';
+import { showToast } from './utils/toast';
+import type { Work } from './types';
+
+let mounted = false;
+let storeRef: MerchStore | null = null;
+let editingId = '';
+
+function works(): Work[] { return storeRef?.snapshot.works ?? []; }
+function itemCount(work: Work): number { return work.items.length; }
+function resetForm(): void {
+  editingId = '';
+  const form = qs<HTMLFormElement>('#works-management-form');
+  if (form) form.reset();
+  const title = qs<HTMLElement>('#works-management-form-title');
+  if (title) title.textContent = '新增作品';
+  const cancel = qs<HTMLButtonElement>('#works-management-cancel');
+  if (cancel) cancel.hidden = true;
+  const id = qs<HTMLInputElement>('#works-management-id');
+  if (id) id.disabled = false;
+  const code = qs<HTMLInputElement>('#works-management-code');
+  if (code) code.disabled = false;
+}
+function fillForm(work: Work): void {
+  editingId = work.id;
+  const title = qs<HTMLElement>('#works-management-form-title');
+  if (title) title.textContent = '編輯作品';
+  const id = qs<HTMLInputElement>('#works-management-id');
+  if (id) { id.value = work.id; id.disabled = true; }
+  const name = qs<HTMLInputElement>('#works-management-name');
+  if (name) name.value = work.name;
+  const code = qs<HTMLInputElement>('#works-management-code');
+  if (code) { code.value = work.code; code.disabled = work.items.length > 0; }
+  const cancel = qs<HTMLButtonElement>('#works-management-cancel');
+  if (cancel) cancel.hidden = false;
+}
+function renderList(): void {
+  const root = qs<HTMLElement>('#works-management-list');
+  if (!root) return;
+  root.innerHTML = works().map(work => `<div class="works-management-row"><div class="works-management-main"><strong>${escapeHtml(work.name)}</strong><span>${escapeHtml(work.code)} · ${itemCount(work)} 筆收藏</span><small>${escapeHtml(work.id)}</small></div><div class="works-management-actions"><button class="button secondary" type="button" data-work-edit="${escapeHtml(work.id)}">編輯</button><button class="button danger" type="button" data-work-delete="${escapeHtml(work.id)}" ${work.items.length ? 'disabled title="作品仍有收藏，無法刪除"' : ''}>刪除</button></div></div>`).join('') || '<div class="notice">目前沒有作品。</div>';
+}
+async function refreshFromApi(): Promise<void> {
+  if (!storeRef) return;
+  const data = await getRemoteData();
+  storeRef.replaceData(data.works, data.version);
+  renderList();
+}
+function validate(id: string, name: string, code: string, current?: Work): string[] {
+  const errors: string[] = [];
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) errors.push('作品 ID 只能使用小寫英數字與連字號。');
+  if (!name) errors.push('作品名稱為必填。');
+  if (!/^[A-Z]{2,3}$/.test(code)) errors.push('作品代碼必須是 2～3 碼大寫英文字母。');
+  if (works().some(work => work.id === id && work.id !== current?.id)) errors.push('作品 ID 已存在。');
+  if (works().some(work => work.code === code && work.id !== current?.id)) errors.push('作品代碼已存在。');
+  if (current && current.items.length > 0 && code !== current.code) errors.push('作品已有收藏時不可修改作品代碼，以避免破壞永久 Item ID。');
+  return errors;
+}
+async function submit(event: Event): Promise<void> {
+  event.preventDefault();
+  const id = qs<HTMLInputElement>('#works-management-id')?.value.trim() ?? '';
+  const name = qs<HTMLInputElement>('#works-management-name')?.value.trim() ?? '';
+  const code = qs<HTMLInputElement>('#works-management-code')?.value.trim().toUpperCase() ?? '';
+  const current = editingId ? works().find(work => work.id === editingId) : undefined;
+  const errors = validate(id, name, code, current);
+  if (errors.length) { showToast(errors.join('\n'), 'error'); return; }
+  const submitButton = qs<HTMLButtonElement>('#works-management-submit');
+  if (submitButton) submitButton.disabled = true;
+  try {
+    const data = current ? await updateWork(current.id, { name, code }) : await createWork({ id, name, code });
+    storeRef?.replaceData(data.works, data.version);
+    resetForm();
+    renderList();
+    showToast(current ? '作品已更新。' : '作品已新增。', 'success');
+  } catch (error) { showToast(error instanceof Error ? error.message : '作品儲存失敗。', 'error'); }
+  finally { if (submitButton) submitButton.disabled = false; }
+}
+async function remove(id: string): Promise<void> {
+  const work = works().find(entry => entry.id === id);
+  if (!work) return;
+  if (work.items.length) { showToast('作品仍有收藏，請先移除所有收藏後再刪除。', 'error'); return; }
+  if (!window.confirm(`確定要刪除作品「${work.name}」？\n此操作只允許刪除沒有任何收藏的作品。`)) return;
+  try {
+    const data = await deleteWork(id);
+    storeRef?.replaceData(data.works, data.version);
+    if (editingId === id) resetForm();
+    renderList();
+    showToast('作品已刪除。', 'success');
+  } catch (error) { showToast(error instanceof Error ? error.message : '作品刪除失敗。', 'error'); }
+}
+function bind(root: HTMLElement): void {
+  const form = qs<HTMLFormElement>('#works-management-form', root);
+  form?.addEventListener('submit', submit);
+  qs<HTMLButtonElement>('#works-management-cancel', root)?.addEventListener('click', resetForm);
+  qs<HTMLButtonElement>('#works-management-refresh', root)?.addEventListener('click', async () => {
+    try { await refreshFromApi(); showToast('作品資料已重新載入。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '作品資料重新載入失敗。', 'error'); }
+  });
+  root.addEventListener('click', event => {
+    const target = event.target as Element | null;
+    const edit = target?.closest<HTMLButtonElement>('[data-work-edit]');
+    const del = target?.closest<HTMLButtonElement>('[data-work-delete]');
+    if (edit) { const work = works().find(entry => entry.id === edit.dataset.workEdit); if (work) fillForm(work); }
+    if (del && del.dataset.workDelete) void remove(del.dataset.workDelete);
+  });
+}
+function mount(): void {
+  const root = qs<HTMLElement>('#management-root');
+  if (!root || root.querySelector('#works-management')) return;
+  const panel = document.createElement('section');
+  panel.id = 'works-management';
+  panel.className = 'panel works-management';
+  panel.innerHTML = `<div class="section-heading"><div><span class="eyebrow">WORKS</span><h2>作品管理</h2><p>管理作品名稱與代碼。已有收藏的作品會鎖定代碼，避免影響永久 Item ID。</p></div><button class="button secondary" id="works-management-refresh" type="button">重新載入</button></div><div class="works-management-grid"><form id="works-management-form" class="works-management-form"><h3 id="works-management-form-title">新增作品</h3><label>作品 ID<input id="works-management-id" name="id" required placeholder="honkai-star-rail" autocomplete="off"></label><label>作品名稱<input id="works-management-name" name="name" required placeholder="崩壞：星穹鐵道" autocomplete="off"></label><label>作品代碼<input id="works-management-code" name="code" required maxlength="3" placeholder="HSR" autocomplete="off"></label><div class="works-management-form-actions"><button class="button" id="works-management-submit" type="submit">儲存作品</button><button class="button secondary" id="works-management-cancel" type="button" hidden>取消編輯</button></div></form><div><h3>現有作品</h3><div id="works-management-list"></div></div></div>`;
+  root.prepend(panel);
+  bind(panel);
+  renderList();
+}
+export function initWorksManagement(): void {
+  if (mounted) return;
+  mounted = true;
+  getStore().then(store => { storeRef = store; mount(); store.subscribe(() => { if (document.querySelector('#works-management')) renderList(); }); }).catch(() => undefined);
+  const observer = new MutationObserver(() => mount());
+  observer.observe(document.body, { childList: true, subtree: true });
+  mount();
+}
+initWorksManagement();
