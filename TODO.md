@@ -84,7 +84,7 @@
 - [x] `預購中` 搜尋仍可單獨命中 preorder
 - [x] `已收到` 搜尋仍可單獨命中 received
 - [x] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
-- [x] 多詞條支援空白、`,`、`，`、`、` 等常見分隔方式
+- [x] 多詞條支援空白、`,`、`，`、` 等常見分隔方式
 - [x] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
 - [x] Filter
 - [x] Sort
@@ -166,19 +166,19 @@
 - [x] 流水號選擇器
 - [x] 管理頁搜尋
 - [x] 作品／類型／流水號選擇與搜尋狀態同步
-- [ ] 收藏 CRUD
-- [ ] 表單 validation
-- [ ] 刪除確認
-- [ ] 成功提示
-- [ ] 失敗提示
+- [x] 收藏 CRUD
+- [x] 表單 validation
+- [x] 刪除確認
+- [x] 成功提示
+- [x] 失敗提示
 - [ ] 作品管理新增
 - [ ] 作品管理編輯
 - [ ] 作品管理移除
-- [ ] 表單編輯狀態不因重新 render 遺失
-- [ ] 新增／編輯表單完整欄位
-- [ ] 必填欄位與格式錯誤清楚提示
-- [ ] 重複 ID / 重複資料安全處理
-- [ ] 新增／編輯表單支援 quantity
+- [x] 表單編輯狀態不因重新 render 遺失
+- [x] 新增／編輯表單完整欄位
+- [x] 必填欄位與格式錯誤清楚提示
+- [x] 重複 ID / 重複資料安全處理
+- [x] 新增／編輯表單支援 quantity
 
 ## 11. GitHub API / Worker
 - [x] API layer
@@ -232,27 +232,24 @@
 - [ ] Management test
 - [ ] GitHub API write test
 - [ ] Image management test
-- [ ] Empty / error / loading test
+- [ ] Empty/error/loading test
 - [ ] Data integrity verification
 - [ ] Production deploy verification
 
 ## 15. Final Polish
-- [ ] 全站 desktop UI 精修
-- [ ] 全站 tablet UI 精修
-- [ ] 全站 mobile UI 精修
-- [ ] Desktop Statistics / Management / Settings 排版檢查
-- [ ] Mobile Statistics / Management / Settings 排版檢查
-- [ ] 全站 spacing / typography / alignment 最終檢查
-- [ ] 全站互動狀態最終檢查
-- [ ] 全站 accessibility 最終檢查
-- [ ] 最終 production smoke test
+- [ ] desktop / tablet / mobile UI polish
+- [ ] desktop / mobile Statistics / Management / Settings layout checks
+- [ ] spacing / typography / alignment
+- [ ] interaction states
+- [ ] accessibility
+- [ ] final production smoke test
 
 ## 16. Architecture Follow-up
-- [x] 統一所有頁面與 enhancement module 共用同一個 Store instance，避免各模組重複 `loadStore()` 造成 state 分裂
-- [x] 移除 Management 頁面的獨立 `items` 資料副本，改由 Store 作為唯一資料來源
-- [x] 移除 Statistics 頁面的獨立 Store instance，改由主 App Store 提供資料與訂閱
-- [x] 移除 Home enhancement 與主 rendering 之間的重複資料 rendering，建立單一 rendering ownership
-- [ ] 確保 Store 更新後 Home / Collection / Statistics / Management / Detail 所有畫面由同一 state 正確同步
-- [x] 檢查 enhancement module 的初始化生命週期，避免 Router 重複 render 後重複綁定事件
-- [ ] 檢查所有跨頁／動態元素互動是否仍符合事件 delegation 與單一責任原則
-- [ ] 完成上述架構調整後重新執行全站 regression verification
+- [x] shared Store instance
+- [x] Management no independent items copy
+- [x] Statistics shared Store
+- [x] Home enhancement / main rendering single ownership
+- [ ] ensure Store update sync across Home / Collection / Statistics / Management / Detail
+- [x] enhancement lifecycle check
+- [ ] all cross-page / dynamic interactions use event delegation and single responsibility
+- [ ] full regression verification
