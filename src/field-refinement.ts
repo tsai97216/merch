@@ -3,12 +3,9 @@ const managementHiddenFields = new Set([
   'management-order-id',
   'management-release-date',
   'management-shipping-note',
+  'management-shipping-status',
+  'management-shipping-method',
 ]);
-
-const shippingStatusMap: Record<string, string> = {
-  '': '', pending: '待出貨', shipped: '已出貨', in_transit: '運送中', delivered: '已送達', received: '已收貨',
-  '待出貨': '待出貨', '已出貨': '已出貨', '運送中': '運送中', '已送達': '已送達', '已收貨': '已收貨',
-};
 
 const afterSalesStatusMap: Record<string, string> = {
   '': '', none: '無', pending: '處理中', processing: '處理中', completed: '已完成', refunded: '已退款', returned: '已退貨', exchanged: '已換貨',
@@ -50,22 +47,12 @@ function refineManagement(): void {
   const root = document.querySelector<HTMLElement>('#management-root');
   if (!root) return;
   managementHiddenFields.forEach(hideManagementField);
-  replaceStatusInput('management-shipping-status', ['', '待出貨', '已出貨', '運送中', '已送達', '已收貨'], shippingStatusMap);
   replaceStatusInput('management-after-sales-status', ['', '無', '處理中', '已完成', '已退款', '已退貨', '已換貨'], afterSalesStatusMap);
 }
 
 function refineDetail(): void {
-  const shipping = document.querySelector<HTMLElement>('#detail-shipping');
   const afterSales = document.querySelector<HTMLElement>('#detail-after-sales');
-  const shippingLabel = shipping?.closest('div')?.querySelector('dt');
   const afterSalesLabel = afterSales?.closest('div')?.querySelector('dt');
-  if (shipping && shipping.dataset.refined !== 'true') {
-    const raw = shipping.textContent?.trim() ?? '';
-    const translated = shippingStatusMap[raw] ?? raw;
-    shipping.textContent = translated || '未設定';
-    shipping.dataset.refined = 'true';
-    if (shippingLabel) shippingLabel.textContent = '物流狀態';
-  }
   if (afterSales && afterSales.dataset.refined !== 'true') {
     const raw = afterSales.textContent?.trim() ?? '';
     const translated = afterSalesStatusMap[raw] ?? raw;
@@ -73,6 +60,8 @@ function refineDetail(): void {
     afterSales.dataset.refined = 'true';
     if (afterSalesLabel) afterSalesLabel.textContent = '售後狀態';
   }
+  const shipping = document.querySelector<HTMLElement>('#detail-shipping');
+  shipping?.closest('div')?.remove();
   const release = document.querySelector<HTMLElement>('#detail-release-date');
   release?.closest('div')?.remove();
 }
