@@ -50,6 +50,8 @@ jobs:
         run: npm run verify:images
       - name: Verify management schema contract
         run: npm run verify:management-schema
+      - name: Verify works management CRUD contract
+        run: npm run verify:works-management
       - name: Verify worker architecture
         run: npm run verify:worker
       - name: Verify worker write scope
