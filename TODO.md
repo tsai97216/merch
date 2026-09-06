@@ -204,7 +204,7 @@
 - [x] CORS / allowed origin
 - [x] request payload validation
 - [x] response schema validation
-- [ ] Worker GitHub Token 實際寫入權限驗證與部署後驗證
+- [x] Worker GitHub Token 實際寫入權限驗證與部署後驗證
 
 ## 12. Write Consistency
 - [x] validate
@@ -235,8 +235,8 @@
 - [ ] Detail test
 - [x] Statistics test
 - [ ] Management test
-- [ ] GitHub API write test
-- [ ] Image management test
+- [x] GitHub API write test
+- [x] Image management test
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
 - [x] Production deploy verification
@@ -264,6 +264,6 @@
 - [ ] 修正 Home「作品消費排行」顯示邏輯：排行標題與完整排行 Modal 是消費金額，但 Home 小圖目前使用數量作為排行值，需統一為消費排行語意與計算方式
 - [ ] 統一 Migration / Verify / 現行資料 schema：目前 `scripts/migrate.mjs`、`scripts/verify-data.mjs` 與 `public/data/works/*.json` 對 work 欄位結構存在不一致，需完成遷移後資料格式的單一規格與前後驗證
 - [ ] 落實商品分類規則並處理既有資料：`亞克力` 為材質而非商品類型，需確認現有資料中的相關分類並依實際商品型態修正，同時避免管理介面再次建立錯誤分類
-- [ ] 實際驗證 Worker GitHub Token 寫入流程：除了權限與 Secret 存在性檢查外，需完成部署後實際 API 寫入／讀回驗證，確認 Worker 能真正修改 `tsai97216/merch` 資料
+- [x] 實際驗證 Worker GitHub Token 寫入流程：除了權限與 Secret 存在性檢查外，需完成部署後實際 API 寫入／讀回驗證，確認 Worker 能真正修改 `tsai97216/merch` 資料
 - [ ] 完成跨頁與動態互動的事件委派檢查：逐一檢查 Home / Collection / Statistics / Management / Detail / Modal 的動態元素，避免重複 listener、事件攔截或責任邊界不清
 - [ ] 完成全站回歸檢查並重新驗證既有已勾選 TODO：特別確認 Home、Collection、Detail、Statistics、Management、Settings 在資料更新、Router 切換、Modal 開關與重新 render 後仍保持一致
