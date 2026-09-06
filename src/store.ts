@@ -9,6 +9,68 @@ function isRecord(value: unknown): value is Record<string, unknown> { return typ
 function assertRecord(value: unknown, label: string): asserts value is Record<string, unknown> { if (!isRecord(value)) throw dataError(`${label} 必須是物件`); }
 function normalizeQuantity(value: unknown, label: string): number { if (value === undefined) return 1; if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) throw dataError(`${label}.quantity 必須是大於等於 1 的整數`); return value; }
 function normalizeStringArray(value: unknown): string[] { return Array.isArray(value) ? value.filter((x): x is string => typeof x === 'string').map(x => x.trim()).filter(Boolean) : typeof value === 'string' && value.trim() ? [value.trim()] : []; }
+function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
+  assertRecord(value, label);
+  for (const forbidden of ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt']) if (forbidden in value) throw dataError(`${label}.${forbidden} 已不屬於 canonical Item schema`);
+  if (typeof value.id !== 'string' || !value.id) throw dataError(`${label}.id 無效`);
+  if (typeof value.title !== 'string' || !value.title) throw dataError(`${label}.title 無效`);
+  if (typeof value.status !== 'string' || !value.status) throw dataError(`${label}.status 無效`);
+  const parsed = parseItemId(value.id);
+  if (!parsed) throw dataError(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
+  if (parsed.workCode !== work.code) throw dataError(`${label}.id 作品代碼 ${parsed.workCode} 與資料作品 ${work.code} 不一致`);
+  const category = typeof value.category === 'string' ? value.category : '';
+  if (!category || !/^[a-z]$/.test(category)) throw dataError(`${label}.category 無效`);
+  const series = value.series === undefined ? [] : value.series;
+  const characters = value.characters === undefined ? [] : value.characters;
+  if (!Array.isArray(series) || series.some(x => typeof x !== 'string')) throw dataError(`${label}.series 必須是字串陣列`);
+  if (!Array.isArray(characters) || characters.some(x => typeof x !== 'string')) throw dataError(`${label}.characters 必須是字串陣列`);
+  const images = value.images === undefined ? [] : value.images;
+  if (!Array.isArray(images) || images.some(x => !isRecord(x) || typeof x.id !== 'string' || typeof x.file !== 'string')) throw dataError(`${label}.images 格式無效`);
+  const purchase = value.purchase === undefined ? {} : value.purchase;
+  const arrival = value.arrival === undefined ? {} : value.arrival;
+  const afterSales = value.afterSales === undefined ? {} : value.afterSales;
+  if (!isRecord(purchase)) throw dataError(`${label}.purchase 必須是物件`);
+  if (!isRecord(arrival)) throw dataError(`${label}.arrival 必須是物件`);
+  if (!isRecord(afterSales)) throw dataError(`${label}.afterSales 必須是物件`);
+  if (purchase.price !== undefined && (typeof purchase.price !== 'number' || !Number.isFinite(purchase.price) || purchase.price < 0)) throw dataError(`${label}.purchase.price 無效`);
+  if (purchase.currency !== undefined && typeof purchase.currency !== 'string') throw dataError(`${label}.purchase.currency 無效`);
+  if (purchase.platform !== undefined && typeof purchase.platform !== 'string') throw dataError(`${label}.purchase.platform 無效`);
+  if (purchase.date !== undefined && typeof purchase.date !== 'string') throw dataError(`${label}.purchase.date 無效`);
+  for (const field of ['expectedDate', 'receivedDate']) if (arrival[field] !== undefined && arrival[field] !== null && typeof arrival[field] !== 'string') throw dataError(`${label}.arrival.${field} 無效`);
+  if (afterSales.status !== undefined && typeof afterSales.status !== 'string') throw dataError(`${label}.afterSales.status 無效`);
+  if (afterSales.note !== undefined && typeof afterSales.note !== 'string') throw dataError(`${label}.afterSales.note 無效`);
+  const imageIds = new Set<string>();
+  for (const image of images as Record<string, unknown>[]) { if (imageIds.has(image.id as string)) throw dataError(`${label}.images 存在重複 image id`); imageIds.add(image.id as string); if (image.alt !== undefined && typeof image.alt !== 'string') throw dataError(`${label}.images.alt 無效`); if (image.isCover !== undefined && typeof image.isCover !== 'boolean') throw dataError(`${label}.images.isCover 無效`); if (image.sha !== undefined && typeof image.sha !== 'string') throw dataError(`${label}.images.sha 無效`); }
+  return {
+    id: value.id,
+    workId: work.id,
+    workName: work.name,
+    title: value.title,
+    series: normalizeStringArray(series),
+    characters: normalizeStringArray(characters),
+    category,
+    manufacturer: typeof value.manufacturer === 'string' ? value.manufacturer : '',
+    quantity: normalizeQuantity(value.quantity, label),
+    status: value.status,
+    description: typeof value.description === 'string' ? value.description : '',
+    notes: typeof value.notes === 'string' ? value.notes : '',
+    purchase: isRecord(purchase) ? {
+      ...(typeof purchase.price === 'number' ? { price: purchase.price } : {}),
+      ...(typeof purchase.currency === 'string' ? { currency: purchase.currency } : {}),
+      ...(typeof purchase.platform === 'string' ? { platform: purchase.platform } : {}),
+      ...(typeof purchase.date === 'string' ? { date: purchase.date } : {}),
+    } : {},
+    arrival: isRecord(arrival) ? {
+      ...(typeof arrival.expectedDate === 'string' || arrival.expectedDate === null ? { expectedDate: arrival.expectedDate } : {}),
+      ...(typeof arrival.receivedDate === 'string' || arrival.receivedDate === null ? { receivedDate: arrival.receivedDate } : {}),
+    } : {},
+    afterSales: isRecord(afterSales) ? {
+      ...(typeof afterSales.status === 'string' ? { status: afterSales.status } : {}),
+      ...(typeof afterSales.note === 'string' ? { note: afterSales.note } : {}),
+    } : {},
+    images: images as Item['images'],
+  };
+}
 function validateWorksIndex(value: unknown): WorksIndex {
   assertRecord(value, 'works.json');
   if (value.schemaVersion !== 1 && value.schemaVersion !== 2) throw dataError('works.json schemaVersion 不支援');
@@ -26,68 +88,23 @@ function validateWorksIndex(value: unknown): WorksIndex {
   works.forEach(work => { if (codes.has(work.code)) throw dataError(`works.json 存在重複作品代碼：${work.code}`); codes.add(work.code); });
   return { schemaVersion: value.schemaVersion as 1 | 2, works };
 }
-function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
-  assertRecord(value, label);
-  if (typeof value.id !== 'string' || !value.id) throw dataError(`${label}.id 無效`);
-  if (typeof value.title !== 'string' || !value.title) throw dataError(`${label}.title 無效`);
-  if (typeof value.status !== 'string' || !value.status) throw dataError(`${label}.status 無效`);
-  const parsed = parseItemId(value.id);
-  if (!parsed) throw dataError(`${label}.id 不符合永久 Item ID 格式：${value.id}`);
-  if (parsed.workCode !== work.code) throw dataError(`${label}.id 作品代碼 ${parsed.workCode} 與資料作品 ${work.code} 不一致`);
-  const category = typeof value.category === 'string' ? value.category : '';
-  if (!category) throw dataError(`${label}.category 無效`);
-  const images = value.images === undefined ? [] : value.images;
-  if (!Array.isArray(images) || images.some(x => !isRecord(x) || typeof x.id !== 'string' || typeof x.file !== 'string')) throw dataError(`${label}.images 格式無效`);
-  return {
-    id: value.id,
-    workId: work.id,
-    workName: work.name,
-    title: value.title,
-    series: normalizeStringArray(value.series),
-    characters: normalizeStringArray(value.characters),
-    category,
-    manufacturer: typeof value.manufacturer === 'string' ? value.manufacturer : '',
-    quantity: normalizeQuantity(value.quantity, label),
-    status: value.status,
-    description: typeof value.description === 'string' ? value.description : '',
-    notes: typeof value.notes === 'string' ? value.notes : '',
-    purchase: isRecord(value.purchase) ? {
-      ...(typeof value.purchase.price === 'number' ? { price: value.purchase.price } : {}),
-      ...(typeof value.purchase.currency === 'string' ? { currency: value.purchase.currency } : {}),
-      ...(typeof value.purchase.platform === 'string' ? { platform: value.purchase.platform } : {}),
-      ...(typeof value.purchase.date === 'string' ? { date: value.purchase.date } : {}),
-    } : {},
-    arrival: isRecord(value.arrival) ? {
-      ...(typeof value.arrival.expectedDate === 'string' || value.arrival.expectedDate === null ? { expectedDate: value.arrival.expectedDate } : {}),
-      ...(typeof value.arrival.receivedDate === 'string' || value.arrival.receivedDate === null ? { receivedDate: value.arrival.receivedDate } : {}),
-    } : {},
-    afterSales: isRecord(value.afterSales) ? {
-      ...(typeof value.afterSales.status === 'string' ? { status: value.afterSales.status } : {}),
-      ...(typeof value.afterSales.note === 'string' ? { note: value.afterSales.note } : {}),
-    } : {},
-    images: images as Item['images'],
-  };
-}
 function validateVersion(value: unknown): VersionData { assertRecord(value, 'version.json'); if (typeof value.version !== 'string' || !VERSION_RE.test(value.version)) throw dataError('version.json version 格式無效'); return { version: value.version }; }
 function deepFreeze<T>(value: T): T { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Reflect.ownKeys(value as object).forEach(key => { const child = (value as Record<PropertyKey, unknown>)[key]; if (child && typeof child === 'object') deepFreeze(child); }); Object.freeze(value); } return value; }
 function cloneAndFreeze<T>(value: T): T { return deepFreeze(structuredClone(value)); }
 function normalizeStoreItem(item: Item, label: string): Item { return { ...item, quantity: normalizeQuantity(item.quantity, label) }; }
-function readSavedUi(): UiState { try { const raw = localStorage.getItem('merch-ui'); if (!raw) return { ...defaultUiState }; const parsed = JSON.parse(raw) as Partial<UiState>; return { collectionView: parsed.collectionView === 'list' ? 'list' : 'cards', collectionQuery: typeof parsed.collectionQuery === 'string' ? parsed.collectionQuery : '', collectionStatus: typeof parsed.collectionStatus === 'string' ? parsed.collectionStatus : 'all', collectionWork: typeof parsed.collectionWork === 'string' ? parsed.collectionWork : 'all', collectionCategory: typeof parsed.collectionCategory === 'string' ? parsed.collectionCategory : 'all', collectionCharacter: typeof parsed.collectionCharacter === 'string' ? parsed.collectionCharacter : 'all', collectionManufacturer: typeof parsed.collectionManufacturer === 'string' ? parsed.collectionManufacturer : 'all', collectionSort: parsed.collectionSort === 'title' || parsed.collectionSort === 'price' ? parsed.collectionSort : 'created' }; } catch { return { ...defaultUiState }; } }
+function readSavedUi(): UiState { try { const raw = localStorage.getItem('merch-ui'); if (!raw) return { ...defaultUiState }; const parsed = JSON.parse(raw) as Partial<UiState>; return { collectionView: parsed.collectionView === 'list' ? 'list' : 'cards', collectionQuery: typeof parsed.collectionQuery === 'string' ? parsed.collectionQuery : '', collectionStatus: typeof parsed.collectionStatus === 'string' ? parsed.collectionStatus : 'all', collectionWork: typeof parsed.collectionWork === 'string' ? parsed.collectionWork : 'all', collectionCategory: typeof parsed.collectionCategory === 'string' ? parsed.collectionCategory : 'all', collectionCharacter: typeof parsed.collectionCharacter === 'string' ? parsed.collectionCharacter : 'all', collectionSort: parsed.collectionSort === 'title' || parsed.collectionSort === 'price' ? parsed.collectionSort : 'created' }; } catch { return { ...defaultUiState }; } }
 
 async function loadNewStaticData(index: WorksIndex): Promise<Work[]> {
   const works: Work[] = [];
   for (const entry of index.works) {
     const rootPath = entry.path.replace(/^\//, '').replace(/\/$/, '');
-    const categoriesResponse = await fetch(`./${rootPath}/categories.json`, { cache: 'no-store' });
+    const categoriesResponse = await fetch('./data/categories.json', { cache: 'no-store' });
     let categories: string[] = [];
     if (categoriesResponse.ok) {
       const payload = await categoriesResponse.json() as unknown;
-      if (isRecord(payload) && Array.isArray(payload.categories)) categories = payload.categories.filter((x): x is string => typeof x === 'string');
+      if (isRecord(payload) && Array.isArray(payload.categories)) categories = payload.categories.map(x => isRecord(x) && typeof x.code === 'string' ? x.code : '').filter(Boolean);
     }
-    if (!categories.length) {
-      const known = ['b','c','d','e','f','g','h','k','l','m','n','o','p','q','r','s','v','w','y'];
-      categories = known;
-    }
+    if (!categories.length) categories = ['b','c','d','e','f','g','h','k','l','m','n','o','p','q','r','s','v','w','y'];
     const items: Item[] = [];
     for (const category of categories) {
       const response = await fetch(`./${rootPath}/${category}/index.json`, { cache: 'no-store' });
