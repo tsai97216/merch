@@ -188,55 +188,53 @@ export class MerchStore {
   }
 }
 
-export async function loadStore(): Promise<MerchStore> {
-  const store = new MerchStore({
-    works: [],
-    items: [],
-    version: '0.0.0',
-    ui: readSavedUi(),
-    loading: true,
-    error: null,
-  });
-
-  try {
-    const indexResponse = await fetch('./data/works.json', { cache: 'no-store' });
-    if (!indexResponse.ok) throw httpError('works.json', indexResponse.status);
-    const index = validateWorksIndex(await indexResponse.json());
-
-    const works = await Promise.all(index.works.map(async (entry) => {
-      const response = await fetch(`./${entry.data}`, { cache: 'no-store' });
-      if (!response.ok) throw httpError(entry.data, response.status);
-      const payload = validateWorkPayload(await response.json(), entry.data, entry);
-      return { id: entry.id, name: entry.name, code: entry.code, items: payload.items } satisfies Work;
-    }));
-
-    const allIds = new Set<string>();
-    works.forEach((work) => work.items.forEach((item) => {
-      if (allIds.has(item.id)) throw dataError(`所有作品存在重複 Item ID：${item.id}`);
-      allIds.add(item.id);
-    }));
-
-    const versionResponse = await fetch('./data/version.json', { cache: 'no-store' });
-    if (!versionResponse.ok) throw httpError('version.json', versionResponse.status);
-    const version = validateVersion(await versionResponse.json()).version;
-    store.replaceData(works, version);
-    return store;
-  } catch (error) {
-    const appError = toAppError(error, '資料載入失敗');
-    store.setError(appError.message);
-    throw Object.assign(new Error(appError.message), { store, code: appError.code, cause: appError.cause });
-  }
-}
-
 let sharedStorePromise: Promise<MerchStore> | null = null;
 
-/** Return the application's single shared Store instance. */
-export function getStore(): Promise<MerchStore> {
-  if (!sharedStorePromise) {
-    sharedStorePromise = loadStore().catch((error) => {
-      sharedStorePromise = null;
-      throw error;
+export function loadStore(): Promise<MerchStore> {
+  if (sharedStorePromise) return sharedStorePromise;
+
+  sharedStorePromise = (async () => {
+    const store = new MerchStore({
+      works: [],
+      items: [],
+      version: '0.0.0',
+      ui: readSavedUi(),
+      loading: true,
+      error: null,
     });
-  }
+
+    try {
+      const indexResponse = await fetch('./data/works.json', { cache: 'no-store' });
+      if (!indexResponse.ok) throw httpError('works.json', indexResponse.status);
+      const index = validateWorksIndex(await indexResponse.json());
+
+      const works = await Promise.all(index.works.map(async (entry) => {
+        const response = await fetch(`./${entry.data}`, { cache: 'no-store' });
+        if (!response.ok) throw httpError(entry.data, response.status);
+        const payload = validateWorkPayload(await response.json(), entry.data, entry);
+        return { id: entry.id, name: entry.name, code: entry.code, items: payload.items } satisfies Work;
+      }));
+
+      const allIds = new Set<string>();
+      works.forEach((work) => work.items.forEach((item) => {
+        if (allIds.has(item.id)) throw dataError(`所有作品存在重複 Item ID：${item.id}`);
+        allIds.add(item.id);
+      }));
+
+      const versionResponse = await fetch('./data/version.json', { cache: 'no-store' });
+      if (!versionResponse.ok) throw httpError('version.json', versionResponse.status);
+      const version = validateVersion(await versionResponse.json()).version;
+      store.replaceData(works, version);
+      return store;
+    } catch (error) {
+      const appError = toAppError(error, '資料載入失敗');
+      store.setError(appError.message);
+      sharedStorePromise = null;
+      throw Object.assign(new Error(appError.message), { store, code: appError.code, cause: appError.cause });
+    }
+  })();
+
   return sharedStorePromise;
 }
+
+export const getStore = loadStore;
