@@ -9,7 +9,7 @@ const required = [
   ['commit parent pinning', /parents:\s*\[remote\.headSha\]/],
   ['non-force ref update', /force:\s*false/],
   ['target Item lookup', /remote\.items\.get\(id\)/],
-  ['target Item data path', /data\/\$\{work\.id\}\/\$\{storageItem\.category\}\/\$\\{id\}\/data\.json/],
+  ['target Item data path', /data\/\$\{work\.id\}\/\$\{storageItem\.category\}\/\$\{id\}\/data\.json/],
   ['category index update', /remote\.categories\.get\(newCategoryPath\)/],
   ['old category removal on move', /oldIndex\.items\.filter\(entry => entry\.id !== id\)/],
   ['target image ownership check', /entry\.workId !== parts\.workId \|\| entry\.item\.category !== parts\.category/],
