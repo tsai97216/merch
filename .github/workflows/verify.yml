@@ -42,6 +42,8 @@ jobs:
         run: npm run verify:schema
       - name: Verify category contract
         run: npm run verify:category
+      - name: Verify image contract
+        run: npm run verify:images
       - name: Verify worker architecture
         run: npm run verify:worker
       - name: Verify worker write scope
