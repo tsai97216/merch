@@ -202,14 +202,14 @@
 - [x] response schema validation
 
 ## 12. Write Consistency
-- [ ] validate
-- [ ] 先取得最新 remote state
-- [ ] 建立新 state
-- [ ] PUT 成功後才更新 Store
-- [ ] 寫入失敗不污染 Store
-- [ ] concurrent write protection
-- [ ] stale state detection
-- [ ] write operation error recovery
+- [x] validate
+- [x] 先取得最新 remote state
+- [x] 建立新 state
+- [x] PUT 成功後才更新 Store
+- [x] 寫入失敗不污染 Store
+- [x] concurrent write protection
+- [x] stale state detection
+- [x] write operation error recovery
 
 ## 13. Image Management
 - [ ] Image upload
