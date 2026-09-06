@@ -406,3 +406,56 @@ data/
 - [ ] **Production deploy 驗證通過**
 - [ ] **確認 `public/data/version.json` 為唯一正式版本來源**
 - [ ] **完成後才移除 §1 中被 §16 取代的舊架構描述**
+
+### 16.13 Implementation Sequence
+
+> **以下為實際開始改檔後的建議執行順序。不要跳過資料層直接先改 UI；每一階段完成並驗證後再進入下一階段。**
+
+#### Phase 1：規格與資料結構
+- [ ] **`src/types.ts`：先完成新 Item schema、index schema、storage metadata 型別**
+- [ ] **`public/data/categories.json`：確認正式類型代碼與新分類資料結構**
+- [ ] **`scripts/migrate.mjs`：準備舊資料 → 新資料架構的轉換邏輯**
+- [ ] **`scripts/verify-data.mjs`：準備新架構驗證器**
+
+#### Phase 2：正式資料遷移
+- [ ] **執行實際資料 migration，建立 `data/<work>/<category>/<Item ID>/`**
+- [ ] **建立各 category 的 `index.json`**
+- [ ] **建立各 Item 的 `data.json` 與 `images/`**
+- [ ] **完成 migration 前後資料／ID／數量／圖片比對**
+- [ ] **Verify 通過後才保留新架構作為正式資料來源**
+
+#### Phase 3：資料讀取與寫入層
+- [ ] **`src/store.ts`：改為新架構載入、合併與 Item path mapping**
+- [ ] **`src/api.ts`：改為新 Item／index／asset payload 與路徑**
+- [ ] **`worker/src/index.ts`：改為新 GitHub 目錄、index、Item data 與 asset 操作**
+- [ ] **完成精準 Item 寫入與 multi-file atomic write / rollback**
+
+#### Phase 4：圖片系統
+- [ ] **`src/image-source.ts`：切換新 Item image path**
+- [ ] **`src/image-viewer.ts`：確認新圖片來源相容**
+- [ ] **完成圖片新增／替換／刪除／cover／ordering 與 orphan cleanup 的新架構驗證**
+
+#### Phase 5：管理與詳細頁
+- [ ] **`src/management.ts`：表單全面對應新 Item schema**
+- [ ] **`src/main.ts`：主 UI／Detail 依新資料語義調整**
+- [ ] **`src/router.ts`：確認 Detail／路由不依賴舊資料路徑**
+
+#### Phase 6：統計與既有功能相容
+- [ ] **`src/statistics.ts`：確認統計資料來源與新 Store 相容**
+- [ ] **`src/statistics-data.ts`：確認統計計算不直接依賴舊檔案結構**
+- [ ] **`src/item-id.ts`：確認永久 ID 與新 category/path 規則相容**
+- [ ] **`src/collection-controls.ts`：確認搜尋／篩選／排序維持既有行為**
+- [ ] **`src/home-enhancements.ts`：確認首頁 Item 導航與統計轉跳正常**
+- [ ] **`src/cross-navigation.ts`：確認跨頁 Item 導航正常**
+
+#### Phase 7：全面驗證與收尾
+- [ ] **TypeScript build / production build**
+- [ ] **Desktop / Mobile smoke test**
+- [ ] **Collection / Detail / Management / Statistics / Home 全流程測試**
+- [ ] **GET / PUT / DELETE Item 實寫測試，確認只影響目標 Item／index**
+- [ ] **圖片 API 實寫與一致性測試**
+- [ ] **concurrent write / stale state / rollback 測試**
+- [ ] **migration / rollback 最終驗證**
+- [ ] **確認 `public/data/version.json` 為唯一正式版本來源並同步必要版本資訊**
+- [ ] **全部驗證完成後移除舊作品 JSON 與舊路徑相依程式碼**
+- [ ] **更新 TODO，僅勾選實際完成並驗證的項目**
