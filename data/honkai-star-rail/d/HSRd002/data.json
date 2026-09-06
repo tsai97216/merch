@@ -1,7 +1,7 @@
 {
   "id": "HSRd002",
   "workId": "honkai-star-rail",
-  "title": "昔漣 光錐系列壓克力流沙立牌擺件",
+  "title": "昔漣 光錐系列 壓克力流沙立牌擺件",
   "series": [
     "光錐系列"
   ],
@@ -16,16 +16,11 @@
   "notes": "",
   "purchase": {
     "price": 276.74,
-    "currency": "TWD",
-    "platform": "",
-    "date": ""
+    "currency": "TWD"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": [
     {
