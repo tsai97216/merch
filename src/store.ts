@@ -2,7 +2,6 @@ import type { Item, StoreState, UiState, VersionData, Work, WorkPayload, WorksIn
 import { defaultUiState } from './types';
 import { parseItemId } from './item-id';
 import { dataError, httpError, toAppError } from './error';
-import { deleteItem as deleteRemoteItem, getRemoteData, putItem as putRemoteItem } from './api';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
 function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null && !Array.isArray(value); }
@@ -81,20 +80,25 @@ export class MerchStore {
   subscribe(listener: (state: StoreState) => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   setUi(patch: Partial<UiState>): void { const ui = { ...this.state.ui, ...patch }; this.state = cloneAndFreeze({ ...this.state, ui }); try { localStorage.setItem('merch-ui', JSON.stringify(ui)); } catch { /* optional */ } this.emit(); }
   replaceData(works: Work[], version: string): void { const normalizedWorks = works.map((work) => ({ ...work, items: work.items.map((item, index) => normalizeStoreItem(item, `${work.name}.items[${index}]`)) })); const items = normalizedWorks.flatMap((work) => work.items.map((item) => ({ ...item, workId: work.id, workName: work.name }))); this.state = cloneAndFreeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null }); this.emit(); }
-  async updateItem(item: Item): Promise<void> {
+  updateItem(item: Item): void {
     const current = this.state.items.find((entry) => entry.id === item.id);
     if (!current) throw dataError(`找不到收藏：${item.id}`);
     const work = this.state.works.find((entry) => entry.id === current.workId);
     if (!work) throw dataError(`找不到收藏所屬作品：${current.workId}`);
     const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
     if (parseItemId(normalized.id)?.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
-    const remote = await putRemoteItem(normalized);
-    this.replaceData(remote.works, remote.version);
+    const items = this.state.items.map((entry) => entry.id === normalized.id ? normalized : entry);
+    const works = this.state.works.map((entry) => entry.id === work.id ? { ...entry, items: entry.items.map((entryItem) => entryItem.id === normalized.id ? normalized : entryItem) } : entry);
+    this.state = cloneAndFreeze({ ...this.state, works, items });
+    this.emit();
   }
-  async deleteItem(id: string): Promise<void> {
-    if (!this.state.items.some((entry) => entry.id === id)) throw dataError(`找不到收藏：${id}`);
-    const remote = await deleteRemoteItem(id);
-    this.replaceData(remote.works, remote.version);
+  deleteItem(id: string): void {
+    const current = this.state.items.find((entry) => entry.id === id);
+    if (!current) throw dataError(`找不到收藏：${id}`);
+    const items = this.state.items.filter((entry) => entry.id !== id);
+    const works = this.state.works.map((work) => work.id === current.workId ? { ...work, items: work.items.filter((entry) => entry.id !== id) } : work);
+    this.state = cloneAndFreeze({ ...this.state, works, items });
+    this.emit();
   }
   setLoading(loading: boolean): void { this.state = cloneAndFreeze({ ...this.state, loading }); this.emit(); }
   setError(error: string | null): void { this.state = cloneAndFreeze({ ...this.state, error, loading: false }); this.emit(); }
