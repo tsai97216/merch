@@ -1,4 +1,5 @@
 import type { Item } from './types';
+import { categoryName } from './category-label';
 import { currentYear, monthKey, monthLabel } from './utils/date';
 import { formatMoney, formatPercent, formatQuantity } from './utils/format';
 
@@ -24,7 +25,7 @@ export function aggregateStatistics(items: Item[]): Chart[] {
     const row = { quantity: quantity(item), spend: value(item) };
     add(workSpend, item.workName || '未分類作品', row);
     add(workCount, item.workName || '未分類作品', row);
-    add(categoryCount, item.category || '未分類', row);
+    add(categoryCount, categoryName(item.category), row);
     const month = monthKey(item.purchase?.date);
     if (month) add(monthly, month, row);
   });
@@ -74,7 +75,7 @@ export function aggregateStatistics(items: Item[]): Chart[] {
       summary: [['總收藏', formatQuantity(totalQuantity)], ['作品種類', `${workCountEntries.length} 個`], ['最多收藏作品', workCountEntries[0]?.[0] || '無資料'], ['最多作品數量', workCountEntries[0] ? formatQuantity(workCountEntries[0][1].quantity) : '0 件']].map(([label, value]) => ({ label, value }))
     },
     {
-      id: 'category-count', title: '類別收藏數量', description: '以圓餅圖呈現各類別收藏占比，詳細視圖提供完整數量與比例。', largeType: 'donut', smallType: 'donut',
+      id: 'category-count', title: '類別收藏數量', description: '以周邊類型名稱呈現各類別收藏占比，詳細視圖提供完整數量與比例。', largeType: 'donut', smallType: 'donut',
       rows: rows(categoryEntries, 'quantity'), details: details(categoryEntries, totalQuantity, (row) => `消費 ${formatMoney(row.spend)}`), format: 'count',
       summary: [['總收藏', formatQuantity(totalQuantity)], ['類別數', `${categoryEntries.length} 類`], ['主要類別', categoryEntries[0]?.[0] || '無資料'], ['主要類別占比', categoryEntries[0] ? formatPercent(categoryEntries[0][1].quantity / Math.max(totalQuantity, 1) * 100) : '0%']].map(([label, value]) => ({ label, value }))
     },
