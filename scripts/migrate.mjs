@@ -30,6 +30,7 @@ function normalizeImage(image, index, itemId) {
   const id = nonEmptyString(image.id ?? image.path ?? `image-${index + 1}`, `${itemId}.images[${index}].id`);
   const result = { ...image, id };
   if (result.sha !== undefined) nonEmptyString(result.sha, `${itemId}.images[${index}].sha`);
+  if (result.path !== undefined) nonEmptyString(result.path, `${itemId}.images[${index}].path`);
   return result;
 }
 
@@ -84,10 +85,30 @@ for (const work of works) {
 }
 
 await fs.mkdir(outputDir, { recursive: true });
-await fs.writeFile(path.join(outputDir, 'works.json'), JSON.stringify({ schemaVersion: 1, works: works.map(({ items, ...work }) => ({ ...work, data: `data/works/${work.id}.json` })) }, null, 2) + '\n');
+await fs.writeFile(
+  path.join(outputDir, 'works.json'),
+  JSON.stringify({
+    schemaVersion: 1,
+    works: works.map(({ items, ...work }) => ({
+      id: work.id,
+      name: work.name,
+      code: work.code,
+      data: `data/works/${work.id}.json`,
+    })),
+  }, null, 2) + '\n',
+);
+
 for (const work of works) {
   await fs.mkdir(path.join(outputDir, 'works'), { recursive: true });
-  await fs.writeFile(path.join(outputDir, 'works', `${work.id}.json`), JSON.stringify({ schemaVersion: 1, work: { id: work.id, name: work.name }, items: work.items }, null, 2) + '\n');
+  await fs.writeFile(
+    path.join(outputDir, 'works', `${work.id}.json`),
+    JSON.stringify({
+      schemaVersion: 1,
+      work: work.id,
+      name: work.code,
+      items: work.items,
+    }, null, 2) + '\n',
+  );
 }
 
 console.log(`Migration 完成：${works.length} 個作品、${allIds.size} 個收藏品`);
