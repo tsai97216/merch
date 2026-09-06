@@ -173,6 +173,33 @@ export class MerchStore {
     this.emit();
   }
 
+  updateItem(item: Item): void {
+    const current = this.state.items.find((entry) => entry.id === item.id);
+    if (!current) throw dataError(`找不到收藏：${item.id}`);
+    const work = this.state.works.find((entry) => entry.id === current.workId);
+    if (!work) throw dataError(`找不到收藏所屬作品：${current.workId}`);
+    const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
+    if (parseItemId(normalized.id)?.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
+
+    const items = this.state.items.map((entry) => entry.id === normalized.id ? normalized : entry);
+    const works = this.state.works.map((entry) => entry.id === work.id
+      ? { ...entry, items: entry.items.map((entryItem) => entryItem.id === normalized.id ? normalized : entryItem) }
+      : entry);
+    this.state = cloneAndFreeze({ ...this.state, works, items });
+    this.emit();
+  }
+
+  deleteItem(id: string): void {
+    const current = this.state.items.find((entry) => entry.id === id);
+    if (!current) throw dataError(`找不到收藏：${id}`);
+    const items = this.state.items.filter((entry) => entry.id !== id);
+    const works = this.state.works.map((work) => work.id === current.workId
+      ? { ...work, items: work.items.filter((entry) => entry.id !== id) }
+      : work);
+    this.state = cloneAndFreeze({ ...this.state, works, items });
+    this.emit();
+  }
+
   setLoading(loading: boolean): void {
     this.state = cloneAndFreeze({ ...this.state, loading });
     this.emit();
