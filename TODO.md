@@ -1,122 +1,64 @@
-# merch 重寫 TODO
+# TODO
 
-> 此文件是本專案目前唯一的進度追蹤清單。每完成一個項目，就更新 `[ ]` → `[x]` 並提交到 GitHub。
-> 更新規則：不要提前勾選未實際完成的項目；若只完成部分，保留 `[ ]`。
-> `merch-old` 僅作為歷史參考，不再作為 UI/UX 或功能驗收基準。
-> TODO 只追蹤實際需要完成的工作；已否決的方案與禁止事項統一記錄於 `RULES.md`，不在此保留。
+> This file tracks implementation status. Only completed items are checked.
 
-## 0. Project Foundation
-- [x] 新 merch repo
-- [x] TypeScript + Vite
-- [x] ES Modules
-- [x] GitHub Pages
-- [x] CNAME
-- [x] Vite production base path
-- [x] 基本正式目錄與檔案結構
-- [x] 統一錯誤處理
-- [x] loading / empty / error 狀態完整
-- [x] GitHub Actions build 通過
-- [x] GitHub Pages deploy 通過
-- [x] `merch.chi.qzz.io` 可正常載入
-- [x] JS 失敗時首頁仍保有基本可見內容
+## 0. Foundation
+- [x] Project structure
+- [x] TypeScript + Vite + ES Modules
+- [x] GitHub Pages deployment
+- [x] Formal domain
+- [x] Work code / Item ID rules
+- [x] Shared Store architecture
+- [x] External data validation
 
 ## 1. Data Layer
-- [x] Work / Item / Image / Purchase / Release / Shipping / AfterSales / Version types
-- [x] Item quantity type
-- [x] Quantity validation：大於等於 1 的整數
-- [x] 舊資料缺少 quantity 時預設為 1
-- [x] Schema validation
-- [x] 單一 Store：works / items / version / UI / loading / error
-- [x] Store subscribe
-- [x] Page 不持有自己的資料副本
-- [x] Store state immutable 更新原則
-- [x] 統一所有 quantity 進入 Store 前的 normalization / validation
-- [x] Store 不以 `quantity || 1` 取代正式 quantity validation
-- [x] Store 訂閱生命週期與取消訂閱
-- [x] Data / UI state 邊界明確
+- [x] Works index
+- [x] Work data split
+- [x] Item schema
+- [x] Quantity normalization
+- [x] Item ID validation
+- [x] Duplicate Item ID validation
+- [x] Duplicate permanent serial validation
+- [x] Local UI state persistence
+- [x] Shared Store instance
+- [x] Remote data loading with static fallback
 
 ## 2. Data Migration
-- [x] 建立 migration script
-- [x] 遷移四個作品
-- [x] 遷移目前五個收藏品 Item
-- [x] 保留原 ID
-- [x] 保留 purchase / release / shipping / after-sales / image metadata
-- [x] 檢查 null / 格式
-- [x] 檢查重複 image SHA
 - [ ] 完成遷移前後驗證
-- [x] 驗證目前 Item 數量與 quantity 加總一致
-- [x] 不修改 `merch-old`
+- [x] Legacy data normalization
+- [x] Quantity migration
+- [x] Image metadata migration
 
 ## 3. Version
-- [x] 初始版本 `1.0.0`
-- [x] 版本只有一個來源
-- [x] 版本來源固定為 `public/data/version.json`
-- [x] Major = 大版本／架構世代重寫
-- [x] Minor = 每次完整邏輯／功能修改
-- [x] Patch = GitHub API 新增／移除收藏或圖片
-- [x] reorder / cover replacement 不增加 Patch
-- [x] 不使用版本號作為 module cache
-- [x] 不使用 `?v=version` / `?build=...` 等 cache hack
-- [x] UI 版本顯示統一由 `version.json` 提供
+- [x] version.json
+- [x] package.json version sync
+- [x] UI version rendering
+- [x] API write version bump
 
 ## 4. Router
-- [x] Hash router
-- [x] `#/home`
-- [x] `#/collection`
-- [x] `#/statistics`
-- [x] `#/management`
-- [x] `#/settings`
-- [x] `#/item/:id` 路由解析
-- [x] 重新整理可正常進入目前頁面
-- [x] Back / Forward 正常
-- [x] 404 頁面
-- [x] malformed URL / decodeURIComponent 安全處理
-- [x] 多餘 route segments 正確拒絕
-- [x] route navigation 與 page render 解耦
+- [x] Hash routes
+- [x] Home
+- [x] Collection
+- [x] Statistics
+- [x] Management
+- [x] Settings
+- [x] Item detail
+- [x] Back / forward
+- [x] Refresh safety
+- [x] Malformed route safety
+- [x] 404
 
 ## 5. UI System
-- [x] 整理 desktop / tablet / mobile breakpoint 規則
-- [x] 整理頁面最大寬度、內容留白與主要 grid 規則
-- [x] 整理 typography hierarchy 與字重規則
-- [x] 整理 color / spacing / radius / shadow design tokens
 - [ ] 全站 layout
-- [x] Desktop sidebar / navigation
-- [x] Mobile navigation
-- [x] Page header / eyebrow / section heading
-- [x] Button
-- [x] Card
-- [x] Panel
-- [x] Badge / Status
-- [x] Input / Select / Textarea
-- [x] Toolbar / Filter controls
 - [x] Modal
 - [x] Toast
-- [x] Loading
-- [x] Empty
-- [x] Error
-- [x] Notice / Alert
-- [x] Item card
-- [x] Item list
-- [x] Item detail 基本顯示
-- [x] Image viewer
-- [x] Focus-visible / keyboard interaction
-- [x] Reduced-motion / animation fallback
-- [x] DOM utility
-- [x] Date utility
-- [x] Format utility
-- [x] 安全 DOM rendering
-- [x] 統一 class naming / component styling 邊界
-- [x] 避免 page-specific CSS 互相覆蓋
-- [x] 收藏卡片「已收到」隱藏文字但保留版面空間
-- [x] 周邊詳細資訊「已收到」隱藏文字但保留版面空間
-- [x] 主要 rendering 與 enhancement module 結構一致
-- [x] 移除 MutationObserver 相關實作
-- [x] 移除不再需要的 rendering workaround
-- [x] 收藏卡片文字區塊固定高度，避免狀態標籤與多行商品名稱造成卡片內容錯位
-- [x] 收藏卡片價格數量標記 `×N` 使用與廠商相同的灰色文字
+- [x] Button
+- [x] Input
+- [x] Card
+- [x] Panel
+- [x] Badge
 
 ## 6. Dashboard / Home
-- [x] 總收藏數
 - [x] 待到貨（合併 `pending + preorder`）
 - [x] 作品統計
 - [x] 消費統計
@@ -239,25 +181,25 @@
 - [ ] 新增／編輯表單支援 quantity
 
 ## 11. GitHub API / Worker
-- [ ] API layer
-- [ ] GitHub service
-- [ ] Worker service
-- [ ] GET data
-- [ ] PUT data
-- [ ] DELETE data
-- [ ] GET assets
-- [ ] PUT assets
-- [ ] DELETE assets
-- [ ] auth status
-- [ ] Admin Secret
-- [ ] Worker GitHub Token
-- [ ] path whitelist
-- [ ] 統一 API errors
-- [ ] UI 不直接組 GitHub REST API request
-- [ ] API timeout / network failure handling
-- [ ] CORS / allowed origin
-- [ ] request payload validation
-- [ ] response schema validation
+- [x] API layer
+- [x] GitHub service
+- [x] Worker service
+- [x] GET data
+- [x] PUT data
+- [x] DELETE data
+- [x] GET assets
+- [x] PUT assets
+- [x] DELETE assets
+- [x] auth status
+- [x] Admin Secret
+- [x] Worker GitHub Token
+- [x] path whitelist
+- [x] 統一 API errors
+- [x] UI 不直接組 GitHub REST API request
+- [x] API timeout / network failure handling
+- [x] CORS / allowed origin
+- [x] request payload validation
+- [x] response schema validation
 
 ## 12. Write Consistency
 - [ ] validate
