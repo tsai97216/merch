@@ -1,5 +1,5 @@
 const SORT_OPTIONS = [
-  { value: 'purchase', label: '最新' },
+  { value: 'created', label: '最新' },
   { value: 'title', label: '名稱' },
   { value: 'price', label: '價格' },
 ] as const;
