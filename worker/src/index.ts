@@ -16,9 +16,9 @@ type CategoryEntry = { id: string; path: string; title?: string; characters?: st
 type CategoryIndex = { schemaVersion: 1; workId: string; category: string; items: CategoryEntry[] };
 type ImageMeta = { id: string; file: string; alt?: string; isCover?: boolean; [key: string]: unknown };
 type Item = { id: string; workId: string; title: string; series: string[]; characters: string[]; category: string; manufacturer: string; quantity: number; status: string; description: string; notes: string; purchase: Record<string, unknown>; arrival: Record<string, unknown>; afterSales: Record<string, unknown>; images: ImageMeta[]; [key: string]: unknown };
-type RemoteState = { index: WorkIndex; version: string; headSha: string; baseTreeSha: string; files: Map<string, { content: string; sha: string }>; categories: Map<string, CategoryIndex>; items: Map<string, { item: Item; path: string; categoryPath: string; workId: string }>; paths: Set<string> };
+type RemoteState = { index: WorkIndex; version: string; headSha: string; baseTreeSha: string; files: Map<string, { content: string; sha: string }>; blobs: Map<string, string>; categories: Map<string, CategoryIndex>; items: Map<string, { item: Item; path: string; categoryPath: string; workId: string }>; paths: Set<string> };
 type AssetRequest = { path: string; content: string };
-type WriteEntry = { path: string; content?: string; encoding?: 'utf-8' | 'base64'; delete?: boolean };
+type WriteEntry = { path: string; content?: string; encoding?: 'utf-8' | 'base64'; sha?: string; delete?: boolean };
 
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
 const MAX_ASSET_BASE64_LENGTH = 10 * 1024 * 1024;
@@ -46,7 +46,9 @@ async function loadRemote(env: Env): Promise<RemoteState> {
   const head = await githubJson<GitHubCommit>(env, `/repos/${env.GITHUB_REPO}/git/commits/${headSha}`);
   const tree = await githubJson<{ tree: GitHubTreeEntry[]; truncated?: boolean }>(env, `/repos/${env.GITHUB_REPO}/git/trees/${head.tree.sha}?recursive=1`);
   if (tree.truncated) throw new Error('GitHub 資料樹過大，無法安全載入。');
-  const paths = new Set(tree.tree.filter(entry => entry.type === 'blob' && typeof entry.path === 'string').map(entry => entry.path as string));
+  const blobs = new Map<string, string>();
+  for (const entry of tree.tree) if (entry.type === 'blob' && typeof entry.path === 'string' && typeof entry.sha === 'string') blobs.set(entry.path, entry.sha);
+  const paths = new Set(blobs.keys());
   const wanted = tree.tree.filter(entry => entry.type === 'blob' && typeof entry.path === 'string' && (entry.path === 'data/works.json' || entry.path === 'public/data/version.json' || (entry.path.startsWith('data/') && entry.path.endsWith('.json'))));
   const files = new Map<string, { content: string; sha: string }>();
   await Promise.all(wanted.map(async entry => { const sha = entry.sha as string; const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs/${sha}`); files.set(entry.path as string, { content: decodeText(blob.content), sha }); }));
@@ -75,7 +77,7 @@ async function loadRemote(env: Env): Promise<RemoteState> {
       }
     }
   }
-  return { index, version, headSha, baseTreeSha: head.tree.sha, files, categories, items, paths };
+  return { index, version, headSha, baseTreeSha: head.tree.sha, files, blobs, categories, items, paths };
 }
 function allWorks(remote: RemoteState) { return remote.index.works.map(work => ({ id: work.id, name: work.name, code: work.code, items: [...remote.items.values()].filter(entry => entry.workId === work.id).map(entry => entry.item) })); }
 async function dataResponse(env: Env, origin: string): Promise<Response> { const remote = await loadRemote(env); return ok({ works: allWorks(remote), version: remote.version }, origin); }
@@ -100,7 +102,7 @@ function categoryEntry(item: Item, path: string): CategoryEntry { const cover = 
 async function createBlob(env: Env, content: string, encoding: 'utf-8' | 'base64' = 'utf-8'): Promise<string> { const result = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs`, { method: 'POST', body: JSON.stringify({ content, encoding }) }); return result.sha; }
 async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEntry[], message: string): Promise<void> {
   const entries = [] as { path: string; mode: '100644'; type: 'blob'; sha: string | null }[];
-  for (const file of files) entries.push({ path: file.path, mode: '100644', type: 'blob', sha: file.delete ? null : await createBlob(env, file.content || '', file.encoding || 'utf-8') });
+  for (const file of files) entries.push({ path: file.path, mode: '100644', type: 'blob', sha: file.delete ? null : file.sha || await createBlob(env, file.content || '', file.encoding || 'utf-8') });
   const tree = await githubJson<GitHubTree>(env, `/repos/${env.GITHUB_REPO}/git/trees`, { method: 'POST', body: JSON.stringify({ base_tree: remote.baseTreeSha, tree: entries }) });
   const commit = await githubJson<GitHubCommit>(env, `/repos/${env.GITHUB_REPO}/git/commits`, { method: 'POST', body: JSON.stringify({ message, tree: tree.sha, parents: [remote.headSha] }) });
   try { await githubJson(env, `/repos/${env.GITHUB_REPO}/git/refs/heads/${encodeURIComponent(env.GITHUB_BRANCH)}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha, force: false }) }); }
@@ -113,9 +115,23 @@ async function updateItem(env: Env, id: string, input: unknown, origin: string):
   const existing = remote.items.get(id); if (existing && existing.workId !== item.workId) return fail('WORK_CHANGE', '既有 Item 不允許更換作品。', 400, origin);
   const storageItem = normalizeItemForStorage(item); const newPath = `data/${work.id}/${storageItem.category}/${id}/data.json`; const newCategoryPath = `data/${work.id}/${storageItem.category}/index.json`;
   const writes: WriteEntry[] = [{ path: newPath, content: jsonFile(storageItem) }];
-  if (existing && existing.path !== newPath) { writes.push({ path: existing.path, delete: true }); const oldIndex = remote.categories.get(existing.categoryPath); if (oldIndex) writes.push({ path: existing.categoryPath, content: jsonFile({ ...oldIndex, items: oldIndex.items.filter(entry => entry.id !== id) }) }); }
+  if (existing && existing.path !== newPath) {
+    const oldPrefix = `data/${existing.workId}/${existing.item.category}/${id}/images/`;
+    const newPrefix = `data/${work.id}/${storageItem.category}/${id}/images/`;
+    const oldImages = [...remote.paths].filter(path => path.startsWith(oldPrefix));
+    const conflicting = [...remote.paths].filter(path => path.startsWith(newPrefix));
+    if (conflicting.length) return fail('ITEM_MOVE_CONFLICT', '目標 Item 圖片目錄已存在，為避免覆蓋其他資料，移動已取消。', 409, origin);
+    for (const oldPath of oldImages) {
+      const sha = remote.blobs.get(oldPath);
+      if (!sha) return fail('ASSET_NOT_FOUND', `找不到要搬移的圖片：${oldPath}`, 409, origin);
+      writes.push({ path: `${newPrefix}${oldPath.slice(oldPrefix.length)}`, sha });
+      writes.push({ path: oldPath, delete: true });
+    }
+    writes.push({ path: existing.path, delete: true });
+    const oldIndex = remote.categories.get(existing.categoryPath); if (oldIndex) writes.push({ path: existing.categoryPath, content: jsonFile({ ...oldIndex, items: oldIndex.items.filter(entry => entry.id !== id) }) });
+  }
   const newIndex = remote.categories.get(newCategoryPath); const nextEntries = (newIndex?.items || []).filter(entry => entry.id !== id); nextEntries.push(categoryEntry(storageItem, newPath)); writes.push({ path: newCategoryPath, content: jsonFile({ schemaVersion: 1, workId: work.id, category: storageItem.category, items: nextEntries }) });
-  if (!existing || !sameNonImageItem(existing.item, storageItem)) {
+  if (!existing || !sameNonImageItem(existing.item, storageItem) || existing.path !== newPath) {
     const nextVersion = bumpPatch(remote.version);
     writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
   }
@@ -142,7 +158,7 @@ async function getAsset(env: Env, path: string, origin: string): Promise<Respons
   if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin);
   const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(env.GITHUB_BRANCH)}`);
   const content = blob.content.replace(/\s/g, '');
-  return new Response(decodeBase64(content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=31536000, immutable', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${blob.sha}"` } });
+  return new Response(decodeBase64(content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=31536000, immutable', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `\"${blob.sha}\"` } });
 }
 
 async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<Response> {
@@ -164,8 +180,7 @@ async function deleteAsset(env: Env, path: string, origin: string): Promise<Resp
   if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin);
   const item = normalizeItemForStorage(entry.item); item.images = item.images.filter(image => image.file !== parts.file); const writes: WriteEntry[] = [{ path, delete: true }, { path: entry.path, content: jsonFile(item) }];
   const category = remote.categories.get(entry.categoryPath); if (!category) return fail('CATEGORY_NOT_FOUND', '找不到圖片所屬類型索引。', 404, origin); writes.push({ path: entry.categoryPath, content: jsonFile(categoryWithItem(category, item, entry.path)) });
-  const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
-  await createAtomicCommit(env, remote, writes, `fix: delete image ${parts.itemId}/${parts.file}`); return ok({ path, deleted: true, version: nextVersion }, origin);
+  const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }); await createAtomicCommit(env, remote, writes, `fix: delete image ${parts.itemId}/${parts.file}`); return ok({ path, deleted: true, version: nextVersion }, origin);
 }
 
 async function cleanupAssets(env: Env, origin: string): Promise<Response> {
