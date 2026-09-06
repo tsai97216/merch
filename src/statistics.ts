@@ -7,7 +7,8 @@ const quantity = (item: Item) => Number.isInteger(item.quantity) && item.quantit
 const value = (item: Item) => Number(item.purchase?.price || 0) * quantity(item);
 const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;', "'":'&#39;' }[c] as string));
 const monthKey = (date?: string) => { if (!date) return ''; const d = new Date(date); if (Number.isNaN(d.getTime())) return ''; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
-const monthLabel = (key: string) => { const [year, month] = key.split('-'); return `${year}/${Number(month)}月`; };
+const monthLabel = (key: string) => { const [, month] = key.split('-'); return `${Number(month)}月`; };
+const chartColors = ['#2563eb','#60a5fa','#93c5fd','#1d4ed8','#3b82f6','#bfdbfe'];
 const percent = (n: number) => `${n.toFixed(1)}%`;
 
 type Row = { label: string; value: number };
@@ -88,7 +89,7 @@ function verticalMonthlySvg(chart: Chart, width: number, height: number, large: 
   const plotW=width-left-right, plotH=height-top-bottom;
   const max=Math.max(...chart.rows.map(r=>r.value),1);
   const gap=large?12:8, slot=plotW/chart.rows.length, barW=Math.max(8,slot-gap);
-  const labels=chart.rows.map((r,i)=>{const x=left+i*slot+(slot-barW)/2; const h=r.value/max*plotH; const y=top+plotH-h; const value=chart.format==='money'?money(r.value):String(r.value); return '<g class="chart-bar-item"><title>'+escapeHtml(r.label)+'：'+escapeHtml(value)+'</title><rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+h+'" rx="5" class="bar-fill"></rect><text x="'+(x+barW/2)+'" y="'+(height-bottom+20)+'" text-anchor="middle">'+escapeHtml(r.label.replace(/^\\d{4}-/,'').replace('-','月'))+'</text>'+ (large?'<text x="'+(x+barW/2)+'" y="'+Math.max(18,y-7)+'" text-anchor="middle" class="bar-value">'+escapeHtml(value)+'</text>':'')+'</g>';}).join('');
+  const labels=chart.rows.map((r,i)=>{const x=left+i*slot+(slot-barW)/2; const h=r.value/max*plotH; const y=top+plotH-h; const value=chart.format==='money'?money(r.value):String(r.value); return '<g class="chart-bar-item"><title>'+escapeHtml(r.label)+'：'+escapeHtml(value)+'</title><rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+h+'" rx="5" class="bar-fill"></rect><text x="'+(x+barW/2)+'" y="'+(height-bottom+20)+'" text-anchor="middle">'+escapeHtml(r.label)+'</text>'+ (large?'<text x="'+(x+barW/2)+'" y="'+Math.max(18,y-7)+'" text-anchor="middle" class="bar-value">'+escapeHtml(value)+'</text>':'')+'</g>';}).join('');
   return '<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="'+escapeHtml(chart.title)+'"><text x="'+left+'" y="16" class="chart-year">'+new Date().getFullYear()+' 年</text><line x1="'+left+'" y1="'+(top+plotH)+'" x2="'+(width-right)+'" y2="'+(top+plotH)+'" class="chart-axis"></line>'+labels+'</svg>';
 }
 
@@ -110,8 +111,8 @@ function lineSvg(chart: Chart, width: number, height: number, large: boolean): s
 function donutSvg(chart: Chart, width: number, height: number, large: boolean): string {
   const cx=large?300:300, cy=height/2, radius=large?175:190, inner=large?105:112, total=chart.rows.reduce((s,r)=>s+r.value,0)||1;
   let angle=-Math.PI/2;
-  const arcs=chart.rows.map((r,i)=>{const start=angle, end=angle+r.value/total*Math.PI*2; angle=end; const largeArc=end-start>Math.PI?1:0; const p1=[cx+radius*Math.cos(start),cy+radius*Math.sin(start)],p2=[cx+radius*Math.cos(end),cy+radius*Math.sin(end)],q1=[cx+inner*Math.cos(end),cy+inner*Math.sin(end)],q2=[cx+inner*Math.cos(start),cy+inner*Math.sin(start)]; const d=`M ${p1[0]} ${p1[1]} A ${radius} ${radius} 0 ${largeArc} 1 ${p2[0]} ${p2[1]} L ${q1[0]} ${q1[1]} A ${inner} ${inner} 0 ${largeArc} 0 ${q2[0]} ${q2[1]} Z`; return `<path d="${d}" class="donut-segment donut-${i%6}" tabindex="0"><title>${escapeHtml(r.label)}：${r.value} 件（${percent(r.value/total*100)}）</title></path>`; }).join('');
-  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?600:610}" cy="${35+i*30}" r="8" fill="var(--chart-${i%6})" class="donut-dot"/><text x="${large?615:625}" y="${39+i*30}">${escapeHtml(r.label)} · ${chart.format==='money'?money(r.value):`${r.value} 件`} · ${percent(r.value/total*100)}</text></g>`).join('');
+  const arcs=chart.rows.map((r,i)=>{const start=angle, end=angle+r.value/total*Math.PI*2; angle=end; const largeArc=end-start>Math.PI?1:0; const p1=[cx+radius*Math.cos(start),cy+radius*Math.sin(start)],p2=[cx+radius*Math.cos(end),cy+radius*Math.sin(end)],q1=[cx+inner*Math.cos(end),cy+inner*Math.sin(end)],q2=[cx+inner*Math.cos(start),cy+inner*Math.sin(start)]; const d=`M ${p1[0]} ${p1[1]} A ${radius} ${radius} 0 ${largeArc} 1 ${p2[0]} ${p2[1]} L ${q1[0]} ${q1[1]} A ${inner} ${inner} 0 ${largeArc} 0 ${q2[0]} ${q2[1]} Z`; return `<path d="${d}" class="donut-segment donut-${i%6}" fill="${chartColors[i%chartColors.length]}" tabindex="0"><title>${escapeHtml(r.label)}：${r.value} 件（${percent(r.value/total*100)}）</title></path>`; }).join('');
+  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?600:610}" cy="${35+i*30}" r="8" fill="${chartColors[i%chartColors.length]}" class="donut-dot"/><text x="${large?615:625}" y="${39+i*30}">${escapeHtml(r.label)} · ${chart.format==='money'?money(r.value):`${r.value} 件`} · ${percent(r.value/total*100)}</text></g>`).join('');
   return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}">${arcs}<text x="${cx}" y="${cy-5}" text-anchor="middle" class="donut-total">${total}</text><text x="${cx}" y="${cy+18}" text-anchor="middle" class="donut-caption">收藏</text>${legend}</svg>`;
 }
 
