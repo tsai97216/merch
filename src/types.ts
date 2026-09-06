@@ -2,9 +2,12 @@ export type ItemStatus = string;
 
 export type ImageMeta = {
   id: string;
+  /** Filename only. The physical path is always derived from the Item folder. */
   file: string;
   alt?: string;
   isCover?: boolean;
+  /** Optional content hash retained for future integrity verification. */
+  sha?: string;
 };
 
 export type Purchase = {
@@ -24,6 +27,7 @@ export type AfterSales = {
   note?: string;
 };
 
+/** Complete Item document stored at <item>/data.json. */
 export type Item = {
   id: string;
   workId: string;
@@ -42,6 +46,13 @@ export type Item = {
   images: ImageMeta[];
 };
 
+/** Storage locations belonging to one permanent Item ID. */
+export type ItemStorage = {
+  dataPath: string;
+  imagesPath: string;
+  categoryIndexPath: string;
+};
+
 export type Category = {
   code: string;
   name: string;
@@ -52,6 +63,7 @@ export type CategoriesData = {
   categories: Category[];
 };
 
+/** Runtime/UI work. Storage does not persist the items array here. */
 export type Work = {
   id: string;
   name: string;
@@ -66,6 +78,7 @@ export type WorksIndexEntry = {
   path: string;
 };
 
+/** Lightweight metadata kept in a category index. */
 export type CategoryIndexEntry = {
   id: string;
   path: string;
@@ -73,21 +86,22 @@ export type CategoryIndexEntry = {
   characters: string[];
   manufacturer: string;
   quantity: number;
-  status: string;
+  status: ItemStatus;
   cover?: string;
 };
 
 export type CategoryIndex = {
-  schemaVersion: number;
+  schemaVersion: 1;
   workId: string;
   category: string;
   items: CategoryIndexEntry[];
 };
 
+/** Alias documenting that ItemData is the complete per-Item JSON document. */
 export type ItemData = Item;
 
 export type WorksIndex = {
-  schemaVersion: number;
+  schemaVersion: 2;
   works: WorksIndexEntry[];
 };
 
