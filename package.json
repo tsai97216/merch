@@ -18,6 +18,7 @@
     "verify:images": "node scripts/verify-image-contract.mjs",
     "verify:statistics": "node scripts/verify-statistics-date.mjs",
     "verify:management-schema": "node scripts/verify-management-schema.mjs",
+    "verify:works-management": "node scripts/verify-works-management.mjs",
     "migrate:new": "node scripts/migrate.mjs public/data data-migrated",
     "preview": "vite preview",
     "verify:worker-read": "node scripts/verify-worker-read-scope.mjs",
