@@ -146,6 +146,27 @@
       "release": {},
       "shipping": {},
       "afterSales": {}
+    },
+    {
+      "id": "HSRd002",
+      "workId": "honkai-star-rail",
+      "workName": "崩壞：星穹鐵道",
+      "title": "昔漣 光錐系列壓克力流沙立牌擺件",
+      "category": "立牌／擺件",
+      "quantity": 1,
+      "status": "pending",
+      "createdAt": "2026-09-06T15:12:01.855Z",
+      "updatedAt": "2026-09-06T15:12:03.498Z",
+      "characters": [
+        "昔漣"
+      ],
+      "purchase": {
+        "price": 276.74,
+        "currency": "TWD"
+      },
+      "release": {},
+      "shipping": {},
+      "afterSales": {}
     }
   ]
 }
