@@ -2,9 +2,9 @@ const managementHiddenFields = new Set([
   'management-purchase-url',
   'management-order-id',
   'management-release-date',
-  'management-shipping-note',
   'management-shipping-status',
   'management-shipping-method',
+  'management-shipping-note',
 ]);
 
 const afterSalesStatusMap: Record<string, string> = {
@@ -17,37 +17,26 @@ function hideManagementField(id: string): void {
   if (field) field.remove();
 }
 
-function replaceStatusInput(id: string, options: string[], map: Record<string, string>): void {
-  const input = document.querySelector<HTMLInputElement>(`#${id}`);
-  if (!input || input.tagName === 'SELECT') return;
-  const select = document.createElement('select');
-  select.id = id;
-  select.name = input.name;
-  select.className = input.className;
-  select.setAttribute('aria-label', input.getAttribute('aria-label') || id);
-  const current = map[input.value.trim()] ?? input.value.trim();
-  options.forEach((value) => {
-    const option = document.createElement('option');
-    option.value = value;
-    option.textContent = value || '未設定';
-    select.appendChild(option);
-  });
-  if (options.includes(current)) select.value = current;
-  else if (current) {
-    const option = document.createElement('option');
-    option.value = current;
-    option.textContent = current;
-    select.appendChild(option);
-    select.value = current;
-  }
-  input.replaceWith(select);
-}
-
 function refineManagement(): void {
   const root = document.querySelector<HTMLElement>('#management-root');
   if (!root) return;
   managementHiddenFields.forEach(hideManagementField);
-  replaceStatusInput('management-after-sales-status', ['', '無', '處理中', '已完成', '已退款', '已退貨', '已換貨'], afterSalesStatusMap);
+  const afterSales = document.querySelector<HTMLInputElement | HTMLSelectElement>('#management-after-sales-status');
+  if (afterSales && afterSales.tagName !== 'SELECT') {
+    const select = document.createElement('select');
+    select.id = afterSales.id;
+    select.name = afterSales.name;
+    select.className = afterSales.className;
+    const current = afterSalesStatusMap[afterSales.value.trim()] ?? afterSales.value.trim();
+    ['', '無', '處理中', '已完成', '已退款', '已退貨', '已換貨'].forEach((value) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value || '未設定';
+      select.appendChild(option);
+    });
+    if (current) select.value = current;
+    afterSales.replaceWith(select);
+  }
 }
 
 function refineDetail(): void {
@@ -55,15 +44,12 @@ function refineDetail(): void {
   const afterSalesLabel = afterSales?.closest('div')?.querySelector('dt');
   if (afterSales && afterSales.dataset.refined !== 'true') {
     const raw = afterSales.textContent?.trim() ?? '';
-    const translated = afterSalesStatusMap[raw] ?? raw;
-    afterSales.textContent = translated || '未設定';
+    afterSales.textContent = afterSalesStatusMap[raw] ?? raw || '未設定';
     afterSales.dataset.refined = 'true';
     if (afterSalesLabel) afterSalesLabel.textContent = '售後狀態';
   }
-  const shipping = document.querySelector<HTMLElement>('#detail-shipping');
-  shipping?.closest('div')?.remove();
-  const release = document.querySelector<HTMLElement>('#detail-release-date');
-  release?.closest('div')?.remove();
+  document.querySelector<HTMLElement>('#detail-shipping')?.closest('div')?.remove();
+  document.querySelector<HTMLElement>('#detail-release-date')?.closest('div')?.remove();
 }
 
 function refine(): void {
