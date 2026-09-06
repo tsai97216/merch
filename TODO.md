@@ -82,11 +82,11 @@
 - [ ] 全站 layout
 - [x] Desktop sidebar / navigation
 - [x] Mobile navigation
-- [ ] Page header / eyebrow / section heading
-- [ ] Button
-- [ ] Card
-- [ ] Panel
-- [ ] Badge / Status
+- [x] Page header / eyebrow / section heading
+- [x] Button
+- [x] Card
+- [x] Panel
+- [x] Badge / Status
 - [x] Input / Select / Textarea
 - [x] Toolbar / Filter controls
 - [ ] Modal
@@ -101,9 +101,9 @@
 - [x] Image viewer
 - [x] Focus-visible / keyboard interaction
 - [x] Reduced-motion / animation fallback
-- [ ] DOM utility
-- [ ] Date utility
-- [ ] Format utility
+- [x] DOM utility
+- [x] Date utility
+- [x] Format utility
 - [x] 安全 DOM rendering
 - [x] 統一 class naming / component styling 邊界
 - [x] 避免 page-specific CSS 互相覆蓋
@@ -204,8 +204,8 @@
 - [x] 各作品消費
 - [x] 各月份消費（1～12 月完整顯示，無資料月份為 0）
 - [ ] 各月份新增收藏
-- [ ] 集中使用 Date utility
-- [ ] 統計計算與 UI rendering 分離
+- [x] 集中使用 Date utility
+- [x] 統計計算與 UI rendering 分離
 - [x] 空資料狀態
 - [x] 金額／數量格式統一
 - [x] 消費：大圖長條圖／小圖圓餅圖
