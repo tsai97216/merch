@@ -40,6 +40,8 @@ jobs:
         run: npm run verify:new
       - name: Verify Item schema contract
         run: npm run verify:schema
+      - name: Verify category contract
+        run: npm run verify:category
       - name: Verify worker architecture
         run: npm run verify:worker
       - name: Verify worker write scope
