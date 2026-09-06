@@ -29,7 +29,7 @@ export function aggregateStatistics(items: Item[]): Chart[] {
     const month = monthKey(item.purchase?.date);
     if (month) add(monthly, month, row);
     const createdMonth = monthKey(item.createdAt);
-    if (createdMonth) add(monthlyAdded, createdMonth, row);
+    if (createdMonth) add(monthlyAdded, createdMonth, { quantity: 1, spend: row.spend });
   });
 
   const totalSpend = [...workSpend.values()].reduce((sum, row) => sum + row.spend, 0);
@@ -83,7 +83,7 @@ export function aggregateStatistics(items: Item[]): Chart[] {
       summary: [['有消費月份', `${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`], ['最高月份', topMonth ? monthLabel(topMonth[0]) : '無資料'], ['最高月消費', topMonth ? formatMoney(topMonth[1].spend) : 'NT$ 0'], ['月均消費', formatMoney(averageMonth)]].map(([label, value]) => ({ label, value }))
     },
     {
-      id: 'monthly-added', title: '每月新增收藏', description: '以收藏建立時間統計今年每個月份新增的收藏數量，沒有資料的月份也會顯示為 0。', largeType: 'bar', smallType: 'bar',
+      id: 'monthly-added', title: '每月新增收藏', description: '以收藏建立時間統計今年每個月份新增的收藏筆數，沒有資料的月份也會顯示為 0。', largeType: 'bar', smallType: 'bar',
       rows: monthlyAddedEntries.map(([label, row]) => ({ label: monthLabel(label), value: row.quantity })), details: monthlyAddedDetails, format: 'count',
       summary: [['今年新增', formatQuantity(totalAddedQuantity)], ['最高月份', topAddedMonth ? monthLabel(topAddedMonth[0]) : '無資料'], ['最高月新增', topAddedMonth ? formatQuantity(topAddedMonth[1].quantity) : '0 件'], ['有新增月份', `${monthlyAddedEntries.filter(([,r]) => r.quantity > 0).length} 個月`]].map(([label, value]) => ({ label, value }))
     },
