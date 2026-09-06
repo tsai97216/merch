@@ -1,13 +1,14 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.100.0",
+  "version": "1.100.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "node scripts/sync-public-data.mjs && tsc --noEmit && vite build",
     "verify": "node scripts/verify-data.mjs",
     "verify:new": "node scripts/verify-new-data.mjs",
+    "verify:migration": "node scripts/verify-migration-completion.mjs",
     "verify:worker": "node scripts/verify-worker-architecture.mjs",
     "verify:worker-scope": "node scripts/verify-worker-write-scope.mjs",
     "verify:version": "node scripts/verify-version-sync.mjs",
