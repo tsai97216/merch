@@ -6,6 +6,8 @@ type ApiData = Pick<StoreState, 'works' | 'version'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 type AuthStatus = { authenticated: boolean };
 type ApiFailure = { apiCode?: string; status: number };
+type AssetResult = { path: string; sha: string; contentType: string; url: string; version: string };
+type AssetDeleteResult = { path: string; deleted: boolean; version: string };
 
 const meta = import.meta as ImportMetaWithEnv;
 const API_BASE = (meta.env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
@@ -48,15 +50,44 @@ function validateData(data: unknown): ApiData {
 }
 
 function validateAuthStatus(data: unknown): AuthStatus {
-  if (!data || typeof data !== 'object' || typeof (data as { authenticated?: unknown }).authenticated !== 'boolean') {
-    throw dataError('API 驗證狀態格式無效。');
-  }
+  if (!data || typeof data !== 'object' || typeof (data as { authenticated?: unknown }).authenticated !== 'boolean') throw dataError('API 驗證狀態格式無效。');
   return data as AuthStatus;
+}
+
+function validateAssetResult(data: unknown): AssetResult {
+  if (!data || typeof data !== 'object') throw dataError('API 回傳圖片資料格式無效。');
+  const value = data as Partial<AssetResult>;
+  if (typeof value.path !== 'string' || typeof value.sha !== 'string' || typeof value.contentType !== 'string' || typeof value.url !== 'string' || typeof value.version !== 'string') throw dataError('API 回傳圖片資料格式無效。');
+  return value as AssetResult;
+}
+
+function validateAssetDeleteResult(data: unknown): AssetDeleteResult {
+  if (!data || typeof data !== 'object') throw dataError('API 回傳圖片刪除結果格式無效。');
+  const value = data as Partial<AssetDeleteResult>;
+  if (typeof value.path !== 'string' || value.deleted !== true || typeof value.version !== 'string') throw dataError('API 回傳圖片刪除結果格式無效。');
+  return value as AssetDeleteResult;
 }
 
 export async function getRemoteData(): Promise<ApiData> { return validateData(await request('/data')); }
 export async function putItem(item: Item): Promise<ApiData> { return validateData(await request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item }) })); }
 export async function deleteItem(id: string): Promise<ApiData> { return validateData(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); }
+export async function getAsset(path: string): Promise<Blob> {
+  const headers = new Headers({ Accept: 'image/*' });
+  const token = authToken();
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+  try {
+    const response = await fetch(endpoint(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`), { headers, cache: 'no-store', signal: controller.signal });
+    if (!response.ok) throw dataError(`圖片讀取失敗（${response.status}）。`);
+    return await response.blob();
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') throw dataError('圖片請求逾時，請稍後再試。');
+    throw error;
+  } finally { window.clearTimeout(timer); }
+}
+export async function putAsset(path: string, content: string): Promise<AssetResult> { return validateAssetResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', body: JSON.stringify({ path, content }) })); }
+export async function deleteAsset(path: string): Promise<AssetDeleteResult> { return validateAssetDeleteResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' })); }
 export async function getAuthStatus(): Promise<AuthStatus> { return validateAuthStatus(await request('/auth/status')); }
 export function hasAdminSecret(): boolean { return Boolean(authToken()); }
 export function setAdminSecret(value: string): void { try { if (value.trim()) sessionStorage.setItem('merch-admin-secret', value.trim()); else sessionStorage.removeItem('merch-admin-secret'); } catch { throw dataError('無法儲存管理驗證資訊。'); } }
