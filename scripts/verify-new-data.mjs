@@ -34,7 +34,6 @@ const index = await readDataJson('works.json');
 if (!isRecord(index) || index.schemaVersion !== 2 || !Array.isArray(index.works)) fail('新 works.json 格式無效。');
 
 const allIds = new Set();
-const indexedItemPaths = new Set();
 let itemCount = 0;
 let physicalQuantity = 0;
 let imageCount = 0;
@@ -59,9 +58,8 @@ for (const work of index.works) {
       if (allIds.has(entry.id)) fail(`發現重複 Item ID：${entry.id}`);
       allIds.add(entry.id);
       const idMatch = ITEM_ID_RE.exec(entry.id);
-      if (!idMatch || idMatch[2] !== category) fail(`Item ID 與 category 不一致：${entry.id}`);
+      if (!idMatch) fail(`Item ID 格式無效：${entry.id}`);
       if (entry.path !== `data/${work.id}/${category}/${entry.id}/data.json`) fail(`Item path 不一致：${entry.id}`);
-      indexedItemPaths.add(entry.path);
       if (!actualItemIds.has(entry.id)) fail(`Category index 指向不存在的 Item 目錄：${entry.id}`);
       const itemDir = path.join(workRoot, category, entry.id);
       const item = await readDataJson(`${work.id}/${category}/${entry.id}/data.json`);
@@ -97,8 +95,8 @@ for (const work of index.works) {
       if (covers > 1) fail(`一個 Item 有多個封面：${entry.id}`);
       if (imageFiles.some(file => !IMAGE_RE.test(file))) fail(`Item images 含有不允許的檔案：${entry.id}`);
       if (imageFiles.some(file => !metadataFiles.has(file))) fail(`發現孤立圖片：${entry.id}`);
-      if (entry.cover !== undefined && (!nonEmptyString(entry.cover) || entry.cover !== coverFile)) fail(`Category index 封面與 Item metadata 不一致：${entry.id}`);
-      if (coverFile && entry.cover === undefined) fail(`Category index 缺少封面：${entry.id}`);
+      if (coverFile && entry.cover !== coverFile) fail(`Category index 封面與 Item metadata 不一致：${entry.id}`);
+      if (!coverFile && entry.cover !== undefined) fail(`Category index 不應存在封面：${entry.id}`);
       itemCount += 1;
       physicalQuantity += item.quantity;
     }
