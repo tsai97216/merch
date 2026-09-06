@@ -50,9 +50,9 @@ export type Item = {
   afterSales: AfterSales;
   images: ImageMeta[];
   /** Runtime compatibility for legacy UI data. New storage uses arrival instead. */
-  release?: { expectedDate?: string | null; receivedDate?: string | null };
-  /** Runtime compatibility for legacy UI data. New storage does not persist this field. */
-  shipping?: unknown;
+  release?: { date?: string | null; expectedDate?: string | null; receivedDate?: string | null };
+  /** Runtime-only compatibility for legacy UI data. New storage does not persist this field. */
+  shipping?: { method?: string; status?: string };
   /** Runtime-only timestamps retained for existing sorting/detail UI. */
   createdAt?: string;
   updatedAt?: string;
