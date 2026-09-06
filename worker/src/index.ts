@@ -120,7 +120,19 @@ function validateItem(item: unknown): asserts item is Item {
   if (!Array.isArray(value.images) || value.images.some(image => !image || typeof image !== 'object' || Array.isArray(image))) throw new Error('images 格式無效');
   for (const forbidden of ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt']) if (forbidden in value) throw new Error(`禁止儲存欄位：${forbidden}`);
 }
-function normalizeItemForStorage(item: Item): Item { const copy = JSON.parse(JSON.stringify(item)) as Item; delete copy.workName; return copy; }
+function normalizeImages(images: ImageMeta[]): ImageMeta[] {
+  const seenFiles = new Set<string>(); const seenIds = new Set<string>(); let coverSeen = false;
+  return images.map((image, index) => {
+    if (!image.file || seenFiles.has(image.file)) throw new Error(`圖片 file 重複：${image.file}`);
+    if (!image.id || seenIds.has(image.id)) throw new Error(`圖片 id 重複：${image.id}`);
+    seenFiles.add(image.file); seenIds.add(image.id);
+    const next = { ...image };
+    if (next.isCover === true) { if (coverSeen) throw new Error('一個 Item 只能有一張封面。'); coverSeen = true; }
+    return next;
+  });
+}
+function normalizeItemForStorage(item: Item): Item { const copy = JSON.parse(JSON.stringify(item)) as Item; delete copy.workName; copy.images = normalizeImages(copy.images || []); return copy; }
+function categoryWithItem(category: CategoryIndex, item: Item, itemPath: string): CategoryIndex { return { ...category, items: [...category.items.filter(entry => entry.id !== item.id), categoryEntry(item, itemPath)] }; }
 function withoutImages(item: Item): Item { const copy = normalizeItemForStorage(item); delete copy.images; return copy; }
 function sameNonImageItem(a: Item, b: Item): boolean { return JSON.stringify(withoutImages(a)) === JSON.stringify(withoutImages(b)); }
 function categoryEntry(item: Item, path: string): CategoryEntry { const cover = item.images.find(image => image.isCover === true); return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...(cover?.file ? { cover: cover.file } : {}) }; }
