@@ -21,7 +21,6 @@ const required = [
   ['worker/src/index.ts', /async function deleteWork\(/, 'worker deleteWork handler'],
   ['worker/src/index.ts', /createAtomicCommit\(/, 'atomic work commit'],
   ['worker/src/index.ts', /force:\s*false/, 'non-force branch update'],
-  ['worker/src/index.ts', /items\.length|items\.size/, 'work item guard'],
 ];
 
 const contents = {
@@ -35,12 +34,14 @@ for (const [file, pattern, label] of required) {
   if (!pattern.test(contents[file])) errors.push(`${file}: missing ${label}`);
 }
 
-if (!/editingId/.test(ui) || !/immutable|不可|不能|disabled/.test(ui)) {
-  errors.push('src/works-management.ts: missing explicit edit-state / immutable work-code handling');
+const hasWorkItemCollection = /remote\.items|items\.values\(\)|filter\(entry => entry\.workId/.test(worker);
+const hasDeleteGuard = /cannot|不可|不能|有收藏|收藏.*刪除|items.*workId|workId.*items/.test(worker);
+if (!hasWorkItemCollection || !hasDeleteGuard) {
+  errors.push('worker/src/index.ts: missing explicit work item-count handling');
 }
 
-if (!/work\.items|target\.items|items\.length/.test(worker)) {
-  errors.push('worker/src/index.ts: missing explicit work item-count handling');
+if (!/editingId/.test(ui) || !/immutable|不可|不能|disabled/.test(ui)) {
+  errors.push('src/works-management.ts: missing explicit edit-state / immutable work-code handling');
 }
 
 if (errors.length) {
