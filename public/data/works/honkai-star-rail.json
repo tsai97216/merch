@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "work": "honkai-star-rail",
   "name": "HSR",
-  "updatedAt": "2026-09-06T15:17:50.371Z",
+  "updatedAt": "2026-09-07T14:00:00.000Z",
   "items": [
     {
       "id": "HSRf001",
@@ -10,7 +10,7 @@
         {
           "id": "image-1788513731019-sfc19z",
           "path": "data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg",
-          "url": "https://raw.githubusercontent.com/tsai97216/merch/main/data/honkai-star-rail/images/item-1788513731019-sfc19z.jpg",
+          "url": "https://raw.githubusercontent.com/tsai97216/merch/main/data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg",
           "sha": "34fe984896a1baf9df56527a99b4e9121a95734e",
           "alt": "流螢 春日手信 1/8比例手辦",
           "isCover": true
@@ -18,9 +18,7 @@
       ],
       "workId": "honkai-star-rail",
       "title": "流螢 春日手信 1/8比例手辦",
-      "characters": [
-        "流螢"
-      ],
+      "characters": ["流螢"],
       "category": "手辦",
       "manufacturer": "Myethos",
       "status": "received",
@@ -54,58 +52,19 @@
       "workId": "honkai-star-rail",
       "title": "流螢 春日手信 手辦 訂金卡",
       "series": "",
-      "characters": [
-        "流螢"
-      ],
+      "characters": ["流螢"],
       "category": "訂金卡",
       "manufacturer": "米哈遊",
       "status": "pending",
-      "description": "",
-      "notes": "",
       "purchase": {
         "price": 0,
         "currency": "TWD",
         "platform": "米哈遊淘寶",
-        "date": "2026-02-27",
-        "url": "",
-        "orderId": ""
+        "date": "2026-02-27"
       },
       "release": {
-        "date": "",
-        "expectedDate": "",
         "receivedDate": ""
       },
-      "shipping": {
-        "status": "pending",
-        "method": "集運",
-        "trackingNumber": "",
-        "note": ""
-      },
-      "afterSales": {
-        "status": "none",
-        "note": "",
-        "updatedAt": "2026-09-04T05:38:47.137Z"
-      },
-      "createdAt": "2026-09-04T05:38:47.137Z",
-      "updatedAt": "2026-09-04T05:38:47.137Z"
-    },
-    {
-      "id": "HSRa001",
-      "images": [],
-      "workId": "honkai-star-rail",
-      "title": "仲夏螢火之約系列亞克力合影卡",
-      "characters": [
-        "流螢"
-      ],
-      "category": "掛件／吊飾",
-      "manufacturer": "米哈遊",
-      "status": "pending",
-      "purchase": {
-        "price": 149.62,
-        "currency": "TWD",
-        "platform": "米哈遊淘寶"
-      },
-      "release": {},
       "shipping": {
         "status": "pending",
         "method": "集運",
@@ -113,6 +72,40 @@
       },
       "afterSales": {
         "status": "none",
+        "note": "",
+        "updatedAt": "2026-09-04T05:38:47.137Z"
+      },
+      "createdAt": "2026-09-04T05:38:47.137Z",
+      "updatedAt": "2026-09-04T05:38:47.137Z",
+      "quantity": 1
+    },
+    {
+      "id": "HSRa001",
+      "images": [],
+      "workId": "honkai-star-rail",
+      "title": "仲夏螢火之約系列亞克力合影卡",
+      "series": "",
+      "characters": ["流螢"],
+      "category": "掛件／吊飾",
+      "manufacturer": "米哈遊",
+      "status": "pending",
+      "purchase": {
+        "price": 149.62,
+        "currency": "TWD",
+        "platform": "米哈遊淘寶",
+        "date": ""
+      },
+      "release": {
+        "receivedDate": ""
+      },
+      "shipping": {
+        "status": "pending",
+        "method": "集運",
+        "trackingNumber": ""
+      },
+      "afterSales": {
+        "status": "none",
+        "note": "",
         "updatedAt": "2026-09-04T10:33:39.814Z"
       },
       "createdAt": "2026-09-04T10:32:01.359Z",
@@ -121,25 +114,6 @@
     },
     {
       "id": "HSRd001",
-      "workId": "honkai-star-rail",
-      "workName": "崩壞：星穹鐵道",
-      "title": "流螢 光錐系列壓克力流沙立牌擺件",
-      "category": "立牌／擺件",
-      "quantity": 1,
-      "status": "pending",
-      "createdAt": "2026-09-06T15:09:12.307Z",
-      "updatedAt": "2026-09-06T15:17:35.851Z",
-      "characters": [
-        "流螢"
-      ],
-      "purchase": {
-        "price": 267.74,
-        "currency": "TWD",
-        "platform": "米哈遊淘寶"
-      },
-      "release": {},
-      "shipping": {},
-      "afterSales": {},
       "images": [
         {
           "id": "HSRd001-1788707854052",
@@ -149,28 +123,39 @@
           "alt": "流螢 光錐系列壓克力流沙立牌擺件",
           "isCover": true
         }
-      ]
+      ],
+      "workId": "honkai-star-rail",
+      "title": "流螢 光錐系列壓克力流沙立牌擺件",
+      "series": "光錐系列",
+      "characters": ["流螢"],
+      "category": "立牌／擺件",
+      "manufacturer": "米哈遊",
+      "status": "pending",
+      "purchase": {
+        "price": 267.74,
+        "currency": "TWD",
+        "platform": "米哈遊淘寶",
+        "date": ""
+      },
+      "release": {
+        "receivedDate": ""
+      },
+      "shipping": {
+        "status": "pending",
+        "method": "",
+        "trackingNumber": ""
+      },
+      "afterSales": {
+        "status": "none",
+        "note": "",
+        "updatedAt": ""
+      },
+      "createdAt": "2026-09-06T15:09:12.307Z",
+      "updatedAt": "2026-09-06T15:17:35.851Z",
+      "quantity": 1
     },
     {
       "id": "HSRd002",
-      "workId": "honkai-star-rail",
-      "workName": "崩壞：星穹鐵道",
-      "title": "昔漣 光錐系列壓克力流沙立牌擺件",
-      "category": "立牌／擺件",
-      "quantity": 1,
-      "status": "pending",
-      "createdAt": "2026-09-06T15:12:01.855Z",
-      "updatedAt": "2026-09-06T15:19:19.645Z",
-      "characters": [
-        "昔漣"
-      ],
-      "purchase": {
-        "price": 276.74,
-        "currency": "TWD"
-      },
-      "release": {},
-      "shipping": {},
-      "afterSales": {},
       "images": [
         {
           "id": "HSRd002-1788707958188",
@@ -180,7 +165,36 @@
           "alt": "昔漣 光錐系列壓克力流沙立牌擺件",
           "isCover": true
         }
-      ]
+      ],
+      "workId": "honkai-star-rail",
+      "title": "昔漣 光錐系列壓克力流沙立牌擺件",
+      "series": "光錐系列",
+      "characters": ["昔漣"],
+      "category": "立牌／擺件",
+      "manufacturer": "米哈遊",
+      "status": "pending",
+      "purchase": {
+        "price": 276.74,
+        "currency": "TWD",
+        "platform": "",
+        "date": ""
+      },
+      "release": {
+        "receivedDate": ""
+      },
+      "shipping": {
+        "status": "pending",
+        "method": "",
+        "trackingNumber": ""
+      },
+      "afterSales": {
+        "status": "none",
+        "note": "",
+        "updatedAt": ""
+      },
+      "createdAt": "2026-09-06T15:12:01.855Z",
+      "updatedAt": "2026-09-06T15:19:19.645Z",
+      "quantity": 1
     }
   ]
 }
