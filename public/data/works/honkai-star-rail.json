@@ -159,7 +159,7 @@
       "quantity": 1,
       "status": "pending",
       "createdAt": "2026-09-06T15:12:01.855Z",
-      "updatedAt": "2026-09-06T15:12:03.498Z",
+      "updatedAt": "2026-09-06T15:19:19.645Z",
       "characters": [
         "昔漣"
       ],
@@ -169,7 +169,17 @@
       },
       "release": {},
       "shipping": {},
-      "afterSales": {}
+      "afterSales": {},
+      "images": [
+        {
+          "id": "HSRd002-1788707958188",
+          "path": "data/honkai-star-rail/images/HSRd002/1788707950578-O1CN01YmXzKL1fEbSsOBR0S_-3249253975.jpg",
+          "url": "https://raw.githubusercontent.com/tsai97216/merch/main/data/honkai-star-rail/images/HSRd002/1788707950578-O1CN01YmXzKL1fEbSsOBR0S_-3249253975.jpg",
+          "sha": "06fbc7885ac6c0a9b1039746ff4f2b2ccbb1e7f5",
+          "alt": "昔漣 光錐系列壓克力流沙立牌擺件",
+          "isCover": true
+        }
+      ]
     }
   ]
 }
