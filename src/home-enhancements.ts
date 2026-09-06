@@ -8,19 +8,60 @@ const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\\\"']/g
 
 let storeRef: MerchStore | null = null;
 let characterModal: HTMLElement | null = null;
+let workModal: HTMLElement | null = null;
+
+function getWorkRows(store: MerchStore) {
+  const spendingByWork = new Map<string, number>();
+  store.snapshot.items.forEach((item) => {
+    const name = item.workName || '未分類';
+    spendingByWork.set(name, (spendingByWork.get(name) || 0) + itemValue(item));
+  });
+  return store.snapshot.works
+    .map((work) => ({ name: work.name, spend: spendingByWork.get(work.name) || 0 }))
+    .sort((a, b) => b.spend - a.spend || a.name.localeCompare(b.name, 'zh-Hant'));
+}
 
 function renderHomeSpending(store: MerchStore) {
   const host = document.querySelector<HTMLElement>('#work-bars');
   if (!host) return;
-  const { items, works } = store.snapshot;
-  const spendingByWork = new Map<string, number>();
-  items.forEach((item) => spendingByWork.set(item.workName || '未分類', (spendingByWork.get(item.workName || '未分類') || 0) + itemValue(item)));
-  const rows = works.map((work) => ({ name: work.name, spend: spendingByWork.get(work.name) || 0 }))
-    .sort((a, b) => b.spend - a.spend || a.name.localeCompare(b.name, 'zh-Hant'));
+  const rows = getWorkRows(store);
   const max = rows.reduce((value, row) => Math.max(value, row.spend), 0);
   host.innerHTML = rows.length
     ? rows.map((row) => `<div class="bar-row" data-search-query="${escapeHtml(row.name)}"><span>${escapeHtml(row.name)}</span><div><i style="width:${max ? Math.max(4, row.spend / max * 100) : 4}%"></i></div><b>${escapeHtml(money(row.spend))}</b></div>`).join('')
     : '<div class="empty-state">目前沒有資料</div>';
+}
+
+function ensureWorkModal() {
+  if (workModal) return workModal;
+  const modal = document.createElement('div');
+  modal.className = 'item-detail-modal';
+  modal.hidden = true;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，顯示全部作品。</p></div><ol id="work-ranking-all" class="ranking"></ol></section>`;
+  document.body.appendChild(modal);
+  modal.querySelectorAll('[data-work-ranking-close]').forEach((node) => node.addEventListener('click', closeWorkModal));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && workModal && !workModal.hidden) closeWorkModal();
+  });
+  workModal = modal;
+  return modal;
+}
+
+function openWorkModal() {
+  if (!storeRef) return;
+  const modal = ensureWorkModal();
+  const list = modal.querySelector<HTMLOListElement>('#work-ranking-all');
+  const rows = getWorkRows(storeRef);
+  if (list) list.innerHTML = rows.length
+    ? rows.map((row, index) => `<li><span>${index + 1}</span><strong>${escapeHtml(row.name)}</strong><b>${escapeHtml(money(row.spend))}</b></li>`).join('')
+    : '<li class="empty-state">目前沒有資料</li>';
+  modal.hidden = false;
+  document.body.classList.add('detail-modal-open');
+}
+
+function closeWorkModal() {
+  if (!workModal) return;
+  workModal.hidden = true;
+  document.body.classList.remove('detail-modal-open');
 }
 
 function ensureCharacterModal() {
@@ -82,6 +123,23 @@ function install() {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         openCharacterModal();
+      }
+    });
+  }
+
+  const workPanel = document.querySelector<HTMLElement>('#work-bars')?.closest<HTMLElement>('.panel');
+  if (workPanel) {
+    workPanel.setAttribute('role', 'button');
+    workPanel.setAttribute('tabindex', '0');
+    workPanel.setAttribute('aria-label', '查看作品消費總排行');
+    workPanel.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement | null)?.closest('[data-search-query]')) return;
+      openWorkModal();
+    });
+    workPanel.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openWorkModal();
       }
     });
   }
