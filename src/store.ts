@@ -227,3 +227,16 @@ export async function loadStore(): Promise<MerchStore> {
     throw Object.assign(new Error(appError.message), { store, code: appError.code, cause: appError.cause });
   }
 }
+
+let sharedStorePromise: Promise<MerchStore> | null = null;
+
+/** Return the application's single shared Store instance. */
+export function getStore(): Promise<MerchStore> {
+  if (!sharedStorePromise) {
+    sharedStorePromise = loadStore().catch((error) => {
+      sharedStorePromise = null;
+      throw error;
+    });
+  }
+  return sharedStorePromise;
+}
