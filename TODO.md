@@ -145,7 +145,7 @@
 - [x] 類別數量統計依 quantity 加總
 - [x] 各作品消費
 - [x] 各月份消費（1～12 月完整顯示，無資料月份為 0）
-- [ ] 各月份新增收藏
+- [x] 各月份新增收藏
 - [x] 集中使用 Date utility
 - [x] 統計計算與 UI rendering 分離
 - [x] 空資料狀態
@@ -249,7 +249,7 @@
 - [x] Management no independent items copy
 - [x] Statistics shared Store
 - [x] Home enhancement / main rendering single ownership
-- [ ] ensure Store update sync across Home / Collection / Statistics / Management / Detail
+- [x] ensure Store update sync across Home / Collection / Statistics / Management / Detail
 - [x] enhancement lifecycle check
 - [ ] all cross-page / dynamic interactions use event delegation and single responsibility
 - [ ] full regression verification
