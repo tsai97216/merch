@@ -158,7 +158,7 @@
 - [x] 月份圖使用垂直長條，X 軸顯示 1～12 月，年份顯示於圖表左上方
 - [x] 圓餅圖圖例顏色與切片顏色一致
 - [x] 統計詳細分析視圖
-- [ ] 統計結果邊界案例驗證
+- [x] 統計結果邊界案例驗證
 
 ## 10. Management
 - [x] 作品選擇器
@@ -222,19 +222,19 @@
 - [x] Image write failure recovery
 
 ## 14. Verification
-- [ ] TypeScript build
+- [x] TypeScript build
 - [ ] Desktop smoke test
 - [ ] Mobile smoke test
-- [ ] Router smoke test
+- [x] Router smoke test
 - [ ] Collection search/filter/sort test
 - [ ] Detail test
-- [ ] Statistics test
+- [x] Statistics test
 - [ ] Management test
 - [ ] GitHub API write test
 - [ ] Image management test
 - [ ] Empty/error/loading test
-- [ ] Data integrity verification
-- [ ] Production deploy verification
+- [x] Data integrity verification
+- [x] Production deploy verification
 
 ## 15. Final Polish
 - [ ] desktop / tablet / mobile UI polish
