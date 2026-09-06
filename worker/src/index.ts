@@ -126,6 +126,13 @@ function sameNonImageItem(a: Item, b: Item): boolean { return JSON.stringify(wit
 function categoryEntry(item: Item, path: string): CategoryEntry { const cover = item.images.find(image => image.isCover === true); return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...(cover?.file ? { cover: cover.file } : {}) }; }
 async function createBlob(env: Env, content: string, encoding: 'utf-8' | 'base64' = 'utf-8'): Promise<string> { const result = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs`, { method: 'POST', body: JSON.stringify({ content, encoding }) }); return result.sha; }
 async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEntry[], message: string): Promise<void> {
+  if (!files.length) throw new Error('寫入內容不可為空。');
+  const seen = new Set<string>();
+  for (const file of files) {
+    if (!file.path || seen.has(file.path)) throw new Error(`atomic write 包含重複或無效路徑：${file.path}`);
+    seen.add(file.path);
+    if (file.delete && (file.content !== undefined || file.sha !== undefined)) throw new Error(`刪除項目不得同時提供 content/sha：${file.path}`);
+  }
   const entries = [] as { path: string; mode: '100644'; type: 'blob'; sha: string | null }[];
   for (const file of files) entries.push({ path: file.path, mode: '100644', type: 'blob', sha: file.delete ? null : file.sha || await createBlob(env, file.content || '', file.encoding || 'utf-8') });
   const tree = await githubJson<GitHubTree>(env, `/repos/${env.GITHUB_REPO}/git/trees`, { method: 'POST', body: JSON.stringify({ base_tree: remote.baseTreeSha, tree: entries }) });
@@ -178,7 +185,7 @@ function assetMetadata(item: Item, file: string): ImageMeta { const existing = i
 function categoryWithItem(category: CategoryIndex, item: Item, itemPath: string): CategoryIndex { return { ...category, items: [...category.items.filter(entry => entry.id !== item.id), categoryEntry(item, itemPath)] }; }
 
 async function getAsset(env: Env, path: string, origin: string): Promise<Response> {
-  const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId);
   const entry = remote.items.get(parts.itemId); if (!entry || entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
   if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin);
   const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(env.GITHUB_BRANCH)}`);
