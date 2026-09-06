@@ -5,6 +5,7 @@ type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; messa
 type ApiData = Pick<StoreState, 'works' | 'version'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 type AuthStatus = { authenticated: boolean };
+type ApiFailure = { apiCode?: string; status: number };
 
 const meta = import.meta as ImportMetaWithEnv;
 const API_BASE = (meta.env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
@@ -32,7 +33,10 @@ async function request(path: string, init: RequestInit = {}): Promise<unknown> {
   }
   let payload: ApiResponse | null = null;
   try { payload = await response.json() as ApiResponse; } catch { /* handled below */ }
-  if (!response.ok || !payload?.ok) throw dataError(payload?.error?.message || `API 請求失敗（${response.status}）`);
+  if (!response.ok || !payload?.ok) {
+    const failure: ApiFailure = { apiCode: payload?.error?.code, status: response.status };
+    throw dataError(payload?.error?.message || `API 請求失敗（${response.status}）`, failure);
+  }
   return payload.data;
 }
 
