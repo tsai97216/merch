@@ -30,12 +30,10 @@ export type AfterSales = {
   note?: string;
 };
 
-/** Complete Item document stored at <item>/data.json. */
-export type Item = {
+/** Canonical Item document stored at <item>/data.json. */
+export type PersistedItem = {
   id: string;
   workId: string;
-  /** Runtime/UI-only display metadata. Storage normalization removes it. */
-  workName?: string;
   title: string;
   series: string[];
   characters: string[];
@@ -49,14 +47,22 @@ export type Item = {
   arrival: Arrival;
   afterSales: AfterSales;
   images: ImageMeta[];
-  /** Runtime compatibility for legacy UI data. New storage uses arrival instead. */
+};
+
+/** Runtime-only fields. These must never be written to data.json. */
+export type RuntimeItemFields = {
+  workName?: string;
+  /** @deprecated Use arrival.expectedDate / arrival.receivedDate. */
   release?: { date?: string; expectedDate?: string; receivedDate?: string };
-  /** Runtime-only compatibility for legacy UI data. New storage does not persist this field. */
+  /** @deprecated Shipping is no longer part of the Item schema. */
   shipping?: { method?: string; status?: string };
-  /** Runtime-only timestamps retained for existing sorting/detail UI. */
+  /** @deprecated Legacy timestamps retained only while old UI sorting is migrated. */
   createdAt?: string;
   updatedAt?: string;
 };
+
+/** UI Item. Persistence/API boundaries must use PersistedItem. */
+export type Item = PersistedItem & RuntimeItemFields;
 
 /** Storage locations belonging to one permanent Item ID. */
 export type ItemStorage = {
@@ -109,8 +115,8 @@ export type CategoryIndex = {
   items: CategoryIndexEntry[];
 };
 
-/** Alias documenting that ItemData is the complete per-Item JSON document. */
-export type ItemData = Item;
+/** Complete per-Item JSON document. */
+export type ItemData = PersistedItem;
 
 export type WorksIndex = {
   schemaVersion: 1 | 2;
