@@ -230,6 +230,11 @@ function render(): void {
 
 void getStore().then(store => {
   storeRef = store;
+  const pendingSelection = sessionStorage.getItem('merch-management-selected-id');
+  if (pendingSelection) {
+    selectedId = pendingSelection;
+    sessionStorage.removeItem('merch-management-selected-id');
+  }
   unsubscribe?.();
   unsubscribe = store.subscribe(() => render());
   render();
