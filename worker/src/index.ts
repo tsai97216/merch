@@ -8,13 +8,14 @@ interface Env {
 type GitHubRef = { object: { sha: string } };
 type GitHubCommit = { sha: string; tree: { sha: string } };
 type GitHubBlob = { sha: string; content: string; encoding: string };
-type GitHubTree = { sha: string };
 type GitHubTreeEntry = { path?: string; type?: string; sha?: string };
+type GitHubTree = { sha: string };
 type WorkEntry = { id: string; name: string; code: string; path: string };
 type WorkIndex = { schemaVersion: 2; works: WorkEntry[] };
 type CategoryEntry = { id: string; path: string; title?: string; characters?: string[]; manufacturer?: string; quantity?: number; status?: string; cover?: string };
 type CategoryIndex = { schemaVersion: 1; workId: string; category: string; items: CategoryEntry[] };
-type Item = { id: string; workId: string; title: string; series: string[]; characters: string[]; category: string; manufacturer: string; quantity: number; status: string; description: string; notes: string; purchase: Record<string, unknown>; arrival: Record<string, unknown>; afterSales: Record<string, unknown>; images: Record<string, unknown>[]; [key: string]: unknown };
+type ImageMeta = { id: string; file: string; alt?: string; isCover?: boolean; [key: string]: unknown };
+type Item = { id: string; workId: string; title: string; series: string[]; characters: string[]; category: string; manufacturer: string; quantity: number; status: string; description: string; notes: string; purchase: Record<string, unknown>; arrival: Record<string, unknown>; afterSales: Record<string, unknown>; images: ImageMeta[]; [key: string]: unknown };
 type RemoteState = { index: WorkIndex; version: string; headSha: string; baseTreeSha: string; files: Map<string, { content: string; sha: string }>; categories: Map<string, CategoryIndex>; items: Map<string, { item: Item; path: string; categoryPath: string; workId: string }>; paths: Set<string> };
 type AssetRequest = { path: string; content: string };
 type WriteEntry = { path: string; content?: string; encoding?: 'utf-8' | 'base64'; delete?: boolean };
@@ -24,7 +25,10 @@ const MAX_ASSET_BASE64_LENGTH = 10 * 1024 * 1024;
 const ASSET_RE = /^data\/[^/]+\/[^/]+\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 const ITEM_ID_RE = /^[A-Z]{2,3}[a-z]\d{3}$/;
 const CATEGORY_RE = /^[a-z]$/;
-function response(body: unknown, status = 200, origin = '*'): Response { return new Response(JSON.stringify(body), { status, headers: { ...jsonHeaders, 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS', 'Vary': 'Origin' } }); }
+
+function response(body: unknown, status = 200, origin = '*'): Response {
+  return new Response(JSON.stringify(body), { status, headers: { ...jsonHeaders, 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS', 'Vary': 'Origin' } });
+}
 function ok(data: unknown, origin: string): Response { return response({ ok: true, data }, 200, origin); }
 function fail(code: string, message: string, status: number, origin: string): Response { return response({ ok: false, error: { code, message } }, status, origin); }
 function originFor(request: Request, env: Env): string | null { const origin = request.headers.get('Origin'); return !origin || origin === env.ALLOWED_ORIGIN ? env.ALLOWED_ORIGIN : null; }
@@ -66,6 +70,7 @@ async function loadRemote(env: Env): Promise<RemoteState> {
         if (!itemFile) throw new Error(`找不到 Item：${summary.id}`);
         const item = JSON.parse(itemFile.content) as Item;
         if (item.id !== summary.id || item.workId !== entry.id || item.category !== category.category) throw new Error(`Item 索引不一致：${summary.id}`);
+        if (!Array.isArray(item.images)) item.images = [];
         items.set(item.id, { item, path: summary.path, categoryPath, workId: entry.id });
       }
     }
@@ -74,6 +79,7 @@ async function loadRemote(env: Env): Promise<RemoteState> {
 }
 function allWorks(remote: RemoteState) { return remote.index.works.map(work => ({ id: work.id, name: work.name, code: work.code, items: [...remote.items.values()].filter(entry => entry.workId === work.id).map(entry => entry.item) })); }
 async function dataResponse(env: Env, origin: string): Promise<Response> { const remote = await loadRemote(env); return ok({ works: allWorks(remote), version: remote.version }, origin); }
+
 function validateItem(item: unknown): asserts item is Item {
   if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('Item 必須是物件');
   const value = item as Record<string, unknown>;
@@ -84,11 +90,11 @@ function validateItem(item: unknown): asserts item is Item {
   if (!Array.isArray(value.series) || value.series.some(entry => typeof entry !== 'string')) throw new Error('series 必須是字串陣列');
   if (!Array.isArray(value.characters) || value.characters.some(entry => typeof entry !== 'string')) throw new Error('characters 必須是字串陣列');
   if (typeof value.quantity !== 'number' || !Number.isInteger(value.quantity) || value.quantity < 1) throw new Error('quantity 必須是大於等於 1 的整數');
-  if (value.images !== undefined && (!Array.isArray(value.images) || value.images.some(image => !image || typeof image !== 'object' || Array.isArray(image)))) throw new Error('images 格式無效');
+  if (!Array.isArray(value.images) || value.images.some(image => !image || typeof image !== 'object' || Array.isArray(image))) throw new Error('images 格式無效');
   for (const forbidden of ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt']) if (forbidden in value) throw new Error(`禁止儲存欄位：${forbidden}`);
 }
 function normalizeItemForStorage(item: Item): Item { const copy = JSON.parse(JSON.stringify(item)) as Item; delete copy.workName; return copy; }
-function categoryEntry(item: Item, path: string): CategoryEntry { const cover = Array.isArray(item.images) ? item.images.find(image => (image as { isCover?: unknown }).isCover === true) : undefined; return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...((cover as { file?: unknown } | undefined)?.file ? { cover: cover.file as string } : {}) }; }
+function categoryEntry(item: Item, path: string): CategoryEntry { const cover = item.images.find(image => image.isCover === true); return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...(cover?.file ? { cover: cover.file } : {}) }; }
 async function createBlob(env: Env, content: string, encoding: 'utf-8' | 'base64' = 'utf-8'): Promise<string> { const result = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs`, { method: 'POST', body: JSON.stringify({ content, encoding }) }); return result.sha; }
 async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEntry[], message: string): Promise<void> {
   const entries = [] as { path: string; mode: '100644'; type: 'blob'; sha: string | null }[];
@@ -98,6 +104,7 @@ async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEnt
   try { await githubJson(env, `/repos/${env.GITHUB_REPO}/git/refs/heads/${encodeURIComponent(env.GITHUB_BRANCH)}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha, force: false }) }); }
   catch (error) { if ((error as Error & { status?: number }).status === 422) throw new Error('資料在寫入期間已被其他操作更新，這次修改未套用。請重新載入後再試。'); throw error; }
 }
+
 async function updateItem(env: Env, id: string, input: unknown, origin: string): Promise<Response> {
   const item = (input as { item?: unknown } | null)?.item; validateItem(item); if (item.id !== id) return fail('ID_MISMATCH', '路由 Item ID 與 payload 不一致。', 400, origin);
   const remote = await loadRemote(env); const work = remote.index.works.find(entry => entry.id === item.workId); if (!work) return fail('WORK_NOT_FOUND', '找不到 Item 所屬作品。', 404, origin);
@@ -115,29 +122,67 @@ async function deleteItem(env: Env, id: string, origin: string): Promise<Respons
   const prefix = `data/${existing.workId}/${existing.item.category}/${id}/images/`; for (const path of remote.paths) if (path.startsWith(prefix)) writes.push({ path, delete: true });
   const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }); await createAtomicCommit(env, remote, writes, `fix: delete item ${id}`); return dataResponse(env, origin);
 }
+
+function assetParts(path: string) { const match = /^data\/([^/]+)\/([^/]+)\/([^/]+)\/images\/([^/]+)$/.exec(path); return match ? { workId: match[1], category: match[2], itemId: match[3], file: match[4] } : null; }
 function validateAssetPath(path: unknown): string { if (typeof path !== 'string' || !ASSET_RE.test(path) || path.includes('..')) throw new Error('圖片路徑格式無效。'); return path; }
-function validateAssetPayload(value: unknown): AssetRequest { if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('圖片請求格式無效。'); const body = value as Record<string, unknown>; const path = validateAssetPath(body.path); if (typeof body.content !== 'string' || !body.content) throw new Error('圖片內容為必填欄位。'); if (body.content.length > MAX_ASSET_BASE64_LENGTH) throw new Error('圖片檔案過大，請使用 10 MB 以下的圖片。'); if (!/^[A-Za-z0-9+/\s]+=*$/.test(body.content)) throw new Error('圖片內容不是有效的 Base64。'); return { path, content: body.content.replace(/\s/g, '') }; }
-function assetContentType(path: string): string { const ext = path.toLowerCase().split('.').pop(); return ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : ext === 'avif' ? 'image/avif' : 'image/jpeg'; }
-async function getAsset(env: Env, path: string, origin: string): Promise<Response> { const remote = await loadRemote(env); if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin); const file = await githubJson<{ content: string; sha: string }>(env, `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(remote.headSha)}`); return new Response(decodeBase64(file.content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${file.sha}"` } }); }
+function validateAssetPayload(value: unknown): AssetRequest { if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('圖片請求格式無效。'); const body = value as Record<string, unknown>; const path = validateAssetPath(body.path); if (typeof body.content !== 'string' || !body.content) throw new Error('圖片內容為必填欄位。'); if (body.content.length > MAX_ASSET_BASE64_LENGTH) throw new Error('圖片檔案過大，請使用 10 MB 以下的圖片。'); if (!/^[A-Za-z0-9+/]*={0,2}$/.test(body.content.replace(/\s/g, ''))) throw new Error('圖片內容不是有效的 Base64。'); return { path, content: body.content.replace(/\s/g, '') }; }
+function assetContentType(path: string): string { const ext = path.toLowerCase().split('.').pop(); return ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'webp' ? 'image/webp' : ext === 'avif' ? 'image/avif' : 'image/jpeg'; }
+function imageIdForFile(file: string, images: ImageMeta[]): string { const stem = file.replace(/\.[^.]+$/, ''); if (!images.some(image => image.id === stem)) return stem; let index = 2; while (images.some(image => image.id === `${stem}-${index}`)) index += 1; return `${stem}-${index}`; }
+function assetMetadata(item: Item, file: string): ImageMeta { const existing = item.images.find(image => image.file === file); if (existing) return existing; return { id: imageIdForFile(file, item.images), file }; }
+function categoryWithItem(category: CategoryIndex, item: Item, itemPath: string): CategoryIndex { return { ...category, items: [...category.items.filter(entry => entry.id !== item.id), categoryEntry(item, itemPath)] }; }
+
+async function getAsset(env: Env, path: string, origin: string): Promise<Response> {
+  const remote = await loadRemote(env); const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const entry = remote.items.get(parts.itemId); if (!entry || entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
+  if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin);
+  const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(env.GITHUB_BRANCH)}`);
+  const content = blob.content.replace(/\s/g, '');
+  return new Response(decodeBase64(content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=31536000, immutable', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${blob.sha}"` } });
+}
+
 async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<Response> {
-  const remote = await loadRemote(env); const match = /^data\/([^/]+)\/([^/]+)\/([^/]+)\/images\/([^/]+)$/.exec(asset.path); if (!match || !remote.items.has(match[3])) return fail('ITEM_NOT_FOUND', '圖片所屬 Item 不存在。', 404, origin);
-  const nextVersion = bumpPatch(remote.version); const exists = remote.paths.has(asset.path); await createAtomicCommit(env, remote, [{ path: asset.path, content: asset.content, encoding: 'base64' }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `${exists ? 'fix' : 'feat'}: ${exists ? 'replace' : 'add'} asset ${asset.path}`);
-  const latest = await loadRemote(env); const file = await githubJson<{ sha: string }>(env, `/repos/${env.GITHUB_REPO}/contents/${asset.path}?ref=${encodeURIComponent(latest.headSha)}`); return ok({ path: asset.path, sha: file.sha, contentType: assetContentType(asset.path), url: `https://raw.githubusercontent.com/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/${asset.path}`, version: latest.version }, origin);
+  const remote = await loadRemote(env); const parts = assetParts(asset.path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const entry = remote.items.get(parts.itemId); if (!entry) return fail('ITEM_NOT_FOUND', '找不到圖片所屬的收藏。', 404, origin);
+  if (entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
+  const exists = remote.paths.has(asset.path); const item = normalizeItemForStorage(entry.item); const nextImages = [...item.images]; if (!nextImages.some(image => image.file === parts.file)) nextImages.push(assetMetadata(item, parts.file)); item.images = nextImages;
+  const writes: WriteEntry[] = [{ path: asset.path, content: asset.content, encoding: 'base64' }, { path: entry.path, content: jsonFile(item) }];
+  const category = remote.categories.get(entry.categoryPath); if (!category) return fail('CATEGORY_NOT_FOUND', '找不到圖片所屬類型索引。', 404, origin); writes.push({ path: entry.categoryPath, content: jsonFile(categoryWithItem(category, item, entry.path)) });
+  if (!exists) { const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }); }
+  await createAtomicCommit(env, remote, writes, `${exists ? 'fix: replace' : 'feat: add'} image ${parts.itemId}/${parts.file}`);
+  return ok({ path: asset.path, replaced: exists, version: exists ? remote.version : bumpPatch(remote.version) }, origin);
 }
-async function deleteAsset(env: Env, path: string, origin: string): Promise<Response> { const remote = await loadRemote(env); if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin); const nextVersion = bumpPatch(remote.version); await createAtomicCommit(env, remote, [{ path, delete: true }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `fix: delete asset ${path}`); return ok({ path, deleted: true, version: nextVersion }, origin); }
+
+async function deleteAsset(env: Env, path: string, origin: string): Promise<Response> {
+  const remote = await loadRemote(env); const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const entry = remote.items.get(parts.itemId); if (!entry) return fail('ITEM_NOT_FOUND', '找不到圖片所屬的收藏。', 404, origin);
+  if (entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
+  if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin);
+  const item = normalizeItemForStorage(entry.item); item.images = item.images.filter(image => image.file !== parts.file); const writes: WriteEntry[] = [{ path, delete: true }, { path: entry.path, content: jsonFile(item) }];
+  const category = remote.categories.get(entry.categoryPath); if (!category) return fail('CATEGORY_NOT_FOUND', '找不到圖片所屬類型索引。', 404, origin); writes.push({ path: entry.categoryPath, content: jsonFile(categoryWithItem(category, item, entry.path)) });
+  const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
+  await createAtomicCommit(env, remote, writes, `fix: delete image ${parts.itemId}/${parts.file}`); return ok({ path, deleted: true, version: nextVersion }, origin);
+}
+
 async function cleanupAssets(env: Env, origin: string): Promise<Response> {
-  const remote = await loadRemote(env); const referenced = new Set<string>(); for (const entry of remote.items.values()) for (const image of entry.item.images || []) if (image && typeof image === 'object' && typeof (image as { file?: unknown }).file === 'string') referenced.add(`data/${entry.workId}/${entry.item.category}/${entry.item.id}/images/${(image as { file: string }).file}`);
-  const orphaned = [...remote.paths].filter(path => ASSET_RE.test(path) && !referenced.has(path)); if (!orphaned.length) return ok({ deletedPaths: [], count: 0, version: remote.version }, origin);
-  const nextVersion = bumpPatch(remote.version); const writes: WriteEntry[] = orphaned.map(path => ({ path, delete: true })); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }); await createAtomicCommit(env, remote, writes, 'fix: clean orphan assets'); return ok({ deletedPaths: orphaned, count: orphaned.length, version: nextVersion }, origin);
+  const remote = await loadRemote(env); const referenced = new Set<string>(); for (const entry of remote.items.values()) for (const image of entry.item.images) referenced.add(`data/${entry.workId}/${entry.item.category}/${entry.item.id}/images/${image.file}`);
+  const orphaned = [...remote.paths].filter(path => /^data\/[^/]+\/[a-z]\/[^/]+\/images\//.test(path) && !referenced.has(path)); if (!orphaned.length) return ok({ deleted: 0, version: remote.version }, origin);
+  const writes: WriteEntry[] = orphaned.map(path => ({ path, delete: true })); const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }); await createAtomicCommit(env, remote, writes, `fix: cleanup ${orphaned.length} orphan images`); return ok({ deleted: orphaned.length, version: nextVersion }, origin);
 }
-export default { async fetch(request: Request, env: Env): Promise<Response> {
-  const origin = originFor(request, env); if (!origin) return fail('ORIGIN_NOT_ALLOWED', '來源網域不被允許。', 403, '*'); if (request.method === 'OPTIONS') return response({}, 204, origin); const url = new URL(request.url);
-  try {
-    if (url.pathname === '/api/auth/status' && request.method === 'GET') return ok({ authenticated: authorized(request, env) }, origin);
-    if (url.pathname === '/api/data' && request.method === 'GET') return dataResponse(env, origin);
-    const itemMatch = url.pathname.match(/^\/api\/items\/([^/]+)$/); if (itemMatch) { if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員驗證。', 401, origin); const id = decodeURIComponent(itemMatch[1]); if (request.method === 'PUT') return updateItem(env, id, await request.json(), origin); if (request.method === 'DELETE') return deleteItem(env, id, origin); }
-    if (url.pathname === '/api/assets/cleanup' && request.method === 'POST') { if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員驗證。', 401, origin); return cleanupAssets(env, origin); }
-    const assetPath = url.pathname.match(/^\/api\/assets\/(.+)$/)?.[1]; if (assetPath) { const decoded = decodeURIComponent(assetPath); if (request.method === 'GET') return getAsset(env, validateAssetPath(decoded), origin); if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員驗證。', 401, origin); if (request.method === 'PUT') return putAsset(env, validateAssetPayload(await request.json()), origin); if (request.method === 'DELETE') return deleteAsset(env, validateAssetPath(decoded), origin); }
-    return fail('NOT_FOUND', 'API 路徑不存在。', 404, origin);
-  } catch (error) { return fail('SERVER_ERROR', error instanceof Error ? error.message : '伺服器發生未知錯誤。', 500, origin); }
-} };
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const origin = originFor(request, env); if (!origin) return fail('ORIGIN_NOT_ALLOWED', '來源網域不被允許。', 403, '*');
+    if (request.method === 'OPTIONS') return response({}, 204, origin);
+    const url = new URL(request.url);
+    try {
+      if (url.pathname === '/api/auth/status' && request.method === 'GET') return ok({ authenticated: authorized(request, env) }, origin);
+      if (url.pathname === '/api/data' && request.method === 'GET') return dataResponse(env, origin);
+      const itemMatch = url.pathname.match(/^\/api\/items\/([^/]+)$/);
+      if (itemMatch) { if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員權限。', 401, origin); const id = decodeURIComponent(itemMatch[1]); if (request.method === 'PUT') return updateItem(env, id, await request.json(), origin); if (request.method === 'DELETE') return deleteItem(env, id, origin); }
+      if (url.pathname === '/api/assets/cleanup' && request.method === 'POST') { if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員權限。', 401, origin); return cleanupAssets(env, origin); }
+      const assetPath = url.pathname.startsWith('/api/assets/') ? decodeURIComponent(url.pathname.slice('/api/assets/'.length)) : '';
+      if (assetPath) { if (request.method === 'GET') return getAsset(env, validateAssetPath(assetPath), origin); if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員權限。', 401, origin); if (request.method === 'PUT') return putAsset(env, validateAssetPayload(await request.json()), origin); if (request.method === 'DELETE') return deleteAsset(env, validateAssetPath(assetPath), origin); }
+      return fail('NOT_FOUND', 'API 路由不存在。', 404, origin);
+    } catch (error) { console.error(error); return fail('INTERNAL_ERROR', error instanceof Error ? error.message : '伺服器處理失敗。', 500, origin); }
+  }
+};
