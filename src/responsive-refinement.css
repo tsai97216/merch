@@ -3,6 +3,23 @@
 .content,.footer{width:100%}
 .page-heading h1,.hero h1{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 
+/* Management: give the editor a clearer hierarchy without changing its data flow. */
+.management-panel{min-width:0}
+.management-toolbar{gap:14px}
+.management-picker-grid{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(160px,1fr) minmax(120px,.7fr);gap:10px;min-width:0}
+.management-picker-grid .field{min-width:0}
+.management-picker-grid select{width:100%;min-width:0}
+.management-readonly{overflow-wrap:anywhere;word-break:break-word}
+.management-actions{gap:10px;flex-wrap:wrap}
+.management-actions .button{min-height:40px}
+.management-image-row{min-width:0}
+.management-image-info{min-width:0}
+.management-image-info small{overflow-wrap:anywhere;word-break:break-word}
+
+@media (min-width:1001px){
+  .management-picker-grid{grid-template-columns:minmax(220px,1.4fr) minmax(180px,1fr) minmax(130px,.65fr)}
+}
+
 @media (min-width:701px) and (max-width:1000px){
   .main{padding-right:16px}
   .content{padding-left:24px;padding-right:24px}
@@ -12,6 +29,7 @@
   .management-panel{overflow:hidden}
   .management-toolbar{align-items:stretch;flex-direction:column;gap:10px}
   .management-toolbar .field.compact{width:100%;flex:1 1 auto}
+  .management-picker-grid{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
   .management-readonly{max-width:none}
   .settings-auth-heading{gap:14px}
   .settings-auth-controls{align-items:stretch;flex-direction:column}
@@ -23,6 +41,7 @@
   .management-form-grid,.form-grid{grid-template-columns:1fr}
   .management-actions{justify-content:stretch}
   .management-actions .button{flex:1}
+  .management-picker-grid{grid-template-columns:1fr}
 }
 
 @media (max-width:700px){
@@ -37,9 +56,18 @@
   .statistics-chart-heading>span{min-width:0}
   .statistics-chart-heading small{overflow-wrap:anywhere}
   .settings-auth-panel{overflow:hidden}
+  .management-picker-grid{grid-template-columns:1fr;gap:8px}
+  .management-toolbar{gap:10px}
+  .management-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .management-actions .button{width:100%}
+  .management-image-row{grid-template-columns:1fr}
+  .management-image-preview{max-width:100%;}
+  .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .management-image-actions .button{width:100%;}
 }
 
 @media (max-width:380px){
   .content{padding-left:12px;padding-right:12px}
   .page-heading h1,.hero h1{max-width:calc(100vw - 24px)}
+  .management-actions,.management-image-actions{grid-template-columns:1fr}
 }
