@@ -89,8 +89,8 @@
 - [x] Badge / Status
 - [x] Input / Select / Textarea
 - [x] Toolbar / Filter controls
-- [ ] Modal
-- [ ] Toast
+- [x] Modal
+- [x] Toast
 - [x] Loading
 - [x] Empty
 - [x] Error
@@ -306,11 +306,11 @@
 - [ ] 最終 production smoke test
 
 ## 16. Architecture Follow-up
-- [ ] 統一所有頁面與 enhancement module 共用同一個 Store instance，避免各模組重複 `loadStore()` 造成 state 分裂
-- [ ] 移除 Management 頁面的獨立 `items` 資料副本，改由 Store 作為唯一資料來源
-- [ ] 移除 Statistics 頁面的獨立 Store instance，改由主 App Store 提供資料與訂閱
-- [ ] 移除 Home enhancement 與主 rendering 之間的重複資料 rendering，建立單一 rendering ownership
+- [x] 統一所有頁面與 enhancement module 共用同一個 Store instance，避免各模組重複 `loadStore()` 造成 state 分裂
+- [x] 移除 Management 頁面的獨立 `items` 資料副本，改由 Store 作為唯一資料來源
+- [x] 移除 Statistics 頁面的獨立 Store instance，改由主 App Store 提供資料與訂閱
+- [x] 移除 Home enhancement 與主 rendering 之間的重複資料 rendering，建立單一 rendering ownership
 - [ ] 確保 Store 更新後 Home / Collection / Statistics / Management / Detail 所有畫面由同一 state 正確同步
-- [ ] 檢查 enhancement module 的初始化生命週期，避免 Router 重複 render 後重複綁定事件
+- [x] 檢查 enhancement module 的初始化生命週期，避免 Router 重複 render 後重複綁定事件
 - [ ] 檢查所有跨頁／動態元素互動是否仍符合事件 delegation 與單一責任原則
 - [ ] 完成上述架構調整後重新執行全站 regression verification
