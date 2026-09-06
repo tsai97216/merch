@@ -11,6 +11,7 @@
     "verify:worker": "node scripts/verify-worker-architecture.mjs",
     "verify:worker-scope": "node scripts/verify-worker-write-scope.mjs",
     "verify:version": "node scripts/verify-version-sync.mjs",
+    "verify:legacy-fields": "node scripts/verify-legacy-fields.mjs",
     "verify:statistics": "node scripts/verify-statistics-date.mjs",
     "migrate:new": "node scripts/migrate.mjs public/data data-migrated",
     "preview": "vite preview"
