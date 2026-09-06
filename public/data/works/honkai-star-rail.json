@@ -18,33 +18,25 @@
       ],
       "workId": "honkai-star-rail",
       "title": "流螢 春日手信 1/8比例手辦",
-      "series": "",
       "characters": [
         "流螢"
       ],
       "category": "手辦",
       "manufacturer": "Myethos",
       "status": "received",
-      "description": "",
-      "notes": "",
       "purchase": {
         "price": 1375,
         "currency": "TWD",
         "platform": "米哈遊淘寶",
-        "date": "2026-08-05",
-        "url": "",
-        "orderId": ""
+        "date": "2026-08-05"
       },
       "release": {
-        "date": "",
-        "expectedDate": "",
         "receivedDate": "2026-09-14"
       },
       "shipping": {
         "status": "received",
         "method": "集運",
-        "trackingNumber": "",
-        "note": ""
+        "trackingNumber": ""
       },
       "afterSales": {
         "status": "pending",
@@ -52,7 +44,8 @@
         "updatedAt": "2026-09-04T05:31:26.180Z"
       },
       "createdAt": "2026-09-04T05:31:26.180Z",
-      "updatedAt": "2026-09-04T09:22:14.136Z"
+      "updatedAt": "2026-09-06T15:17:50.371Z",
+      "quantity": 1
     },
     {
       "id": "HSRc001",
