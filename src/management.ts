@@ -1,6 +1,7 @@
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
 import { escapeHtml, qs } from './utils/dom';
+import { showToast } from './utils/toast';
 
 let storeRef: MerchStore | null = null;
 let unsubscribe: (() => void) | null = null;
@@ -87,7 +88,6 @@ function render() {
   const items = allItems();
   const current = items.find(x => x.id === selectedId) ?? items[0];
   if (current && !pickerWork) fill(current);
-
   const works = unique(items.map(workOf));
   if (!pickerWork || !works.includes(pickerWork)) pickerWork = workOf(current ?? items[0]);
   const categories = unique(items.filter(x => workOf(x) === pickerWork).map(categoryOf));
@@ -160,6 +160,7 @@ function render() {
     box.innerHTML = errors.length
       ? `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`
       : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub。';
+    showToast(errors.length ? '表單驗證失敗，請檢查欄位。' : '表單驗證通過。', errors.length ? 'error' : 'success');
   });
 }
 
