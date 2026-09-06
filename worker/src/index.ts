@@ -194,7 +194,7 @@ async function getAsset(env: Env, path: string, origin: string): Promise<Respons
 }
 
 async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<Response> {
-  const parts = assetParts(asset.path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const parts = assetParts(asset.path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId);
   const entry = remote.items.get(parts.itemId); if (!entry) return fail('ITEM_NOT_FOUND', '找不到圖片所屬的收藏。', 404, origin);
   if (entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
   const exists = remote.paths.has(asset.path); const item = normalizeItemForStorage(entry.item); const nextImages = [...item.images]; if (!nextImages.some(image => image.file === parts.file)) nextImages.push(assetMetadata(item, parts.file)); item.images = nextImages;
@@ -206,7 +206,7 @@ async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<
 }
 
 async function deleteAsset(env: Env, path: string, origin: string): Promise<Response> {
-  const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin);
+  const parts = assetParts(path); if (!parts) return fail('INVALID_ASSET_PATH', '圖片路徑格式無效。', 400, origin); const remote = await loadRemoteTarget(env, parts.itemId);
   const entry = remote.items.get(parts.itemId); if (!entry) return fail('ITEM_NOT_FOUND', '找不到圖片所屬的收藏。', 404, origin);
   if (entry.workId !== parts.workId || entry.item.category !== parts.category) return fail('ITEM_PATH_MISMATCH', '圖片路徑與 Item 所屬位置不一致。', 400, origin);
   if (!remote.paths.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin);
