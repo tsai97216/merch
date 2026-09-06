@@ -2,6 +2,7 @@ import type { Item, StoreState, UiState, VersionData, Work, WorkPayload, WorksIn
 import { defaultUiState } from './types';
 import { parseItemId } from './item-id';
 import { dataError, httpError, toAppError } from './error';
+import { getRemoteData, putItem, deleteItem as deleteRemoteItem } from './api';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
 function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null && !Array.isArray(value); }
@@ -80,25 +81,22 @@ export class MerchStore {
   subscribe(listener: (state: StoreState) => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   setUi(patch: Partial<UiState>): void { const ui = { ...this.state.ui, ...patch }; this.state = cloneAndFreeze({ ...this.state, ui }); try { localStorage.setItem('merch-ui', JSON.stringify(ui)); } catch { /* optional */ } this.emit(); }
   replaceData(works: Work[], version: string): void { const normalizedWorks = works.map((work) => ({ ...work, items: work.items.map((item, index) => normalizeStoreItem(item, `${work.name}.items[${index}]`)) })); const items = normalizedWorks.flatMap((work) => work.items.map((item) => ({ ...item, workId: work.id, workName: work.name }))); this.state = cloneAndFreeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null }); this.emit(); }
-  updateItem(item: Item): void {
+  private applyRemote(data: { works: Work[]; version: string }): void { this.replaceData(data.works, data.version); }
+  async updateItem(item: Item): Promise<void> {
     const current = this.state.items.find((entry) => entry.id === item.id);
     if (!current) throw dataError(`找不到收藏：${item.id}`);
     const work = this.state.works.find((entry) => entry.id === current.workId);
     if (!work) throw dataError(`找不到收藏所屬作品：${current.workId}`);
     const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
     if (parseItemId(normalized.id)?.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
-    const items = this.state.items.map((entry) => entry.id === normalized.id ? normalized : entry);
-    const works = this.state.works.map((entry) => entry.id === work.id ? { ...entry, items: entry.items.map((entryItem) => entryItem.id === normalized.id ? normalized : entryItem) } : entry);
-    this.state = cloneAndFreeze({ ...this.state, works, items });
-    this.emit();
+    const data = await putItem(normalized);
+    this.applyRemote(data);
   }
-  deleteItem(id: string): void {
+  async deleteItem(id: string): Promise<void> {
     const current = this.state.items.find((entry) => entry.id === id);
     if (!current) throw dataError(`找不到收藏：${id}`);
-    const items = this.state.items.filter((entry) => entry.id !== id);
-    const works = this.state.works.map((work) => work.id === current.workId ? { ...work, items: work.items.filter((entry) => entry.id !== id) } : work);
-    this.state = cloneAndFreeze({ ...this.state, works, items });
-    this.emit();
+    const data = await deleteRemoteItem(id);
+    this.applyRemote(data);
   }
   setLoading(loading: boolean): void { this.state = cloneAndFreeze({ ...this.state, loading }); this.emit(); }
   setError(error: string | null): void { this.state = cloneAndFreeze({ ...this.state, error, loading: false }); this.emit(); }
@@ -111,6 +109,13 @@ export function loadStore(): Promise<MerchStore> {
   sharedStorePromise = (async () => {
     const store = new MerchStore({ works: [], items: [], version: '0.0.0', ui: readSavedUi(), loading: true, error: null });
     try {
+      try {
+        const remote = await getRemoteData();
+        store.replaceData(remote.works, remote.version);
+        return store;
+      } catch {
+        // API 尚未可用時保留靜態資料作為唯讀啟動備援，寫入仍一律要求 API 成功。
+      }
       const indexResponse = await fetch('./data/works.json', { cache: 'no-store' });
       if (!indexResponse.ok) throw httpError('works.json', indexResponse.status);
       const index = validateWorksIndex(await indexResponse.json());
