@@ -36,9 +36,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p data/honkai-star-rail/images/item-1788499886180-xm1w0h
-          curl -fsSL "https://raw.githubusercontent.com/tsai97216/merch-old/main/data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg" \
-            -o data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg
+          rm -rf merch-old-source
+          git clone --depth 1 https://github.com/tsai97216/merch-old.git merch-old-source
+          mkdir -p data
+          cp -R merch-old-source/data/. data/
 
       - name: Build migration staging data
         run: node scripts/migrate.mjs public/data data-migrated
