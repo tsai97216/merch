@@ -1,0 +1,21 @@
+.works-management { margin-top: 1.25rem; }
+.works-management .section-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+.works-management-grid { display:grid; grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr); gap:1.25rem; margin-top:1rem; }
+.works-management-form { display:grid; gap:.8rem; align-content:start; }
+.works-management-form h3, .works-management-grid > div > h3 { margin:0 0 .5rem; }
+.works-management-form label { display:grid; gap:.35rem; font-weight:600; }
+.works-management-form input { width:100%; box-sizing:border-box; }
+.works-management-form-actions, .works-management-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+.works-management-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 0; border-bottom:1px solid var(--border, #ddd); }
+.works-management-row:first-child { padding-top:0; }
+.works-management-main { min-width:0; display:grid; gap:.18rem; }
+.works-management-main strong { overflow-wrap:anywhere; }
+.works-management-main span, .works-management-main small { color:var(--muted, #777); }
+@media (max-width:720px) {
+  .works-management-grid { grid-template-columns:1fr; }
+  .works-management .section-heading { flex-direction:column; }
+  .works-management .section-heading > button { width:100%; }
+  .works-management-row { align-items:stretch; flex-direction:column; }
+  .works-management-actions { width:100%; }
+  .works-management-actions .button { flex:1 1 0; min-height:42px; }
+}
