@@ -39,7 +39,8 @@ for (const entry of index.works) {
     allIds.add(item.id);
     if (item.workId !== entry.id) fail(`workId 不一致：${item.id}`);
     if (typeof item.title !== 'string' || !item.title.trim()) fail(`缺少標題：${item.id}`);
-    if (!Number.isInteger(item.quantity) || item.quantity < 1) fail(`quantity 無效：${item.id}`);
+    const quantity = item.quantity === undefined ? 1 : item.quantity;
+    if (!Number.isInteger(quantity) || quantity < 1) fail(`quantity 無效：${item.id}`);
     if (item.images !== undefined) {
       if (!Array.isArray(item.images)) fail(`images 必須是陣列：${item.id}`);
       let covers = 0;
@@ -55,7 +56,7 @@ for (const entry of index.works) {
       if (covers > 1) fail(`一個收藏不能有多個封面：${item.id}`);
     }
     recordCount += 1;
-    physicalQuantity += item.quantity;
+    physicalQuantity += quantity;
   }
 }
 
