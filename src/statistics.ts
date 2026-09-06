@@ -77,7 +77,7 @@ function aggregate(items: Item[]): Chart[] {
 
 function chartSvg(chart: Chart, large = false): string {
   const type = large ? chart.largeType : chart.smallType;
-  const width = large ? 1100 : 760, height = large ? 520 : 330;
+  const width = large ? 1100 : 820, height = large ? 520 : 380;
   if (!chart.rows.length) return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${width/2}" y="${height/2}" text-anchor="middle" class="chart-empty">目前沒有足夠資料</text></svg>`;
   if (type === 'donut') return donutSvg(chart, width, height, large);
   return barSvg(chart, width, height, large);
@@ -98,10 +98,10 @@ function lineSvg(chart: Chart, width: number, height: number, large: boolean): s
 }
 
 function donutSvg(chart: Chart, width: number, height: number, large: boolean): string {
-  const cx=large?300:240, cy=height/2, radius=large?175:112, inner=large?105:68, total=chart.rows.reduce((s,r)=>s+r.value,0)||1;
+  const cx=large?300:245, cy=height/2, radius=large?175:155, inner=large?105:92, total=chart.rows.reduce((s,r)=>s+r.value,0)||1;
   let angle=-Math.PI/2;
   const arcs=chart.rows.map((r,i)=>{const start=angle, end=angle+r.value/total*Math.PI*2; angle=end; const largeArc=end-start>Math.PI?1:0; const p1=[cx+radius*Math.cos(start),cy+radius*Math.sin(start)],p2=[cx+radius*Math.cos(end),cy+radius*Math.sin(end)],q1=[cx+inner*Math.cos(end),cy+inner*Math.sin(end)],q2=[cx+inner*Math.cos(start),cy+inner*Math.sin(start)]; const d=`M ${p1[0]} ${p1[1]} A ${radius} ${radius} 0 ${largeArc} 1 ${p2[0]} ${p2[1]} L ${q1[0]} ${q1[1]} A ${inner} ${inner} 0 ${largeArc} 0 ${q2[0]} ${q2[1]} Z`; return `<path d="${d}" class="donut-segment donut-${i%6}" tabindex="0"><title>${escapeHtml(r.label)}：${r.value} 件（${percent(r.value/total*100)}）</title></path>`; }).join('');
-  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?600:470}" cy="${35+i*30}" r="6" class="donut-dot donut-${i%6}"/><text x="${large?615:485}" y="${39+i*30}">${escapeHtml(r.label)} · ${r.value} 件 · ${percent(r.value/total*100)}</text></g>`).join('');
+  const legend=chart.rows.map((r,i)=>`<g class="donut-legend"><circle cx="${large?600:515}" cy="${35+i*30}" r="7" class="donut-dot donut-${i%6}"/><text x="${large?615:530}" y="${39+i*30}">${escapeHtml(r.label)} · ${chart.format==='money'?money(r.value):`${r.value} 件`} · ${percent(r.value/total*100)}</text></g>`).join('');
   return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}">${arcs}<text x="${cx}" y="${cy-5}" text-anchor="middle" class="donut-total">${total}</text><text x="${cx}" y="${cy+18}" text-anchor="middle" class="donut-caption">收藏</text>${legend}</svg>`;
 }
 
