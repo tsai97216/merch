@@ -212,14 +212,14 @@
 - [x] write operation error recovery
 
 ## 13. Image Management
-- [ ] Image upload
+- [x] Image upload
 - [ ] Image replace
-- [ ] Image delete
-- [ ] Cover image control
-- [ ] Image ordering
+- [x] Image delete
+- [x] Cover image control
+- [x] Image ordering
 - [ ] orphan image cleanup
-- [ ] SHA / filename consistency
-- [ ] Image write failure recovery
+- [x] SHA / filename consistency
+- [x] Image write failure recovery
 
 ## 14. Verification
 - [ ] TypeScript build
