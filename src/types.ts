@@ -1,10 +1,8 @@
-export type ItemStatus = 'received' | 'preorder' | 'pending' | string;
+export type ItemStatus = string;
 
 export type ImageMeta = {
   id: string;
-  path?: string;
-  url?: string;
-  sha?: string;
+  file: string;
   alt?: string;
   isCover?: boolean;
 };
@@ -14,48 +12,44 @@ export type Purchase = {
   currency?: string;
   platform?: string;
   date?: string;
-  url?: string;
-  orderId?: string;
 };
 
-export type Release = {
-  date?: string;
-  expectedDate?: string;
-  receivedDate?: string;
-};
-
-export type Shipping = {
-  status?: string;
-  method?: string;
-  note?: string;
+export type Arrival = {
+  expectedDate?: string | null;
+  receivedDate?: string | null;
 };
 
 export type AfterSales = {
   status?: string;
   note?: string;
-  updatedAt?: string;
 };
 
 export type Item = {
   id: string;
   workId: string;
-  workName?: string;
   title: string;
-  series?: string;
-  characters?: string[];
-  category?: string;
-  manufacturer?: string;
+  series: string[];
+  characters: string[];
+  category: string;
+  manufacturer: string;
   quantity: number;
   status: ItemStatus;
-  description?: string;
-  notes?: string;
-  images?: ImageMeta[];
-  purchase?: Purchase;
-  release?: Release;
-  shipping?: Shipping;
-  afterSales?: AfterSales;
-  createdAt?: string;
-  updatedAt?: string;
+  description: string;
+  notes: string;
+  purchase: Purchase;
+  arrival: Arrival;
+  afterSales: AfterSales;
+  images: ImageMeta[];
+};
+
+export type Category = {
+  code: string;
+  name: string;
+  aliases: string[];
+};
+
+export type CategoriesData = {
+  categories: Category[];
 };
 
 export type Work = {
@@ -69,18 +63,32 @@ export type WorksIndexEntry = {
   id: string;
   name: string;
   code: string;
-  data: string;
+  path: string;
 };
+
+export type CategoryIndexEntry = {
+  id: string;
+  path: string;
+  title: string;
+  characters: string[];
+  manufacturer: string;
+  quantity: number;
+  status: string;
+  cover?: string;
+};
+
+export type CategoryIndex = {
+  schemaVersion: number;
+  workId: string;
+  category: string;
+  items: CategoryIndexEntry[];
+};
+
+export type ItemData = Item;
 
 export type WorksIndex = {
   schemaVersion: number;
   works: WorksIndexEntry[];
-};
-
-export type WorkPayload = {
-  schemaVersion?: number;
-  work?: { id?: string; name?: string };
-  items: Item[];
 };
 
 export type VersionData = {
