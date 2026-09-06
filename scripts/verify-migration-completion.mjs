@@ -16,7 +16,10 @@ let imageCount = 0;
 
 for (const work of works.works) {
   const workRoot = path.join(root, work.id);
-  if (!fs.existsSync(workRoot)) throw new Error(`找不到作品目錄：${work.id}`);
+  // Git cannot represent empty directories. A registered work may therefore
+  // legitimately have no directory until its first Item is created.
+  if (!fs.existsSync(workRoot)) continue;
+
   for (const category of fs.readdirSync(workRoot, { withFileTypes: true })) {
     if (!category.isDirectory()) continue;
     const indexPath = path.join(workRoot, category.name, 'index.json');
@@ -36,6 +39,7 @@ for (const work of works.works) {
       if (item.id !== summary.id || item.workId !== work.id || item.category !== category.name) throw new Error(`Item/index 不一致：${summary.id}`);
       for (const field of forbidden) if (Object.prototype.hasOwnProperty.call(item, field)) throw new Error(`Item 含禁止欄位 ${field}：${summary.id}`);
       if (!Array.isArray(item.images)) throw new Error(`images 必須是陣列：${summary.id}`);
+      if (!Number.isInteger(item.quantity) || item.quantity < 1) throw new Error(`Item quantity 無效：${summary.id}`);
       physicalQuantity += item.quantity;
       const imageDir = path.join(path.dirname(itemPath), 'images');
       const files = fs.existsSync(imageDir) ? fs.readdirSync(imageDir, { withFileTypes: true }).filter(entry => entry.isFile()) : [];
@@ -47,5 +51,10 @@ for (const work of works.works) {
     }
   }
 }
+
+// A legacy work-level JSON must not survive directly under the new data root.
+const legacyFiles = fs.readdirSync(root, { withFileTypes: true })
+  .filter(entry => entry.isFile() && entry.name.endsWith('.json') && !['works.json', 'categories.json', 'version.json'].includes(entry.name));
+if (legacyFiles.length) throw new Error(`發現舊作品 JSON：${legacyFiles.map(entry => entry.name).join(', ')}`);
 
 console.log(`Migration completion passed: ${works.works.length} works, ${itemCount} item records, ${physicalQuantity} physical items, ${imageCount} images.`);
