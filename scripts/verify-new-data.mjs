@@ -42,7 +42,10 @@ for (const work of index.works) {
   if (!isRecord(work) || !nonEmptyString(work.id) || !nonEmptyString(work.name) || !nonEmptyString(work.code) || work.path !== `data/${work.id}`) fail(`作品索引格式無效：${work?.id ?? '<unknown>'}`);
   const workRoot = path.join(dataRoot, work.id);
   let workEntries;
-  try { workEntries = await fs.readdir(workRoot, { withFileTypes: true }); } catch { fail(`找不到作品目錄：${work.id}`); }
+  try { workEntries = await fs.readdir(workRoot, { withFileTypes: true }); } catch {
+    // Git cannot represent an empty directory. A work with no Item records is therefore allowed to have no directory.
+    continue;
+  }
   const registeredCategoryDirs = new Set(workEntries.filter(entry => entry.isDirectory()).map(entry => entry.name));
   for (const category of registeredCategoryDirs) {
     if (!categoryCodes.has(category)) fail(`未註冊的類型目錄：${work.id}/${category}`);
