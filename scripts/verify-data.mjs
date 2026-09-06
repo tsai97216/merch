@@ -28,7 +28,7 @@ for (const entry of index.works) {
   const payload = await readJson(file);
   if (!isRecord(payload) || !Array.isArray(payload.items)) fail(`作品資料格式無效：${entry.id}`);
   if (payload.work !== entry.id) fail(`作品 ID 不一致：${entry.id}`);
-  if (payload.name !== entry.name) fail(`作品名稱不一致：${entry.id}`);
+  if (payload.name !== entry.code) fail(`作品代碼不一致：${entry.id}（資料=${payload.name}, 索引=${entry.code}）`);
 
   const localIds = new Set();
   for (const item of payload.items) {
