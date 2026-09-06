@@ -54,6 +54,8 @@ jobs:
         run: npm run verify:worker-scope
       - name: Verify worker target read scope
         run: npm run verify:worker-read
+      - name: Verify worker image mutation semantics
+        run: npm run verify:worker-image
       - name: Verify version consistency
         run: npm run verify:version
       - name: Verify statistics date boundaries
