@@ -42,6 +42,8 @@ jobs:
         run: npm run verify:worker
       - name: Verify worker write scope
         run: npm run verify:worker-scope
+      - name: Verify version consistency
+        run: npm run verify:version
       - name: Verify statistics date boundaries
         run: npm run verify:statistics
       - name: TypeScript and Vite build
