@@ -213,7 +213,7 @@
 
 ## 13. Image Management
 - [x] Image upload
-- [ ] Image replace
+- [x] Image replace
 - [x] Image delete
 - [x] Cover image control
 - [x] Image ordering
