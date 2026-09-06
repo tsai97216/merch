@@ -10,7 +10,8 @@ function assetPathFromSource(source: string): string {
     if (url.pathname.startsWith('/data/')) return url.pathname.replace(/^\/+/, '');
     if (url.pathname.startsWith('/api/assets/')) return '';
   } catch { /* fall through */ }
-  return source.replace(/^\/+/, '').startsWith('data/') ? source.replace(/^\/+/, '') : '';
+  const normalized = source.replace(/^\/+/, '');
+  return normalized.startsWith('data/') ? normalized : '';
 }
 
 function assetUrl(path: string): string {
@@ -27,7 +28,12 @@ function recoverImage(image: HTMLImageElement): void {
 
 window.addEventListener('error', (event) => {
   const target = event.target;
-  if (target instanceof HTMLImageElement) recoverImage(target);
+  if (!(target instanceof HTMLImageElement)) return;
+  const before = target.currentSrc || target.src;
+  const path = assetPathFromSource(before);
+  if (!path) return;
+  event.stopImmediatePropagation();
+  recoverImage(target);
 }, true);
 
 export function resolveAssetUrl(source?: string): string {
