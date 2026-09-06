@@ -70,13 +70,15 @@
 - 新增 Item 時依現有 ID 規則產生下一個序號。
 - 不因刪除舊 Item 而填補中間缺號。
 - 不要因 UI 排序、重新整理或資料搬移而改變既有 ID。
+- **既有 Item ID 永久保留，即使未來修正商品分類，也不可為了讓 ID 與新分類一致而重新編號。**
+- **ID 中的歷史類型 code 與目前 `category` 欄位是兩個概念；舊 ID 可以保留已淘汰的歷史 code。**
 - Item ID 與使用者看到的標題是不同概念，不要用標題取代 ID。
 
 ## 6. Category / 類型
 
 - 類型有內部 code 與完整顯示名稱，兩者分開保存。
-- 目前類型 code：
-  - `a` 壓克力／亞克力
+- **亞克力／壓克力是材質，不是獨立商品類型。新資料不得使用 `a` 作為商品類型。**
+- 目前新資料可使用的類型 code：
   - `b` 徽章／吧唧
   - `c` 卡片／訂金卡
   - `d` 立牌／擺件
@@ -96,7 +98,9 @@
   - `w` 餐具／生活用品
   - `y` 特典
   - `o` 其他
-- 新增類型時，必須同步更新 `public/data/categories.json`、相關 type / validation、ID 規則、搜尋與 UI 顯示。
+- 舊資料若曾使用 `a`，遷移時依實際商品型態重新判定 `category`，但不因此修改永久 Item ID。
+- 例如「亞克力合影卡」若實際商品型態屬吊飾／掛件，應分類為 `k`，而不是因為名稱含有「亞克力」就分類成 `a` 或 `c`。
+- 新增類型時，必須同步更新 `public/data/categories.json`、相關 type / validation、ID 規則、資料路徑、搜尋與 UI 顯示。
 - 類型的顯示名稱應保持使用者友善，不要在一般 UI 直接顯示內部 code。
 
 ## 7. Item Quantity / 數量
@@ -293,6 +297,20 @@
 - Worker Secret / GitHub Token 不得進入 frontend bundle。
 - GET / PUT / DELETE 等操作必須與實際資料模型一致。
 
+### 17.1 類型 JSON 寫入規則
+
+- 周邊資料採 **「一個作品 × 一個類型一個 JSON」**。
+- 建議資料路徑固定為：`public/data/works/<workId>/<categoryCode>.json`。
+- `works.json` 只負責作品索引／作品 metadata，不直接承擔全部 Item 資料。
+- 每個類型 JSON 只保存該作品、該類型的 Item 陣列與該檔案所需 metadata。
+- Store 載入時可以把多個 JSON 合併成統一的 Item 集合，但 UI 不應需要知道實際分檔方式。
+- 新增／編輯／刪除 Item 時，依 Item 的 `workId + category` 決定目標 JSON。
+- **單一類型的寫入不得順便覆寫其他類型 JSON。**
+- 類型 JSON 的讀取與寫入都必須經過 schema validation。
+- 若分類被修改，必須視為「從舊類型檔移除 + 寫入新類型檔」的跨檔案操作，不能只修改 Item 內的 category 字串。
+- 跨檔案操作必須先取得所有相關檔案最新 state，成功完成後才更新 Store；任一步驟失敗不得留下部分成功狀態。
+- GitHub Contents API 更新檔案時必須使用最新 blob SHA，且同一路徑的更新採序列化處理，避免 concurrent update conflict。GitHub 官方文件也明確要求 Contents API 的檔案更新不要並行進行。citeturn1search0
+
 ## 18. Write Consistency
 
 GitHub 寫入流程固定為：
@@ -305,6 +323,8 @@ GitHub 寫入流程固定為：
 - Remote write 失敗時維持原 Store state，並顯示可理解的失敗提示。
 - Version 必須依第 3 節規則處理。
 - 涉及圖片寫入時必須額外遵守 Image Management 規則。
+- **單一類型 JSON 的新增／編輯／刪除優先保持單檔寫入。**
+- **分類變更等跨檔案操作必須有明確 rollback 策略。**
 
 ## 19. Image Management
 
@@ -337,3 +357,96 @@ GitHub 寫入流程固定為：
 - 若既有 enhancement module 與主要 rendering 結構不一致，優先修正主要 rendering 或移除無必要的 enhancement layer。
 - 不為了維持舊有 workaround 而增加更多 DOM post-processing。
 - 新增 UI 功能時，優先讓 rendering 一次產生可直接使用的最終 DOM。
+
+## 22. Data Architecture v2 / 周邊資料新架構
+
+### 22.1 唯一目標
+
+新架構的核心不是單純「把大 JSON 切小」，而是讓資料的責任邊界清楚：
+
+`作品索引 → 作品 × 類型 JSON → Item`
+
+- `works.json`：作品索引與作品 metadata。
+- `categories.json`：類型 code、名稱與分類規則。
+- `<workId>/<categoryCode>.json`：該作品、該類型的實際收藏資料。
+- Item 本身只描述商品資料，不再混入舊版不一致的物流結構。
+
+### 22.2 Item 欄位基準
+
+新 Item schema 的使用者資料欄位分為：
+
+**基本資料**
+- `id`
+- `workId`
+- `title`
+- `series`
+- `characters`
+- `category`
+- `manufacturer`
+- `quantity`
+- `status`
+- `description`
+- `notes`
+
+**購買**
+- `purchase.price`
+- `purchase.currency`
+- `purchase.platform`
+- `purchase.date`
+
+**到貨**
+- `arrival.expectedDate`
+- `arrival.receivedDate`
+
+**售後**
+- `afterSales.status`
+- `afterSales.note`
+- `afterSales.updatedAt`
+
+**圖片**
+- `images[]`
+
+- 舊版 `purchase.url`、`purchase.orderId`、`release.date`、整個舊 `shipping` 結構等欄位，不屬於新 schema。
+- 若需要內部 migration metadata，必須明確標示為 internal metadata，不可讓 UI 與一般資料 schema 依賴它。
+
+### 22.3 Migration 原則
+
+- 先建立新 schema，再建立 migration，再切換 Store，最後才清理舊格式。
+- migration 必須可重複執行且不應破壞已完成資料。
+- 遷移前後必須能比對 Item ID、數量、圖片與主要資料欄位。
+- 任何資料遺失都視為 migration failure，不可「先跑看看」。
+- 分類修正不得改寫永久 Item ID。
+- 遷移完成後才可刪除舊資料結構與舊欄位。
+
+### 22.4 寫入模型
+
+- API / Worker 的 path whitelist 必須知道新的類型 JSON 路徑。
+- 新增 Item：寫入對應類型 JSON。
+- 編輯 Item：只更新對應類型 JSON；若 category 未變更，不碰其他類型檔。
+- 刪除 Item：只從對應類型 JSON 移除。
+- 修改 category：執行跨檔案搬移，成功後才完成 Store 更新。
+- 圖片檔案仍依既有 Image Management 規則管理，不把圖片 binary 直接塞進類型 JSON。
+
+### 22.5 驗證與部署
+
+- Verify 必須能逐檔檢查所有類型 JSON。
+- Build / Verify 不得因某一類型沒有 Item 而誤判為錯誤；空陣列是合法資料狀態。
+- 不存在的類型檔與空的類型檔要有明確規則，不可在 runtime 隨意猜測。
+- 資料架構大改期間，每完成一個階段都要先通過 GitHub Actions，再進下一階段。GitHub Actions 的 workflow run 可以透過 API 檢查狀態與 logs。citeturn0search7
+
+### 22.6 實作順序
+
+固定按照以下順序進行：
+
+1. 定義新 schema / types。
+2. 定義資料路徑與類型 index。
+3. 寫 migration / verify。
+4. 先遷移一個類型做驗證。
+5. 通過 Verify / Deploy 後再擴大到其他類型。
+6. 更新 Store 讀取。
+7. 更新 API / Worker 寫入。
+8. 更新 Management CRUD。
+9. 更新 Detail / Collection / Home / Statistics 對應欄位。
+10. 完成全站回歸後才清理舊 schema。
+
+**不要一次把 schema、migration、Store、API、Management、UI 全部改掉。** 每一階段都要能獨立驗證與回復。
