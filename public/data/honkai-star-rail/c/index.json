@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "c",
+  "items": [
+    {
+      "id": "HSRc001",
+      "path": "data/honkai-star-rail/c/HSRc001/data.json",
+      "title": "流螢 春日手信 手辦 訂金卡",
+      "characters": [
+        "流螢"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "pending"
+    }
+  ]
+}

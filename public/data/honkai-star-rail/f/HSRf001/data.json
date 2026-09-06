@@ -1,0 +1,38 @@
+{
+  "id": "HSRf001",
+  "workId": "honkai-star-rail",
+  "title": "流螢 春日手信 1/8比例手辦",
+  "series": [
+    "春日手信"
+  ],
+  "characters": [
+    "流螢"
+  ],
+  "category": "f",
+  "manufacturer": "Myethos",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 1375,
+    "currency": "TWD",
+    "platform": "米哈遊淘寶",
+    "date": "2026-08-05"
+  },
+  "arrival": {
+    "receivedDate": "2026-09-14"
+  },
+  "afterSales": {
+    "status": "處理中",
+    "note": "待換貨"
+  },
+  "images": [
+    {
+      "id": "image-1788513731019-sfc19z",
+      "file": "image-1788513731019-sfc19z.jpg",
+      "alt": "流螢 春日手信 1/8比例手辦",
+      "isCover": true
+    }
+  ]
+}

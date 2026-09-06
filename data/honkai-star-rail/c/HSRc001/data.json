@@ -1,0 +1,29 @@
+{
+  "id": "HSRc001",
+  "workId": "honkai-star-rail",
+  "title": "流螢 春日手信 手辦 訂金卡",
+  "series": [],
+  "characters": [
+    "流螢"
+  ],
+  "category": "c",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "pending",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "米哈遊淘寶",
+    "date": "2026-02-27"
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "ZZZb002",
+  "workId": "zenless-zone-zero",
+  "title": "星見雅 影畫系列 吧唧",
+  "series": [],
+  "characters": [
+    "星見雅"
+  ],
+  "category": "b",
+  "manufacturer": "米哈遊",
+  "quantity": 2,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 25,
+    "currency": "TWD",
+    "platform": "FB交易社",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}

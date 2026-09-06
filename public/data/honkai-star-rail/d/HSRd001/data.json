@@ -1,0 +1,38 @@
+{
+  "id": "HSRd001",
+  "workId": "honkai-star-rail",
+  "title": "流螢 光錐系列壓克力流沙立牌擺件",
+  "series": [
+    "光錐系列"
+  ],
+  "characters": [
+    "流螢"
+  ],
+  "category": "d",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "pending",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 267.74,
+    "currency": "TWD",
+    "platform": "米哈遊淘寶",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": [
+    {
+      "id": "HSRd001-1788707854052",
+      "file": "1788707845706-O1CN01OaNQjG1fEbKaCY9Pe_-3249253975.jpg",
+      "alt": "流螢 光錐系列壓克力流沙立牌擺件",
+      "isCover": true
+    }
+  ]
+}

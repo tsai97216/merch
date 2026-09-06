@@ -1,0 +1,36 @@
+{
+  "id": "ZZZb001",
+  "workId": "zenless-zone-zero",
+  "title": "蕾米埃爾 影畫系列 吧唧",
+  "series": [],
+  "characters": [
+    "蕾米埃爾"
+  ],
+  "category": "b",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "preorder",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 77,
+    "currency": "TWD",
+    "platform": "米哈遊淘寶",
+    "date": "2026-09-03"
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": [
+    {
+      "id": "image-1788517269456-b9dv5w",
+      "file": "image-1788517269456-b9dv5w.jpg",
+      "alt": "蕾米埃爾 影畫系列 吧唧",
+      "isCover": true
+    }
+  ]
+}

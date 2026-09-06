@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "k",
+  "items": [
+    {
+      "id": "HSRa001",
+      "path": "data/honkai-star-rail/k/HSRa001/data.json",
+      "title": "仲夏螢火之約系列亞克力合影卡",
+      "characters": [
+        "流螢"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "pending"
+    }
+  ]
+}

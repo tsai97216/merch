@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "f",
+  "items": [
+    {
+      "id": "HSRf001",
+      "path": "data/honkai-star-rail/f/HSRf001/data.json",
+      "title": "流螢 春日手信 1/8比例手辦",
+      "characters": [
+        "流螢"
+      ],
+      "manufacturer": "Myethos",
+      "quantity": 1,
+      "status": "received",
+      "cover": "image-1788513731019-sfc19z.jpg"
+    }
+  ]
+}

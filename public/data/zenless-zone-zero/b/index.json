@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "b",
+  "items": [
+    {
+      "id": "ZZZb001",
+      "path": "data/zenless-zone-zero/b/ZZZb001/data.json",
+      "title": "蕾米埃爾 影畫系列 吧唧",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "preorder",
+      "cover": "image-1788517269456-b9dv5w.jpg"
+    },
+    {
+      "id": "ZZZb002",
+      "path": "data/zenless-zone-zero/b/ZZZb002/data.json",
+      "title": "星見雅 影畫系列 吧唧",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
+}
