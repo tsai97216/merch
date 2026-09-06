@@ -14,6 +14,7 @@ let searchQuery = '';
 
 const fields: Record<string, (item: Item) => string> = {
   'management-item-id': x => x.id,
+  'management-work': x => x.workName ?? '',
   'management-title': x => x.title,
   'management-series': x => x.series ?? '',
   'management-characters': x => (x.characters ?? []).join(', '),
@@ -51,7 +52,7 @@ function pickerValue(item: Item): string { return `${item.id} · ${item.title}`;
 function sortText(a: string, b: string): number { return a.localeCompare(b, 'zh-Hant', { numeric: true }); }
 function unique(values: string[]): string[] { return [...new Set(values.filter(Boolean))].sort(sortText); }
 
-function fill(item: Item) {
+function fill(item: Item): void {
   selectedId = item.id;
   pickerWork = workOf(item);
   pickerCategory = categoryOf(item);
@@ -70,7 +71,7 @@ function searchItems(): Item[] {
 
 function pickerItems(): Item[] { return allItems().filter(item => workOf(item) === pickerWork && categoryOf(item) === pickerCategory); }
 
-function renderSearchResults() {
+function renderSearchResults(): void {
   const results = searchItems();
   const datalist = qs<HTMLDataListElement>('#management-search-options');
   if (datalist) datalist.innerHTML = results.map(x => `<option value="${escapeHtml(pickerValue(x))}"></option>`).join('');
@@ -78,12 +79,73 @@ function renderSearchResults() {
   if (count) count.textContent = searchQuery ? `找到 ${results.length} 筆` : `共 ${allItems().length} 筆收藏`;
 }
 
-function render() {
+function readFormItem(base: Item): Item {
+  const characters = get('management-characters').split(',').map(x => x.trim()).filter(Boolean);
+  const priceText = get('management-price');
+  const purchase = {
+    ...(base.purchase ?? {}),
+    price: priceText ? Number(priceText) : undefined,
+    currency: get('management-currency') || undefined,
+    platform: get('management-platform') || undefined,
+    date: get('management-purchase-date') || undefined,
+    url: get('management-purchase-url') || undefined,
+    orderId: get('management-order-id') || undefined,
+  };
+  const release = {
+    ...(base.release ?? {}),
+    date: get('management-release-date') || undefined,
+    expectedDate: get('management-expected-date') || undefined,
+    receivedDate: get('management-received-date') || undefined,
+  };
+  const shipping = {
+    ...(base.shipping ?? {}),
+    status: get('management-shipping-status') || undefined,
+    method: get('management-shipping-method') || undefined,
+    note: get('management-shipping-note') || undefined,
+  };
+  const afterSales = {
+    ...(base.afterSales ?? {}),
+    status: get('management-after-sales-status') || undefined,
+    note: get('management-after-sales-note') || undefined,
+    updatedAt: get('management-after-sales-updated') || undefined,
+  };
+  const now = new Date().toISOString();
+  return {
+    ...base,
+    title: get('management-title'),
+    series: get('management-series') || undefined,
+    characters: characters.length ? characters : undefined,
+    category: get('management-category') || undefined,
+    manufacturer: get('management-manufacturer') || undefined,
+    quantity: Number(get('management-quantity')),
+    status: get('management-status') || 'pending',
+    description: get('management-description') || undefined,
+    notes: get('management-notes') || undefined,
+    purchase,
+    release,
+    shipping,
+    afterSales,
+    updatedAt: now,
+  };
+}
+
+function validateItem(item: Item): string[] {
+  const errors: string[] = [];
+  if (!item.title.trim()) errors.push('標題為必填欄位。');
+  if (!Number.isInteger(item.quantity) || item.quantity < 1) errors.push('數量必須是大於等於 1 的整數。');
+  if (item.purchase?.price !== undefined && (!Number.isFinite(item.purchase.price) || item.purchase.price < 0)) errors.push('價格必須是大於等於 0 的數字。');
+  if (item.purchase?.url) {
+    try { new URL(item.purchase.url); } catch { errors.push('商品網址格式無效。'); }
+  }
+  return errors;
+}
+
+function render(): void {
   const root = qs<HTMLElement>('#management-root');
   if (!root || !storeRef) return;
   const items = allItems();
   const current = items.find(x => x.id === selectedId) ?? items[0];
-  if (current && !pickerWork) fill(current);
+  if (current && !items.some(x => x.id === selectedId)) selectedId = current.id;
   const works = unique(items.map(workOf));
   if (!pickerWork || !works.includes(pickerWork)) pickerWork = workOf(current ?? items[0]);
   const categories = unique(items.filter(x => workOf(x) === pickerWork).map(categoryOf));
@@ -94,13 +156,12 @@ function render() {
   if (selectedPickerItem) selectedId = selectedPickerItem.id;
   const formItem = selectedPickerItem ?? current;
   const searchResults = searchItems();
-
   const workOptions = works.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
   const categoryOptions = categories.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
   const serialOptions = matching.map(x => `<option value="${escapeHtml(serialOf(x))}">${escapeHtml(serialOf(x).padStart(3, '0'))} · ${escapeHtml(x.title)}</option>`).join('');
   const searchOptions = searchResults.map(x => `<option value="${escapeHtml(pickerValue(x))}"></option>`).join('');
 
-  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid"><label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label><label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label><label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label></div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div><form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid"><label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div><div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div><div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div><div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div><div class="management-actions"><button class="button" type="submit">驗證表單</button><button class="button secondary" type="button" id="management-reset">還原</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
+  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid"><label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label><label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label><label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label></div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div><form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid"><label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div><div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div><div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div><div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div><div class="management-actions"><button class="button" type="submit">儲存修改</button><button class="button secondary" type="button" id="management-reset">還原</button><button class="button danger" type="button" id="management-delete">刪除收藏</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
 
   if (formItem) fill(formItem);
   const workSelect = qs<HTMLSelectElement>('#management-picker-work');
@@ -109,35 +170,65 @@ function render() {
   if (workSelect) workSelect.value = pickerWork;
   if (categorySelect) categorySelect.value = pickerCategory;
   if (serialSelect) serialSelect.value = pickerSerial;
+
   workSelect?.addEventListener('change', () => { pickerWork = workSelect.value; pickerCategory = ''; pickerSerial = ''; render(); });
   categorySelect?.addEventListener('change', () => { pickerCategory = categorySelect.value; pickerSerial = ''; render(); });
-  serialSelect?.addEventListener('change', () => { pickerSerial = serialSelect.value; const next = pickerItems().find(x => serialOf(x) === pickerSerial); if (next) fill(next); render(); });
+  serialSelect?.addEventListener('change', () => { pickerSerial = serialSelect.value; const next = pickerItems().find(x => serialOf(x) === pickerSerial); if (next) { selectedId = next.id; render(); } });
 
   const search = qs<HTMLInputElement>('#management-item-search');
-  search?.addEventListener('input', () => { searchQuery = search.value; renderSearchResults(); const normalized = search.value.trim(); const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized); if (next) { fill(next); searchQuery = ''; render(); } });
-  qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => { const next = allItems().find(x => x.id === selectedId); if (next) { fill(next); searchQuery = ''; render(); } });
+  search?.addEventListener('input', () => {
+    searchQuery = search.value;
+    renderSearchResults();
+    const normalized = search.value.trim();
+    const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized);
+    if (next) { selectedId = next.id; searchQuery = ''; render(); }
+  });
 
-  qs<HTMLFormElement>('#management-form')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const errors: string[] = [];
-    const title = get('management-title');
-    const quantity = Number(get('management-quantity'));
-    const price = get('management-price');
-    const url = get('management-purchase-url');
-    if (!title) errors.push('標題為必填欄位。');
-    if (!Number.isInteger(quantity) || quantity < 1) errors.push('數量必須是大於等於 1 的整數。');
-    if (price && (!Number.isFinite(Number(price)) || Number(price) < 0)) errors.push('價格必須是大於等於 0 的數字。');
-    if (url) { try { new URL(url); } catch { errors.push('商品網址格式無效。'); } }
+  qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => {
+    const next = allItems().find(x => x.id === selectedId);
+    if (next) { searchQuery = ''; render(); showToast('已還原目前收藏資料。', 'info'); }
+  });
+
+  qs<HTMLFormElement>('#management-form')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const base = allItems().find(x => x.id === selectedId);
+    if (!base || !storeRef) { showToast('找不到目前收藏。', 'error'); return; }
+    const draft = readFormItem(base);
+    const errors = validateItem(draft);
     const box = qs<HTMLElement>('#management-errors');
-    if (!box) return;
-    box.hidden = false;
-    box.classList.toggle('is-success', errors.length === 0);
-    box.innerHTML = errors.length ? `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>` : '<strong>表單驗證通過。</strong> 草稿資料有效，尚未寫入 GitHub。';
-    showToast(errors.length ? '表單驗證失敗，請檢查欄位。' : '表單驗證通過。', errors.length ? 'error' : 'success');
+    if (errors.length) {
+      if (box) { box.hidden = false; box.classList.remove('is-success'); box.innerHTML = `<strong>請修正：</strong><ul>${errors.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>`; }
+      showToast('儲存失敗，請檢查欄位。', 'error');
+      return;
+    }
+    try {
+      storeRef.updateItem(draft);
+      selectedId = draft.id;
+      if (box) { box.hidden = false; box.classList.add('is-success'); box.innerHTML = '<strong>修改已套用。</strong>'; }
+      showToast('收藏修改已套用。', 'success');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '收藏修改失敗。';
+      if (box) { box.hidden = false; box.classList.remove('is-success'); box.textContent = message; }
+      showToast(message, 'error');
+    }
+  });
+
+  qs<HTMLButtonElement>('#management-delete')?.addEventListener('click', () => {
+    const base = allItems().find(x => x.id === selectedId);
+    if (!base || !storeRef) { showToast('找不到目前收藏。', 'error'); return; }
+    if (!window.confirm(`確定要刪除「${base.title}」？\n此操作目前只會更新本次頁面狀態，尚未寫入 GitHub。`)) return;
+    try {
+      storeRef.deleteItem(base.id);
+      selectedId = '';
+      pickerSerial = '';
+      showToast('收藏已刪除。', 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : '刪除收藏失敗。', 'error');
+    }
   });
 }
 
-void getStore().then((store) => {
+void getStore().then(store => {
   storeRef = store;
   unsubscribe?.();
   unsubscribe = store.subscribe(() => render());
