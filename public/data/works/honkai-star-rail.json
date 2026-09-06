@@ -124,6 +124,28 @@
       "createdAt": "2026-09-04T10:32:01.359Z",
       "updatedAt": "2026-09-06T15:04:15.068Z",
       "quantity": 1
+    },
+    {
+      "id": "HSRd001",
+      "workId": "honkai-star-rail",
+      "workName": "崩壞：星穹鐵道",
+      "title": "流螢 光錐系列壓克力流沙立牌擺件",
+      "category": "立牌／擺件",
+      "quantity": 1,
+      "status": "pending",
+      "createdAt": "2026-09-06T15:09:12.307Z",
+      "updatedAt": "2026-09-06T15:09:14.304Z",
+      "characters": [
+        "流螢"
+      ],
+      "purchase": {
+        "price": 267.74,
+        "currency": "TWD",
+        "platform": "米哈遊淘寶"
+      },
+      "release": {},
+      "shipping": {},
+      "afterSales": {}
     }
   ]
 }
