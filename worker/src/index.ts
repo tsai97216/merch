@@ -94,6 +94,8 @@ function validateItem(item: unknown): asserts item is Item {
   for (const forbidden of ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt']) if (forbidden in value) throw new Error(`禁止儲存欄位：${forbidden}`);
 }
 function normalizeItemForStorage(item: Item): Item { const copy = JSON.parse(JSON.stringify(item)) as Item; delete copy.workName; return copy; }
+function withoutImages(item: Item): Item { const copy = normalizeItemForStorage(item); delete copy.images; return copy; }
+function sameNonImageItem(a: Item, b: Item): boolean { return JSON.stringify(withoutImages(a)) === JSON.stringify(withoutImages(b)); }
 function categoryEntry(item: Item, path: string): CategoryEntry { const cover = item.images.find(image => image.isCover === true); return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...(cover?.file ? { cover: cover.file } : {}) }; }
 async function createBlob(env: Env, content: string, encoding: 'utf-8' | 'base64' = 'utf-8'): Promise<string> { const result = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs`, { method: 'POST', body: JSON.stringify({ content, encoding }) }); return result.sha; }
 async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEntry[], message: string): Promise<void> {
@@ -113,7 +115,10 @@ async function updateItem(env: Env, id: string, input: unknown, origin: string):
   const writes: WriteEntry[] = [{ path: newPath, content: jsonFile(storageItem) }];
   if (existing && existing.path !== newPath) { writes.push({ path: existing.path, delete: true }); const oldIndex = remote.categories.get(existing.categoryPath); if (oldIndex) writes.push({ path: existing.categoryPath, content: jsonFile({ ...oldIndex, items: oldIndex.items.filter(entry => entry.id !== id) }) }); }
   const newIndex = remote.categories.get(newCategoryPath); const nextEntries = (newIndex?.items || []).filter(entry => entry.id !== id); nextEntries.push(categoryEntry(storageItem, newPath)); writes.push({ path: newCategoryPath, content: jsonFile({ schemaVersion: 1, workId: work.id, category: storageItem.category, items: nextEntries }) });
-  const nextVersion = bumpPatch(remote.version); writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
+  if (!existing || !sameNonImageItem(existing.item, storageItem)) {
+    const nextVersion = bumpPatch(remote.version);
+    writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
+  }
   await createAtomicCommit(env, remote, writes, `${existing ? 'fix: update' : 'feat: add'} item ${id}`); return dataResponse(env, origin);
 }
 async function deleteItem(env: Env, id: string, origin: string): Promise<Response> {
