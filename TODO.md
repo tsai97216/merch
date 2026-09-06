@@ -1,6 +1,8 @@
 # TODO
 
 > This file tracks implementation status. Only completed items are checked.
+> 
+> 本次資料架構重整以 `v1.99.42` 為基準，先整理規格，再開始實作。未完成項目不得提前勾選。
 
 ## 0. Foundation
 - [x] Project structure
@@ -14,7 +16,11 @@
 ## 1. Data Layer
 - [x] Works index
 - [x] Work data split
-- [x] Item schema
+- [ ] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
+- [ ] **周邊資料改為「一個作品 × 一個類型一個 JSON」的儲存架構**
+- [ ] **建立類型 JSON 的路徑／命名規則與 index 對應規則**
+- [ ] **Store 改為讀取並合併各類型 JSON，對 UI 維持單一 Item 集合**
+- [ ] **Store 寫入時只更新受影響的類型 JSON，不再整份作品 JSON 覆寫**
 - [x] Quantity normalization
 - [x] Item ID validation
 - [x] Duplicate Item ID validation
@@ -24,16 +30,21 @@
 - [x] Remote data loading with static fallback
 
 ## 2. Data Migration
-- [ ] 完成遷移前後驗證
+- [ ] **完成舊作品 JSON → 類型 JSON 的完整遷移**
+- [ ] **完成遷移前後 Item 數量、ID、圖片、購買、到貨、售後資料逐項比對**
+- [ ] **移除舊物流欄位與不再使用的欄位**
+- [ ] **處理 `亞克力` 為材質而非商品類型的既有資料**
+- [ ] **建立 migration / rollback 安全流程**
 - [x] Legacy data normalization
 - [x] Quantity migration
 - [x] Image metadata migration
 
 ## 3. Version
 - [x] version.json
-- [x] package.json version sync
+- [ ] package.json version sync with official version
 - [x] UI version rendering
 - [x] API write version bump
+- [ ] **資料架構重整完成後再次確認版本來源只有 `public/data/version.json`**
 
 ## 4. Router
 - [x] Hash routes
@@ -115,14 +126,13 @@
 - [x] 卡片與清單在手機版保持可用
 
 ## 8. Item Detail
-- [x] 完整基本資訊
-- [x] 購買資訊
+- [ ] **依新 Item schema 重整完整基本資訊**
+- [ ] **依新 schema 重整購買資訊**
 - [x] 顯示單價
 - [x] 顯示數量
 - [x] 顯示數量加權後合計價值
-- [x] 發售資訊
-- [x] 物流資訊
-- [x] 售後資訊
+- [ ] **依新 schema 重整到貨資訊**
+- [ ] **依新 schema 重整售後資訊**
 - [x] 圖片展示
 - [x] 圖片載入失敗 fallback
 - [x] 編輯
@@ -145,7 +155,6 @@
 - [x] 類別數量統計依 quantity 加總
 - [x] 各作品消費
 - [x] 各月份消費（1～12 月完整顯示，無資料月份為 0）
-- [x] 各月份新增收藏
 - [ ] 移除「每月新增收藏」統計
 - [x] 集中使用 Date utility
 - [x] 統計計算與 UI rendering 分離
@@ -176,11 +185,11 @@
 - [ ] 作品管理編輯
 - [ ] 作品管理移除
 - [x] 表單編輯狀態不因重新 render 遺失
-- [x] 新增／編輯表單完整欄位
+- [ ] **新增／編輯表單改為完整對應新 Item schema**
 - [x] 必填欄位與格式錯誤清楚提示
 - [x] 重複 ID / 重複資料安全處理
 - [x] 新增／編輯表單支援 quantity
-- [ ] 分類規則：亞克力是材質，不應作為獨立商品類型；新商品應依實際商品型態（如立牌）分類
+- [ ] **分類規則：亞克力是材質，不應作為獨立商品類型；新商品應依實際商品型態分類**
 - [ ] 管理頁重新排版與 UI/UX 優化
 - [ ] 新增專用頁面／流程，與現有管理頁職責清楚分離
 
@@ -205,6 +214,8 @@
 - [x] request payload validation
 - [x] response schema validation
 - [x] Worker GitHub Token 實際寫入權限驗證與部署後驗證
+- [ ] **API / Worker 寫入流程支援新類型 JSON 路徑**
+- [ ] **API / Worker 寫入只修改目標類型 JSON，不覆寫其他類型資料**
 
 ## 12. Write Consistency
 - [x] validate
@@ -215,6 +226,9 @@
 - [x] concurrent write protection
 - [x] stale state detection
 - [x] write operation error recovery
+- [ ] **新架構寫入前只重新取得目標類型 JSON 的最新 state**
+- [ ] **同類型 JSON 的 concurrent write / stale state 保護**
+- [ ] **跨類型操作需要明確的多檔案 transaction / rollback 策略**
 
 ## 13. Image Management
 - [x] Image upload
@@ -225,6 +239,7 @@
 - [x] orphan image cleanup
 - [x] SHA / filename consistency
 - [x] Image write failure recovery
+- [ ] **確認圖片 metadata 在新類型 JSON 中的保存方式**
 
 ## 14. Verification
 - [x] TypeScript build
@@ -240,6 +255,9 @@
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
 - [x] Production deploy verification
+- [ ] **新資料架構 Verify：逐類型 JSON 驗證 schema / ID / quantity / 必填欄位**
+- [ ] **新資料架構 Migration Verify：遷移前後總筆數與資料內容一致**
+- [ ] **新資料架構 API 實寫：新增／編輯／刪除各只影響目標類型 JSON**
 
 ## 15. Final Polish
 - [ ] desktop / tablet / mobile UI polish
@@ -258,12 +276,13 @@
 - [x] enhancement lifecycle check
 - [ ] all cross-page / dynamic interactions use event delegation and single responsibility
 - [ ] full regression verification
+- [ ] **Store / API / Verify / Migration 統一使用新類型 JSON 架構**
 
 ## 17. Discovered Issues / Regression Candidates
 - [ ] 修正 Home 角色排行的跨頁搜尋：目前 `.ranking-panel` 的事件防護會攔截角色排行項目的搜尋轉跳，需確保點擊角色後能正確導向 Collection 並套用角色搜尋條件
 - [ ] 修正 Home「作品消費排行」顯示邏輯：排行標題與完整排行 Modal 是消費金額，但 Home 小圖目前使用數量作為排行值，需統一為消費排行語意與計算方式
-- [ ] 統一 Migration / Verify / 現行資料 schema：目前 `scripts/migrate.mjs`、`scripts/verify-data.mjs` 與 `public/data/works/*.json` 對 work 欄位結構存在不一致，需完成遷移後資料格式的單一規格與前後驗證
-- [ ] 落實商品分類規則並處理既有資料：`亞克力` 為材質而非商品類型，需確認現有資料中的相關分類並依實際商品型態修正，同時避免管理介面再次建立錯誤分類
+- [ ] 統一 Migration / Verify / 現行資料 schema：改以新 Item schema 與「一作品 × 一類型一 JSON」作為唯一規格
+- [ ] 落實商品分類規則並處理既有資料：`亞克力` 為材質而非商品類型，需依實際商品型態修正；既有 Item ID 不因分類修正而任意重編
 - [x] 實際驗證 Worker GitHub Token 寫入流程：除了權限與 Secret 存在性檢查外，需完成部署後實際 API 寫入／讀回驗證，確認 Worker 能真正修改 `tsai97216/merch` 資料
 - [ ] 完成跨頁與動態互動的事件委派檢查：逐一檢查 Home / Collection / Statistics / Management / Detail / Modal 的動態元素，避免重複 listener、事件攔截或責任邊界不清
 - [ ] 完成全站回歸檢查並重新驗證既有已勾選 TODO：特別確認 Home、Collection、Detail、Statistics、Management、Settings 在資料更新、Router 切換、Modal 開關與重新 render 後仍保持一致
