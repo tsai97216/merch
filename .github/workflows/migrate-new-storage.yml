@@ -41,6 +41,9 @@ jobs:
       - name: Verify staging Item schema
         run: node scripts/verify-schema-contract.mjs data-migrated
 
+      - name: Verify staging category contract
+        run: node scripts/verify-category-contract.mjs data-migrated
+
       - name: Compare legacy and migrated data
         run: node scripts/verify-migration.mjs public/data data-migrated
 
@@ -59,6 +62,7 @@ jobs:
           trap restore ERR
           node scripts/verify-new-data.mjs data
           node scripts/verify-schema-contract.mjs data
+          node scripts/verify-category-contract.mjs data
           rm -rf data-legacy-backup
           trap - ERR
 
