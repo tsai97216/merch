@@ -1,6 +1,7 @@
 import './toast.css';
+import { getAsset, putAsset, deleteAsset } from './api';
 import { getStore, type MerchStore } from './store';
-import type { Item } from './types';
+import type { ImageMeta, Item } from './types';
 import { escapeHtml, qs } from './utils/dom';
 import { showToast } from './utils/toast';
 
@@ -51,6 +52,7 @@ function serialOf(item: Item): string { return item.id.match(/(\d+)$/)?.[1] ?? '
 function pickerValue(item: Item): string { return `${item.id} · ${item.title}`; }
 function sortText(a: string, b: string): number { return a.localeCompare(b, 'zh-Hant', { numeric: true }); }
 function unique(values: string[]): string[] { return [...new Set(values.filter(Boolean))].sort(sortText); }
+function selectedItem(): Item | undefined { return allItems().find(x => x.id === selectedId); }
 
 function fill(item: Item): void {
   selectedId = item.id;
@@ -96,6 +98,69 @@ function validateItem(item: Item): string[] {
   return errors;
 }
 
+function imageList(item: Item): ImageMeta[] { return [...(item.images ?? [])]; }
+function imageUrl(image: ImageMeta): string { return image.url || image.path || ''; }
+function renderImages(item: Item): string {
+  const images = imageList(item);
+  if (!images.length) return '<div class="notice">目前沒有圖片。可從下方選擇圖片上傳。</div>';
+  return images.map((image, index) => `<div class="management-image-row" data-image-id="${escapeHtml(image.id)}"><div class="management-image-preview">${imageUrl(image) ? `<img src="${escapeHtml(imageUrl(image))}" alt="${escapeHtml(image.alt || item.title)}" loading="lazy">` : '<span>無預覽</span>'}</div><div class="management-image-info"><strong>${escapeHtml(image.id)}</strong><small>${escapeHtml(image.path || image.url || '尚未設定路徑')}</small>${image.isCover ? '<span class="badge">封面</span>' : ''}</div><div class="management-image-actions"><button class="button secondary" type="button" data-image-action="cover" data-image-index="${index}" ${image.isCover ? 'disabled' : ''}>設為封面</button><button class="button secondary" type="button" data-image-action="up" data-image-index="${index}" ${index === 0 ? 'disabled' : ''}>上移</button><button class="button secondary" type="button" data-image-action="down" data-image-index="${index}" ${index === images.length - 1 ? 'disabled' : ''}>下移</button><button class="button danger" type="button" data-image-action="delete" data-image-index="${index}">刪除</button></div></div>`).join('');
+}
+async function fileToBase64(file: File): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('圖片讀取失敗。'));
+    reader.onload = () => { const value = String(reader.result ?? ''); const comma = value.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(value.slice(comma + 1)); };
+    reader.readAsDataURL(file);
+  });
+}
+function imageExtension(file: File): string { const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'; return ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'].includes(ext) ? ext : 'jpg'; }
+function imagePath(item: Item, file: File): string { const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/\.[^.]+$/, '').slice(0, 80) || 'image'; return `data/${item.workId}/images/${item.id}/${Date.now()}-${safeName}.${imageExtension(file)}`; }
+async function updateImages(item: Item, images: ImageMeta[]): Promise<void> { if (!storeRef) throw new Error('資料庫尚未載入。'); await storeRef.updateItem({ ...item, images, updatedAt: new Date().toISOString() }); }
+
+async function uploadImage(file: File): Promise<void> {
+  const item = selectedItem();
+  if (!item) { showToast('請先選擇收藏。', 'error'); return; }
+  if (!file.type.startsWith('image/')) { showToast('只允許上傳圖片檔案。', 'error'); return; }
+  if (file.size > 8 * 1024 * 1024) { showToast('圖片大小不可超過 8 MB。', 'error'); return; }
+  const path = imagePath(item, file);
+  try {
+    showToast('正在上傳圖片…', 'info');
+    const uploaded = await putAsset(path, await fileToBase64(file));
+    const images = imageList(item);
+    images.push({ id: `${item.id}-${Date.now()}`, path: uploaded.path, url: uploaded.url, sha: uploaded.sha, alt: item.title, isCover: images.length === 0 });
+    try { await updateImages(item, images); }
+    catch (error) { try { await deleteAsset(uploaded.path); } catch { /* best-effort orphan cleanup */ } throw error; }
+    showToast('圖片已上傳並加入收藏。', 'success');
+  } catch (error) { showToast(error instanceof Error ? error.message : '圖片上傳失敗。', 'error'); }
+}
+
+async function mutateImage(action: string, index: number): Promise<void> {
+  const item = selectedItem();
+  if (!item || !storeRef) return;
+  const images = imageList(item);
+  if (!images[index]) return;
+  if (action === 'delete') {
+    if (!window.confirm(`確定要刪除這張圖片？\n「${item.title}」的圖片檔案也會從遠端移除。`)) return;
+    const target = images[index];
+    const next = images.filter((_, i) => i !== index);
+    if (next.length && !next.some(x => x.isCover)) next[0] = { ...next[0], isCover: true };
+    try {
+      await updateImages(item, next);
+      if (target.path) await deleteAsset(target.path);
+      showToast('圖片已刪除。', 'success');
+    } catch (error) {
+      try { await updateImages(item, images); } catch { /* best-effort metadata recovery */ }
+      showToast(error instanceof Error ? error.message : '圖片刪除失敗。', 'error');
+    }
+    return;
+  }
+  if (action === 'cover') images.forEach((image, i) => { image.isCover = i === index; });
+  if (action === 'up' && index > 0) [images[index - 1], images[index]] = [images[index], images[index - 1]];
+  if (action === 'down' && index < images.length - 1) [images[index + 1], images[index]] = [images[index], images[index + 1]];
+  try { await updateImages(item, images); showToast(action === 'cover' ? '封面已更新。' : '圖片順序已更新。', 'success'); }
+  catch (error) { showToast(error instanceof Error ? error.message : '圖片更新失敗。', 'error'); }
+}
+
 function render(): void {
   const root = qs<HTMLElement>('#management-root');
   if (!root || !storeRef) return;
@@ -116,7 +181,7 @@ function render(): void {
   const categoryOptions = categories.map(x => `<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
   const serialOptions = matching.map(x => `<option value="${escapeHtml(serialOf(x))}">${escapeHtml(serialOf(x).padStart(3, '0'))} · ${escapeHtml(x.title)}</option>`).join('');
   const searchOptions = searchResults.map(x => `<option value="${escapeHtml(pickerValue(x))}"></option>`).join('');
-  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid"><label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label><label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label><label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label></div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div><form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid"><label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div><div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div><div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div><div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div><div class="management-actions"><button class="button" type="submit">儲存修改</button><button class="button secondary" type="button" id="management-reset">還原</button><button class="button danger" type="button" id="management-delete">刪除收藏</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
+  root.innerHTML = `<div class="management-toolbar"><div class="management-picker-grid"><label class="field compact"><span>作品</span><select id="management-picker-work" aria-label="選擇作品">${workOptions}</select></label><label class="field compact"><span>周邊類型</span><select id="management-picker-category" aria-label="選擇周邊類型">${categoryOptions}</select></label><label class="field compact"><span>流水號</span><select id="management-picker-serial" aria-label="選擇流水號">${serialOptions}</select></label></div><div class="management-search-row"><label class="field compact management-search-field"><span>搜尋</span><input id="management-item-search" list="management-search-options" autocomplete="off" placeholder="搜尋 ID、名稱、角色、類型…" aria-label="搜尋收藏"><datalist id="management-search-options">${searchOptions}</datalist></label><span id="management-search-count" class="management-search-count">${searchQuery ? `找到 ${searchResults.length} 筆` : `共 ${items.length} 筆收藏`}</span></div><div class="management-selected">${formItem ? `目前：<strong>${escapeHtml(pickerValue(formItem))}</strong>` : '尚未選擇收藏'}</div></div><form id="management-form" class="management-form" novalidate><div class="form-section"><h3>基本資訊</h3><div class="form-grid"><label class="field"><span>Item ID *</span><input id="management-item-id" readonly></label><label class="field"><span>作品</span><input id="management-work" readonly></label><label class="field"><span>標題 *</span><input id="management-title" required></label><label class="field"><span>系列</span><input id="management-series"></label><label class="field"><span>角色</span><input id="management-characters" placeholder="以逗號分隔"></label><label class="field"><span>類別</span><input id="management-category"></label><label class="field"><span>廠商</span><input id="management-manufacturer"></label><label class="field"><span>數量 *</span><input id="management-quantity" type="number" min="1" step="1" required></label><label class="field"><span>狀態 *</span><select id="management-status"><option value="received">已收到</option><option value="preorder">預購中</option><option value="pending">待到貨</option></select></label></div></div><div class="form-section"><h3>圖片管理</h3><div class="management-image-upload"><input id="management-image-file" type="file" accept="image/*" multiple><span>單張最大 8 MB；第一張圖片會自動成為封面。</span></div><div id="management-images">${formItem ? renderImages(formItem) : '<div class="notice">尚未選擇收藏。</div>'}</div></div><div class="form-section"><h3>說明</h3><div class="form-grid single"><label class="field"><span>描述</span><textarea id="management-description" rows="3"></textarea></label><label class="field"><span>備註</span><textarea id="management-notes" rows="3"></textarea></label></div></div><div class="form-section"><h3>購買資訊</h3><div class="form-grid"><label class="field"><span>價格</span><input id="management-price" type="number" min="0" step="1"></label><label class="field"><span>幣別</span><input id="management-currency"></label><label class="field"><span>平台</span><input id="management-platform"></label><label class="field"><span>購買日期</span><input id="management-purchase-date" type="date"></label><label class="field"><span>商品網址</span><input id="management-purchase-url" type="url"></label><label class="field"><span>訂單編號</span><input id="management-order-id"></label></div></div><div class="form-section"><h3>發售／物流／售後</h3><div class="form-grid"><label class="field"><span>發售日期</span><input id="management-release-date" type="date"></label><label class="field"><span>預計到貨</span><input id="management-expected-date" type="date"></label><label class="field"><span>收到日期</span><input id="management-received-date" type="date"></label><label class="field"><span>物流狀態</span><input id="management-shipping-status"></label><label class="field"><span>物流方式</span><input id="management-shipping-method"></label><label class="field"><span>物流備註</span><input id="management-shipping-note"></label><label class="field"><span>售後狀態</span><input id="management-after-sales-status"></label><label class="field"><span>售後更新</span><input id="management-after-sales-updated"></label><label class="field full"><span>售後備註</span><textarea id="management-after-sales-note" rows="2"></textarea></label></div></div><div class="management-actions"><button class="button" type="submit">儲存修改</button><button class="button secondary" type="button" id="management-reset">還原</button><button class="button danger" type="button" id="management-delete">刪除收藏</button></div><div id="management-errors" class="form-errors" role="alert" hidden></div></form>`;
   if (formItem) fill(formItem);
   const workSelect = qs<HTMLSelectElement>('#management-picker-work'); const categorySelect = qs<HTMLSelectElement>('#management-picker-category'); const serialSelect = qs<HTMLSelectElement>('#management-picker-serial');
   if (workSelect) workSelect.value = pickerWork; if (categorySelect) categorySelect.value = pickerCategory; if (serialSelect) serialSelect.value = pickerSerial;
@@ -125,6 +190,8 @@ function render(): void {
   serialSelect?.addEventListener('change', () => { pickerSerial = serialSelect.value; const next = pickerItems().find(x => serialOf(x) === pickerSerial); if (next) { selectedId = next.id; render(); } });
   const search = qs<HTMLInputElement>('#management-item-search');
   search?.addEventListener('input', () => { searchQuery = search.value; renderSearchResults(); const normalized = search.value.trim(); const next = searchItems().find(x => pickerValue(x) === normalized || x.id === normalized); if (next) { selectedId = next.id; searchQuery = ''; render(); } });
+  qs<HTMLInputElement>('#management-image-file')?.addEventListener('change', event => { const files = [...((event.target as HTMLInputElement).files ?? [])]; void files.reduce((chain, file) => chain.then(() => uploadImage(file)), Promise.resolve()); });
+  qs<HTMLElement>('#management-images')?.addEventListener('click', event => { const target = event.target as HTMLElement | null; const button = target?.closest<HTMLButtonElement>('[data-image-action]'); if (!button) return; void mutateImage(button.dataset.imageAction || '', Number(button.dataset.imageIndex)); });
   qs<HTMLButtonElement>('#management-reset')?.addEventListener('click', () => { const next = allItems().find(x => x.id === selectedId); if (next) { searchQuery = ''; render(); showToast('已還原目前收藏資料。', 'info'); } });
   qs<HTMLFormElement>('#management-form')?.addEventListener('submit', event => { void handleSubmit(event); });
   qs<HTMLButtonElement>('#management-delete')?.addEventListener('click', () => { void handleDelete(); });
