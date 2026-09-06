@@ -54,20 +54,9 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
     status: value.status,
     description: typeof value.description === 'string' ? value.description : '',
     notes: typeof value.notes === 'string' ? value.notes : '',
-    purchase: isRecord(purchase) ? {
-      ...(typeof purchase.price === 'number' ? { price: purchase.price } : {}),
-      ...(typeof purchase.currency === 'string' ? { currency: purchase.currency } : {}),
-      ...(typeof purchase.platform === 'string' ? { platform: purchase.platform } : {}),
-      ...(typeof purchase.date === 'string' ? { date: purchase.date } : {}),
-    } : {},
-    arrival: isRecord(arrival) ? {
-      ...(typeof arrival.expectedDate === 'string' || arrival.expectedDate === null ? { expectedDate: arrival.expectedDate } : {}),
-      ...(typeof arrival.receivedDate === 'string' || arrival.receivedDate === null ? { receivedDate: arrival.receivedDate } : {}),
-    } : {},
-    afterSales: isRecord(afterSales) ? {
-      ...(typeof afterSales.status === 'string' ? { status: afterSales.status } : {}),
-      ...(typeof afterSales.note === 'string' ? { note: afterSales.note } : {}),
-    } : {},
+    purchase: { ...(typeof purchase.price === 'number' ? { price: purchase.price } : {}), ...(typeof purchase.currency === 'string' ? { currency: purchase.currency } : {}), ...(typeof purchase.platform === 'string' ? { platform: purchase.platform } : {}), ...(typeof purchase.date === 'string' ? { date: purchase.date } : {}) },
+    arrival: { ...(typeof arrival.expectedDate === 'string' || arrival.expectedDate === null ? { expectedDate: arrival.expectedDate } : {}), ...(typeof arrival.receivedDate === 'string' || arrival.receivedDate === null ? { receivedDate: arrival.receivedDate } : {}) },
+    afterSales: { ...(typeof afterSales.status === 'string' ? { status: afterSales.status } : {}), ...(typeof afterSales.note === 'string' ? { note: afterSales.note } : {}) },
     images: images as Item['images'],
   };
 }
@@ -92,7 +81,7 @@ function validateVersion(value: unknown): VersionData { assertRecord(value, 'ver
 function deepFreeze<T>(value: T): T { if (value && typeof value === 'object' && !Object.isFrozen(value)) { Reflect.ownKeys(value as object).forEach(key => { const child = (value as Record<PropertyKey, unknown>)[key]; if (child && typeof child === 'object') deepFreeze(child); }); Object.freeze(value); } return value; }
 function cloneAndFreeze<T>(value: T): T { return deepFreeze(structuredClone(value)); }
 function normalizeStoreItem(item: Item, label: string): Item { return { ...item, quantity: normalizeQuantity(item.quantity, label) }; }
-function readSavedUi(): UiState { try { const raw = localStorage.getItem('merch-ui'); if (!raw) return { ...defaultUiState }; const parsed = JSON.parse(raw) as Partial<UiState>; return { collectionView: parsed.collectionView === 'list' ? 'list' : 'cards', collectionQuery: typeof parsed.collectionQuery === 'string' ? parsed.collectionQuery : '', collectionStatus: typeof parsed.collectionStatus === 'string' ? parsed.collectionStatus : 'all', collectionWork: typeof parsed.collectionWork === 'string' ? parsed.collectionWork : 'all', collectionCategory: typeof parsed.collectionCategory === 'string' ? parsed.collectionCategory : 'all', collectionCharacter: typeof parsed.collectionCharacter === 'string' ? parsed.collectionCharacter : 'all', collectionSort: parsed.collectionSort === 'title' || parsed.collectionSort === 'price' ? parsed.collectionSort : 'created' }; } catch { return { ...defaultUiState }; } }
+function readSavedUi(): UiState { try { const raw = localStorage.getItem('merch-ui'); if (!raw) return { ...defaultUiState }; const parsed = JSON.parse(raw) as Partial<UiState>; return { collectionView: parsed.collectionView === 'list' ? 'list' : 'cards', collectionQuery: typeof parsed.collectionQuery === 'string' ? parsed.collectionQuery : '', collectionStatus: typeof parsed.collectionStatus === 'string' ? parsed.collectionStatus : 'all', collectionWork: typeof parsed.collectionWork === 'string' ? parsed.collectionWork : 'all', collectionCategory: typeof parsed.collectionCategory === 'string' ? parsed.collectionCategory : 'all', collectionCharacter: typeof parsed.collectionCharacter === 'string' ? parsed.collectionCharacter : 'all', collectionManufacturer: typeof parsed.collectionManufacturer === 'string' ? parsed.collectionManufacturer : 'all', collectionSort: parsed.collectionSort === 'title' || parsed.collectionSort === 'price' ? parsed.collectionSort : 'created' }; } catch { return { ...defaultUiState }; } }
 
 async function loadNewStaticData(index: WorksIndex): Promise<Work[]> {
   const works: Work[] = [];
