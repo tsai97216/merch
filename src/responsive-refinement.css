@@ -1,9 +1,8 @@
-/* Final responsive pass: keep headings, forms, charts and settings controls inside the available viewport. */
+/* Responsive refinement: keep the collection UI readable and usable from phone to desktop. */
 .main{padding-right:20px}
 .content,.footer{width:100%}
 .page-heading h1,.hero h1{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 
-/* Management: give the editor a clearer hierarchy without changing its data flow. */
 .management-panel{min-width:0}
 .management-toolbar{gap:14px}
 .management-picker-grid{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(160px,1fr) minmax(120px,.7fr);gap:10px;min-width:0}
@@ -16,15 +15,12 @@
 .management-image-info{min-width:0}
 .management-image-info small{overflow-wrap:anywhere;word-break:break-word}
 
-/* Make the two management jobs visibly different: browse/edit first, creation second. */
 #management-add{font-weight:700;min-width:132px}
 .management-form:has(#management-delete:disabled){border:1px solid color-mix(in srgb,var(--accent,#8b7cff) 28%,transparent);border-radius:18px;padding:18px;background:color-mix(in srgb,var(--accent,#8b7cff) 4%,transparent)}
 .management-form:has(#management-delete:disabled)::before{content:'新增周邊';display:block;margin:0 0 14px;font-size:18px;font-weight:800;letter-spacing:.02em}
 .management-form:has(#management-delete:disabled) .management-image-upload{opacity:.62}
 .management-form:has(#management-delete:disabled) #management-cleanup-assets{display:none}
 .management-form:has(#management-delete:not(:disabled)){border:1px solid color-mix(in srgb,var(--text,#222) 10%,transparent);border-radius:18px;padding:18px}
-
-/* Management form hierarchy: content, media and actions read as separate stages. */
 .management-form-grid{gap:18px}
 .management-form-grid .field{min-width:0}
 .management-form-grid label{line-height:1.35}
@@ -74,18 +70,26 @@
   .settings-auth-panel{overflow:hidden}
   .management-picker-grid{grid-template-columns:1fr;gap:8px}
   .management-toolbar{gap:10px}
-  .management-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
-  .management-actions .button{width:100%}
+  .management-search-row{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .management-search-field{width:100%;min-width:0}
+  .management-search-count{justify-self:start}
+  #management-add{width:100%;min-height:44px}
+  .management-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+  .management-actions .button{width:100%;min-height:44px}
   .management-image-row{grid-template-columns:1fr}
-  .management-image-preview{max-width:100%;}
-  .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
-  .management-image-actions .button{width:100%;}
+  .management-image-preview{max-width:100%;width:100%;aspect-ratio:16/9}
+  .management-image-preview img{width:100%;height:100%;object-fit:contain}
+  .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+  .management-image-actions .button{width:100%;min-height:42px}
   .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:14px;border-radius:14px}
   .management-actions{position:static;margin-top:14px;padding-top:12px}
+  .management-form .form-section{min-width:0}
+  .management-form input,.management-form select,.management-form textarea{max-width:100%;min-width:0}
 }
 
 @media (max-width:380px){
   .content{padding-left:12px;padding-right:12px}
   .page-heading h1,.hero h1{max-width:calc(100vw - 24px)}
   .management-actions,.management-image-actions{grid-template-columns:1fr}
+  .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:12px}
 }
