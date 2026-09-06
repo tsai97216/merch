@@ -1,0 +1,29 @@
+{
+  "id": "HSRk001",
+  "workId": "honkai-star-rail",
+  "title": "仲夏螢火之約系列亞克力合影卡",
+  "series": [],
+  "characters": [
+    "流螢"
+  ],
+  "category": "k",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "pending",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 149.62,
+    "currency": "TWD",
+    "platform": "米哈遊淘寶",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
