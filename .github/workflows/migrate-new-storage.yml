@@ -32,6 +32,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Restore legacy image sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/honkai-star-rail/images/item-1788499886180-xm1w0h
+          curl -fsSL "https://raw.githubusercontent.com/tsai97216/merch-old/main/data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg" \
+            -o data/honkai-star-rail/images/item-1788499886180-xm1w0h/image-1788513731019-sfc19z.jpg
+
       - name: Build migration staging data
         run: node scripts/migrate.mjs public/data data-migrated
 
