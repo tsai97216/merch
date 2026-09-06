@@ -1,0 +1,45 @@
+/* Final responsive pass: keep headings, forms, charts and settings controls inside the available viewport. */
+.main{padding-right:20px}
+.content,.footer{width:100%}
+.page-heading h1,.hero h1{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+
+@media (min-width:701px) and (max-width:1000px){
+  .main{padding-right:16px}
+  .content{padding-left:24px;padding-right:24px}
+  .page-heading h1{font-size:42px;line-height:1.14}
+  .hero h1{font-size:44px}
+  .page-heading{gap:14px}
+  .management-panel{overflow:hidden}
+  .management-toolbar{align-items:stretch;flex-direction:column;gap:10px}
+  .management-toolbar .field.compact{width:100%;flex:1 1 auto}
+  .management-readonly{max-width:none}
+  .settings-auth-heading{gap:14px}
+  .settings-auth-controls{align-items:stretch;flex-direction:column}
+  .settings-auth-buttons{width:100%}
+  .settings-auth-buttons .button{flex:1}
+}
+
+@media (min-width:701px) and (max-width:820px){
+  .management-form-grid,.form-grid{grid-template-columns:1fr}
+  .management-actions{justify-content:stretch}
+  .management-actions .button{flex:1}
+}
+
+@media (max-width:700px){
+  .main{padding-right:0}
+  .content{width:100%;padding-left:16px;padding-right:16px}
+  .footer{width:100%;padding-left:16px;padding-right:16px}
+  .page-heading h1,.hero h1{max-width:calc(100vw - 32px)}
+  .collection-summary{margin-top:10px}
+  .collection-summary strong{font-size:12px}
+  .statistics-chart-grid{width:100%;min-width:0}
+  .statistics-chart-card{min-width:0;overflow:hidden}
+  .statistics-chart-heading>span{min-width:0}
+  .statistics-chart-heading small{overflow-wrap:anywhere}
+  .settings-auth-panel{overflow:hidden}
+}
+
+@media (max-width:380px){
+  .content{padding-left:12px;padding-right:12px}
+  .page-heading h1,.hero h1{max-width:calc(100vw - 24px)}
+}
