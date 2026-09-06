@@ -1,6 +1,6 @@
 import type { Item, StoreState, UiState, VersionData, Work, WorkPayload, WorksIndex, WorksIndexEntry } from './types';
 import { defaultUiState } from './types';
-import { parseItemId } from './item-id';
+import { buildNextItemId, parseItemId } from './item-id';
 import { dataError, httpError, toAppError } from './error';
 import { getRemoteData, putItem, deleteItem as deleteRemoteItem } from './api';
 
@@ -87,6 +87,18 @@ export class MerchStore {
     const run = this.writeQueue.then(operation, operation);
     this.writeQueue = run.then(() => undefined, () => undefined);
     return run;
+  }
+  async addItem(item: Item): Promise<void> {
+    return this.enqueueWrite(async () => {
+      const work = this.state.works.find((entry) => entry.id === item.workId);
+      if (!work) throw dataError(`找不到收藏所屬作品：${item.workId}`);
+      const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
+      const parsed = parseItemId(normalized.id);
+      if (!parsed || parsed.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
+      if (this.state.items.some((entry) => entry.id === normalized.id)) throw dataError(`Item ID 已存在：${normalized.id}`);
+      const data = await putItem(normalized);
+      this.applyRemote(data);
+    });
   }
   async updateItem(item: Item): Promise<void> {
     return this.enqueueWrite(async () => {
