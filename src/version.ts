@@ -1,5 +1,3 @@
-import './admin-auth';
-
 export type AppVersion = `${number}.${number}.${number}`;
 
 type VersionResponse = { version?: unknown };
