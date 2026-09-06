@@ -24,6 +24,14 @@
 .management-form:has(#management-delete:disabled) #management-cleanup-assets{display:none}
 .management-form:has(#management-delete:not(:disabled)){border:1px solid color-mix(in srgb,var(--text,#222) 10%,transparent);border-radius:18px;padding:18px}
 
+/* Management form hierarchy: content, media and actions read as separate stages. */
+.management-form-grid{gap:18px}
+.management-form-grid .field{min-width:0}
+.management-form-grid label{line-height:1.35}
+.management-image-upload{margin-top:6px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--text,#222) 9%,transparent)}
+.management-actions{margin-top:20px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--text,#222) 9%,transparent)}
+.management-actions .button{min-width:120px}
+
 @media (min-width:1001px){
   .management-picker-grid{grid-template-columns:minmax(220px,1.4fr) minmax(180px,1fr) minmax(130px,.65fr)}
 }
@@ -73,6 +81,7 @@
   .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
   .management-image-actions .button{width:100%;}
   .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:14px;border-radius:14px}
+  .management-actions{position:static;margin-top:14px;padding-top:12px}
 }
 
 @media (max-width:380px){
