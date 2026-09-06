@@ -129,7 +129,7 @@ export type UiState = {
   collectionCategory: string;
   collectionCharacter: string;
   collectionManufacturer: string;
-  collectionSort: 'created' | 'title' | 'price';
+  collectionSort: 'purchase' | 'title' | 'price';
 };
 
 export type StoreState = {
@@ -149,5 +149,5 @@ export const defaultUiState: UiState = {
   collectionCategory: 'all',
   collectionCharacter: 'all',
   collectionManufacturer: 'all',
-  collectionSort: 'created',
+  collectionSort: 'purchase',
 };
