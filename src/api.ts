@@ -6,7 +6,7 @@ type ApiData = Pick<StoreState, 'works' | 'version'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 type AuthStatus = { authenticated: boolean };
 type ApiFailure = { apiCode?: string; status: number };
-type AssetResult = { path: string; sha: string; contentType: string; url: string; version: string };
+type AssetResult = { path: string; replaced: boolean; version: string };
 type AssetDeleteResult = { path: string; deleted: boolean; version: string };
 type AssetCleanupResult = { deletedPaths: string[]; count: number; version: string };
 
@@ -36,7 +36,7 @@ async function request(path: string, init: RequestInit = {}): Promise<unknown> {
 }
 function validateData(data: unknown): ApiData { if (!data || typeof data !== 'object') throw dataError('API 回傳資料格式無效。'); const value = data as Partial<ApiData>; if (!Array.isArray(value.works) || typeof value.version !== 'string') throw dataError('API 回傳資料格式無效。'); return { works: value.works as Work[], version: value.version }; }
 function validateAuthStatus(data: unknown): AuthStatus { if (!data || typeof data !== 'object' || typeof (data as { authenticated?: unknown }).authenticated !== 'boolean') throw dataError('API 驗證狀態格式無效。'); return data as AuthStatus; }
-function validateAssetResult(data: unknown): AssetResult { if (!data || typeof data !== 'object') throw dataError('API 回傳圖片資料格式無效。'); const value = data as Partial<AssetResult>; if (typeof value.path !== 'string' || typeof value.sha !== 'string' || typeof value.contentType !== 'string' || typeof value.url !== 'string' || typeof value.version !== 'string') throw dataError('API 回傳圖片資料格式無效。'); return value as AssetResult; }
+function validateAssetResult(data: unknown): AssetResult { if (!data || typeof data !== 'object') throw dataError('API 回傳圖片資料格式無效。'); const value = data as Partial<AssetResult>; if (typeof value.path !== 'string' || typeof value.replaced !== 'boolean' || typeof value.version !== 'string') throw dataError('API 回傳圖片資料格式無效。'); return value as AssetResult; }
 function validateAssetDeleteResult(data: unknown): AssetDeleteResult { if (!data || typeof data !== 'object') throw dataError('API 回傳圖片刪除結果格式無效。'); const value = data as Partial<AssetDeleteResult>; if (typeof value.path !== 'string' || value.deleted !== true || typeof value.version !== 'string') throw dataError('API 回傳圖片刪除結果格式無效。'); return value as AssetDeleteResult; }
 function validateAssetCleanupResult(data: unknown): AssetCleanupResult { if (!data || typeof data !== 'object') throw dataError('API 回傳圖片清理結果格式無效。'); const value = data as Partial<AssetCleanupResult>; if (!Array.isArray(value.deletedPaths) || value.deletedPaths.some(path => typeof path !== 'string') || typeof value.count !== 'number' || !Number.isInteger(value.count) || value.count < 0 || typeof value.version !== 'string') throw dataError('API 回傳圖片清理結果格式無效。'); return value as AssetCleanupResult; }
 
