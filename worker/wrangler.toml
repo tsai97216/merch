@@ -10,3 +10,6 @@ routes = [
 ALLOWED_ORIGIN = "https://merch.chi.qzz.io"
 GITHUB_REPO = "tsai97216/merch"
 GITHUB_BRANCH = "main"
+
+[secrets]
+required = ["GITHUB_TOKEN", "ADMIN_SECRET"]
