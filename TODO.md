@@ -42,7 +42,7 @@
 - [x] 保留原 ID
 - [x] 保留 purchase / release / shipping / after-sales / image metadata
 - [x] 檢查 null / 格式
-- [ ] 檢查重複 image SHA
+- [x] 檢查重複 image SHA
 - [ ] 完成遷移前後驗證
 - [x] 不修改 `merch-old`
 
@@ -196,7 +196,7 @@
 - [x] 總數量統計依 quantity 加總
 - [x] 作品數量統計依 quantity 加總
 - [x] 類別數量統計依 quantity 加總
-- [ ] 各作品消費
+- [x] 各作品消費
 - [ ] 各月份消費／新增
 - [ ] 集中使用 Date utility
 - [ ] 統計計算與 UI rendering 分離
