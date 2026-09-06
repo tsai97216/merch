@@ -38,12 +38,13 @@
 ## 2. Data Migration
 - [x] 建立 migration script
 - [x] 遷移四個作品
-- [x] 遷移目前四個收藏品
+- [x] 遷移目前五個收藏品 Item
 - [x] 保留原 ID
 - [x] 保留 purchase / release / shipping / after-sales / image metadata
 - [x] 檢查 null / 格式
 - [x] 檢查重複 image SHA
 - [ ] 完成遷移前後驗證
+- [x] 驗證目前 Item 數量與 quantity 加總一致
 - [x] 不修改 `merch-old`
 
 ## 3. Version
@@ -127,6 +128,10 @@
 - [x] Home 資料區塊在空資料時仍保持合理排版
 - [x] Home 數量統計依 quantity 加總
 - [x] Home 消費統計依單價 × quantity 計算
+- [x] 作品消費排行
+- [x] 作品消費排行完整總排行 Modal
+- [x] 角色排行 Top 5
+- [x] 角色排行完整總排行 Modal
 
 ## 7. Collection
 - [x] 全部
@@ -197,11 +202,20 @@
 - [x] 作品數量統計依 quantity 加總
 - [x] 類別數量統計依 quantity 加總
 - [x] 各作品消費
-- [ ] 各月份消費／新增
+- [x] 各月份消費（1～12 月完整顯示，無資料月份為 0）
+- [ ] 各月份新增收藏
 - [ ] 集中使用 Date utility
 - [ ] 統計計算與 UI rendering 分離
 - [x] 空資料狀態
 - [x] 金額／數量格式統一
+- [x] 消費：大圖長條圖／小圖圓餅圖
+- [x] 每月：大圖長條圖／小圖長條圖
+- [x] 收藏：大圖長條圖／小圖圓餅圖
+- [x] 類別：大圖圓餅圖／小圖圓餅圖
+- [x] 大圖與小圖使用獨立圖表配置，而非單純縮放同一圖表
+- [x] 月份圖使用垂直長條，X 軸顯示 1～12 月，年份顯示於圖表左上方
+- [x] 圓餅圖圖例顏色與切片顏色一致
+- [x] 統計詳細分析視圖
 - [ ] 統計結果邊界案例驗證
 
 ## 10. Management
