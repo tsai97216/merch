@@ -217,7 +217,7 @@
 - [x] Image delete
 - [x] Cover image control
 - [x] Image ordering
-- [ ] orphan image cleanup
+- [x] orphan image cleanup
 - [x] SHA / filename consistency
 - [x] Image write failure recovery
 
