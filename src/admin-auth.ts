@@ -1,3 +1,4 @@
+import './admin-auth.css';
 import { getAuthStatus, hasAdminSecret, setAdminSecret, clearAdminSecret } from './api';
 import { showToast } from './utils/toast';
 
