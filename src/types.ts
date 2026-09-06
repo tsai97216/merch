@@ -31,6 +31,8 @@ export type AfterSales = {
 export type Item = {
   id: string;
   workId: string;
+  /** Runtime/UI-only display metadata. Storage normalization removes it. */
+  workName?: string;
   title: string;
   series: string[];
   characters: string[];
