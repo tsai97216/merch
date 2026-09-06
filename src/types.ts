@@ -8,6 +8,9 @@ export type ImageMeta = {
   isCover?: boolean;
   /** Optional content hash retained for future integrity verification. */
   sha?: string;
+  /** Runtime compatibility for legacy image records. Never persisted by new storage. */
+  url?: string;
+  path?: string;
 };
 
 export type Purchase = {
@@ -46,6 +49,13 @@ export type Item = {
   arrival: Arrival;
   afterSales: AfterSales;
   images: ImageMeta[];
+  /** Runtime compatibility for legacy UI data. New storage uses arrival instead. */
+  release?: { expectedDate?: string | null; receivedDate?: string | null };
+  /** Runtime compatibility for legacy UI data. New storage does not persist this field. */
+  shipping?: unknown;
+  /** Runtime-only timestamps retained for existing sorting/detail UI. */
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 /** Storage locations belonging to one permanent Item ID. */
@@ -103,7 +113,7 @@ export type CategoryIndex = {
 export type ItemData = Item;
 
 export type WorksIndex = {
-  schemaVersion: 2;
+  schemaVersion: 1 | 2;
   works: WorksIndexEntry[];
 };
 
