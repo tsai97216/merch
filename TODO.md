@@ -17,10 +17,10 @@
 - [x] Works index
 - [x] Work data split
 - [ ] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
-- [ ] **周邊資料改為「一個作品 × 一個類型一個 JSON」的儲存架構**
-- [ ] **建立類型 JSON 的路徑／命名規則與 index 對應規則**
-- [ ] **Store 改為讀取並合併各類型 JSON，對 UI 維持單一 Item 集合**
-- [ ] **Store 寫入時只更新受影響的類型 JSON，不再整份作品 JSON 覆寫**
+- [ ] **周邊資料改為「一個作品 × 一個類型一個 JSON」的儲存架構**（此項架構方向改由 §16 取代，實作時以 §16 為準）
+- [ ] **建立類型 JSON 的路徑／命名規則與 index 對應規則**（此項架構方向改由 §16 取代）
+- [ ] **Store 改為讀取並合併各類型 JSON，對 UI 維持單一 Item 集合**（此項架構方向改由 §16 取代）
+- [ ] **Store 寫入時只更新受影響的類型 JSON，不再整份作品 JSON 覆寫**（此項架構方向改由 §16 取代）
 - [x] Quantity normalization
 - [x] Item ID validation
 - [x] Duplicate Item ID validation
@@ -30,7 +30,7 @@
 - [x] Remote data loading with static fallback
 
 ## 2. Data Migration
-- [ ] **完成舊作品 JSON → 類型 JSON 的完整遷移**
+- [ ] **完成舊作品 JSON → 新 Item 儲存架構的完整遷移**
 - [ ] **完成遷移前後 Item 數量、ID、圖片、購買、到貨、售後資料逐項比對**
 - [ ] **移除舊物流欄位與不再使用的欄位**
 - [ ] **處理 `亞克力` 為材質而非商品類型的既有資料**
@@ -214,8 +214,8 @@
 - [x] request payload validation
 - [x] response schema validation
 - [x] Worker GitHub Token 實際寫入權限驗證與部署後驗證
-- [ ] **API / Worker 寫入流程支援新類型 JSON 路徑**
-- [ ] **API / Worker 寫入只修改目標類型 JSON，不覆寫其他類型資料**
+- [ ] **API / Worker 寫入流程支援新 Item 資料夾與 index 路徑**
+- [ ] **API / Worker 寫入只修改目標 Item／index 檔案，不覆寫其他 Item 資料**
 
 ## 12. Write Consistency
 - [x] validate
@@ -226,9 +226,10 @@
 - [x] concurrent write protection
 - [x] stale state detection
 - [x] write operation error recovery
-- [ ] **新架構寫入前只重新取得目標類型 JSON 的最新 state**
-- [ ] **同類型 JSON 的 concurrent write / stale state 保護**
-- [ ] **跨類型操作需要明確的多檔案 transaction / rollback 策略**
+- [ ] **新架構寫入前只重新取得目標 Item／index 的最新 state**
+- [ ] **同一 Item 的 concurrent write / stale state 保護**
+- [ ] **新增／刪除 Item 時 index 與 Item 資料夾的多檔案 transaction / rollback 策略**
+- [ ] **圖片與 Item data 的多檔案寫入順序、失敗回復與一致性策略**
 
 ## 13. Image Management
 - [x] Image upload
@@ -239,7 +240,9 @@
 - [x] orphan image cleanup
 - [x] SHA / filename consistency
 - [x] Image write failure recovery
-- [ ] **確認圖片 metadata 在新類型 JSON 中的保存方式**
+- [ ] **確認圖片 metadata 在 Item `data.json` 中的保存方式**
+- [ ] **圖片實體檔案固定隨 Item 存放於該 Item 的 `images/` 目錄**
+- [ ] **重新設計 image API path resolution，不再依賴舊作品 JSON 圖片路徑**
 
 ## 14. Verification
 - [x] TypeScript build
@@ -255,9 +258,10 @@
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
 - [x] Production deploy verification
-- [ ] **新資料架構 Verify：逐類型 JSON 驗證 schema / ID / quantity / 必填欄位**
+- [ ] **新資料架構 Verify：逐 Item 驗證 schema / ID / quantity / 必填欄位 / 路徑**
 - [ ] **新資料架構 Migration Verify：遷移前後總筆數與資料內容一致**
-- [ ] **新資料架構 API 實寫：新增／編輯／刪除各只影響目標類型 JSON**
+- [ ] **新資料架構 API 實寫：新增／編輯／刪除只影響目標 Item 與必要 index**
+- [ ] **新資料架構圖片 Verify：圖片、metadata、cover、ordering、orphan cleanup 一致**
 
 ## 15. Final Polish
 - [ ] desktop / tablet / mobile UI polish
@@ -265,24 +269,140 @@
 - [ ] spacing / typography / alignment
 - [ ] interaction states
 - [ ] accessibility
-- [ ] final production smoke test
 
-## 16. Architecture Follow-up
-- [x] shared Store instance
-- [x] Management no independent items copy
-- [x] Statistics shared Store
-- [x] Home enhancement / main rendering single ownership
-- [x] ensure Store update sync across Home / Collection / Statistics / Management / Detail
-- [x] enhancement lifecycle check
-- [ ] all cross-page / dynamic interactions use event delegation and single responsibility
-- [ ] full regression verification
-- [ ] **Store / API / Verify / Migration 統一使用新類型 JSON 架構**
+## 16. New Item Storage Architecture
 
-## 17. Discovered Issues / Regression Candidates
-- [ ] 修正 Home 角色排行的跨頁搜尋：目前 `.ranking-panel` 的事件防護會攔截角色排行項目的搜尋轉跳，需確保點擊角色後能正確導向 Collection 並套用角色搜尋條件
-- [ ] 修正 Home「作品消費排行」顯示邏輯：排行標題與完整排行 Modal 是消費金額，但 Home 小圖目前使用數量作為排行值，需統一為消費排行語意與計算方式
-- [ ] 統一 Migration / Verify / 現行資料 schema：改以新 Item schema 與「一作品 × 一類型一 JSON」作為唯一規格
-- [ ] 落實商品分類規則並處理既有資料：`亞克力` 為材質而非商品類型，需依實際商品型態修正；既有 Item ID 不因分類修正而任意重編
-- [x] 實際驗證 Worker GitHub Token 寫入流程：除了權限與 Secret 存在性檢查外，需完成部署後實際 API 寫入／讀回驗證，確認 Worker 能真正修改 `tsai97216/merch` 資料
-- [ ] 完成跨頁與動態互動的事件委派檢查：逐一檢查 Home / Collection / Statistics / Management / Detail / Modal 的動態元素，避免重複 listener、事件攔截或責任邊界不清
-- [ ] 完成全站回歸檢查並重新驗證既有已勾選 TODO：特別確認 Home、Collection、Detail、Statistics、Management、Settings 在資料更新、Router 切換、Modal 開關與重新 render 後仍保持一致
+> **正式目標架構：作品 → 類型 → index.json + 每個周邊獨立資料夾。**
+> 
+> 這一節是本次資料儲存方式重整的總控清單。實作前後均以此節為檢查表；所有項目完成並驗證後才可勾選。
+
+### 16.1 Directory structure
+- [ ] **確定正式根目錄結構：`data/<work>/<category>/`**
+- [ ] **每個類型目錄建立 `index.json`**
+- [ ] **每個 Item 使用永久 Item ID 作為資料夾名稱，例如 `HSRd001/`**
+- [ ] **每個 Item 資料夾建立 `data.json`**
+- [ ] **每個 Item 的圖片固定存放於該 Item 的 `images/`**
+- [ ] **禁止以標題、角色名稱等可變欄位作為 Item 路徑識別；路徑識別只使用永久 Item ID**
+
+目標範例：
+
+```text
+data/
+└─ honkai-star-rail/
+   └─ d/
+      ├─ index.json
+      ├─ HSRd001/
+      │  ├─ data.json
+      │  └─ images/
+      │     ├─ cover.webp
+      │     └─ 01.webp
+      ├─ HSRd002/
+      │  ├─ data.json
+      │  └─ images/
+      └─ HSRd003/
+         ├─ data.json
+         └─ images/
+```
+
+### 16.2 Index responsibility
+- [ ] **定義 `index.json` schemaVersion 與 schema**
+- [ ] **index 只負責列出該作品／類型下有哪些 Item 與其資料路徑／必要 metadata**
+- [ ] **避免 index 重複保存完整 Item 資料，避免雙重資料來源**
+- [ ] **定義 index 與實際 Item 資料夾不一致時的 Verify / error handling**
+- [ ] **定義新增、刪除、遷移 Item 時 index 的同步規則**
+
+### 16.3 Item data responsibility
+- [ ] **將完整 Item schema 放入各自的 `data.json`**
+- [ ] **確認 `data.json` 不保存不必要的 GitHub／儲存層資訊**
+- [ ] **Item ID、workId、category 等識別資訊與實際路徑一致性驗證**
+- [ ] **保留現有永久 Item ID，不因遷移重新編號**
+- [ ] **保留 quantity、purchase、release、shipping、afterSales、images 等既定資料語義**
+
+### 16.4 Store
+- [ ] **重新設計 `src/store.ts` 的載入流程：works index → category index → Item data**
+- [ ] **Store 對 UI 仍提供單一 `Item[]`，UI 不需要知道檔案分層**
+- [ ] **Store 建立 Item → data path 的內部映射，供精準寫入使用**
+- [ ] **載入時驗證 index、Item data、路徑、ID、work/category 一致性**
+- [ ] **避免因單一 Item 讀取失敗造成整個 Store 無法使用，明確定義錯誤策略**
+- [ ] **保留 static fallback 與 remote API 的一致資料語義**
+
+### 16.5 API / Worker
+- [ ] **重新設計 `src/api.ts` 的 Item／asset path 解析與 request payload**
+- [ ] **重新設計 `worker/src/index.ts` 的資料載入與 GitHub 路徑白名單**
+- [ ] **GET data 能從新架構組合出前端所需的完整 Store 資料**
+- [ ] **PUT Item 只修改目標 `data.json`，必要時同步 `index.json`**
+- [ ] **DELETE Item 正確處理 Item 資料夾、圖片與 index**
+- [ ] **新增 Item 正確建立 Item 資料夾、`data.json`、圖片目錄與 index**
+- [ ] **Asset API 以 Item ID／Item path 定位圖片，不再依賴舊作品 JSON 結構**
+- [ ] **所有新路徑仍受 path whitelist / traversal protection 保護**
+
+### 16.6 Git / atomic write
+- [ ] **單一 Item 編輯盡可能形成單一 atomic commit**
+- [ ] **新增／刪除 Item 涉及多個檔案時使用明確的 multi-file transaction**
+- [ ] **index 與 Item data 任何一方更新失敗時不得留下不一致狀態**
+- [ ] **stale state detection 改以目標 Item／index 的最新 Git state 為基準**
+- [ ] **同一 Item 的 concurrent writes 不得互相覆蓋**
+- [ ] **跨類型移動／分類修正若涉及兩個 category 目錄，定義 rollback / transaction 邏輯**
+
+### 16.7 Images
+- [ ] **定義 `images` metadata 與實體圖片檔案的對應規則**
+- [ ] **cover、ordering、filename、SHA 等規則與 Item data 保持一致**
+- [ ] **圖片新增／替換／刪除只影響目標 Item**
+- [ ] **Item 刪除時正確處理其全部圖片**
+- [ ] **重新執行 orphan image cleanup，且不誤刪其他 Item 圖片**
+
+### 16.8 Migration
+- [ ] **建立舊 `work.json` → 新 `work/category/index.json + Item folders` migration 工具**
+- [ ] **依現有 Item ID 決定目標 category 與 Item 路徑，不重新編號**
+- [ ] **完整搬移每個 Item 的 JSON 資料**
+- [ ] **完整搬移／重新定位每個 Item 的圖片與 metadata**
+- [ ] **遷移前後逐 Item 比對所有資料欄位**
+- [ ] **遷移前後比對 Item 數量、quantity 總和、ID 集合與圖片集合**
+- [ ] **migration 完成前保留舊資料，可安全 rollback**
+- [ ] **Verify 通過後才移除舊作品 JSON**
+
+### 16.9 Validation / tests
+- [ ] **新增新架構專用 schema validator**
+- [ ] **驗證 index ↔ Item folder ↔ data.json 三者一致**
+- [ ] **驗證 Item ID、work code、category code 與路徑一致**
+- [ ] **驗證 quantity / 必填欄位 / 圖片 metadata**
+- [ ] **驗證空類型目錄、空 index、孤立 Item、孤立圖片等邊界情況**
+- [ ] **測試新增／編輯／刪除 Item**
+- [ ] **測試新增／替換／刪除圖片**
+- [ ] **測試 concurrent write / stale state**
+- [ ] **測試 migration 與 rollback**
+- [ ] **測試 production build 與部署後 GET / PUT / DELETE**
+
+### 16.10 Affected source files / modules
+- [ ] **`src/types.ts`：新增 index / storage metadata 型別，確認 Item schema**
+- [ ] **`src/store.ts`：重寫資料載入、合併、path mapping、寫入前最新 state 邏輯**
+- [ ] **`src/api.ts`：調整 Item／asset API payload 與新路徑解析**
+- [ ] **`worker/src/index.ts`：重寫 GitHub data tree、index、Item folder 與 asset 操作**
+- [ ] **`src/item-id.ts`：確認永久 ID 與新路徑規則相容**
+- [ ] **`src/image-source.ts`：調整圖片來源與新 Item image path**
+- [ ] **`src/image-viewer.ts`：確認新圖片 URL／asset path 相容**
+- [ ] **`scripts/migrate.mjs`：改為完整舊架構 → 新 Item folder 架構 migration**
+- [ ] **`scripts/verify-data.mjs`：加入 index／Item folder／data.json 一致性驗證**
+- [ ] **`public/data/works.json`：重新定義 work/category index 對應方式**
+- [ ] **`public/data/works/*`：遷移為新 category/index + Item folder 結構**
+- [ ] **`data/*`：圖片實體檔案重新整理至各 Item `images/`**
+- [ ] **`scripts/verify-statistics-date.mjs`：確認資料來源改變後統計驗證仍正常**
+- [ ] **`.github/workflows/verify.yml`：加入新資料架構 Verify**
+- [ ] **`.github/workflows/deploy-worker.yml`：確認 Worker 新路徑部署流程**
+- [ ] **`vite.config.ts` / `index.html`：僅在新資料路徑需要時調整 static asset handling**
+
+### 16.11 UI / feature compatibility
+- [ ] **Collection：確認單一 Item[] API 不因儲存層改變而改變既有搜尋／篩選／排序行為**
+- [ ] **Item Detail：確認詳細頁不直接依賴舊 JSON 路徑**
+- [ ] **Management：確認 CRUD 透過 Store/API 操作新 Item path**
+- [ ] **Statistics：確認統計只依賴 Store Item[]，不直接讀取檔案結構**
+- [ ] **Home / cross-navigation：確認既有 Item 導航不受 storage path 改變影響**
+
+### 16.12 Completion gate
+- [ ] **所有舊作品 JSON 已完成 migration 且 Verify 通過**
+- [ ] **所有新架構 schema / path / index 規則已固定並文件化**
+- [ ] **Store / API / Worker 已全部切換至新架構**
+- [ ] **CRUD、圖片管理、concurrent write 全部通過測試**
+- [ ] **Production deploy 驗證通過**
+- [ ] **確認 `public/data/version.json` 為唯一正式版本來源**
+- [ ] **完成後才移除 §1 中被 §16 取代的舊架構描述**
