@@ -13,6 +13,8 @@ function goToCollectionSearch(query: string) {
 }
 
 function getSearchTarget(target: HTMLElement): HTMLElement | null {
+  if (target.closest('.ranking-panel')) return null;
+
   const explicit = target.closest<HTMLElement>('[data-search-query]');
   if (explicit) return explicit;
 
