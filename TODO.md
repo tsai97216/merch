@@ -1,6 +1,6 @@
 # TODO
 
-> Implementation checklist. Only completed and verified implementation items are checked.
+> This file tracks implementation status. Only completed items are checked.
 
 ## 0. Foundation
 - [x] Project structure
@@ -22,7 +22,6 @@
 - [x] Local UI state persistence
 - [x] Shared Store instance
 - [x] Remote data loading with static fallback
-- [x] Work codes normalized: HSR / GI / ZZZ / WW
 
 ## 2. Data Migration
 - [ ] 完成遷移前後驗證
@@ -64,11 +63,11 @@
 - [x] 作品統計
 - [x] 消費統計
 - [x] 快速入口
-- [x] 主頁狀態統計方塊導向 Collection 並帶入狀態條件
-- [x] 主頁作品統計方塊／項目導向 Collection 並帶入作品條件
+- [x] 主頁狀態統計方塊點擊後導向 Collection，並帶入對應狀態搜尋條件
+- [x] 主頁作品統計方塊／項目點擊後導向 Collection，並帶入對應作品搜尋條件
 - [x] 主頁其他可對應收藏的統計項目提供搜尋轉跳
 - [x] JS 失敗時仍能看到基本首頁
-- [x] Home 空資料保持合理排版
+- [x] Home 資料區塊在空資料時仍保持合理排版
 - [x] Home 數量統計依 quantity 加總
 - [x] Home 消費統計依單價 × quantity 計算
 - [x] 作品消費排行
@@ -80,13 +79,13 @@
 - [x] 全部
 - [x] 作品分類
 - [x] 搜尋
-- [x] 搜尋支援使用者可見狀態文字
-- [x] `待到貨` 包含 `pending + preorder`
-- [x] `預購中` 可單獨命中 preorder
-- [x] `已收到` 可單獨命中 received
-- [x] 多詞條 AND 搜尋
-- [x] 空白 / `,` / `，` 等常見分隔
-- [x] Item ID／作品／類型／角色／廠商搜尋相容
+- [x] 搜尋支援狀態文字：`預購中`、`待到貨`、`已收到` 等使用者可見狀態
+- [x] `待到貨` 搜尋結果包含 `pending + preorder`
+- [x] `預購中` 搜尋仍可單獨命中 preorder
+- [x] `已收到` 搜尋仍可單獨命中 received
+- [x] 搜尋支援多個詞條同時搜尋，採 AND 邏輯
+- [x] 多詞條支援空白、`,`、`，`、` 等常見分隔方式
+- [x] 搜尋詞條與既有 Item ID／作品／類型／角色／廠商等搜尋邏輯保持相容
 - [x] Filter
 - [x] Sort
 - [x] 狀態篩選
@@ -94,12 +93,19 @@
 - [x] 搜尋下方只保留「類型／狀態」可見篩選
 - [x] 角色條件可透過搜尋
 - [x] 廠商條件可透過搜尋
-- [x] 排序按鈕式控制
+- [x] 排序改為按鈕式控制
 - [x] 卡片顯示模式
 - [x] 清單顯示模式
 - [x] 記住卡片／清單選擇
-- [x] 顯示封面／標題／作品／角色／類別／價格／數量／狀態
-- [x] 多件商品顯示單價 × 數量與合計價值
+- [x] 顯示封面
+- [x] 顯示標題
+- [x] 顯示作品
+- [x] 顯示角色
+- [x] 顯示類別
+- [x] 顯示價格
+- [x] 顯示數量
+- [x] 顯示多件商品的單價 × 數量與合計價值
+- [x] 顯示狀態
 - [x] 顯示預計到貨日期
 - [x] 點擊進入詳細頁
 - [x] 篩選條件組合正確
@@ -119,8 +125,8 @@
 - [x] 售後資訊
 - [x] 圖片展示
 - [x] 圖片載入失敗 fallback
-- [ ] 編輯
-- [ ] 刪除
+- [x] 編輯
+- [x] 刪除
 - [x] 返回
 - [x] 不存在的 Item 顯示 Not Found
 - [x] Modal / Detail 狀態與 Router 狀態一致
@@ -148,9 +154,9 @@
 - [x] 每月：大圖長條圖／小圖長條圖
 - [x] 收藏：大圖長條圖／小圖圓餅圖
 - [x] 類別：大圖圓餅圖／小圖圓餅圖
-- [x] 大圖與小圖使用獨立圖表配置
-- [x] 月份圖使用垂直長條，X 軸 1～12 月，年份顯示於左上方
-- [x] 圓餅圖圖例顏色與切片一致
+- [x] 大圖與小圖使用獨立圖表配置，而非單純縮放同一圖表
+- [x] 月份圖使用垂直長條，X 軸顯示 1～12 月，年份顯示於圖表左上方
+- [x] 圓餅圖圖例顏色與切片顏色一致
 - [x] 統計詳細分析視圖
 - [ ] 統計結果邊界案例驗證
 
@@ -160,21 +166,19 @@
 - [x] 流水號選擇器
 - [x] 管理頁搜尋
 - [x] 作品／類型／流水號選擇與搜尋狀態同步
-- [x] 收藏 CRUD implementation
+- [x] 收藏 CRUD
 - [x] 表單 validation
 - [x] 刪除確認
 - [x] 成功提示
 - [x] 失敗提示
-- [x] 新增周邊流程
-- [x] 新增周邊自動產生 Item ID
+- [ ] 作品管理新增
+- [ ] 作品管理編輯
+- [ ] 作品管理移除
+- [x] 表單編輯狀態不因重新 render 遺失
 - [x] 新增／編輯表單完整欄位
 - [x] 必填欄位與格式錯誤清楚提示
 - [x] 重複 ID / 重複資料安全處理
 - [x] 新增／編輯表單支援 quantity
-- [x] 表單編輯狀態不因重新 render 遺失
-- [ ] 作品管理新增
-- [ ] 作品管理編輯
-- [ ] 作品管理移除
 
 ## 11. GitHub API / Worker
 - [x] API layer
@@ -216,46 +220,36 @@
 - [ ] orphan image cleanup
 - [x] SHA / filename consistency
 - [x] Image write failure recovery
-- [ ] Verify all production images render correctly
 
 ## 14. Verification
 - [ ] TypeScript build
 - [ ] Desktop smoke test
 - [ ] Mobile smoke test
 - [ ] Router smoke test
-- [ ] Collection search / filter / sort test
+- [ ] Collection search/filter/sort test
 - [ ] Detail test
 - [ ] Statistics test
 - [ ] Management test
 - [ ] GitHub API write test
 - [ ] Image management test
-- [ ] Empty / error / loading test
+- [ ] Empty/error/loading test
 - [ ] Data integrity verification
 - [ ] Production deploy verification
 
 ## 15. Final Polish
-- [ ] Desktop / tablet / mobile UI polish
-- [ ] Desktop / mobile Statistics / Management / Settings layout checks
-- [ ] Spacing / typography / alignment
-- [ ] Interaction states
-- [ ] Accessibility
-- [ ] Final production smoke test
+- [ ] desktop / tablet / mobile UI polish
+- [ ] desktop / mobile Statistics / Management / Settings layout checks
+- [ ] spacing / typography / alignment
+- [ ] interaction states
+- [ ] accessibility
+- [ ] final production smoke test
 
 ## 16. Architecture Follow-up
-- [x] Shared Store instance
+- [x] shared Store instance
 - [x] Management no independent items copy
 - [x] Statistics shared Store
 - [x] Home enhancement / main rendering single ownership
-- [ ] Ensure Store update sync across Home / Collection / Statistics / Management / Detail
-- [x] Enhancement lifecycle check
-- [ ] All cross-page / dynamic interactions use event delegation and single responsibility
-- [ ] Full regression verification
-
-## Current Priority
-1. [ ] CI / data integrity verification fully pass
-2. [ ] Item Detail edit / delete completion
-3. [ ] Image replace + production image rendering
-4. [ ] Store cross-page synchronization regression
-5. [ ] Statistics / Management / Settings responsive UI polish
-6. [ ] Full desktop / mobile regression test
-7. [ ] Final production smoke test
+- [ ] ensure Store update sync across Home / Collection / Statistics / Management / Detail
+- [x] enhancement lifecycle check
+- [ ] all cross-page / dynamic interactions use event delegation and single responsibility
+- [ ] full regression verification
