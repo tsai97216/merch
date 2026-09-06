@@ -1,0 +1,55 @@
+name: Migrate New Storage
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build migration staging data
+        run: node scripts/migrate.mjs public/data data-migrated
+
+      - name: Verify staging data
+        run: node scripts/verify-new-data.mjs data-migrated
+
+      - name: Switch data root after verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          mv data data-legacy-backup
+          mv data-migrated data
+          restore() {
+            if [ -d data-legacy-backup ] && [ ! -d data-migrated ]; then
+              rm -rf data
+              mv data-legacy-backup data
+            fi
+          }
+          trap restore ERR
+          node scripts/verify-new-data.mjs data
+          rm -rf data-legacy-backup
+          trap - ERR
+
+      - name: Commit migrated storage
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git status --short
+          git diff --cached --quiet && echo "No migration changes." && exit 0
+          git commit -m "refactor: migrate merch data to item storage"
+          git push
