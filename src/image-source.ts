@@ -1,5 +1,6 @@
 const API_BASE = ((import.meta as ImportMeta & { env?: { VITE_MERCH_API_URL?: string } }).env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_ASSET_PREFIX = `${API_BASE}/assets/`;
+const LEGACY_ASSET_PREFIX = 'https://raw.githubusercontent.com/tsai97216/merch-old/main/';
 
 function assetPathFromSource(source: string): string {
   try {
@@ -8,7 +9,10 @@ function assetPathFromSource(source: string): string {
     const markerIndex = url.pathname.indexOf(marker);
     if (markerIndex >= 0) return url.pathname.slice(markerIndex + '/main/'.length).replace(/^\/+/, '');
     if (url.pathname.startsWith('/data/')) return url.pathname.replace(/^\/+/, '');
-    if (url.pathname.startsWith('/api/assets/')) return '';
+    if (url.pathname.startsWith('/api/assets/')) {
+      const assetMarker = '/api/assets/';
+      return url.pathname.slice(url.pathname.indexOf(assetMarker) + assetMarker.length).replace(/^\/+/, '');
+    }
   } catch { /* fall through */ }
   const normalized = source.replace(/^\/+/, '');
   return normalized.startsWith('data/') ? normalized : '';
@@ -18,20 +22,31 @@ function assetUrl(path: string): string {
   return `${API_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
+function legacyAssetUrl(path: string): string {
+  return `${LEGACY_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
+}
+
 function recoverImage(image: HTMLImageElement): void {
-  if (image.dataset.assetFallback === 'true') return;
   const path = assetPathFromSource(image.currentSrc || image.src);
   if (!path) return;
-  image.dataset.assetFallback = 'true';
-  image.src = assetUrl(path);
+  const stage = image.dataset.assetFallbackStage || '0';
+  if (stage === '0') {
+    image.dataset.assetFallbackStage = '1';
+    image.src = assetUrl(path);
+    return;
+  }
+  if (stage === '1') {
+    image.dataset.assetFallbackStage = '2';
+    image.src = legacyAssetUrl(path);
+  }
 }
 
 window.addEventListener('error', (event) => {
   const target = event.target;
   if (!(target instanceof HTMLImageElement)) return;
-  const before = target.currentSrc || target.src;
-  const path = assetPathFromSource(before);
+  const path = assetPathFromSource(target.currentSrc || target.src);
   if (!path) return;
+  if ((target.dataset.assetFallbackStage || '0') === '2') return;
   event.stopImmediatePropagation();
   recoverImage(target);
 }, true);
