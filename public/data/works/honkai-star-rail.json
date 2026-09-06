@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "work": "honkai-star-rail",
   "name": "HSR",
-  "updatedAt": "2026-09-05T02:00:00.000Z",
+  "updatedAt": "2026-09-06T15:17:50.371Z",
   "items": [
     {
       "id": "HSRf001",
@@ -96,7 +96,7 @@
       "characters": [
         "流螢"
       ],
-      "category": "壓克力",
+      "category": "卡片／訂金卡",
       "manufacturer": "米哈遊",
       "status": "pending",
       "purchase": {
