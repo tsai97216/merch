@@ -44,7 +44,7 @@ function refineDetail(): void {
   const afterSalesLabel = afterSales?.closest('div')?.querySelector('dt');
   if (afterSales && afterSales.dataset.refined !== 'true') {
     const raw = afterSales.textContent?.trim() ?? '';
-    afterSales.textContent = afterSalesStatusMap[raw] ?? raw || '未設定';
+    afterSales.textContent = (afterSalesStatusMap[raw] ?? raw) || '未設定';
     afterSales.dataset.refined = 'true';
     if (afterSalesLabel) afterSalesLabel.textContent = '售後狀態';
   }
