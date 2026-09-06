@@ -5,7 +5,6 @@ interface Env {
   GITHUB_TOKEN: string;
   ADMIN_SECRET: string;
 }
-
 type GitHubRef = { object: { sha: string } };
 type GitHubCommit = { sha: string; tree: { sha: string } };
 type GitHubBlob = { sha: string; content: string; encoding: string };
@@ -16,15 +15,7 @@ type WorkIndex = { schemaVersion: 2; works: WorkEntry[] };
 type CategoryEntry = { id: string; path: string; title?: string; characters?: string[]; manufacturer?: string; quantity?: number; status?: string; cover?: string };
 type CategoryIndex = { schemaVersion: 1; workId: string; category: string; items: CategoryEntry[] };
 type Item = { id: string; workId: string; title: string; series: string[]; characters: string[]; category: string; manufacturer: string; quantity: number; status: string; description: string; notes: string; purchase: Record<string, unknown>; arrival: Record<string, unknown>; afterSales: Record<string, unknown>; images: Record<string, unknown>[]; [key: string]: unknown };
-type RemoteState = {
-  index: WorkIndex;
-  version: string;
-  headSha: string;
-  baseTreeSha: string;
-  files: Map<string, { content: string; sha: string }>;
-  categories: Map<string, CategoryIndex>;
-  items: Map<string, { item: Item; path: string; categoryPath: string; workId: string }>;
-};
+type RemoteState = { index: WorkIndex; version: string; headSha: string; baseTreeSha: string; files: Map<string, { content: string; sha: string }>; categories: Map<string, CategoryIndex>; items: Map<string, { item: Item; path: string; categoryPath: string; workId: string }> };
 type AssetRequest = { path: string; content: string };
 type WriteEntry = { path: string; content?: string; encoding?: 'utf-8' | 'base64'; delete?: boolean };
 
@@ -34,19 +25,13 @@ const ASSET_RE = /^data\/[^/]+\/[^/]+\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jp
 const ITEM_ID_RE = /^[A-Z]{2,3}[a-z]\d{3}$/;
 const CATEGORY_RE = /^[a-z]$/;
 
-function response(body: unknown, status = 200, origin = '*'): Response {
-  return new Response(JSON.stringify(body), { status, headers: { ...jsonHeaders, 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS', 'Vary': 'Origin' } });
-}
+function response(body: unknown, status = 200, origin = '*'): Response { return new Response(JSON.stringify(body), { status, headers: { ...jsonHeaders, 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS', 'Vary': 'Origin' } }); }
 function ok(data: unknown, origin: string): Response { return response({ ok: true, data }, 200, origin); }
 function fail(code: string, message: string, status: number, origin: string): Response { return response({ ok: false, error: { code, message } }, status, origin); }
 function originFor(request: Request, env: Env): string | null { const origin = request.headers.get('Origin'); return !origin || origin === env.ALLOWED_ORIGIN ? env.ALLOWED_ORIGIN : null; }
 function authorized(request: Request, env: Env): boolean { return Boolean(env.ADMIN_SECRET) && request.headers.get('Authorization') === `Bearer ${env.ADMIN_SECRET}`; }
 function githubHeaders(env: Env): HeadersInit { return { Accept: 'application/vnd.github+json', 'Content-Type': 'application/json', Authorization: `Bearer ${env.GITHUB_TOKEN}`, 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'chi-merch-api' }; }
-async function githubJson<T>(env: Env, path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(`https://api.github.com${path}`, { ...init, headers: { ...githubHeaders(env), ...(init.headers || {}) } });
-  if (!res.ok) { const detail = await res.text().catch(() => ''); const error = new Error(`GitHub request failed: ${res.status}${detail ? ` ${detail.slice(0, 240)}` : ''}`); (error as Error & { status?: number }).status = res.status; throw error; }
-  return await res.json() as T;
-}
+async function githubJson<T>(env: Env, path: string, init: RequestInit = {}): Promise<T> { const res = await fetch(`https://api.github.com${path}`, { ...init, headers: { ...githubHeaders(env), ...(init.headers || {}) } }); if (!res.ok) { const detail = await res.text().catch(() => ''); const error = new Error(`GitHub request failed: ${res.status}${detail ? ` ${detail.slice(0, 240)}` : ''}`); (error as Error & { status?: number }).status = res.status; throw error; } return await res.json() as T; }
 function decodeBase64(content: string): Uint8Array { const binary = atob(content.replace(/\s/g, '')); return Uint8Array.from(binary, char => char.charCodeAt(0)); }
 function decodeText(content: string): string { return new TextDecoder().decode(decodeBase64(content)); }
 function jsonFile(content: unknown): string { return JSON.stringify(content, null, 2) + '\n'; }
@@ -60,11 +45,7 @@ async function loadRemote(env: Env): Promise<RemoteState> {
   if (tree.truncated) throw new Error('GitHub 資料樹過大，無法安全載入。');
   const wanted = tree.tree.filter(entry => entry.type === 'blob' && typeof entry.path === 'string' && (entry.path === 'data/works.json' || entry.path === 'public/data/version.json' || entry.path.startsWith('data/')));
   const files = new Map<string, { content: string; sha: string }>();
-  await Promise.all(wanted.map(async entry => {
-    const sha = entry.sha as string;
-    const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs/${sha}`);
-    files.set(entry.path as string, { content: decodeText(blob.content), sha });
-  }));
+  await Promise.all(wanted.map(async entry => { const sha = entry.sha as string; const blob = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs/${sha}`); files.set(entry.path as string, { content: decodeText(blob.content), sha }); }));
   const indexFile = files.get('data/works.json');
   const versionFile = files.get('public/data/version.json');
   if (!indexFile || !versionFile) throw new Error('新資料根索引或版本檔不存在。');
@@ -91,10 +72,7 @@ async function loadRemote(env: Env): Promise<RemoteState> {
   }
   return { index, version, headSha, baseTreeSha: head.tree.sha, files, categories, items };
 }
-
-function allWorks(remote: RemoteState) {
-  return remote.index.works.map(work => ({ id: work.id, name: work.name, code: work.code, items: [...remote.items.values()].filter(entry => entry.workId === work.id).map(entry => entry.item) }));
-}
+function allWorks(remote: RemoteState) { return remote.index.works.map(work => ({ id: work.id, name: work.name, code: work.code, items: [...remote.items.values()].filter(entry => entry.workId === work.id).map(entry => entry.item) })); }
 async function dataResponse(env: Env, origin: string): Promise<Response> { const remote = await loadRemote(env); return ok({ works: allWorks(remote), version: remote.version }, origin); }
 
 function validateItem(item: unknown): asserts item is Item {
@@ -112,7 +90,6 @@ function validateItem(item: unknown): asserts item is Item {
 }
 function normalizeItemForStorage(item: Item): Item { const copy = JSON.parse(JSON.stringify(item)) as Item; delete copy.workName; return copy; }
 function categoryEntry(item: Item, path: string): CategoryEntry { const cover = Array.isArray(item.images) ? item.images.find(image => (image as { isCover?: unknown }).isCover === true) : undefined; return { id: item.id, path, title: item.title, characters: item.characters, manufacturer: item.manufacturer, quantity: item.quantity, status: item.status, ...((cover as { file?: unknown } | undefined)?.file ? { cover: cover.file as string } : {}) }; }
-
 async function createBlob(env: Env, content: string, encoding: 'utf-8' | 'base64' = 'utf-8'): Promise<string> { const result = await githubJson<GitHubBlob>(env, `/repos/${env.GITHUB_REPO}/git/blobs`, { method: 'POST', body: JSON.stringify({ content, encoding }) }); return result.sha; }
 async function createAtomicCommit(env: Env, remote: RemoteState, files: WriteEntry[], message: string): Promise<void> {
   const entries = [] as { path: string; mode: '100644'; type: 'blob'; sha: string | null }[];
@@ -150,7 +127,6 @@ async function updateItem(env: Env, id: string, input: unknown, origin: string):
   await createAtomicCommit(env, remote, writes, `${existing ? 'fix: update' : 'feat: add'} item ${id}`);
   return dataResponse(env, origin);
 }
-
 async function deleteItem(env: Env, id: string, origin: string): Promise<Response> {
   const remote = await loadRemote(env);
   const existing = remote.items.get(id);
@@ -169,13 +145,7 @@ async function deleteItem(env: Env, id: string, origin: string): Promise<Respons
 function validateAssetPath(path: unknown): string { if (typeof path !== 'string' || !ASSET_RE.test(path) || path.includes('..')) throw new Error('圖片路徑格式無效。'); return path; }
 function validateAssetPayload(value: unknown): AssetRequest { if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('圖片請求格式無效。'); const body = value as Record<string, unknown>; const path = validateAssetPath(body.path); if (typeof body.content !== 'string' || !body.content) throw new Error('圖片內容為必填欄位。'); if (body.content.length > MAX_ASSET_BASE64_LENGTH) throw new Error('圖片檔案過大，請使用 10 MB 以下的圖片。'); if (!/^[A-Za-z0-9+/\s]+=*$/.test(body.content)) throw new Error('圖片內容不是有效的 Base64。'); return { path, content: body.content.replace(/\s/g, '') }; }
 function assetContentType(path: string): string { const ext = path.toLowerCase().split('.').pop(); return ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : ext === 'avif' ? 'image/avif' : 'image/jpeg'; }
-
-async function getAsset(env: Env, path: string, origin: string): Promise<Response> {
-  const remote = await loadRemote(env);
-  const file = remote.files.get(path);
-  if (!file) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin);
-  return new Response(decodeBase64(file.content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${file.sha}"` } });
-}
+async function getAsset(env: Env, path: string, origin: string): Promise<Response> { const remote = await loadRemote(env); const file = remote.files.get(path); if (!file) return fail('ASSET_NOT_FOUND', '找不到圖片。', 404, origin); return new Response(decodeBase64(file.content), { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${file.sha}"` } }); }
 async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<Response> {
   const remote = await loadRemote(env);
   const match = /^data\/([^/]+)\/([^/]+)\/([^/]+)\/images\/([^/]+)$/.exec(asset.path);
@@ -186,21 +156,13 @@ async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<
   const file = latest.files.get(asset.path);
   return ok({ path: asset.path, sha: file?.sha || '', contentType: assetContentType(asset.path), url: `https://raw.githubusercontent.com/${env.GITHUB_REPO}/${env.GITHUB_BRANCH}/${asset.path}`, version: latest.version }, origin);
 }
-async function deleteAsset(env: Env, path: string, origin: string): Promise<Response> {
-  const remote = await loadRemote(env);
-  if (!remote.files.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin);
-  const nextVersion = bumpPatch(remote.version);
-  await createAtomicCommit(env, remote, [{ path, delete: true }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `fix: delete asset ${path}`);
-  return ok({ path, deleted: true, version: nextVersion }, origin);
-}
+async function deleteAsset(env: Env, path: string, origin: string): Promise<Response> { const remote = await loadRemote(env); if (!remote.files.has(path)) return fail('ASSET_NOT_FOUND', '找不到要刪除的圖片。', 404, origin); const nextVersion = bumpPatch(remote.version); await createAtomicCommit(env, remote, [{ path, delete: true }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `fix: delete asset ${path}`); return ok({ path, deleted: true, version: nextVersion }, origin); }
 async function cleanupAssets(env: Env, origin: string): Promise<Response> {
-  const remote = await loadRemote(env);
-  const referenced = new Set<string>();
+  const remote = await loadRemote(env); const referenced = new Set<string>();
   for (const entry of remote.items.values()) for (const image of entry.item.images || []) if (image && typeof image === 'object' && typeof (image as { file?: unknown }).file === 'string') referenced.add(`data/${entry.workId}/${entry.item.category}/${entry.item.id}/images/${(image as { file: string }).file}`);
   const orphaned = [...remote.files.keys()].filter(path => ASSET_RE.test(path) && !referenced.has(path));
   if (!orphaned.length) return ok({ deletedPaths: [], count: 0, version: remote.version }, origin);
-  const nextVersion = bumpPatch(remote.version);
-  const writes: WriteEntry[] = orphaned.map(path => ({ path, delete: true }));
+  const nextVersion = bumpPatch(remote.version); const writes: WriteEntry[] = orphaned.map(path => ({ path, delete: true }));
   writes.push({ path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) });
   await createAtomicCommit(env, remote, writes, 'fix: clean orphan assets');
   return ok({ deletedPaths: orphaned, count: orphaned.length, version: nextVersion }, origin);
@@ -208,8 +170,7 @@ async function cleanupAssets(env: Env, origin: string): Promise<Response> {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const origin = originFor(request, env);
-    if (!origin) return fail('ORIGIN_NOT_ALLOWED', '來源網域不被允許。', 403, '*');
+    const origin = originFor(request, env); if (!origin) return fail('ORIGIN_NOT_ALLOWED', '來源網域不被允許。', 403, '*');
     if (request.method === 'OPTIONS') return response({}, 204, origin);
     const url = new URL(request.url);
     try {
@@ -222,11 +183,8 @@ export default {
         if (request.method === 'PUT') return updateItem(env, id, await request.json(), origin);
         if (request.method === 'DELETE') return deleteItem(env, id, origin);
       }
+      if (url.pathname === '/api/assets/cleanup' && request.method === 'POST') { if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員驗證。', 401, origin); return cleanupAssets(env, origin); }
       const assetPath = url.pathname.match(/^\/api\/assets\/(.+)$/)?.[1];
-      if (url.pathname === '/api/assets/cleanup' && request.method === 'POST') {
-        if (!authorized(request, env)) return fail('UNAUTHORIZED', '需要管理員驗證。', 401, origin);
-        return cleanupAssets(env, origin);
-      }
       if (assetPath) {
         const decoded = decodeURIComponent(assetPath);
         if (request.method === 'GET') return getAsset(env, validateAssetPath(decoded), origin);
@@ -235,9 +193,6 @@ export default {
         if (request.method === 'DELETE') return deleteAsset(env, validateAssetPath(decoded), origin);
       }
       return fail('NOT_FOUND', 'API 路徑不存在。', 404, origin);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '伺服器發生未知錯誤。';
-      return fail('SERVER_ERROR', message, 500, origin);
-    }
+    } catch (error) { return fail('SERVER_ERROR', error instanceof Error ? error.message : '伺服器發生未知錯誤。', 500, origin); }
   },
 };
