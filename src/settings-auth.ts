@@ -67,7 +67,11 @@ async function verify(): Promise<void> {
 function renderPanel(): void {
   const page = document.querySelector<HTMLElement>('[data-page="settings"]');
   const heading = page?.querySelector<HTMLElement>('.page-heading');
-  if (!page || !heading || panel?.isConnected) return;
+  if (!page || !heading) return;
+
+  const existing = page.querySelector<HTMLElement>('.settings-auth-panel');
+  if (existing) panel = existing;
+  if (panel?.isConnected) return;
 
   panel = document.createElement('section');
   panel.className = 'panel settings-auth-panel';
@@ -90,11 +94,7 @@ function renderPanel(): void {
 }
 
 function syncRoute(): void {
-  if (location.hash !== '#/settings') {
-    panel = null;
-    return;
-  }
-  renderPanel();
+  if (location.hash === '#/settings') renderPanel();
 }
 
 window.addEventListener('hashchange', () => window.setTimeout(syncRoute, 0));
