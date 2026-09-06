@@ -76,27 +76,37 @@ function readSavedUi(): UiState {
 export class MerchStore {
   private state: StoreState;
   private listeners = new Set<(state: StoreState) => void>();
+  private writeQueue: Promise<void> = Promise.resolve();
   constructor(state: StoreState) { this.state = cloneAndFreeze(state); }
   get snapshot(): StoreState { return this.state; }
   subscribe(listener: (state: StoreState) => void): () => void { this.listeners.add(listener); return () => this.listeners.delete(listener); }
   setUi(patch: Partial<UiState>): void { const ui = { ...this.state.ui, ...patch }; this.state = cloneAndFreeze({ ...this.state, ui }); try { localStorage.setItem('merch-ui', JSON.stringify(ui)); } catch { /* optional */ } this.emit(); }
   replaceData(works: Work[], version: string): void { const normalizedWorks = works.map((work) => ({ ...work, items: work.items.map((item, index) => normalizeStoreItem(item, `${work.name}.items[${index}]`)) })); const items = normalizedWorks.flatMap((work) => work.items.map((item) => ({ ...item, workId: work.id, workName: work.name }))); this.state = cloneAndFreeze({ ...this.state, works: normalizedWorks, items, version, loading: false, error: null }); this.emit(); }
   private applyRemote(data: { works: Work[]; version: string }): void { this.replaceData(data.works, data.version); }
+  private enqueueWrite<T>(operation: () => Promise<T>): Promise<T> {
+    const run = this.writeQueue.then(operation, operation);
+    this.writeQueue = run.then(() => undefined, () => undefined);
+    return run;
+  }
   async updateItem(item: Item): Promise<void> {
-    const current = this.state.items.find((entry) => entry.id === item.id);
-    if (!current) throw dataError(`找不到收藏：${item.id}`);
-    const work = this.state.works.find((entry) => entry.id === current.workId);
-    if (!work) throw dataError(`找不到收藏所屬作品：${current.workId}`);
-    const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
-    if (parseItemId(normalized.id)?.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
-    const data = await putItem(normalized);
-    this.applyRemote(data);
+    return this.enqueueWrite(async () => {
+      const current = this.state.items.find((entry) => entry.id === item.id);
+      if (!current) throw dataError(`找不到收藏：${item.id}`);
+      const work = this.state.works.find((entry) => entry.id === current.workId);
+      if (!work) throw dataError(`找不到收藏所屬作品：${current.workId}`);
+      const normalized = normalizeStoreItem({ ...item, workId: work.id, workName: work.name }, `item ${item.id}`);
+      if (parseItemId(normalized.id)?.workCode !== work.code) throw dataError(`Item ID 與作品不一致：${normalized.id}`);
+      const data = await putItem(normalized);
+      this.applyRemote(data);
+    });
   }
   async deleteItem(id: string): Promise<void> {
-    const current = this.state.items.find((entry) => entry.id === id);
-    if (!current) throw dataError(`找不到收藏：${id}`);
-    const data = await deleteRemoteItem(id);
-    this.applyRemote(data);
+    return this.enqueueWrite(async () => {
+      const current = this.state.items.find((entry) => entry.id === id);
+      if (!current) throw dataError(`找不到收藏：${id}`);
+      const data = await deleteRemoteItem(id);
+      this.applyRemote(data);
+    });
   }
   setLoading(loading: boolean): void { this.state = cloneAndFreeze({ ...this.state, loading }); this.emit(); }
   setError(error: string | null): void { this.state = cloneAndFreeze({ ...this.state, error, loading: false }); this.emit(); }
