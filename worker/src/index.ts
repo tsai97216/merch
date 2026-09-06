@@ -21,7 +21,7 @@ type AssetRequest = { path: string; content: string };
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
 const API_PREFIX = '/api/';
 const ALLOWED_API_PATHS = new Set(['/api/data', '/api/auth/status']);
-const ASSET_PATH_RE = /^data\/[A-Za-z0-9._/-]+\.(?:jpg|jpeg|png|webp|gif)$/i;
+const ASSET_PATH_RE = /^data\/[A-Za-z0-9._/-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 const MAX_ASSET_BASE64_LENGTH = 10 * 1024 * 1024;
 function response(body: unknown, status = 200, origin = '*'): Response { return new Response(JSON.stringify(body), { status, headers: { ...jsonHeaders, 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'Authorization, Content-Type', 'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS', 'Vary': 'Origin' } }); }
 function ok(data: unknown, origin: string): Response { return response({ ok: true, data }, 200, origin); }
@@ -72,7 +72,7 @@ function validateAssetPayload(value: unknown): AssetRequest {
   if (!/^[A-Za-z0-9+/\s]+=*$/.test(body.content)) throw new Error('圖片內容不是有效的 Base64。');
   return { path, content: body.content.replace(/\s/g, '') };
 }
-function assetContentType(path: string): string { const ext = path.toLowerCase().split('.').pop(); return ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : 'image/jpeg'; }
+function assetContentType(path: string): string { const ext = path.toLowerCase().split('.').pop(); return ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : ext === 'avif' ? 'image/avif' : 'image/jpeg'; }
 function parseItemId(id: string): { workCode: string; categoryCode: string; sequence: number } | null { const match = /^([A-Z]{2,3})([a-z])(\d{3})$/.exec(id); return match ? { workCode: match[1], categoryCode: match[2], sequence: Number(match[3]) } : null; }
 function bumpPatch(version: string): string { const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version); if (!match) throw new Error('version.json 格式無效'); return `${match[1]}.${match[2]}.${Number(match[3]) + 1}`; }
 function jsonFile(content: unknown): string { return JSON.stringify(content, null, 2) + '\n'; }
@@ -105,7 +105,7 @@ async function getAsset(env: Env, path: string, origin: string): Promise<Respons
   const remote = await loadRemote(env);
   const file = await githubJson<GitHubContent>(env, `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(remote.headSha)}`);
   const bytes = decodeBase64(file.content);
-  return new Response(bytes, { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `"${file.sha}"` } });
+  return new Response(bytes, { status: 200, headers: { 'Content-Type': assetContentType(path), 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': origin, 'Vary': 'Origin', ETag: `\"${file.sha}\"` } });
 }
 async function putAsset(env: Env, asset: AssetRequest, origin: string): Promise<Response> {
   const remote = await loadRemote(env); const existing = await githubJson<GitHubContent | null>(env, `/repos/${env.GITHUB_REPO}/contents/${asset.path}?ref=${encodeURIComponent(remote.headSha)}`).catch(() => null); const nextVersion = bumpPatch(remote.version);
