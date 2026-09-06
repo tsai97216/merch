@@ -65,3 +65,13 @@ export function getNextSequence(ids: Iterable<string>, workCode: string, categor
 export function buildNextItemId(ids: Iterable<string>, workCode: string, categoryCode: string): string {
   return buildItemId(workCode, categoryCode, getNextSequence(ids, workCode, categoryCode));
 }
+
+/** Paths are derived only from the permanent Item ID and current storage location. */
+export function buildItemStoragePaths(workId: string, category: string, itemId: string) {
+  const base = `data/${workId}/${category}/${itemId}`;
+  return {
+    dataPath: `${base}/data.json`,
+    imagesPath: `${base}/images`,
+    categoryIndexPath: `data/${workId}/${category}/index.json`,
+  } as const;
+}
