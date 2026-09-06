@@ -16,7 +16,6 @@ type Item = { id: string; workId: string; workName?: string; title: string; quan
 type WorkPayload = { schemaVersion?: number; work?: { id?: string; name?: string }; items: Item[] };
 type RemoteFile = { path: string; content: string; sha: string };
 type RemoteState = { index: WorkIndex; works: { path: string; payload: WorkPayload; sha: string }[]; version: string; versionSha: string; headSha: string; baseTreeSha: string };
-
 type AssetRequest = { path: string; content: string };
 
 const jsonHeaders = { 'Content-Type': 'application/json; charset=utf-8' };
@@ -87,9 +86,16 @@ async function createAtomicCommit(env: Env, remote: RemoteState, files: { path: 
 }
 async function updateItem(env: Env, id: string, item: Item, origin: string): Promise<Response> {
   validateItem(item); if (item.id !== id) return fail('ID_MISMATCH', '路由 Item ID 與 payload 不一致。', 400, origin); const remote = await loadRemote(env); const parsed = parseItemId(id); if (!parsed) return fail('INVALID_ID', 'Item ID 格式無效。', 400, origin);
-  const workIndex = remote.index.works.findIndex(entry => entry.code === parsed.workCode); if (workIndex < 0) return fail('WORK_NOT_FOUND', '找不到 Item 所屬作品。', 404, origin); const payload = remote.works[workIndex].payload; const itemIndex = payload.items.findIndex(entry => entry.id === id); if (itemIndex < 0) return fail('ITEM_NOT_FOUND', '找不到要編輯的收藏。', 404, origin);
-  const current = payload.items[itemIndex]; payload.items[itemIndex] = { ...item, workId: current.workId, workName: current.workName, updatedAt: new Date().toISOString() }; const nextVersion = bumpPatch(remote.version);
-  await createAtomicCommit(env, remote, [{ path: remote.works[workIndex].path, content: jsonFile(payload) }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `fix: update item ${id}`); return dataResponse(env, origin);
+  const workIndex = remote.index.works.findIndex(entry => entry.code === parsed.workCode); if (workIndex < 0) return fail('WORK_NOT_FOUND', '找不到 Item 所屬作品。', 404, origin); const payload = remote.works[workIndex].payload; const itemIndex = payload.items.findIndex(entry => entry.id === id);
+  const current = itemIndex >= 0 ? payload.items[itemIndex] : undefined;
+  if (current) {
+    payload.items[itemIndex] = { ...item, workId: current.workId, workName: current.workName, updatedAt: new Date().toISOString() };
+  } else {
+    if (payload.items.some(entry => entry.id === id)) return fail('ITEM_EXISTS', 'Item ID 已存在。', 409, origin);
+    payload.items.push({ ...item, workId: remote.index.works[workIndex].id, workName: remote.index.works[workIndex].name, createdAt: item.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() });
+  }
+  const nextVersion = bumpPatch(remote.version);
+  await createAtomicCommit(env, remote, [{ path: remote.works[workIndex].path, content: jsonFile(payload) }, { path: 'public/data/version.json', content: jsonFile({ version: nextVersion }) }], `${current ? 'fix: update' : 'feat: add'} item ${id}`); return dataResponse(env, origin);
 }
 async function deleteItem(env: Env, id: string, origin: string): Promise<Response> {
   const remote = await loadRemote(env); const parsed = parseItemId(id); if (!parsed) return fail('INVALID_ID', 'Item ID 格式無效。', 400, origin); const workIndex = remote.index.works.findIndex(entry => entry.code === parsed.workCode); if (workIndex < 0) return fail('WORK_NOT_FOUND', '找不到 Item 所屬作品。', 404, origin); const payload = remote.works[workIndex].payload; if (!payload.items.some(entry => entry.id === id)) return fail('ITEM_NOT_FOUND', '找不到要刪除的收藏。', 404, origin);
