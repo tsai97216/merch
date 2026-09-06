@@ -31,8 +31,7 @@
 - 新架構重新實作，不直接複製舊版程式碼。
 - 新增元件或頁面時，可參考既有視覺語言、間距、圓角、陰影、字體階層與互動方式，但以目前專案架構與實際需求為準。
 - Sidebar、Navigation、Header、Card、Panel、Button、Badge、Input、Modal、Toast 等元件應保持全站一致。
-- 不要為單一頁面任意建立另一套視覺規則。
-- Desktop、Tablet、Mobile 都要考慮，不可只以桌面畫面判斷功能完成。
+- Desktop、Tablet、Mobile 都要考慮。
 - 新增互動時要考慮 hover、focus-visible、disabled、loading、empty、error 等狀態。
 
 ## 3. 版本號
@@ -43,86 +42,54 @@
 - `Minor`：每次完整邏輯／功能修改。
 - `Patch`：GitHub API 新增／移除收藏或圖片。
 - reorder 與 cover replacement 不增加 Patch。
-- 不使用版本號作為 module cache。
-- 不使用 `?v=version`、`?build=...` 等 cache hack。
+- 不使用版本號作為 module cache，也不使用 `?v=version`、`?build=...` 等 cache hack。
 - UI 顯示版本應從 Store 載入的正式版本來源取得，不要在多個地方硬編版本號。
 - 修改完成後要確認版本號是否依規則更新，而不是只看 `package.json`。
 
 ## 4. Work / 作品
 
 - 作品「顯示名稱」與「內部代碼」必須分開。
-- `Work.name`：使用者看到的完整作品名稱，例如 `崩壞：星穹鐵道`。
-- `Work.code`：內部短代碼，例如 `HSR`。
-- 不要把 `name` 當作 code 使用。
-- 一般 UI 優先顯示完整作品名稱；只有需要識別、解析 ID 或資料處理時才使用 code。
-- 目前作品代碼：
-  - `HSR` = 崩壞：星穹鐵道
-  - `GI` = 原神
-  - `ZZZ` = 絕區零
-  - `WW` = 鳴潮
-- 新增作品時，必須同步考慮 `works.json`、type、schema validation、Item ID、Store、搜尋與 UI 顯示。
+- `Work.name`：使用者看到的完整作品名稱。
+- `Work.code`：內部短代碼。
+- 一般 UI 優先顯示完整作品名稱；需要識別、解析 ID 或資料處理時才使用 code。
+- 目前作品代碼：`HSR`、`GI`、`ZZZ`、`WW`。
+- 新增作品時，必須同步考慮 `works.json`、schema validation、Item ID、Store、搜尋與 UI 顯示。
 
 ## 5. Item ID
 
 - Item ID 是永久識別碼，刪除後不可重新編號。
 - ID 依「作品 + 類型」分組遞增。
 - 格式：`作品代碼 + 類型代碼 + 三位流水號`，例如 `GIa001`、`HSRf001`。
-- 新增 Item 時依現有 ID 規則產生下一個序號。
 - 不因刪除舊 Item 而填補中間缺號。
 - 不要因 UI 排序、重新整理或資料搬移而改變既有 ID。
-- **既有 Item ID 永久保留，即使未來修正商品分類，也不可為了讓 ID 與新分類一致而重新編號。**
-- **ID 中的歷史類型 code 與目前 `category` 欄位是兩個概念；舊 ID 可以保留已淘汰的歷史 code。**
+- 既有 Item ID 永久保留，即使未來修正商品分類，也不可為了讓 ID 與新分類一致而重新編號。
+- ID 中的歷史類型 code 與目前 `category` 欄位是兩個概念；舊 ID 可以保留已淘汰的歷史 code。
 - Item ID 與使用者看到的標題是不同概念，不要用標題取代 ID。
 
 ## 6. Category / 類型
 
-- 類型有內部 code 與完整顯示名稱，兩者分開保存。
-- **亞克力／壓克力是材質，不是獨立商品類型。新資料不得使用 `a` 作為商品類型。**
-- 目前新資料可使用的類型 code：
-  - `b` 徽章／吧唧
-  - `c` 卡片／訂金卡
-  - `d` 立牌／擺件
-  - `e` 電子產品
-  - `f` 手辦／模型
-  - `g` 文具
-  - `h` 海報／掛畫／掛軸
-  - `k` 掛件／吊飾
-  - `l` 文件／資料夾
-  - `m` 書籍／漫畫
-  - `n` 明信片
-  - `p` 毛絨／布偶
-  - `q` 鑰匙圈
-  - `r` 雷射票
-  - `s` 色紙
-  - `v` 服飾
-  - `w` 餐具／生活用品
-  - `y` 特典
-  - `o` 其他
-- 舊資料若曾使用 `a`，遷移時依實際商品型態重新判定 `category`，但不因此修改永久 Item ID。
-- 例如「亞克力合影卡」若實際商品型態屬吊飾／掛件，應分類為 `k`，而不是因為名稱含有「亞克力」就分類成 `a` 或 `c`。
-- 新增類型時，必須同步更新 `public/data/categories.json`、相關 type / validation、ID 規則、資料路徑、搜尋與 UI 顯示。
-- 類型的顯示名稱應保持使用者友善，不要在一般 UI 直接顯示內部 code。
+- 類型 code、顯示名稱與完整分類規則統一記錄於 **`ITEM_TYPES.md`**。
+- **`ITEM_TYPES.md` 是目前周邊類型的唯一規格來源。**
+- 本文件不再重複列出類型清單，避免出現兩份互相矛盾的分類規則。
+- 新增、刪除或修改類型時，必須先更新 `ITEM_TYPES.md`，再同步檢查 `public/data/categories.json`、type / validation、Item ID、資料路徑、搜尋與 UI。
 
 ## 7. Item Quantity / 數量
 
 - `Item` 代表一種收藏資料，不代表固定只有一個實物。
 - 同一款、同一版本、同一規格、同一收藏資料的複數實物，使用同一個 Item ID，以 `quantity` 記錄實際持有件數。
-- 只有在角色、版本／圖樣、尺寸、附贈內容或其他收藏資料本身不同時，才建立新的 Item ID。
 - `quantity` 必須是大於等於 1 的整數。
-- 舊資料沒有 `quantity` 時，載入時視為 `1`，不可因此讓既有資料失效。
-- **收藏品種類數** = Item 記錄筆數。
-- **實際周邊數量** = 所有 Item 的 `quantity` 總和。
+- 舊資料沒有 `quantity` 時，載入時視為 `1`。
+- 收藏品種類數 = Item 記錄筆數。
+- 實際周邊數量 = 所有 Item 的 `quantity` 總和。
 - 單項實際價值 = `purchase.price × quantity`。
 - 總消費 = 所有 Item 的 `purchase.price × quantity` 加總。
-- 按作品、類別、角色、廠商、狀態等統計「數量」時，一律加總 `quantity`，不能只計算 Item 筆數。
+- 按作品、類別、角色、廠商、狀態等統計「數量」時，一律加總 `quantity`。
 - 若統計明確描述「種類」，才使用 Item 筆數。
-- UI 顯示單價時仍可顯示原始單價，但若數量大於 1，應讓使用者知道實際數量與該項合計價值。
-- 新增或修改數量功能時，必須同步檢查 type、schema validation、Store、既有資料相容性、Collection、Detail、Dashboard、Statistics 與後續 Management CRUD。
 
 ### 7.1 Quantity Validation
 
 - 所有進入 Store 的 Item 都必須經過同一套 quantity validation / normalization。
-- 不得使用 `quantity || 1` 這類會把非法值靜默轉成合法值的寫法取代正式驗證。
+- 不得使用 `quantity || 1` 將非法值靜默轉成合法值。
 - 缺少 quantity 的舊資料可以相容性預設為 `1`。
 - 已存在但格式錯誤的 quantity 不應被無條件當成 `1`。
 - 新增、編輯、載入、migration、API response 都必須遵守相同 quantity 規則。
@@ -130,75 +97,38 @@
 ## 8. Search / 搜尋規則
 
 - 搜尋是 Collection 的核心功能之一。
-- 搜尋文字應能與使用者看到的名稱、角色、作品、類型、廠商、Item ID 等既有可搜尋資料一致。
-- 內部 code 可以作為搜尋識別，但不能因此犧牲完整名稱的可搜尋性。
-- 新增可搜尋欄位時，要同步更新搜尋索引／搜尋文字組合邏輯與 UI。
-- 搜尋無結果時維持既有 Empty State。
+- 搜尋文字應能與使用者看到的名稱、角色、作品、類型、廠商、Item ID 等可搜尋資料一致。
+- 新增可搜尋欄位時，要同步更新搜尋索引與 UI。
+- 搜尋無結果時維持 Empty State。
 - 搜尋、Filter、Sort 與顯示模式不可各自維護互相矛盾的資料狀態。
 
 ## 9. 跨頁搜尋轉跳規則
 
-### 9.1 核心規則
-
-**任何可以代表搜尋條件的統計、排名、摘要或 Dashboard 項目，只要使用者點擊後可以合理查看對應收藏，就必須提供搜尋轉跳。**
-
-不要只做「看起來可以點」的 UI，必須完成完整流程：
-
-`點擊項目 → Collection → 帶入搜尋條件 → 顯示對應結果`
-
-### 9.2 目前既有行為
-
-- 主頁「角色排名」點角色名稱 → `#/collection` → 搜尋該角色。
-- 主頁「作品統計」點作品名稱 → `#/collection` → 搜尋該作品。
-- 統計頁「作品」點作品名稱 → `#/collection` → 搜尋該作品。
-- 統計頁「類型」點類型名稱 → `#/collection` → 搜尋該類型。
-
-### 9.3 未來新增統計時
-
-- 角色統計／排名 → 點角色 → 搜尋角色。
-- 廠商統計 → 點廠商 → 搜尋廠商。
-- 狀態統計 → 點狀態 → 搜尋對應狀態。
-- 作品消費統計 → 若項目代表單一作品 → 點作品 → 搜尋作品。
-- 其他可以唯一或合理對應收藏的統計 → 原則上提供搜尋轉跳。
-
-### 9.4 實作規則
-
+- 任何可以代表搜尋條件的統計、排名、摘要或 Dashboard 項目，只要使用者點擊後可以合理查看對應收藏，就必須提供搜尋轉跳。
+- 完整流程：`點擊項目 → Collection → 帶入搜尋條件 → 顯示對應結果`。
 - 目前跨頁搜尋邏輯集中於 `src/cross-navigation.ts`。
-- 動態 rendering 的統計／排名元素優先使用事件 delegation，不要每次 render 都重新綁定大量 listener。
+- 動態 rendering 優先使用事件 delegation。
 - 搜尋轉跳不能只修改 hash；必須確認 Collection 搜尋欄位實際收到 query 並觸發搜尋。
-- 轉跳後要保持既有搜尋 Empty State、Filter、Sort 與顯示模式行為。
-- 搜尋 query 優先使用使用者看到且搜尋系統可識別的值。
-- 如果一個統計項目需要複合條件才能準確表示，不能只塞一個模糊文字當 query，應設計相應的 Filter / query state。
+- 複合條件應使用相應 Filter / query state，而不是塞一個模糊文字。
 
 ## 10. Router / Navigation
 
 - 使用 Hash Router。
-- 既有主要 route：
-  - `#/home`
-  - `#/collection`
-  - `#/statistics`
-  - `#/management`
-  - `#/settings`
-  - `#/item/:id`
+- 主要 route：`#/home`、`#/collection`、`#/statistics`、`#/management`、`#/settings`、`#/item/:id`。
 - 重新整理後應能恢復目前 route。
-- Back / Forward 必須保持正常。
+- Back / Forward 必須正常。
 - malformed URL、decode 失敗與多餘 route segments 必須安全處理。
 - 404 不應造成整個 App 白屏。
 - Route navigation 與 page rendering 應保持解耦。
-- 從其他頁面跳 Collection 搜尋時，Router 與搜尋狀態都必須正確更新。
 
 ## 11. Data / Store
 
 - Store 是資料與 UI state 的主要來源。
 - Page 不持有自己的資料副本。
 - State 更新採 immutable 原則。
-- Store state 應視為唯讀資料，不得讓呼叫端直接修改 nested array / object。
-- `Object.freeze()` 若使用，只能視為輔助保護，不可視為完整 immutable 保證。
-- 若 nested data 會被修改，必須透過 Store 的更新方法建立新的 array / object。
 - 不要在 Page、rendering 或 utility 中直接修改 Store state。
 - Store 必須維持 subscribe / unsubscribe 生命週期。
-- 新增資料欄位時，至少檢查：type、schema、Store、migration、rendering、既有資料相容性。
-- 不要只修改 UI 而忘記 data validation。
+- 新增資料欄位時至少檢查 type、schema、Store、migration、rendering 與既有資料相容性。
 - API 回傳資料進 Store 前要先驗證 schema。
 - 不可信資料不能直接假設為合法資料。
 
@@ -207,79 +137,43 @@
 - 使用者輸入、API 資料與外部資料一律視為不可信。
 - 優先使用安全 DOM rendering、DOM API、`textContent` 與既有安全 utility。
 - 不要把未處理的外部字串直接塞入 `innerHTML`。
-- 如果必須使用 `innerHTML`，所有外部／使用者資料必須先經過適當 escaping / sanitization。
-- 主要 UI 應由主要 rendering logic 直接產生正確的最終 DOM 結構。
-- 不應依賴第二層 DOM 掃描、regex 或其他 post-processing 來修補主要 rendering。
 - 不使用 MutationObserver 進行 UI 狀態、搜尋、排序或資料顯示後處理。
 - 動態元素需要互動時優先使用事件 delegation。
 - 不要在每次 render 重複新增相同 document listener。
-- 外部 URL、圖片 URL、API error 原文都不能直接當可信 HTML。
 
 ## 13. Loading / Empty / Error
 
-每個資料驅動區塊都要考慮至少三種狀態：
+每個資料驅動區塊都要考慮：
 
 - Loading：資料尚未完成載入。
 - Empty：資料成功載入，但沒有可顯示內容。
 - Error：資料載入或處理失敗。
 
-規則：
-
-- 不要把 Loading、Empty、Error 混成同一個狀態。
-- Empty 不是 Error。
-- Error 訊息應對使用者可理解，不要直接把原始 exception 當 UI HTML。
-- JS 載入失敗時，首頁仍應保有基本可見內容。
-- 新增頁面或資料區塊時不要只處理正常資料狀態。
+Empty 不是 Error。Error 訊息應對使用者可理解，不要直接把原始 exception 當 UI HTML。JS 載入失敗時，首頁仍應保有基本可見內容。
 
 ## 14. Collection
 
-- 支援：全部、作品分類、搜尋、Filter、Sort、狀態篩選。
+- 支援全部、作品分類、搜尋、Filter、Sort、狀態篩選。
 - 卡片／清單顯示模式需可切換並記住使用者選擇。
-- Collection 卡片至少保持既有的封面、標題、作品、角色、類別、價格、狀態資訊呈現邏輯。
+- Collection 至少保持封面、標題、作品、角色、類別、價格、狀態資訊呈現邏輯。
 - 點擊 Item 應能進入詳細頁。
 - 篩選條件組合必須正確。
 - 無結果使用 Empty State。
 - 圖片載入失敗使用 fallback。
-- 未完成的類別／角色／廠商 Filter 不可假裝已完成。
-- 新增 Filter 時要檢查與搜尋、Sort、URL / Store state 的互動。
 - 顯示數量時使用 `quantity`；Item 筆數與實際持有件數是不同概念。
 
 ## 15. Statistics / 統計
 
-目前已存在：
-
-- 按作品統計。
-- 按類別統計。
-- 總消費。
-
-統計計算規則：
-
+- 按作品統計、按類別統計、總消費等統計都必須明確定義資料來源與計算方式。
 - 所有「數量」統計預設代表實際持有件數，使用 `Σ quantity`。
 - 所有消費統計使用 `Σ(purchase.price × quantity)`。
 - Item 筆數只有在統計明確表示「收藏品種類數」時才使用。
-- 若同一 Item 的 quantity > 1，不可在數量統計中只算 1。
-
-未來新增統計時：
-
-1. 先定義統計資料來源與計算方式。
-2. 明確區分「種類數」與「實際件數」。
-3. 消費統計確認是否需要 `price × quantity`。
-4. 再決定 UI rendering。
-5. 若統計項目對應收藏集合，加入搜尋轉跳。
-6. 確認空資料、單一資料、零值與異常值。
-7. 確認手機版排版。
-8. 必要時將計算邏輯與 UI rendering 分離。
-9. 更新 TODO.md 與本 RULES.md。
-
-**統計數字本身不是完成條件，互動行為也屬於功能的一部分。**
+- 新增統計時確認空資料、單一資料、零值、異常值、手機版排版與搜尋轉跳。
 
 ## 16. Management / CRUD
 
-- 管理頁目前的選擇流程為：`作品 → 周邊類型 → 流水號`，選項應依前一層條件動態縮小範圍。
-- 管理頁搜尋應能與作品、類型、流水號及 Item 的既有可搜尋欄位保持一致。
-- 作品／類型／流水號選擇與搜尋結果不可互相矛盾；切換條件後應同步目前選取的 Item。
-- 管理頁的搜尋輸入不應因無關的 render 而失去焦點或使用者輸入。
-- CRUD 功能必須有表單 validation。
+- 管理頁的作品、類型、流水號選擇與搜尋狀態必須保持一致。
+- CRUD 必須有表單 validation。
 - 新增／編輯不可產生重複 ID 或破壞既有資料。
 - 編輯表單應保留使用者輸入狀態，不因無關 render 遺失。
 - 刪除必須有明確確認流程。
@@ -292,24 +186,14 @@
 - API layer 必須限制可操作 path。
 - API 必須驗證 HTTP method、認證資訊與 request payload。
 - API response 在進入 Store 前必須驗證 schema。
-- API error 不得直接把 GitHub 原始 HTML / response body 當 UI。
-- API 必須處理 timeout、network failure、CORS 與認證失敗。
 - Worker Secret / GitHub Token 不得進入 frontend bundle。
 - GET / PUT / DELETE 等操作必須與實際資料模型一致。
 
-### 17.1 類型 JSON 寫入規則
+### 17.1 新資料架構寫入規則
 
-- 周邊資料採 **「一個作品 × 一個類型一個 JSON」**。
-- 建議資料路徑固定為：`public/data/works/<workId>/<categoryCode>.json`。
-- `works.json` 只負責作品索引／作品 metadata，不直接承擔全部 Item 資料。
-- 每個類型 JSON 只保存該作品、該類型的 Item 陣列與該檔案所需 metadata。
-- Store 載入時可以把多個 JSON 合併成統一的 Item 集合，但 UI 不應需要知道實際分檔方式。
-- 新增／編輯／刪除 Item 時，依 Item 的 `workId + category` 決定目標 JSON。
-- **單一類型的寫入不得順便覆寫其他類型 JSON。**
-- 類型 JSON 的讀取與寫入都必須經過 schema validation。
-- 若分類被修改，必須視為「從舊類型檔移除 + 寫入新類型檔」的跨檔案操作，不能只修改 Item 內的 category 字串。
-- 跨檔案操作必須先取得所有相關檔案最新 state，成功完成後才更新 Store；任一步驟失敗不得留下部分成功狀態。
-- GitHub Contents API 更新檔案時必須使用最新 blob SHA，且同一路徑的更新採序列化處理，避免 concurrent update conflict。GitHub 官方文件也明確要求 Contents API 的檔案更新不要並行進行。citeturn1search0
+- 周邊資料的新儲存架構依 `TODO.md` §16 與後續正式架構文件執行。
+- API / Worker 必須只修改目標 Item、index 或必要的跨檔案資料，不覆寫無關 Item。
+- 若分類變更涉及跨檔案搬移，必須有一致性與 rollback 策略。
 
 ## 18. Write Consistency
 
@@ -317,14 +201,12 @@ GitHub 寫入流程固定為：
 
 `validate → fetch latest remote state → build new state → write remote → update Store → handle version`
 
-- 寫入前必須重新取得最新 remote state，避免以過期 Store 覆蓋他人或其他操作的更新。
-- 所有 request payload 必須先 validation。
-- Remote write 成功前不得更新 Store 成為「假成功」狀態。
-- Remote write 失敗時維持原 Store state，並顯示可理解的失敗提示。
+- 寫入前必須重新取得最新 remote state。
+- Remote write 成功前不得更新 Store 成為假成功狀態。
+- Remote write 失敗時維持原 Store state。
 - Version 必須依第 3 節規則處理。
-- 涉及圖片寫入時必須額外遵守 Image Management 規則。
-- **單一類型 JSON 的新增／編輯／刪除優先保持單檔寫入。**
-- **分類變更等跨檔案操作必須有明確 rollback 策略。**
+- 單一 Item 的新增／編輯／刪除應盡可能保持最小範圍寫入。
+- 涉及多檔案時必須有明確 rollback 策略。
 
 ## 19. Image Management
 
@@ -332,8 +214,7 @@ GitHub 寫入流程固定為：
 - 單張圖片不得超過 10MB。
 - 第一張圖片為預設封面。
 - 新增／刪除圖片會增加 Patch。
-- 圖片 reorder 不增加 Patch。
-- cover replacement 不增加 Patch。
+- 圖片 reorder 與 cover replacement 不增加 Patch。
 - 圖片新增前應檢查 duplicate SHA。
 - 圖片寫入必須處理 SHA mismatch 與 rollback。
 - 刪除目前封面後，必須自動選擇有效的新封面。
@@ -341,20 +222,18 @@ GitHub 寫入流程固定為：
 
 ## 20. TODO / 完成判定
 
-- TODO `[x]` 代表功能已實際完成並可由目前架構正常使用，不代表「已有部分程式碼」。
+- TODO `[x]` 代表功能已實際完成並可由目前架構正常使用，不代表已有部分程式碼。
 - 若功能只有部分完成，維持 `[ ]`。
 - 若程式碼存在但與目前 rendering、Store、Router 或 UI 流程沒有真正接通，不得勾選完成。
-- 掃描發現既有 `[x]` 與實際狀態不一致時，應優先修正 TODO 狀態，而不是為了維持進度硬將功能視為完成。
 - UI 功能完成必須同時考慮 Desktop、Tablet、Mobile。
-- 涉及跨模組功能時，必須確認完整流程，而不是只確認單一模組存在。
-- 已否決或禁止使用的方案不應作為 TODO 待辦項目；應記錄於本 RULES.md。
+- 涉及跨模組功能時，必須確認完整流程。
+- 已否決或禁止使用的方案不應作為 TODO 待辦項目。
 
 ## 21. Rendering Architecture
 
 - 主要 rendering 與資料模型、Store、Router 的責任應清楚分離。
 - 主要 UI 應由主要 rendering logic 直接產生正確結果。
 - 不應透過第二層 DOM 掃描、MutationObserver 或事後 regex 處理來補足主要 UI。
-- 若既有 enhancement module 與主要 rendering 結構不一致，優先修正主要 rendering 或移除無必要的 enhancement layer。
 - 不為了維持舊有 workaround 而增加更多 DOM post-processing。
 - 新增 UI 功能時，優先讓 rendering 一次產生可直接使用的最終 DOM。
 
@@ -362,77 +241,44 @@ GitHub 寫入流程固定為：
 
 ### 22.1 唯一目標
 
-新架構的核心不是單純「把大 JSON 切小」，而是讓資料的責任邊界清楚：
+新架構的核心是讓資料責任邊界清楚：
 
-`作品索引 → 作品 × 類型 JSON → Item`
+`作品索引 → 類型索引／資料 → Item`
 
 - `works.json`：作品索引與作品 metadata。
 - `categories.json`：類型 code、名稱與分類規則。
-- `<workId>/<categoryCode>.json`：該作品、該類型的實際收藏資料。
+- Item 儲存架構依新架構文件與 TODO §16 執行。
 - Item 本身只描述商品資料，不再混入舊版不一致的物流結構。
 
 ### 22.2 Item 欄位基準
 
-新 Item schema 的使用者資料欄位分為：
+正式 Item 欄位以 **`ITEM_SCHEMA.md`** 為唯一規格來源。
 
-**基本資料**
-- `id`
-- `workId`
-- `title`
-- `series`
-- `characters`
-- `category`
-- `manufacturer`
-- `quantity`
-- `status`
-- `description`
-- `notes`
-
-**購買**
-- `purchase.price`
-- `purchase.currency`
-- `purchase.platform`
-- `purchase.date`
-
-**到貨**
-- `arrival.expectedDate`
-- `arrival.receivedDate`
-
-**售後**
-- `afterSales.status`
-- `afterSales.note`
-- `afterSales.updatedAt`
-
-**圖片**
-- `images[]`
-
-- 舊版 `purchase.url`、`purchase.orderId`、`release.date`、整個舊 `shipping` 結構等欄位，不屬於新 schema。
-- 若需要內部 migration metadata，必須明確標示為 internal metadata，不可讓 UI 與一般資料 schema 依賴它。
+- 不在本文件重複維護 Item schema。
+- `ITEM_SCHEMA.md` 已明確排除材質、物流、訂單編號、購買網址及售後更新時間等非核心欄位。
 
 ### 22.3 Migration 原則
 
 - 先建立新 schema，再建立 migration，再切換 Store，最後才清理舊格式。
 - migration 必須可重複執行且不應破壞已完成資料。
 - 遷移前後必須能比對 Item ID、數量、圖片與主要資料欄位。
-- 任何資料遺失都視為 migration failure，不可「先跑看看」。
+- 任何資料遺失都視為 migration failure。
 - 分類修正不得改寫永久 Item ID。
 - 遷移完成後才可刪除舊資料結構與舊欄位。
 
 ### 22.4 寫入模型
 
-- API / Worker 的 path whitelist 必須知道新的類型 JSON 路徑。
-- 新增 Item：寫入對應類型 JSON。
-- 編輯 Item：只更新對應類型 JSON；若 category 未變更，不碰其他類型檔。
-- 刪除 Item：只從對應類型 JSON 移除。
-- 修改 category：執行跨檔案搬移，成功後才完成 Store 更新。
-- 圖片檔案仍依既有 Image Management 規則管理，不把圖片 binary 直接塞進類型 JSON。
+- API / Worker 的 path whitelist 必須知道新資料架構的路徑。
+- 新增、編輯、刪除 Item 都只能修改必要的目標資料。
+- 修改 category 時執行跨資料位置搬移，成功後才完成 Store 更新。
+- 圖片檔案依 Image Management 規則管理，不把圖片 binary 直接塞進資料 JSON。
 
 ### 22.5 驗證與部署
 
-- Verify 必須能逐檔檢查所有類型 JSON。
-- Build / Verify 不得因某一類型沒有 Item 而誤判為錯誤；空陣列是合法資料狀態。
-- 不存在的類型檔與空的類型檔要有明確規則，不可在 runtime 隨意猜測。
-- 資料架構大改期間，每完成一個階段都要先通過 GitHub Actions，再進下一階段。GitHub Actions 的 workflow run 可以透過 API 檢查狀態與 logs。citeturn0search7
+- Verify 必須能逐檔檢查新資料架構中的資料。
+- 空陣列是合法資料狀態，不應因沒有 Item 而誤判錯誤。
+- 不存在的資料檔與空資料檔要有明確規則，不可在 runtime 隨意猜測。
+- 資料架構大改期間，每完成一個階段都要先通過 GitHub Actions，再進下一階段。
 
 ### 22.6 實作順序
 
