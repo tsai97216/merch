@@ -15,9 +15,9 @@
    - [x] **Management picker 的 Work value / state key 複查**：確認是否應以永久 `work.id` 而非作品名稱作為 selector value，避免名稱重複或改名造成狀態錯綜。
    - [x] **Category mapping duplicate implementation 複查**：`management.ts`、`category-label.ts` 等是否存在重複 category 定義；確認單一來源後再刪除／改寫舊實作。
    - [x] **Management 未使用欄位常數複查**：確認 `managementCategoryFieldId` 無現存引用，屬歷史殘留，無需保留。
-   - [ ] **Management schema verifier selector 名稱複查**：`verify-management-schema.mjs` 仍檢查不存在的 `management-category`，而目前實際欄位為 `management-picker-category`；需修正驗證腳本並重新跑完整 Verify。
+   - [x] **Management schema verifier selector 名稱複查**：`verify-management-schema.mjs` 已改為檢查實際 `management-picker-category` 欄位，並改由 `category-label.ts` 驗證「其他」分類來源。
 3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
-   - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。
+   - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。**目前已確認 `imageList()` 明確 `slice(0, 1)`，因此管理頁實際只支援單張圖片；需先釐清是否符合目前資料契約。**
    - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。
    - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
@@ -58,5 +58,5 @@
 ### Verification
 
 9. **完整 Verify**：目前版本所有自動化檢查通過。
-10. **Production build / deployment**：最新 1.109.47 已成功完成 Pages build / deploy 與 Worker deploy。
+10. **Production build / deployment**：最新版本需重新確認 Pages build / deploy 與 Worker deploy。
 11. **版本／資料／schema／圖片／Worker contract 一致性**：確認各項契約維持一致。
