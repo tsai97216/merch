@@ -22,7 +22,7 @@
   - [x] **HTML / entry loading**：已確認 `index.html` 直接載入目前各功能 entry，包含 `version.ts`、`theme.ts`、`image-source.ts`、`main.ts`、`cross-navigation.ts`、`collection-controls.ts`、`detail-focus.ts`、`image-viewer.ts`、`statistics.ts`、`home-enhancements.ts`、`management.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts`、`settings-auth.ts`；功能模組的 CSS 亦由各 TS entry 以 side-effect import 載入。`vite.config.ts` 使用標準 Vite build，未發現額外或異常 entry 設定
   - [ ] **Entry wrapper cleanup**：`category-display.ts` 現在只剩 `import './add';`，功能上是額外 wrapper entry。可評估改成 `index.html` 直接載入 `add.ts` 後移除 wrapper，但需確認不影響既有部署／載入順序
   - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，目前僅保留 `add.ts` entry 載入責任
-  - [ ] **CSS entry inventory**：發現 `src/card-enhancements.css` 目前沒有任何 TS / HTML 載入或 import 依賴；檔案本身包含近期卡片 meta、quantity 顯示與 list media 規則，需確認是否為遺漏載入而非 dead CSS，再決定補 import 或刪除
+  - [ ] **CSS entry inventory**：已確認 `src/card-enhancements.css` 不是 dead CSS，檔案內包含目前 `itemCard()` 使用的 `.quantity-mark`、`.item-top`、badge 與 list media 規則；但目前沒有 TS import 或 HTML stylesheet entry，屬於「存在且有用、但未載入」問題，待以最小範圍補入正式 entry
   - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
 - [ ] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
   - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
@@ -32,7 +32,7 @@
   - [ ] **進一步檢查 API → Store 回寫一致性**：逐一確認 `putItem`／`deleteItem`／`putShipping`／`deleteShipping`／Work CRUD 回傳資料是否完整包含最新 works、shipping、version，以及各 UI 模組是否正確套用回傳 state
   - [ ] **Store fallback / race 深查**：確認 API 失敗後靜態來源 fallback、`sharedStorePromise` reset、寫入期間重新載入與多模組訂閱是否可能產生 stale state 或覆蓋較新的遠端資料
   - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener
-  - [ ] **main detail Store reference｜確定 Bug，待修正**：`src/main.ts` 宣告 `let appStore: MerchStore | null = null`，但目前搜尋到的程式內容只有宣告與後續使用，未找到將實際 Store 指派給 `appStore` 的初始化。Detail Modal 的刪除／編輯事件依賴 `appStore`，需確認初始化流程並修正，避免 Detail 操作拿到 `null`
+  - [x] **main detail Store reference｜先前誤判已釐清**：`src/main.ts` 的 `appStore` 會在 `loadStore()` 成功後由 `appStore = store` 正確初始化，Detail Modal 的刪除流程因此有實際 Store reference；原先「未初始化」的疑似 Bug 不成立
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
 - [ ] 第 5 段：UI / CSS / Responsive，依 Desktop → Tablet → Mobile 檢查各頁面、Modal、Toast、Form、Header / Navigation、dark mode、focus、overflow、z-index、breakpoint、dead CSS 與舊 selector
 - [ ] 第 6 段：Form / Management / CRUD，檢查新增、編輯、刪除、搜尋、分類、ID、quantity、validation、表單 state、selector、Modal、confirmation、error handling 與 frozen data
