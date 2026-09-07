@@ -26,6 +26,7 @@
    - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
    - [x] **Worker 圖片 mutation verifier 與實作版本語意不一致**：已改為驗證新增與替換都會 `bumpPatch`，不再要求舊的 `if (!exists)` 分支形狀；Verify #671 已通過。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
+   - [ ] **Shipping CRUD 同步回饋複查**：`shipping.ts` 目前雖會在 `saving` 時鎖定表單並顯示「儲存中…」，但開始同步時沒有明確 Toast；需補上與 Management 一致的同步中提示，並驗證成功／失敗狀態。
 
 ## P1｜UI / UX 與穩定性
 
