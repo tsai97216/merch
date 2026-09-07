@@ -8,19 +8,16 @@
 ## 交接備註｜下一個對話從這裡繼續
 
 - **目前已暫停大量資料輸入，先處理資料載入效能。** 使用者確認目前載入速度已實際影響透過網站新增 Item 與圖片上傳，因此本次可開始進行效能修正。
-- **目前正式版本以 `public/data/version.json` 為準；修改前需同步 `package.json`。**
-- **資料輸入期間可正常新增、編輯、圖片管理與 Shipping。** 暫時避免刪除仍被 Shipping `itemIds` 參照的 Item。
-- 下一次繼續核心正確性工作時，**優先從 P0 Shipping `itemIds` 參照完整性開始**，先確認 Store / API 驗證邊界，再處理 Worker Item deletion 的跨資料參照。
+- **目前正式版本以 `public/data/version.json` 為準；修改前需同步 `package.json`。** 目前版本為 `1.109.93`。
+- **資料輸入期間可正常新增、編輯、圖片管理與 Shipping。** Item 若仍被 Shipping `itemIds` 參照，Worker 會拒絕刪除。
+- **Verify #866 的 GitHub Actions 結果目前仍無法由目前連線取得，因此不得視為已通過。** 完整 Verify / build / deploy 仍需在後續驗收。
 - 若要修改 Worker，注意 `worker/src/index.ts` 曾有過被不完整重寫的回歸風險；不要根據截斷內容盲目整檔重寫，應先取得可靠完整內容或採安全的最小修改方式。
 
 ## P0｜核心功能與正確性
 
-1. **Shipping `itemIds` 參照完整性複查**：
-   - [x] Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合。
-   - [x] Worker Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`，禁止產生孤兒關聯。
-   - [ ] Store / API 載入邊界仍需補上「Shipping `itemIds` 必須存在於同一份 Collection Item 集合」的驗證，避免靜態 Collection 或 API 回應攜帶孤兒 Shipping 關聯時被前端接受。
-2. **Collection 初始資料載入效能**：目前 Worker `/api/data` 會為建立完整 remote read model 掃描 GitHub tree、所有 category index 與所有 Item `data.json`，造成新增頁／圖片操作前等待時間過長。改為 build-time 產生單一靜態 Collection read model，Frontend 優先直接讀取 GitHub Pages 靜態資料，保留 Worker `/api/data` 作為必要 fallback / mutation authoritative response；不得改變 canonical Item-level 儲存架構，也不得犧牲 Collection 的搜尋、Filter、Sort、狀態篩選功能。
-3. **Verify 發現現有 canonical data 結構不完整**：`data/genshin-impact/o/` 存在 Item `GIo001`，但缺少必要的 `index.json`，導致 `verify-data.mjs` / `verify-new-data.mjs` 在 `Verify #862` 於資料完整性步驟直接失敗。需先確認該 Category 是否應保留，以及正確補齊 Category index 的方式，再修改資料或驗證規則。
+1. **Shipping `itemIds` 參照完整性複查**：已完成程式層修正。Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合；Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`；Frontend API data 驗證現在也會確認 Shipping `itemIds` 存在於同一份 Collection Item 集合。完整自動化 Verify 仍待確認。
+2. **Collection 初始資料載入效能**：目前已建立 build-time 單一靜態 Collection read model，Frontend `getRemoteData()` 優先讀取 `./data/collection.json`，Worker `/api/data` 保留為 fallback / mutation authoritative response。`sync-public-data.mjs` 與 `generate-collection.mjs` 已納入 build。仍需實際確認部署後初始載入、fallback、搜尋、Filter、Sort 與新增／圖片操作等待時間，並清理舊的逐 Item 靜態載入邏輯。
+3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續需以可取得的完整 Verify 結果確認修復後沒有其他資料完整性問題。
 
 ## P1｜UI / UX 與穩定性
 
@@ -38,7 +35,7 @@
 
 ### Stage 8｜API / Worker / GitHub 寫入
 
-1. **Shipping 參照刪除策略完成實作與驗證**：在確認參照完整性後，決定並實作 Item deletion 遇到 Shipping reference 時的安全處理，避免自動破壞運費／歷史資料。
+1. **Shipping 參照刪除策略完成實作與驗證**：實作已完成，Item 被 Shipping `itemIds` 參照時安全拒絕刪除；仍需在完整 Verify / deployment 驗收中確認。
 
 ### Stage 9｜Verification / Build / Deployment
 
