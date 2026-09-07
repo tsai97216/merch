@@ -5,13 +5,143 @@ import { getStore } from './store';
 import { showToast } from './utils/toast';
 import type { Item } from './types';
 
-const categories = [['b','徽章／吧唧'],['c','卡片'],['d','立牌／擺件'],['e','電子產品'],['f','手辦／模型'],['g','文具'],['h','海報／掛畫／掛軸'],['k','掛件／吊飾'],['l','文件／資料夾'],['m','書籍／漫畫'],['n','明信片'],['o','其他'],['p','毛絨／布偶'],['q','鑰匙圈'],['r','雷射票'],['s','色紙'],['v','服飾'],['w','餐具／生活用品'],['y','特典']] as const;
-const qs = <T extends Element>(selector:string, root:ParentNode=document) => root.querySelector<T>(selector);
-const value = (id:string) => (qs<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>(`#${id}`)?.value ?? '').trim();
+const qs = <T extends Element>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector);
+const value = (id: string) => (qs<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? '').trim();
 let submitting = false;
 
-function setBusy(busy:boolean):void { submitting=busy; const form=qs<HTMLFormElement>('#add-form');if(!form)return;form.setAttribute('aria-busy',String(busy));form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement|HTMLButtonElement>('input,textarea,select,button').forEach(control=>{control.disabled=busy;});const button=qs<HTMLButtonElement>('#add-form button[type="submit"]');if(button)button.textContent=busy?'儲存中…':'＋ 新增收藏'; }
-function showCompletion(item:Item):void { const existing=qs<HTMLElement>('[data-add-result]');existing?.remove();const modal=document.createElement('div');modal.dataset.addResult='true';modal.innerHTML=`<div data-add-result-backdrop style="position:fixed;inset:0;background:rgba(0,0,0,.46);backdrop-filter:blur(4px);z-index:90"></div><section role="dialog" aria-modal="true" aria-labelledby="add-result-title" style="position:fixed;z-index:91;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 28px));padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 24px 80px rgba(0,0,0,.25)"><span class="eyebrow">COMPLETED</span><h2 id="add-result-title" style="margin:7px 0 6px">收藏已新增</h2><p style="margin:0;color:var(--muted)">${item.id} · ${item.title}</p><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px"><button type="button" class="button secondary" data-add-result-close>留在此頁</button><button type="button" class="button" data-add-result-management>前往管理</button></div></section>`;document.body.appendChild(modal);document.body.classList.add('detail-modal-open');const close=()=>{modal.remove();document.body.classList.remove('detail-modal-open');};modal.querySelector('[data-add-result-backdrop]')?.addEventListener('click',close);modal.querySelector('[data-add-result-close]')?.addEventListener('click',close);modal.querySelector('[data-add-result-management]')?.addEventListener('click',()=>{close();location.hash='#/management';});modal.querySelector<HTMLElement>('section')?.focus(); }
-function render():void { const page=qs<HTMLElement>('[data-page="add"]');const root=qs<HTMLElement>('#add-root');if(!page||!root)return;page.hidden=location.hash!=='#/add'&&location.hash!=='#add';if(page.hidden)return;void getStore().then(store=>{const works=store.snapshot.works;root.innerHTML=`<form class="add-form" id="add-form"><div class="add-section"><div class="add-section-heading"><span>01</span><div><h2>基本資料</h2><p>建立收藏資料。圖片儲存後可到管理頁處理。</p></div></div><div class="add-grid"><label><span>作品 <b>*</b></span><select id="add-work" required>${works.map(w=>`<option value="${w.id}">${w.name} (${w.code})</option>`).join('')}</select></label><label><span>類型 <b>*</b></span><select id="add-category" required>${categories.map(([c,n])=>`<option value="${c}">${n}</option>`).join('')}</select></label><label class="wide"><span>標題 <b>*</b></span><input id="add-title" required maxlength="200" placeholder="例如：流螢主題立牌"></label><label><span>系列</span><input id="add-series" placeholder="多個項目請用逗號分隔"></label><label><span>角色</span><input id="add-characters" placeholder="多個角色請用逗號分隔"></label><label><span>製造商</span><input id="add-manufacturer"></label><label><span>數量 <b>*</b></span><input id="add-quantity" type="number" min="1" step="1" value="1" required></label><label><span>狀態 <b>*</b></span><select id="add-status"><option value="pending">待到貨</option><option value="preorder">預購中</option><option value="received">已收到</option></select></label></div></div><div class="add-section"><div class="add-section-heading"><span>02</span><div><h2>購買資訊</h2><p>商品價格與運費分開記錄。</p></div></div><div class="add-grid"><label><span>單價</span><input id="add-price" type="number" min="0" step="0.01"></label><label><span>幣別</span><input id="add-currency" value="TWD"></label><label><span>平台</span><input id="add-platform" placeholder="淘寶、蝦皮、官方商店…"></label><label><span>購買日期</span><input id="add-purchase-date" type="date"></label></div></div><div class="add-section"><div class="add-section-heading"><span>03</span><div><h2>到貨與備註</h2></div></div><div class="add-grid"><label><span>預計到貨</span><input id="add-expected-date" type="date"></label><label><span>收到日期</span><input id="add-received-date" type="date"></label><label class="wide"><span>商品描述</span><textarea id="add-description" rows="3"></textarea></label><label class="wide"><span>備註</span><textarea id="add-notes" rows="3"></textarea></label></div></div><div class="add-actions"><a class="button secondary" href="#/management">前往管理</a><button class="button" type="submit">＋ 新增收藏</button></div></form>`;qs<HTMLFormElement>('#add-form')?.addEventListener('submit',e=>{void submit(e);});if(!works.length)showToast('目前沒有可用的作品，請先建立作品。','error');}).catch(error=>showToast(error instanceof Error?error.message:'新增頁載入失敗。','error')); }
-async function submit(event:SubmitEvent):Promise<void>{event.preventDefault();if(submitting)return;const store=await getStore();const work=store.snapshot.works.find(w=>w.id===value('add-work'))??store.snapshot.works[0];if(!work){showToast('目前沒有可用的作品。','error');return;}const title=value('add-title'),quantity=Number(value('add-quantity')),priceText=value('add-price'),category=value('add-category');if(!title){showToast('標題為必填欄位。','error');return;}if(!Number.isInteger(quantity)||quantity<1){showToast('數量必須是大於等於 1 的整數。','error');return;}if(priceText&&(!Number.isFinite(Number(priceText))||Number(priceText)<0)){showToast('價格必須是大於等於 0 的數字。','error');return;}const item:Item={id:buildNextItemId(store.snapshot.items.map(x=>x.id),work.code,category),workId:work.id,workName:work.name,title,series:value('add-series').split(',').map(x=>x.trim()).filter(Boolean),characters:value('add-characters').split(',').map(x=>x.trim()).filter(Boolean),category,manufacturer:value('add-manufacturer'),quantity,status:value('add-status') as Item['status'],description:value('add-description'),notes:value('add-notes'),purchase:{price:priceText?Number(priceText):undefined,currency:value('add-currency')||undefined,platform:value('add-platform')||undefined,date:value('add-purchase-date')||undefined},arrival:{expectedDate:value('add-expected-date')||undefined,receivedDate:value('add-received-date')||undefined},afterSales:{},images:[]};setBusy(true);try{await store.addItem(item);sessionStorage.setItem('merch-management-selected-id',item.id);showToast('收藏已新增。','success');showCompletion(item);}catch(error){showToast(error instanceof Error?error.message:'新增收藏失敗。','error');}finally{setBusy(false);}}
-render();window.addEventListener('hashchange',render);
+function setBusy(busy: boolean): void {
+  submitting = busy;
+  const form = qs<HTMLFormElement>('#add-form');
+  if (!form) return;
+  form.setAttribute('aria-busy', String(busy));
+  form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>('input,textarea,select,button').forEach(control => {
+    control.disabled = busy;
+  });
+  const button = qs<HTMLButtonElement>('#add-form button[type="submit"]');
+  if (button) button.textContent = busy ? '儲存中…' : '＋ 新增收藏';
+}
+
+function populateWorkOptions(): void {
+  const select = qs<HTMLSelectElement>('#add-work');
+  if (!select) return;
+  void getStore().then(store => {
+    const current = select.value;
+    select.replaceChildren(...store.snapshot.works.map(work => {
+      const option = document.createElement('option');
+      option.value = work.id;
+      option.textContent = `${work.name} (${work.code})`;
+      return option;
+    }));
+    if (current && store.snapshot.works.some(work => work.id === current)) select.value = current;
+    if (!store.snapshot.works.length) showToast('目前沒有可用的作品，請先建立作品。', 'error');
+  }).catch(error => showToast(error instanceof Error ? error.message : '新增頁載入失敗。', 'error'));
+}
+
+function clearForm(): void {
+  const form = qs<HTMLFormElement>('#add-form');
+  if (!form) return;
+  form.reset();
+  const quantity = qs<HTMLInputElement>('#add-quantity');
+  const currency = qs<HTMLInputElement>('#add-currency');
+  if (quantity) quantity.value = '1';
+  if (currency) currency.value = 'TWD';
+}
+
+async function submit(event: SubmitEvent): Promise<void> {
+  event.preventDefault();
+  if (submitting) return;
+  const store = await getStore();
+  const work = store.snapshot.works.find(item => item.id === value('add-work')) ?? store.snapshot.works[0];
+  if (!work) {
+    showToast('目前沒有可用的作品。', 'error');
+    return;
+  }
+  const title = value('add-title');
+  const quantity = Number(value('add-quantity'));
+  const priceText = value('add-price');
+  const category = value('add-category');
+  if (!title) {
+    showToast('標題為必填欄位。', 'error');
+    return;
+  }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    showToast('數量必須是大於等於 1 的整數。', 'error');
+    return;
+  }
+  if (priceText && (!Number.isFinite(Number(priceText)) || Number(priceText) < 0)) {
+    showToast('價格必須是大於等於 0 的數字。', 'error');
+    return;
+  }
+  const item: Item = {
+    id: buildNextItemId(store.snapshot.items.map(x => x.id), work.code, category),
+    workId: work.id,
+    workName: work.name,
+    title,
+    series: value('add-series').split(',').map(x => x.trim()).filter(Boolean),
+    characters: value('add-characters').split(',').map(x => x.trim()).filter(Boolean),
+    category,
+    manufacturer: value('add-manufacturer'),
+    quantity,
+    status: value('add-status') as Item['status'],
+    description: value('add-description'),
+    notes: value('add-notes'),
+    purchase: {
+      price: priceText ? Number(priceText) : undefined,
+      currency: value('add-currency') || undefined,
+      platform: value('add-platform') || undefined,
+      date: value('add-purchase-date') || undefined,
+    },
+    arrival: {
+      expectedDate: value('add-expected-date') || undefined,
+      receivedDate: value('add-received-date') || undefined,
+    },
+    afterSales: {},
+    images: [],
+  };
+  setBusy(true);
+  try {
+    await store.addItem(item);
+    sessionStorage.setItem('merch-management-selected-id', item.id);
+    showToast('收藏已新增。', 'success');
+    const result = qs<HTMLElement>('#add-result');
+    const resultText = qs<HTMLElement>('#add-result-item');
+    if (resultText) resultText.textContent = `${item.id} · ${item.title}`;
+    if (result) result.hidden = false;
+    qs<HTMLButtonElement>('#add-result-management')?.focus();
+  } catch (error) {
+    showToast(error instanceof Error ? error.message : '新增收藏失敗。', 'error');
+  } finally {
+    setBusy(false);
+  }
+}
+
+function closeResult(): void {
+  const result = qs<HTMLElement>('#add-result');
+  if (result) result.hidden = true;
+}
+
+function bind(): void {
+  const form = qs<HTMLFormElement>('#add-form');
+  if (!form || form.dataset.bound === 'true') return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', event => { void submit(event); });
+  qs<HTMLButtonElement>('#add-result-close')?.addEventListener('click', closeResult);
+  qs<HTMLElement>('#add-result-backdrop')?.addEventListener('click', closeResult);
+  qs<HTMLButtonElement>('#add-result-management')?.addEventListener('click', () => {
+    closeResult();
+    location.hash = '#/management';
+  });
+  qs<HTMLButtonElement>('#add-result-cancel')?.addEventListener('click', closeResult);
+}
+
+function render(): void {
+  const page = qs<HTMLElement>('[data-page="add"]');
+  if (!page) return;
+  page.hidden = location.hash !== '#/add' && location.hash !== '#add';
+  if (page.hidden) return;
+  bind();
+  populateWorkOptions();
+}
+
+render();
+window.addEventListener('hashchange', render);
