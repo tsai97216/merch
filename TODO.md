@@ -264,11 +264,11 @@
 - [x] **新資料架構圖片 Verify：圖片、metadata、cover、ordering、orphan cleanup 一致**
 
 ## 15. Final Polish
-- [ ] desktop / tablet / mobile UI polish
+- [x] desktop / tablet / mobile UI polish
 - [ ] desktop / mobile Statistics / Management / Settings layout checks
-- [ ] spacing / typography / alignment
-- [ ] interaction states
-- [ ] accessibility
+- [x] spacing / typography / alignment
+- [x] interaction states
+- [x] accessibility
 
 ## 16. New Item Storage Architecture
 
