@@ -14,6 +14,7 @@
 
 - 小功能只改最小必要範圍，不為小問題重寫整個專案。
 - 不以「看起來能用」取代實際驗證。
+- 發現確定問題、可疑邏輯、舊代碼、重複實作或任何需要判斷的地方，先加入 `TODO.md`，再修改或刪除。
 
 ## 2. 架構與資料
 
@@ -37,12 +38,17 @@
 - 格式為「作品代碼 + 歷史類型 code + 三位流水號」。
 - UI 排序、資料搬移或分類修正都不可改變既有 Item ID。
 - ID 中的歷史類型 code 與目前 `category` 是不同概念。
+- Worker 對既有 Item 的 Work 對應必須解析永久 Item ID 中的完整 Work Code 後精確比對，不得以 `startsWith(work.code)` 等前綴方式判斷，以避免作品代碼碰撞。
+- 新增 Item 的 ID 唯一性必須以完整 remote repository 的 Item 集合檢查，不得只在目標 category 內檢查。
+- 載入 remote Item Map 時若發現重複 Item ID，必須立即視為資料異常並拒絕繼續，不可讓後載入項目靜默覆蓋前一筆。
 
 ### Category
 
 - 類型 code、名稱與分類規則以 `ITEM_TYPES.md` 為唯一規格來源。
 - `亞克力` 是材質，不是獨立商品類型；新商品依實際商品型態分類。
 - 修改類型前先更新 `ITEM_TYPES.md`，再檢查 validation、Item ID、資料路徑、搜尋與 UI。
+- Management 的 category 顯示與驗證應使用既定的單一 category source，不在不同檔案維護重複 category 陣列。
+- Management Work selector 的 value / state key 應使用永久 `work.id`，不要使用可能重複或可變動的作品名稱。
 
 ### Quantity
 
@@ -65,6 +71,7 @@
 - 不使用 MutationObserver 作為 UI 狀態、搜尋、排序或資料顯示的後處理機制。
 - 資料驅動區塊都要能處理 Loading、Empty、Error；Empty 不等於 Error。
 - 錯誤訊息應讓使用者理解，不直接把原始 exception 當 UI HTML。
+- API 驅動的新增、編輯、刪除、圖片操作等，在同步尚未完成前必須有明確的同步／上傳狀態；只有成功收到完成結果後才可顯示成功狀態。
 
 ## 4. Search / Collection / Statistics
 
@@ -98,6 +105,7 @@
 - Refresh、Back、Forward 必須正常。
 - malformed URL、decode 失敗、多餘 segments 與不存在 Item 必須安全處理，不得造成白屏。
 - Route navigation 與 page rendering 保持解耦。
+- 未知 route 應保留 404 語意，不得為了回復正常而強制 replace 成 `#/home`。
 - 統計、排名、Dashboard 等可代表搜尋條件的項目應能正確轉跳到 Collection；不能只改 hash，必須同步更新 Collection query / filter state。
 - Item Detail 的 Modal、Router 與 focus 狀態必須一致。
 - Detail modal 必須使用專用 dialog selector 識別，不可與其他 modal 共用模糊 selector。
@@ -125,6 +133,7 @@
   5. 更新 branch ref 時確認仍指向預期 head。
   6. 競爭或中途失敗時不可靜默覆蓋其他修改。
 - 單一 Item 新增／編輯／刪除盡可能保持最小範圍寫入。
+- Worker 圖片寫入、Item mutation 與清理操作若同時競爭，必須以觀測到的 remote HEAD 作為 atomic commit parent，並以 `force: false` 更新 branch；過期操作必須失敗而非覆蓋新修改。
 
 ## 8. Image Management
 
@@ -135,6 +144,7 @@
 - 設為封面只能有正確的封面標記；排序只改 metadata 順序，不改 Item ID 或檔名。
 - 替換圖片先成功寫入新圖片與 metadata，再清理舊圖片；清理失敗不得讓已成功的新圖片操作被視為失敗。
 - 刪除圖片必須處理 metadata 與遠端檔案一致性，失敗時採可恢復策略。
+- 新增與替換圖片 mutation 都必須遵守 Patch version 語意，不得只在首次建立圖片時增加版本。
 - 任何圖片管理程式碼修改都必須增加 Patch。
 
 ## 9. Version / Verification
