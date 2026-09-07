@@ -151,18 +151,129 @@
 
 ### Version
 
-- 唯一正式版本來源：`public/data/version.json`。
-- 格式：`Major.Minor.Patch`。
-- Major 用於大版本／架構世代；Minor 用於完整邏輯／功能世代；Patch 用於任何實際程式碼、設定、規則、資料結構修改，以及 GitHub API 新增／移除收藏或圖片。
-- 任何實際修改都必須增加 Patch，不因 reorder、cover replacement 或其他操作語義免除版本更新。
-- UI 版本從 Store 載入的正式版本取得，不在多處硬編版本號。
-- 不使用版本號作 module cache，也不使用 `?v=version`、`?build=...` 等 cache hack。
-- 修改完成後確認 `public/data/version.json` 與 `package.json` 同步。
+- 唯一正式版本來源為 `package.json` 的 `version`；`public/data/version.json` 必須同步。
+- 任何會影響正式網站行為的程式碼、設定、規則、資料結構或正式資料變更，都必須增加 Patch version。
+- `package.json` 與 `public/data/version.json` 不一致視為錯誤。
+- 發布前至少確認 TypeScript、Build、schema / data integrity 與相關 Worker 驗證通過。
 
-### Verification / TODO
+### Verification
 
-- 完成實作後才勾選 TODO；「應該完成」不可視為完成。
-- 可由工具驗證的 schema、build、Worker contract 等必須實際驗證後才算完成。
-- Desktop、Mobile、互動 smoke test 若由使用者驗證，助手不可代為宣稱完成。
-- 每次修改後檢查版本號、資料完整性與 production build / deploy 狀態。
-- `RULES.md` 只保留長期規格與重要踩坑；`TODO.md` 只保留未完成、待驗證或值得持續追蹤的工作。
+- 不可只看 diff 判定完成。
+- 需要實際執行適用的 build、typecheck、schema、資料完整性與 Worker 驗證。
+- 涉及部署的變更必須確認 GitHub Actions 成功。
+- 效能改善若涉及使用者實際體感，CI 通過不等於完成；需要實際確認正式網站行為。
+
+## 10. 大量新增周邊資料規範
+
+> 本區塊專門規範「由 ChatGPT 協助一次大量新增周邊」的標準流程。未來即使新增數量很多，也必須依本區塊執行，不得因為資料量大而改用舊式整份作品 JSON、直接修改 `public/data/`，或跳過資料驗證。
+
+### 10.1 資料應新增到哪裡
+
+- 所有正式周邊資料的唯一 canonical source 是 `data/`。
+- 新增 Item 必須建立在：`data/<work>/<category>/<item-id>/data.json`。
+- 該 Item 的圖片必須放在：`data/<work>/<category>/<item-id>/images/`。
+- `data/works.json` 只在新增／修改作品本身時才更新；單純新增周邊不得無故修改。
+- `public/data/` 是 build 產物／部署資料，不是 ChatGPT 手動新增周邊的主要寫入位置。不得因為網站目前看不到新資料，就直接把同一批資料複製到 `public/data/`。
+- `public/data/collection.json` 是 build 時由 `scripts/generate-collection.mjs` 從 `data/` 產生的靜態 read model。不得手動把 Item 加進去。
+- 新增大量周邊後，應由 build 流程執行 `sync-public-data.mjs` 與 `generate-collection.mjs`，讓部署資料自動同步。
+
+### 10.2 ChatGPT 接收的大量新增格式
+
+未來使用者可以直接用自然語言、表格或多筆條列提供資料，但為降低歧義，推薦使用以下格式：
+
+```text
+新增作品／周邊
+作品：絕區零
+作品 ID：zenless-star-zone
+
+1.
+角色：伊埃斯
+類型：手機架
+數量：1
+平台：線下活動
+
+2.
+角色：愛彌斯
+類型：證件照
+數量：1
+平台：線下活動
+```
+
+也可以使用表格：
+
+```text
+| 作品 | 角色 | 類型 | 數量 | 平台 |
+|---|---|---|---:|---|
+| 絕區零 | 伊埃斯 | 手機架 | 1 | 線下活動 |
+| 絕區零 | 愛彌斯 | 證件照 | 1 | 線下活動 |
+```
+
+- 若使用者省略作品、類型、角色、數量、平台等欄位，ChatGPT 應只在能由既有資料或明確上下文可靠判定時補值；無法可靠判定時必須詢問，不得猜測。
+- `quantity` 預設為 1 僅適用於專案既定的相容性規則；若使用者明確提供數量，必須以使用者提供值為準。
+- 「平台」是購買／取得來源欄位，不可自行改寫成其他語意。
+- 角色、作品、類型名稱應保留使用者原意；如需正規化拼字或對應既有作品資料，先檢查 repo 既有資料與規則。
+
+### 10.3 ChatGPT 新增周邊的標準處理步驟
+
+每次收到「大量新增周邊」要求時，ChatGPT 必須依序執行：
+
+1. **先讀規則與待辦**：先讀 `RULES.md`、`TODO.md`，確認目前資料架構、category 規則、ID 規則與任何尚未完成的資料相關 TODO。
+2. **確認作品**：確認每筆 Item 所屬的永久 `work.id`，不能只依作品顯示名稱猜路徑。
+3. **確認類型**：依 `ITEM_TYPES.md` 判斷 category 與 category code。`亞克力` 等材質描述不得直接當成 category，必須依實際商品型態分類。
+4. **檢查既有資料**：在完整 `data/` Item 集合中檢查角色、標題、類型、既有 ID、同商品或可能重複資料，避免重複新增。
+5. **分配 Item ID**：新 ID 必須依目前 ID 規則產生，並以完整 remote repository 的 Item 集合確認唯一。不得因 category 變更而改既有 ID，也不得補號或重用已刪除 ID。
+6. **建立 Item 資料**：每筆建立自己的 `data/<work>/<category>/<item-id>/data.json`。canonical Item JSON 不得加入 `workName`、`shipping`、`material`、`release`、`createdAt`、`updatedAt` 等非 schema 欄位。
+7. **處理圖片**：若使用者同時提供圖片，圖片只放到該 Item 的 `images/`，並確認 metadata 引用與實際檔名一致。沒有圖片就不要虛構圖片檔案或 metadata。
+8. **驗證每筆資料**：新增前後都要檢查 JSON schema、required fields、quantity、category、Item ID、路徑與圖片契約。
+9. **批次寫入 canonical `data/`**：大量新增可以一次建立多個 Item 資料夾／檔案，但仍必須以 `data/` 為唯一來源；不得把大量資料塞回舊作品整份 JSON。
+10. **同步部署資料**：完成 canonical data 後，讓 build 自動執行 `sync-public-data.mjs` 與 `generate-collection.mjs`。除非專案規則另有明確要求，不手動編輯 generated `public/data/`。
+11. **版本更新**：正式資料變更屬於會影響網站行為的 repository change，因此依 Version 規則增加 Patch，並同步 `package.json` 與 `public/data/version.json`。
+12. **實際驗證**：至少確認資料完整性、schema、Item ID 唯一性、collection read model 生成結果與 build；若已部署，確認 GitHub Actions 成功。
+
+### 10.4 大量新增時的「先整理、後寫入」原則
+
+- ChatGPT 不應收到一筆資料就立即寫入一筆，尤其是一次有數十筆以上時。應先把使用者提供的全部資料整理成「待新增清單」，完成去重、欄位補全、category 判定與 ID 規劃，再批次寫入。
+- 若其中有一筆資料存在歧義，不應影響其他無歧義資料的整理；可以先列出「可直接新增」與「需要確認」兩組。
+- 若使用者明確說「直接全部新增」，仍不得跳過 schema、ID 唯一性、category 與資料完整性驗證。
+- 如果同一批資料內可能互相產生重複 ID，必須先在記憶中的待新增集合內預檢，再與 remote repository 現有集合合併檢查。
+- 大量新增不代表可以降低驗證標準，只能提高批次處理效率。
+
+### 10.5 ChatGPT 回覆格式
+
+每次大量新增周邊完成後，ChatGPT 的回覆應簡潔但可核對，固定包含：
+
+```text
+大量新增完成
+
+作品：絕區零
+新增：2 筆
+
+- 伊埃斯｜手機架｜數量 1｜平台：線下活動
+- 愛彌斯｜證件照｜數量 1｜平台：線下活動
+
+資料位置：data/<work>/<category>/<item-id>/data.json
+版本：X.Y.Z
+驗證：schema / ID 唯一性 / data integrity / build / GitHub Actions
+狀態：完成
+```
+
+- 若是多個作品，依作品分組列出新增數量與項目。
+- 不需要在回覆中把每個完整 `data.json` 全部貼出，除非使用者要求檢視原始資料。
+- 若有無法自動判定的資料，必須明確列在「需要確認」區塊，不可把猜測結果當成已完成。
+- 若尚未完成 build、部署或實際驗證，不得寫「完成」；應明確寫「已寫入，待驗證」或對應的實際狀態。
+- 若新增過程發現資料結構、category、ID 或 Worker 有問題，依既有規則先記錄到 `TODO.md`，再處理；不得默默繞過規則。
+
+### 10.6 特別禁止事項
+
+- 禁止把新 Item 直接新增到 `public/data/` 當作 canonical data。
+- 禁止恢復舊版「整份作品 JSON」作為大量新增的主要方式。
+- 禁止為了省時間跳過完整 repository 的 Item ID 唯一性檢查。
+- 禁止猜測使用者沒有提供且 repo 無法可靠推導的資料。
+- 禁止為了大量新增而關閉 schema validation、data integrity 或 build verification。
+- 禁止因為使用者只提供「角色、類型、數量、平台」就自行虛構價格、購買日期、描述、圖片或其他未提供資訊。
+
+## 11. 長期維護
+
+- 新增長期規則前先確認不是一次性 TODO。
+- 已經確認且未來會反覆影響開發流程的規則，才加入本文件。
+- 規則修改本身也屬正式 repository change，必須遵守版本同步與驗證規則。
