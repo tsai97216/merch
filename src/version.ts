@@ -1,3 +1,5 @@
+import './theme';
+
 export type AppVersion = `${number}.${number}.${number}`;
 
 type VersionResponse = { version?: unknown };
