@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "d",
+  "items": [
+    {
+      "id": "WWd001",
+      "path": "data/wuthering-waves/d/WWd001/data.json",
+      "title": "WW二周年 明信片框",
+      "characters": [],
+      "manufacturer": "庫洛",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
+}
