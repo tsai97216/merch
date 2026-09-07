@@ -1,0 +1,27 @@
+{
+  "id": "ZZZd005",
+  "workId": "zenless-zone-zero",
+  "title": "影畫系列 定帧亚克力插片 星見雅",
+  "series": ["影畫系列"],
+  "characters": ["星見雅"],
+  "category": "d",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 100,
+    "currency": "TWD",
+    "platform": "FB交易社",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
