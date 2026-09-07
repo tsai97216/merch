@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "n",
+  "items": [
+    {
+      "id": "HSRn001",
+      "path": "data/honkai-star-rail/n/HSRn001/data.json",
+      "title": "歡愉信號 逼波集章卡明信片",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
+}
