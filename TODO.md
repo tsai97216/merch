@@ -43,6 +43,7 @@
 1. **Stage 8｜API / Worker / GitHub 寫入**：確認 request → validation → read → mutation → transaction、SHA、race condition、rollback、write scope、token 安全與舊 API 殘留。
    - [x] **Worker Item ID → Work 對應方式複查**：已由 `startsWith(work.code)` 改為解析永久 Item ID 的完整 Work Code 後精確比對，避免作品代碼前綴碰撞誤綁。
    - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
+   - [ ] **Worker `loadRemote()` 重複 Item ID 複查**：目前將 category index 展開後直接以 `items.set(item.id, ...)` 建立 Map；若遠端資料因索引異常出現重複 Item ID，後載入的項目會靜默覆蓋前一筆，需改為明確拒絕資料異常而非繼續寫入。
 2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
 3. **Stage 10｜Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 RULES ↔ TODO ↔ Code ↔ Tests ↔ Data。
    - [x] **`merch-old` 圖片 fallback 舊相容邏輯複查**：目前 canonical data 未引用舊 `merch-old` 圖片路徑，但舊 repo 仍保有舊圖片資料，因此 fallback 仍有相容價值，暫不刪除。
