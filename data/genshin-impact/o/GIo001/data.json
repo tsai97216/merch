@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "GIo001",
+  "workId": "genshin-impact",
+  "title": "圓神 哥倫比婭 線下活動 抽獎票根",
+  "series": [],
+  "characters": ["哥倫比婭"],
+  "category": "o",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "expectedDate": null,
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
