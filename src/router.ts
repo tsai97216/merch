@@ -26,7 +26,16 @@ function parseHash(hash: string): Route {
 }
 
 export function createRouter({ onNavigate }: RouterOptions) {
-  const handleChange = () => onNavigate(parseHash(window.location.hash));
+  const handleChange = () => {
+    const hash = window.location.hash;
+    const route = parseHash(hash);
+    if (route.name === 'not-found' && /^#\/?item\//.test(hash)) {
+      window.history.replaceState(null, '', '#/404');
+      onNavigate(route);
+      return;
+    }
+    onNavigate(route);
+  };
   return {
     start() { window.addEventListener('hashchange', handleChange); handleChange(); },
     stop() { window.removeEventListener('hashchange', handleChange); },
