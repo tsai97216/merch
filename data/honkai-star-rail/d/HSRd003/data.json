@@ -1,0 +1,27 @@
+{
+  "id": "HSRd003",
+  "workId": "honkai-star-rail",
+  "title": "如我所書系列 壓克力立牌 昔漣",
+  "series": ["如我所書系列"],
+  "characters": ["昔漣"],
+  "category": "d",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
