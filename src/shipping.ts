@@ -1,5 +1,4 @@
 import './shipping.css';
-import './item-detail-shipping';
 import { getStore, type MerchStore } from './store';
 import type { Item, ShippingRecord } from './types';
 import { escapeHtml, qs } from './utils/dom';
