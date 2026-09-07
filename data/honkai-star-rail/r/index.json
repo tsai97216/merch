@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "r",
+  "items": [
+    {
+      "id": "HSRr001",
+      "path": "data/honkai-star-rail/r/HSRr001/data.json",
+      "title": "銀狼 路跑獎牌",
+      "characters": ["銀狼"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
