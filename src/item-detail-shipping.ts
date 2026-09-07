@@ -1,3 +1,4 @@
+import './detail-focus';
 import type { Item, ShippingRecord } from './types';
 import { escapeHtml } from './utils/dom';
 import { openShippingDetail } from './shipping-detail-modal';
