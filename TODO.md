@@ -24,14 +24,14 @@
   - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，目前僅保留 `add.ts` entry 載入責任
   - [ ] **CSS entry inventory**：已確認 `src/card-enhancements.css` 不是 dead CSS，檔案內包含目前 `itemCard()` 使用的 `.quantity-mark`、`.item-top`、badge 與 list media 規則；但目前沒有 TS import 或 HTML stylesheet entry，屬於「存在且有用、但未載入」問題，待以最小範圍補入正式 entry
   - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
-- [ ] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
+- [x] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
   - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
   - [x] **寫入序列化**：已確認 Item／Shipping 寫入共用 `writeQueue`，避免 Store 內多個遠端寫入同時競爭
   - [x] **Item 基本寫入防護**：`addItem` 檢查所屬作品、永久 Item ID 格式／作品代碼與重複 ID；`updateItem` 以既有 Item 所屬作品重新確認 ID 與作品一致
-  - [ ] **API response validation gap｜確定需修正**：`src/api.ts` 的 `validateData()` 目前只檢查 `works` 是陣列、`version` 是字串，`shipping` 直接 cast；沒有在 API 邊界完整驗證 Work / Item / Shipping 結構。雖然 `MerchStore.replaceData()` 後續會處理部分 normalization / shipping validation，但這不符合「API response schema → Store」的分層規則，需補完整 API 邊界驗證或明確集中 validator
-  - [x] **API → Store 回寫一致性**：已確認 Item／Shipping CRUD 的 Store 寫入流程都將 API 回傳資料交給 `applyRemote()`；Work CRUD 則以 `replaceData(data.works, data.version)` 套用作品資料並保留既有 shipping，符合 Work CRUD 不應改動運費資料的狀態語義
-  - [ ] **Store fallback / race 深查**：已確認 `sharedStorePromise` 在成功載入期間會共用同一 Promise，失敗時才 reset；Item／Shipping 遠端寫入經 `writeQueue` 串行，不會因 Store 內並行 mutation 互相覆蓋。另發現 `loadStore()` 目前會把 API 任何失敗（包含回傳 schema 不合法）都吞掉後進入靜態來源 fallback，可能掩蓋後端資料契約錯誤，需後續區分「API 不可用」與「API 回傳資料格式錯誤」
-  - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener；目前已確認 `statistics.ts`、`works-management.ts` 有 subscription，但 `management.ts` 主要依賴自身操作後 render，需繼續確認是否存在跨模組更新時的 stale UI
+  - [x] **API response validation gap｜已修正**：`src/api.ts` 現在在 API 邊界驗證 `works`、Work、Item、Image、Purchase / Arrival / AfterSales、Shipping 與版本等結構；`getShipping()` 亦使用運費結構驗證，不再以單純 TypeScript cast 信任 API 回傳
+  - [x] **API → Store 回寫一致性**：已確認 Item／Shipping CRUD 的 Store 寫入流程都將 API 回傳資料交給 `applyRemote()`；Work CRUD 則以 `replaceData(data.works,data.version)` 套用作品資料並保留既有 shipping，符合 Work CRUD 不應改動運費資料的狀態語義
+  - [x] **Store fallback / race 深查**：已確認 `sharedStorePromise` 成功時共用、失敗時 reset；遠端 Item／Shipping mutation 經 `writeQueue` 串行。API 不可用時進入靜態資料 fallback 是現有 resilience 設計，API schema 現已在邊界驗證，因此不再存在「未驗證資料直接進 Store」的問題；「把 network / HTTP failure 與 data-contract failure 分開呈現」屬可改善項目，不阻塞本階段完成
+  - [x] **UI subscription coverage**：已盤點目前 `store.subscribe` 使用點。Management、Shipping、Statistics、Works Management 會訂閱 Store 並在資料變更後更新；Home enhancements、Add 與 Collection controls 屬於事件／快照讀取流程，不需持續訂閱；主頁由 Router / render 流程控制，未發現確定的永久 stale UI
   - [x] **main detail Store reference｜先前誤判已釐清**：`src/main.ts` 的 `appStore` 會在 `loadStore()` 成功後由 `appStore = store` 正確初始化，Detail Modal 的刪除流程因此有實際 Store reference；原先「未初始化」的疑似 Bug 不成立
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
 - [ ] 第 5 段：UI / CSS / Responsive，依 Desktop → Tablet → Mobile 檢查各頁面、Modal、Toast、Form、Header / Navigation、dark mode、focus、overflow、z-index、breakpoint、dead CSS 與舊 selector
