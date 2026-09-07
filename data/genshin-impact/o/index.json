@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "genshin-impact",
+  "category": "o",
+  "items": [
+    {
+      "id": "GIo001",
+      "path": "data/genshin-impact/o/GIo001/data.json",
+      "title": "原神 哥倫比婭 線下活動 抽獎票根",
+      "characters": ["哥倫比婭"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
