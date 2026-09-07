@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "d",
+  "items": [
+    {
+      "id": "ZZZd001",
+      "path": "data/zenless-zone-zero/d/ZZZd001/data.json",
+      "title": "絕區零 時裝系列 流沙雙插立牌 葉瞬光",
+      "characters": ["葉瞬光"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
