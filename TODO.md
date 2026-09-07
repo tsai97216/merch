@@ -7,15 +7,16 @@
 
 ## 交接備註｜下一個對話從這裡繼續
 
-- **目前先暫停程式修改，使用者接下來會先大量輸入／建立周邊資料。** 不要主動開始修 P0 或 UI，除非使用者要求繼續開發。
-- **目前版本：1.109.57**。本次整理 TODO / RULES 後已同步版本檔案；大量新增資料時不要任意改版本或程式。
+- **目前已暫停大量資料輸入，先處理資料載入效能。** 使用者確認目前載入速度已實際影響透過網站新增 Item 與圖片上傳，因此本次可開始進行效能修正。
+- **目前正式版本以 `public/data/version.json` 為準；修改前需同步 `package.json`。**
 - **資料輸入期間可正常新增、編輯、圖片管理與 Shipping。** 暫時避免刪除仍被 Shipping `itemIds` 參照的 Item。
-- 下一次繼續開發時，**優先從 P0 Shipping `itemIds` 參照完整性開始**，先確認 Store / API 驗證邊界，再處理 Worker Item deletion 的跨資料參照。
+- 下一次繼續核心正確性工作時，**優先從 P0 Shipping `itemIds` 參照完整性開始**，先確認 Store / API 驗證邊界，再處理 Worker Item deletion 的跨資料參照。
 - 若要修改 Worker，注意 `worker/src/index.ts` 曾有過被不完整重寫的回歸風險；不要根據截斷內容盲目整檔重寫，應先取得可靠完整內容或採安全的最小修改方式。
 
 ## P0｜核心功能與正確性
 
 1. **Shipping `itemIds` 參照完整性複查**：確認 Store / API 載入與寫入時的驗證邊界，以及刪除 Item 時如何處理仍被 Shipping 參照的 Item，避免產生孤兒運費關聯。Worker 已有遠端存在性驗證，但 Item deletion 的跨資料參照仍待完整確認。
+2. **Collection 初始資料載入效能**：目前 Worker `/api/data` 會為建立完整 remote read model 掃描 GitHub tree、所有 category index 與所有 Item `data.json`，造成新增頁／圖片操作前等待時間過長。改為 build-time 產生單一靜態 Collection read model，Frontend 優先直接讀取 GitHub Pages 靜態資料，保留 Worker `/api/data` 作為必要 fallback / mutation authoritative response；不得改變 canonical Item-level 儲存架構，也不得犧牲 Collection 的搜尋、Filter、Sort、狀態篩選功能。
 
 ## P1｜UI / UX 與穩定性
 
