@@ -17,8 +17,9 @@
 
 - [x] 第 1 段：Repo 基礎與規則，檢查 `RULES.md`、`TODO.md`、`package.json`、TypeScript / Vite 設定、GitHub Actions / Pages、版本與 CI 基線
 - [ ] 第 2 段：檔案架構與舊殘留，盤點 `src/`、`public/`、`scripts/`、API / Worker、CSS、HTML、migration，找出未使用檔案、dead code、舊 route、舊 API 與舊資料格式
-  - [ ] **模組入口／Legacy 依賴待確認**：已確認 `management.ts`、`statistics.ts`、`shipping.ts`、`works-management.ts`、`add.ts` 都是現行功能模組且有對應 CSS；仍需確認它們由哪個 Vite / HTML entry 載入並進入 production bundle，未確認前不得刪除或判定為 dead code
-  - [ ] **HTML / entry loading**：確認 `index.html` 的 module script 與 Vite entry，交叉驗證上述功能模組的實際載入關係
+  - [x] **模組入口／Legacy 依賴**：已確認 `management.ts`、`statistics.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts` 都由 `index.html` 以 module script 載入；`add.ts` 則由目前 production entry 的 `category-display.ts` 直接 import，因此這些模組不是未載入的 dead code。暫不刪除
+  - [ ] **HTML / entry loading**：已確認目前 `index.html` 有 Vite module entries，並確認 `add.ts` 的間接載入關係；仍需把所有 entry 與其 CSS／副作用依賴完整交叉整理，確認沒有漏載入或重複載入
+  - [ ] **確認並修正 `MutationObserver` 違反既定 UI 規則**：`src/category-display.ts` 目前以 `MutationObserver` 監聽整個 `document.body`，需改為明確的 render／事件流程，避免以後處理 UI 後續狀態
   - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
 - [ ] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
