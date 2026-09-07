@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "c",
+  "items": [
+    {
+      "id": "WWc001",
+      "path": "data/wuthering-waves/c/WWc001/data.json",
+      "title": "鳴潮 共鳴者系列 Super Card 悠遊卡 愛彌斯款",
+      "characters": ["愛彌斯"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
