@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "v",
+  "items": [
+    {
+      "id": "HSRv001",
+      "path": "data/honkai-star-rail/v/HSRv001/data.json",
+      "title": "流螢 主題印象系列T恤",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "pending"
+    }
+  ]
+}
