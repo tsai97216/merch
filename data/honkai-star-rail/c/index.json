@@ -13,6 +13,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "pending"
+    },
+    {
+      "id": "HSRc002",
+      "path": "data/honkai-star-rail/c/HSRc002/data.json",
+      "title": "昔漣 美好假日 手辦 訂金卡",
+      "characters": [
+        "昔漣"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "preorder"
     }
   ]
 }
