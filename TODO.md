@@ -47,6 +47,7 @@
    - [x] **Worker Item ID → Work 對應方式複查**：已由 `startsWith(work.code)` 改為解析永久 Item ID 的完整 Work Code 後精確比對，避免作品代碼前綴碰撞誤綁。
    - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
    - [x] **Worker `loadRemote()` 重複 Item ID 複查**：已在建立 remote Item Map 時檢查 `items.has(item.id)`，發現重複 Item ID 立即拒絕資料異常，不再讓後載入項目靜默覆蓋前一筆；Verify #671 已通過。
+   - [ ] **Worker 孤兒圖片清理與圖片寫入的伺服器端競態複查**：前端已以 `imageSaving` 避免同一頁面競態，但 Worker 的 `cleanupAssets()` 與另一請求的 `putAsset()` 仍可能在 asset 已寫入、metadata 尚未提交的窗口中同時執行；需確認是否會誤刪新上傳圖片，並以 Worker 可實際保證的併發策略修正後驗證。
 2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
 3. **Stage 10｜Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 RULES ↔ TODO ↔ Code ↔ Tests ↔ Data。
    - [x] **`merch-old` 圖片 fallback 舊相容邏輯複查**：目前 canonical data 未引用舊 `merch-old` 圖片路徑，但舊 repo 仍保有舊圖片資料，因此 fallback 仍有相容價值，暫不刪除。
