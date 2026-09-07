@@ -121,6 +121,16 @@ export type VersionData = {
   version: string;
 };
 
+export type ShippingRecord = {
+  id: string;
+  amount: number;
+  currency: string;
+  date?: string;
+  carrier?: string;
+  note?: string;
+  itemIds: string[];
+};
+
 export type UiState = {
   collectionView: 'cards' | 'list';
   collectionQuery: string;
@@ -137,6 +147,7 @@ export type StoreState = {
   works: Work[];
   items: Item[];
   version: string;
+  shipping: ShippingRecord[];
   ui: UiState;
   loading: boolean;
   error: string | null;

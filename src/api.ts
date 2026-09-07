@@ -2,7 +2,7 @@ import type { Item, StoreState, Work } from './types';
 import { dataError } from './error';
 
 type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; message?: string } };
-type ApiData = Pick<StoreState, 'works' | 'version'>;
+type ApiData = Pick<StoreState, 'works' | 'version' | 'shipping'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 type AuthStatus = { authenticated: boolean };
 type ApiFailure = { apiCode?: string; status: number };
@@ -34,6 +34,9 @@ export async function getAsset(path: string): Promise<Blob> { const headers = ne
 export async function putAsset(path: string, content: string): Promise<AssetResult> { return validateAssetResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', body: JSON.stringify({ path, content }) })); }
 export async function deleteAsset(path: string): Promise<AssetDeleteResult> { return validateAssetDeleteResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' })); }
 export async function cleanupAssets(): Promise<AssetCleanupResult> { return validateAssetCleanupResult(await request('/assets/cleanup', { method: 'POST' })); }
+export async function getShipping(): Promise<StoreState['shipping']> { const data = await request('/shipping'); if (!Array.isArray(data)) throw dataError('API 回傳運費資料格式無效。'); return data as StoreState['shipping']; }
+export async function putShipping(record: StoreState['shipping'][number]): Promise<ApiData> { return validateData(await request(`/shipping/${encodeURIComponent(record.id)}`, { method: 'PUT', body: JSON.stringify({ shipping: record }) })); }
+export async function deleteShipping(id: string): Promise<ApiData> { return validateData(await request(`/shipping/${encodeURIComponent(id)}`, { method: 'DELETE' })); }
 export async function getAuthStatus(): Promise<AuthStatus> { return validateAuthStatus(await request('/auth/status')); }
 export function hasAdminSecret(): boolean { return Boolean(authToken()); }
 export function setAdminSecret(value: string): void { try { if (value.trim()) sessionStorage.setItem('merch-admin-secret', value.trim()); else sessionStorage.removeItem('merch-admin-secret'); } catch { throw dataError('無法儲存管理驗證資訊。'); } }

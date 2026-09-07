@@ -1,4 +1,4 @@
-export type RouteName = 'home' | 'collection' | 'statistics' | 'management' | 'settings';
+export type RouteName = 'home' | 'collection' | 'statistics' | 'shipping' | 'management' | 'settings';
 export type Route =
   | { name: RouteName }
   | { name: 'item'; id: string }
@@ -6,7 +6,7 @@ export type Route =
 
 type RouterOptions = { onNavigate: (route: Route) => void };
 
-const staticRoutes = new Set<RouteName>(['home', 'collection', 'statistics', 'management', 'settings']);
+const staticRoutes = new Set<RouteName>(['home', 'collection', 'statistics', 'shipping', 'management', 'settings']);
 
 function parseHash(hash: string): Route {
   const raw = hash.replace(/^#\/?/, '');
