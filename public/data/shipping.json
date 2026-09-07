@@ -1,4 +1,15 @@
 {
   "schemaVersion": 1,
-  "records": []
+  "records": [
+    {
+      "id": "ship-mtqm9317",
+      "amount": 73,
+      "currency": "TWD",
+      "date": "2026-07-15",
+      "carrier": "台集運",
+      "itemIds": [
+        "HSRf001"
+      ]
+    }
+  ]
 }
