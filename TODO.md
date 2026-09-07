@@ -27,7 +27,8 @@
   - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
   - [x] **寫入序列化**：已確認 Item／Shipping 寫入共用 `writeQueue`，避免 Store 內多個遠端寫入同時競爭
   - [x] **Item 基本寫入防護**：`addItem` 檢查所屬作品、永久 Item ID 格式／作品代碼與重複 ID；`updateItem` 以既有 Item 所屬作品重新確認 ID 與作品一致
-  - [ ] **進一步檢查 API → Store 回寫一致性**：逐一確認 `putItem`／`deleteItem`／`putShipping`／`deleteShipping` 回傳資料是否完整包含最新 works、shipping、version，以及各 UI 模組是否正確套用回傳 state
+  - [ ] **API response validation gap｜疑似／需修正**：`src/api.ts` 的 `validateData()` 目前只檢查 `works` 是陣列、`version` 是字串，`shipping` 直接 cast；沒有在 API 邊界完整驗證 Work / Item / Shipping 結構。雖然 `MerchStore.replaceData()` 後續會處理部分 normalization / shipping validation，但這不符合「API response schema → Store」的分層規則，需補完整 API 邊界驗證或明確集中 validator
+  - [ ] **進一步檢查 API → Store 回寫一致性**：逐一確認 `putItem`／`deleteItem`／`putShipping`／`deleteShipping`／Work CRUD 回傳資料是否完整包含最新 works、shipping、version，以及各 UI 模組是否正確套用回傳 state
   - [ ] **Store fallback / race 深查**：確認 API 失敗後靜態來源 fallback、`sharedStorePromise` reset、寫入期間重新載入與多模組訂閱是否可能產生 stale state 或覆蓋較新的遠端資料
   - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
