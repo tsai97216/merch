@@ -1,0 +1,31 @@
+{
+  "id": "HSRk002",
+  "workId": "honkai-star-rail",
+  "title": "角色立繪系列 壓克力掛件 符玄款",
+  "series": [
+    "角色立繪系列"
+  ],
+  "characters": [
+    "符玄"
+  ],
+  "category": "k",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 220,
+    "currency": "TWD",
+    "platform": "日本商店",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
