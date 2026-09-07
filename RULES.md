@@ -1,8 +1,8 @@
 # merch 開發規則與寫法
 
-> 本文件是本專案的長期開發規格與踩坑紀錄。修改前必讀；確立新規則後要同步補進本文件。
+> 本文件是本專案的長期開發規格與重要踩坑紀錄。修改前必讀；確立新規則後要同步補進本文件。
 >
-> 核心原則：**先理解既有規則，再修改；新增功能時要把資料、UI、互動、錯誤處理、版本與 TODO 一起考慮。**
+> 核心原則：**先理解既有規則，再修改；新增功能時把資料、UI、互動、錯誤處理、版本與驗證一起考慮。**
 
 ## 0. 修改前必讀
 
@@ -41,10 +41,9 @@
 - `Minor`：完整邏輯／功能修改或明確的功能世代變更。
 - **Patch：任何實際程式碼、設定、規則、資料結構修改，以及 GitHub API 新增／移除收藏或圖片。**
 - **只要有修改就必須增加 Patch，不因 reorder、cover replacement 或其他操作語義而免除版本更新。**
-- reorder 與 cover replacement 的資料操作不享有免版本更新例外；相關程式碼修改照一般修改增加 Patch。
 - 不使用版本號作為 module cache，也不使用 `?v=version`、`?build=...` 等 cache hack。
 - UI 顯示版本從 Store 載入的正式版本來源取得，不在多個地方硬編版本號。
-- 修改完成後必須確認正式版本來源與 `package.json` 同步。
+- 修改完成後必須確認 `public/data/version.json` 與 `package.json` 同步。
 
 ## 4. Work / 作品
 
@@ -68,35 +67,39 @@
 
 - 類型 code、顯示名稱與完整分類規則統一記錄於 `ITEM_TYPES.md`。
 - `ITEM_TYPES.md` 是目前周邊類型的唯一規格來源。
+- `亞克力` 是材質，不是獨立商品類型；新商品依實際商品型態分類。
 - 新增、刪除或修改類型前先更新 `ITEM_TYPES.md`，再檢查 categories、type、validation、Item ID、資料路徑、搜尋與 UI。
 
-## 7. Item Quantity / 數量
+## 7. Item Schema / Data Storage
 
-- `Item` 代表一種收藏資料，不代表固定只有一個實物。
-- 複數實物使用同一 Item ID，以 `quantity` 記錄件數。
+- Item schema 的正式欄位分為：基本資料、購買、到貨、售後、圖片 metadata。
+- `Item` 是單一收藏資料，不代表固定只有一件實物；複數實物以 `quantity` 表示。
+- 現行資料已採 Item 級資料夾／檔案架構；舊作品 JSON 架構不再作為新的寫入目標。
+- API / Worker 與 Store 必須以目前 Item／index 路徑為準，不得恢復舊作品 JSON 整份覆寫模式。
+- 舊資料 migration 不得重新編號既有 Item，且必須維持 Item ID、圖片、購買、到貨、售後資料完整。
+
+## 8. Quantity / 數量
+
 - `quantity` 必須是大於等於 1 的整數。
 - 舊資料缺少 quantity 時相容性預設為 `1`。
 - 收藏品種類數 = Item 筆數；實際周邊數量 = `Σ quantity`。
 - 單項實際價值 = `purchase.price × quantity`。
 - 總消費 = `Σ(purchase.price × quantity)`。
 - 統計數量時一律加總 quantity；只有明確描述「種類」才使用 Item 筆數。
-
-### 7.1 Quantity Validation
-
 - 所有進入 Store 的 Item 都經過同一套 quantity validation / normalization。
-- 不得用 `quantity || 1` 把非法值靜默轉為合法值。
-- 缺少 quantity 可相容性預設為 1；已存在但格式錯誤不可無條件當成 1。
+- 不得用 `quantity || 1` 把非法值靜默轉為合法值；缺少 quantity 可相容性預設為 1，已存在但格式錯誤不可無條件當成 1。
 - 新增、編輯、載入、migration、API response 都遵守相同規則。
 
-## 8. Search / 搜尋
+## 9. Search / 搜尋
 
 - 搜尋應涵蓋使用者可辨識的名稱、角色、作品、類型、廠商、Item ID 等資料。
 - 新增可搜尋欄位時同步更新搜尋索引與 UI。
 - 搜尋無結果使用 Empty State。
 - Search、Filter、Sort 與顯示模式不可各自維護矛盾狀態。
-- 多個搜尋詞採 AND 邏輯。
+- 多個搜尋詞採 AND 邏輯；常見空白、`,`、`，` 分隔應能正確處理。
+- 使用者可見狀態如 `預購中`、`待到貨`、`已收到` 應與對應內部狀態搜尋保持一致；`待到貨` 包含 `pending + preorder`。
 
-## 9. 跨頁搜尋轉跳
+## 10. 跨頁搜尋轉跳
 
 - 統計、排名、摘要或 Dashboard 項目若代表可查看的搜尋條件，應提供搜尋轉跳。
 - 流程：`點擊項目 → Collection → 帶入搜尋條件 → 顯示結果`。
@@ -104,17 +107,17 @@
 - 不可只修改 hash；必須確認 Collection query / filter state 實際更新並觸發搜尋。
 - 複合條件使用相應 Filter / query state，不塞模糊文字。
 
-## 10. Router / Navigation
+## 11. Router / Navigation
 
 - 使用 Hash Router。
 - 主要 route：`#/home`、`#/collection`、`#/statistics`、`#/management`、`#/settings`、`#/item/:id`。
-- 重新整理後應恢復目前 route。
-- Back / Forward 正常。
+- 重新整理後應恢復目前 route；Back / Forward 正常。
 - malformed URL、decode 失敗與多餘 route segments 安全處理。
 - 404 不造成整個 App 白屏。
 - Route navigation 與 page rendering 保持解耦。
+- Item Detail 的 Modal 狀態、Router 狀態與 focus 管理必須一致；Detail modal 應以其專用 dialog selector 識別，不可與其他 modal 共用模糊 selector。
 
-## 11. Data / Store
+## 12. Data / Store
 
 - Store 是資料與 UI state 的主要來源。
 - Page 不持有自己的資料副本。
@@ -125,7 +128,7 @@
 - API 回傳資料進 Store 前先驗證 schema。
 - 不可信資料不可直接假設合法。
 
-## 12. Rendering / DOM / XSS
+## 13. Rendering / DOM / XSS
 
 - 使用者輸入、API 資料與外部資料一律視為不可信。
 - 優先使用 DOM API、`textContent` 與安全 utility。
@@ -133,36 +136,32 @@
 - 不使用 MutationObserver 做 UI 狀態、搜尋、排序或資料顯示後處理。
 - 動態元素互動優先使用事件 delegation。
 - 不在每次 render 重複新增相同 document listener。
+- HTML `id` 必須唯一；同一語意的控制項不可複用相同 ID。
 
-## 13. Loading / Empty / Error
+## 14. Loading / Empty / Error
 
-每個資料驅動區塊都要考慮：
+每個資料驅動區塊都要考慮 Loading、Empty、Error。Empty 不是 Error。錯誤訊息應可被使用者理解，不直接把原始 exception 當 UI HTML。JS 載入失敗時首頁仍應保有基本可見內容。
 
-- Loading：資料尚未完成載入。
-- Empty：資料成功載入但沒有可顯示內容。
-- Error：資料載入或處理失敗。
-
-Empty 不是 Error。錯誤訊息應可被使用者理解，不直接把原始 exception 當 UI HTML。JS 載入失敗時首頁仍應保有基本可見內容。
-
-## 14. Collection
+## 15. Collection
 
 - 支援全部、作品分類、搜尋、Filter、Sort、狀態篩選。
 - 卡片／清單可切換並記住使用者選擇。
 - 保持封面、標題、作品、角色、類別、價格、狀態等呈現邏輯。
-- 點擊 Item 進入詳細頁。
-- 篩選條件組合正確；無結果使用 Empty State。
+- 點擊 Item 進入詳細頁；篩選條件組合正確；無結果使用 Empty State。
 - 圖片載入失敗使用 fallback。
 - 顯示數量使用 quantity；Item 筆數與實際件數分開。
 
-## 15. Statistics / 統計
+## 16. Statistics / 統計
 
 - 按作品、類別、狀態、總消費等統計明確定義資料來源與計算方式。
 - 「數量」預設代表實際持有件數，使用 `Σ quantity`。
 - 消費使用 `Σ(purchase.price × quantity)`。
 - Item 筆數只有在明確表示「收藏品種類數」時使用。
-- 新增統計確認空資料、單一資料、零值、異常值、手機版與搜尋轉跳。
+- 月份消費圖完整處理 1～12 月，無資料月份顯示 0。
+- 大圖與小圖應使用適合各自尺寸的獨立圖表配置。
+- 統計新增或修改後確認空資料、邊界值、手機版與搜尋轉跳。
 
-## 16. Management / CRUD
+## 17. Management / CRUD
 
 - 管理頁作品、類型、流水號選擇與搜尋狀態保持一致。
 - CRUD 必須有表單 validation。
@@ -170,8 +169,9 @@ Empty 不是 Error。錯誤訊息應可被使用者理解，不直接把原始 e
 - 編輯表單應保留使用者輸入，不因無關 render 遺失。
 - 刪除有明確確認流程。
 - 成功與失敗都提供使用者可理解的回饋。
+- 管理表單的每個 HTML `id` 必須唯一，selector 不可因重複 ID 而只命中其中一個控制項。
 
-## 17. GitHub API / Worker
+## 18. GitHub API / Worker
 
 - Frontend 不保存或暴露 GitHub Token。
 - GitHub 寫入必須經 API / Worker layer。
@@ -180,7 +180,7 @@ Empty 不是 Error。錯誤訊息應可被使用者理解，不直接把原始 e
 - 涉及分類跨檔案搬移時必須有一致性與 rollback 策略。
 - 寫入採目標範圍鎖定，避免過時資料覆蓋較新的遠端資料。
 
-## 18. Write Consistency
+## 19. Write Consistency
 
 GitHub 寫入流程固定遵守：
 
@@ -193,7 +193,7 @@ GitHub 寫入流程固定遵守：
 
 單一 Item 的新增／編輯／刪除應盡可能保持最小範圍寫入；涉及多檔案時必須有明確 rollback 策略。
 
-## 19. Image Management
+## 20. Image Management
 
 - 支援 JPG / JPEG / PNG / WebP / GIF / AVIF。
 - 單張圖片大小上限依目前 API / UI 契約執行，Frontend 與 Worker 必須一致。
@@ -206,9 +206,10 @@ GitHub 寫入流程固定遵守：
 - 管理頁不得直接修改 Store snapshot 中的 frozen image metadata；要建立新的 metadata 物件後再提交。
 - **任何圖片管理程式碼修改都必須遵守版本號規則，增加 Patch。**
 
-## 20. TODO / Verification
+## 21. Verification / TODO
 
 - 完成實作後才勾選 TODO，不因「看起來應該完成」而勾選。
 - 靜態檢查、schema、build、Worker contract 等可由工具驗證的項目應實際驗證後再勾選。
 - Desktop、Mobile 與互動 smoke test 若由使用者自行驗證，助手不可宣稱已完成。
 - 每次修改後檢查版本號、資料完整性與 production build / deploy 狀態。
+- 已完成且屬於長期規格的資訊放在本文件；TODO 只保留未完成、待驗證或值得持續追蹤的工作。
