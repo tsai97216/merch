@@ -1,0 +1,27 @@
+{
+  "id": "ZZZw004",
+  "workId": "zenless-zone-zero",
+  "title": "伊埃斯 手機架",
+  "series": [],
+  "characters": ["伊埃斯"],
+  "category": "w",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
