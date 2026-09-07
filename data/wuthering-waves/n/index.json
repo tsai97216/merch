@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "n",
+  "items": [
+    {
+      "id": "WWn001",
+      "path": "data/wuthering-waves/n/WWn001/data.json",
+      "title": "2.5版本線下 明信片",
+      "characters": ["漂泊者", "尤諾", "奧古斯塔"],
+      "manufacturer": "庫洛",
+      "quantity": 3,
+      "status": "received"
+    }
+  ]
+}
