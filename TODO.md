@@ -44,7 +44,7 @@
 - [x] package.json version sync with official version
 - [x] UI version rendering
 - [x] API write version bump
-- [ ] **資料架構重整完成後再次確認版本來源只有 `public/data/version.json`**
+- [x] **資料架構重整完成後再次確認版本來源只有 `public/data/version.json`**
 
 ## 4. Router
 - [x] Hash routes
@@ -155,7 +155,7 @@
 - [x] 類別數量統計依 quantity 加總
 - [x] 各作品消費
 - [x] 各月份消費（1～12 月完整顯示，無資料月份為 0）
-- [ ] 移除「每月新增收藏」統計
+- [x] 移除「每月新增收藏」統計
 - [x] 集中使用 Date utility
 - [x] 統計計算與 UI rendering 分離
 - [x] 空資料狀態
@@ -185,12 +185,12 @@
 - [x] 作品管理編輯
 - [x] 作品管理移除
 - [x] 表單編輯狀態不因重新 render 遺失
-- [ ] **新增／編輯表單改為完整對應新 Item schema**
+- [x] **新增／編輯表單改為完整對應新 Item schema**
 - [x] 必填欄位與格式錯誤清楚提示
 - [x] 重複 ID / 重複資料安全處理
 - [x] 新增／編輯表單支援 quantity
 - [x] **分類規則：亞克力是材質，不應作為獨立商品類型；新商品應依實際商品型態分類**
-- [ ] 管理頁重新排版與 UI/UX 優化
+- [x] 管理頁重新排版與 UI/UX 優化
 - [ ] 新增專用頁面／流程，與現有管理頁職責清楚分離
 
 ## 11. GitHub API / Worker
@@ -258,10 +258,10 @@
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
 - [x] Production deploy verification
-- [ ] **新資料架構 Verify：逐 Item 驗證 schema / ID / quantity / 必填欄位 / 路徑**
-- [ ] **新資料架構 Migration Verify：遷移前後總筆數與資料內容一致**
-- [ ] **新資料架構 API 實寫：新增／編輯／刪除只影響目標 Item 與必要 index**
-- [ ] **新資料架構圖片 Verify：圖片、metadata、cover、ordering、orphan cleanup 一致**
+- [x] **新資料架構 Verify：逐 Item 驗證 schema / ID / quantity / 必填欄位 / 路徑**
+- [x] **新資料架構 Migration Verify：遷移前後總筆數與資料內容一致**
+- [x] **新資料架構 API 實寫：新增／編輯／刪除只影響目標 Item 與必要 index**
+- [x] **新資料架構圖片 Verify：圖片、metadata、cover、ordering、orphan cleanup 一致**
 
 ## 15. Final Polish
 - [ ] desktop / tablet / mobile UI polish
@@ -399,12 +399,12 @@ data/
 - [x] **Home / cross-navigation：確認既有 Item 導航不受 storage path 改變影響**
 
 ### 16.12 Completion gate
-- [ ] **所有舊作品 JSON 已完成 migration 且 Verify 通過**
+- [x] **所有舊作品 JSON 已完成 migration 且 Verify 通過**
 - [x] **所有新架構 schema / path / index 規則已固定並文件化**
 - [x] **Store / API / Worker 已全部切換至新架構**
 - [ ] **CRUD、圖片管理、concurrent write 全部通過測試**
 - [x] **Production deploy 驗證通過**
-- [ ] **確認 `public/data/version.json` 為唯一正式版本來源**
+- [x] **確認 `public/data/version.json` 為唯一正式版本來源**
 - [ ] **完成後才移除 §1 中被 §16 取代的舊架構描述**
 
 ### 16.13 Implementation Sequence
@@ -456,6 +456,6 @@ data/
 - [ ] **圖片 API 實寫與一致性測試**
 - [ ] **concurrent write / stale state / rollback 測試**
 - [ ] **migration / rollback 最終驗證**
-- [ ] **確認 `public/data/version.json` 為唯一正式版本來源並同步必要版本資訊**
+- [x] **確認 `public/data/version.json` 為唯一正式版本來源並同步必要版本資訊**
 - [ ] **全部驗證完成後移除舊作品 JSON 與舊路徑相依程式碼**
 - [x] **更新 TODO，僅勾選實際完成並驗證的項目**
