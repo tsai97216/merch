@@ -2,7 +2,7 @@ import type { Item, ShippingRecord } from './types';
 import { escapeHtml } from './utils/dom';
 import { openShippingDetail } from './shipping-detail-modal';
 
-export function renderItemDetailShipping(dialog: HTMLElement, item: Item, shipping: ShippingRecord[], items: Item[]): void {
+export function renderItemDetailShipping(dialog: Element, item: Item, shipping: ShippingRecord[], items: Item[]): void {
   dialog.querySelector('[data-item-detail-shipping]')?.remove();
   const records = shipping.filter((record) => record.itemIds.includes(item.id));
   if (!records.length) return;
