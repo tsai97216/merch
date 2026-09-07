@@ -20,6 +20,15 @@
       "manufacturer": "",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZw003",
+      "path": "data/zenless-zone-zero/w/ZZZw003/data.json",
+      "title": "月曆 壓克力杯墊 儀玄",
+      "characters": ["儀玄"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
