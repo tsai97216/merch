@@ -11,6 +11,15 @@
       "manufacturer": "",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "WWc002",
+      "path": "data/wuthering-waves/c/WWc002/data.json",
+      "title": "愛彌斯 證件照",
+      "characters": ["愛彌斯"],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
