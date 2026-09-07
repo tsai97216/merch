@@ -26,7 +26,7 @@
    - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
    - [x] **Worker 圖片 mutation verifier 與實作版本語意不一致**：已改為驗證新增與替換都會 `bumpPatch`，不再要求舊的 `if (!exists)` 分支形狀；Verify #671 已通過。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
-   - [ ] **Shipping CRUD 同步回饋複查**：`shipping.ts` 目前雖會在 `saving` 時鎖定表單並顯示「儲存中…」，但開始同步時沒有明確 Toast；需補上與 Management 一致的同步中提示，並驗證成功／失敗狀態。
+   - [x] **Shipping CRUD 同步回饋複查**：已於 1.109.56 補上新增／修改／刪除運費的同步中 Toast，並保留 saving 鎖與成功／失敗回饋；Verify #689、Deploy #1292 均通過。
 
 ## P1｜UI / UX 與穩定性
 
@@ -65,4 +65,4 @@
 
 9. **完整 Verify**：目前版本所有自動化檢查通過。
 10. **Production build / deployment**：最新版本需重新確認 Pages build / deploy 與 Worker deploy。
-11. **版本／資料／schema／圖片／Worker contract 一致性**：確認各項契約維持一致。
+11. **版本／資料／schema／圖片／Worker contract 一致性：確認各項契約維持一致。
