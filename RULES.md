@@ -90,7 +90,7 @@
 
 ## 5. Router / Navigation / Detail
 
-- 使用 Hash Router，主要 route：`#/home`、`#/collection`、`#/statistics`、`#/management`、`#/settings`、`#/item/:id`。
+- 使用 Hash Router，正式 route：`#/home`、`#/collection`、`#/statistics`、`#/add`、`#/shipping`、`#/management`、`#/settings`、`#/item/:id`。
 - Refresh、Back、Forward 必須正常。
 - malformed URL、decode 失敗、多餘 segments 與不存在 Item 必須安全處理，不得造成白屏。
 - Route navigation 與 page rendering 保持解耦。

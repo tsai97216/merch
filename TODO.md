@@ -22,8 +22,8 @@
   - [x] **HTML / entry loading**：已確認 `index.html` 直接載入目前各功能 entry，包含 `version.ts`、`theme.ts`、`image-source.ts`、`main.ts`、`cross-navigation.ts`、`collection-controls.ts`、`detail-focus.ts`、`image-viewer.ts`、`statistics.ts`、`home-enhancements.ts`、`management.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts`、`settings-auth.ts`；功能模組的 CSS 亦由各 TS entry 以 side-effect import 載入。`vite.config.ts` 使用標準 Vite build，未發現額外或異常 entry 設定
   - [ ] **Entry wrapper cleanup**：`category-display.ts` 現在只剩 `import './add';`，功能上是額外 wrapper entry。可評估改成 `index.html` 直接載入 `add.ts` 後移除 wrapper，但需確認不影響既有部署／載入順序
   - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，目前僅保留 `add.ts` entry 載入責任
-  - [ ] **CSS entry inventory**：已確認 `src/card-enhancements.css` 不是 dead CSS，檔案內包含目前 `itemCard()` 使用的 `.quantity-mark`、`.item-top`、badge 與 list media 規則；但目前沒有 TS import 或 HTML stylesheet entry，屬於「存在且有用、但未載入」問題，待以最小範圍補入正式 entry
-  - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
+  - [x] **CSS entry inventory**：已確認 `src/card-enhancements.css` 不是 dead CSS，且已透過 `src/ui-refinement.css` 的正式 CSS import 載入；檔案內的 `.quantity-mark`、`.item-top`、badge 與 list media 規則現在會進入正式樣式鏈
+  - [x] **文件一致性**：`RULES.md` 的主要 route 清單已補齊 `add`、`shipping` 等目前正式 route
 - [x] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
   - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
   - [x] **寫入序列化**：已確認 Item／Shipping 寫入共用 `writeQueue`，避免 Store 內多個遠端寫入同時競爭
