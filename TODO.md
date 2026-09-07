@@ -19,7 +19,24 @@
 - [ ] 完成 Item Detail 實機驗證，包含 Modal、Router、返回、鍵盤與 focus
 - [ ] 完成 Loading / Empty / Error 狀態驗證
 
-## 2. Full Repository Audit / 全倉庫分段健檢
+## 2. Motion / Animation 動效系統
+
+> 統一規劃後一次實作，避免各頁面各自建立不同的動畫與回饋規則。所有動效都應以操作回饋、狀態轉換與可理解性為目的，並支援 `prefers-reduced-motion`。
+
+- [ ] **API 同步狀態動效**：新增、修改、刪除、圖片上傳等 API 寫入操作，統一提供「同步中／上傳中 → 成功／失敗」的明確動畫與結果彈窗；同步完成前不得讓 UI 呈現為已完成狀態
+- [ ] **圖片上傳動效**：圖片選取、處理、上傳、完成與失敗提供清楚的進度／狀態回饋，縮圖加入適度淡入與完成狀態動畫
+- [ ] **Modal 動效**：新增、編輯、詳情、確認等 Modal 統一開啟／關閉 transition，並確保 focus 與鍵盤行為不受動畫影響
+- [ ] **Route／頁面切換動效**：主要頁面切換加入短促、低干擾的 transition，避免內容瞬間跳換
+- [ ] **Toast／操作回饋動效**：收藏、排序、篩選、設定變更等輕量操作提供一致的出現／消失與成功／失敗回饋
+- [ ] **按鈕互動動效**：統一 Hover、Focus、Press、Loading、Disabled 等狀態的視覺回饋，特別是儲存、新增、刪除等關鍵操作
+- [ ] **收藏卡片動效**：Desktop 提供適度 Hover／Focus／Press 回饋；Mobile 不依賴 Hover，避免觸控裝置產生奇怪狀態
+- [ ] **搜尋／篩選／排序動效**：資料列表更新、Empty State 與結果變化提供低干擾 transition，不做大幅飛入飛出
+- [ ] **統計數字／圖表動效**：統計數值變化與圖表首次呈現提供適度進場／更新動畫，避免影響資訊閱讀
+- [ ] **Light／Dark Theme 切換動效**：主題切換提供短暫且穩定的視覺過渡，避免閃爍
+- [ ] **Motion Accessibility**：完整支援 `prefers-reduced-motion`，使用者要求減少動畫時降低或停用非必要動效
+- [ ] **動效一致性驗證**：統一 duration、easing、transition 規則、狀態語意與 z-index／overlay 行為，避免各頁面自行定義互相衝突的動畫
+
+## 3. Full Repository Audit / 全倉庫分段健檢
 
 - [x] 第 1 段：Repo 基礎與規則，檢查 `RULES.md`、`TODO.md`、`package.json`、TypeScript / Vite 設定、GitHub Actions / Pages、版本與 CI 基線
 - [ ] 第 2 段：檔案架構與舊殘留，盤點 `src/`、`public/`、`scripts/`、API / Worker、CSS、HTML、migration，找出未使用檔案、dead code、舊 route、舊 API 與舊資料格式
@@ -48,7 +65,7 @@
 - [ ] 每一段健檢完成後分類問題為「正常／可改善／疑似 Bug／確定 Bug／舊殘留」，再決定是否修正，不因發現問題就直接大範圍重寫
 - [ ] 每次實際修正後遵守版本 Patch 規則，執行對應驗證並重新檢查受影響範圍
 
-## 3. Verification / 驗證
+## 4. Verification / 驗證
 
 - [ ] 執行完整 Verify，確認目前版本所有自動化檢查通過
 - [ ] 確認最新 production build / deployment 狀態
