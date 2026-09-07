@@ -1,6 +1,6 @@
 name = "chi-merch-api"
 main = "src/index.ts"
-compatibility_date = "2026-09-06"
+compatibility_date = "2026-09-07"
 
 routes = [
   { pattern = "merch.chi.qzz.io/api/*", zone_name = "chi.qzz.io" }
