@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "c",
+  "items": [
+    {
+      "id": "ZZZc001",
+      "path": "data/zenless-zone-zero/c/ZZZc001/data.json",
+      "title": "葉瞬光 線下前500 閃卡",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
+}
