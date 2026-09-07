@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "genshin-impact",
+  "category": "e",
+  "items": [
+    {
+      "id": "GIe001",
+      "path": "data/genshin-impact/e/GIe001/data.json",
+      "title": "原神聯名 Sony DualSense 無線控制器",
+      "characters": [],
+      "manufacturer": "Sony",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
