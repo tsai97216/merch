@@ -16,16 +16,22 @@ export function renderItemDetailShipping(dialog: HTMLElement, item: Item, shippi
   if (!grid) return;
   grid.appendChild(section);
 
-  section.querySelectorAll<HTMLElement>('[data-item-shipping-detail]').forEach((card) => {
-    const open = () => {
-      const record = records.find((entry) => entry.id === card.dataset.itemShippingDetail);
-      if (record) openShippingDetail(record, items);
-    };
-    card.addEventListener('click', open);
-    card.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
-      event.preventDefault();
-      open();
-    });
+  const openCard = (card: HTMLElement) => {
+    const record = records.find((entry) => entry.id === card.dataset.itemShippingDetail);
+    if (record) openShippingDetail(record, items);
+  };
+  section.addEventListener('click', (event) => {
+    const card = (event.target as Element | null)?.closest<HTMLElement>('[data-item-shipping-detail]');
+    if (!card || !section.contains(card)) return;
+    event.stopPropagation();
+    openCard(card);
+  });
+  section.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const card = (event.target as Element | null)?.closest<HTMLElement>('[data-item-shipping-detail]');
+    if (!card || !section.contains(card)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openCard(card);
   });
 }
