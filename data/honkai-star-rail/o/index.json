@@ -2,15 +2,5 @@
   "schemaVersion": 1,
   "workId": "honkai-star-rail",
   "category": "o",
-  "items": [
-    {
-      "id": "HSRo001",
-      "path": "data/honkai-star-rail/o/HSRo001/data.json",
-      "title": "ㄓ",
-      "characters": [],
-      "manufacturer": "",
-      "quantity": 1,
-      "status": "pending"
-    }
-  ]
+  "items": []
 }
