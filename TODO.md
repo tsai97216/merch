@@ -28,10 +28,10 @@
   - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
   - [x] **寫入序列化**：已確認 Item／Shipping 寫入共用 `writeQueue`，避免 Store 內多個遠端寫入同時競爭
   - [x] **Item 基本寫入防護**：`addItem` 檢查所屬作品、永久 Item ID 格式／作品代碼與重複 ID；`updateItem` 以既有 Item 所屬作品重新確認 ID 與作品一致
-  - [ ] **API response validation gap｜疑似／需修正**：`src/api.ts` 的 `validateData()` 目前只檢查 `works` 是陣列、`version` 是字串，`shipping` 直接 cast；沒有在 API 邊界完整驗證 Work / Item / Shipping 結構。雖然 `MerchStore.replaceData()` 後續會處理部分 normalization / shipping validation，但這不符合「API response schema → Store」的分層規則，需補完整 API 邊界驗證或明確集中 validator
-  - [ ] **進一步檢查 API → Store 回寫一致性**：逐一確認 `putItem`／`deleteItem`／`putShipping`／`deleteShipping`／Work CRUD 回傳資料是否完整包含最新 works、shipping、version，以及各 UI 模組是否正確套用回傳 state
-  - [ ] **Store fallback / race 深查**：確認 API 失敗後靜態來源 fallback、`sharedStorePromise` reset、寫入期間重新載入與多模組訂閱是否可能產生 stale state 或覆蓋較新的遠端資料
-  - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener
+  - [ ] **API response validation gap｜確定需修正**：`src/api.ts` 的 `validateData()` 目前只檢查 `works` 是陣列、`version` 是字串，`shipping` 直接 cast；沒有在 API 邊界完整驗證 Work / Item / Shipping 結構。雖然 `MerchStore.replaceData()` 後續會處理部分 normalization / shipping validation，但這不符合「API response schema → Store」的分層規則，需補完整 API 邊界驗證或明確集中 validator
+  - [x] **API → Store 回寫一致性**：已確認 Item／Shipping CRUD 的 Store 寫入流程都將 API 回傳資料交給 `applyRemote()`；Work CRUD 則以 `replaceData(data.works, data.version)` 套用作品資料並保留既有 shipping，符合 Work CRUD 不應改動運費資料的狀態語義
+  - [ ] **Store fallback / race 深查**：已確認 `sharedStorePromise` 在成功載入期間會共用同一 Promise，失敗時才 reset；Item／Shipping 遠端寫入經 `writeQueue` 串行，不會因 Store 內並行 mutation 互相覆蓋。另發現 `loadStore()` 目前會把 API 任何失敗（包含回傳 schema 不合法）都吞掉後進入靜態來源 fallback，可能掩蓋後端資料契約錯誤，需後續區分「API 不可用」與「API 回傳資料格式錯誤」
+  - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener；目前已確認 `statistics.ts`、`works-management.ts` 有 subscription，但 `management.ts` 主要依賴自身操作後 render，需繼續確認是否存在跨模組更新時的 stale UI
   - [x] **main detail Store reference｜先前誤判已釐清**：`src/main.ts` 的 `appStore` 會在 `loadStore()` 成功後由 `appStore = store` 正確初始化，Detail Modal 的刪除流程因此有實際 Store reference；原先「未初始化」的疑似 Bug 不成立
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
 - [ ] 第 5 段：UI / CSS / Responsive，依 Desktop → Tablet → Mobile 檢查各頁面、Modal、Toast、Form、Header / Navigation、dark mode、focus、overflow、z-index、breakpoint、dead CSS 與舊 selector
