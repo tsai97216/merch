@@ -1,0 +1,17 @@
+{
+  "id": "HSRn002",
+  "workId": "honkai-star-rail",
+  "title": "run to 歡愉 集章卡明信片",
+  "series": ["run to 歡愉"],
+  "characters": [],
+  "category": "n",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
+  "arrival": {"receivedDate": null},
+  "afterSales": {"status": "無", "note": ""},
+  "images": []
+}
