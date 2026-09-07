@@ -1,5 +1,6 @@
 const API_BASE = ((import.meta as ImportMeta & { env?: { VITE_MERCH_API_URL?: string } }).env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_ASSET_PREFIX = `${API_BASE}/assets/`;
+const API_ASSET_FILE_PREFIX = `${API_BASE}/assets/by-file/`;
 const LEGACY_ASSET_PREFIX = 'https://raw.githubusercontent.com/tsai97216/merch-old/main/';
 
 function assetPathFromSource(source: string): string {
@@ -11,7 +12,8 @@ function assetPathFromSource(source: string): string {
     if (url.pathname.startsWith('/data/')) return url.pathname.replace(/^\/+/, '');
     if (url.pathname.startsWith('/api/assets/')) {
       const assetMarker = '/api/assets/';
-      return url.pathname.slice(url.pathname.indexOf(assetMarker) + assetMarker.length).replace(/^\/+/, '');
+      const path = url.pathname.slice(url.pathname.indexOf(assetMarker) + assetMarker.length).replace(/^\/+/, '');
+      return path.startsWith('by-file/') ? '' : path;
     }
   } catch { /* fall through */ }
   const normalized = source.replace(/^\/+/, '');
@@ -22,12 +24,17 @@ function assetUrl(path: string): string {
   return `${API_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
+function assetFileUrl(file: string): string {
+  return `${API_ASSET_FILE_PREFIX}${encodeURIComponent(file)}`;
+}
+
 function legacyAssetUrl(path: string): string {
   return `${LEGACY_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
 function recoverImage(image: HTMLImageElement): void {
-  const path = assetPathFromSource(image.currentSrc || image.src);
+  const source = image.currentSrc || image.src;
+  const path = assetPathFromSource(source);
   if (!path) return;
   const stage = image.dataset.assetFallbackStage || '0';
   if (stage === '0') {
@@ -55,5 +62,5 @@ export function resolveAssetUrl(source?: string): string {
   if (!source) return '';
   if (source.includes('/api/assets/')) return source;
   const path = assetPathFromSource(source);
-  return path ? assetUrl(path) : source;
+  return path ? assetUrl(path) : assetFileUrl(source.split('/').pop() || source);
 }
