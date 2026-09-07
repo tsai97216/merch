@@ -26,6 +26,10 @@
 - API 回傳資料進 Store 前必須驗證 schema；外部資料一律視為不可信。
 - 現行資料採 Item 級資料夾／檔案架構；舊作品 JSON 不再作為新的整份寫入目標。
 - API / Worker / Store 必須使用目前 Item 與 index 路徑，不得恢復舊作品 JSON 整份覆寫模式。
+- Store 內涉及遠端資料的寫入操作必須序列化，避免同一份資料在並行 mutation 下產生競爭或 stale overwrite。
+- 遠端 mutation 成功後，以 API 回傳結果作為 Store 的權威資料來源，統一經 Store 的 remote-apply 流程回寫，不在 UI 各自建立第二份遠端資料狀態。
+- 共用 Store 載入 promise 若載入失敗必須清除，使後續操作仍可重新嘗試載入或進入既定 fallback；不可永久快取失敗結果。
+- Work CRUD 不應無故修改 Shipping state；除非操作本身明確針對 Shipping，否則套用 Work 資料時應保留現有運費資料。
 
 ### Item ID
 
