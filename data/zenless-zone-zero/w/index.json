@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "w",
+  "items": [
+    {
+      "id": "ZZZw001",
+      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
+      "title": "儀玄 扇子",
+      "characters": [
+        "儀玄"
+      ],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
