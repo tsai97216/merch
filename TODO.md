@@ -14,13 +14,13 @@
 - [x] External data validation
 
 ## 1. Data Layer
-- [x] Works index
-- [x] Work data split
-- [x] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
 - [ ] **周邊資料改為「一個作品 × 一個類型一個 JSON」的儲存架構**（此項架構方向改由 §16 取代，實作時以 §16 為準）
 - [ ] **建立類型 JSON 的路徑／命名規則與 index 對應規則**（此項架構方向改由 §16 取代）
 - [ ] **Store 改為讀取並合併各類型 JSON，對 UI 維持單一 Item 集合**（此項架構方向改由 §16 取代）
 - [ ] **Store 寫入時只更新受影響的類型 JSON，不再整份作品 JSON 覆寫**（此項架構方向改由 §16 取代）
+- [x] Works index
+- [x] Work data split
+- [x] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
 - [x] Quantity normalization
 - [x] Item ID validation
 - [x] Duplicate Item ID validation
@@ -259,3 +259,11 @@
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
 - [x] Production deploy verification
+
+## 15. UI / UX Follow-up
+- [ ] **Favicon**：完整檢查並補齊網站 Favicon，確認桌面、手機及各頁面載入一致
+- [ ] **載入動畫**：首次載入網站時顯示載入動畫
+- [ ] **新增／修改載入動畫**：新增或修改內容時顯示載入動畫，直到 API 確認成功
+- [ ] **新增／修改完成提示**：API 確認成功後顯示完成彈窗
+- [ ] **新增／修改失敗處理**：API 失敗時結束載入狀態並顯示錯誤提示
+- [ ] **防止重複提交**：新增／修改處理期間禁止重複提交
