@@ -15,7 +15,10 @@
 
 ## P0｜核心功能與正確性
 
-1. **Shipping `itemIds` 參照完整性複查**：確認 Store / API 載入與寫入時的驗證邊界，以及刪除 Item 時如何處理仍被 Shipping 參照的 Item，避免產生孤兒運費關聯。Worker 已有遠端存在性驗證，但 Item deletion 的跨資料參照仍待完整確認。
+1. **Shipping `itemIds` 參照完整性複查**：
+   - [x] Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合。
+   - [x] Worker Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`，禁止產生孤兒關聯。
+   - [ ] Store / API 載入邊界仍需補上「Shipping `itemIds` 必須存在於同一份 Collection Item 集合」的驗證，避免靜態 Collection 或 API 回應攜帶孤兒 Shipping 關聯時被前端接受。
 2. **Collection 初始資料載入效能**：目前 Worker `/api/data` 會為建立完整 remote read model 掃描 GitHub tree、所有 category index 與所有 Item `data.json`，造成新增頁／圖片操作前等待時間過長。改為 build-time 產生單一靜態 Collection read model，Frontend 優先直接讀取 GitHub Pages 靜態資料，保留 Worker `/api/data` 作為必要 fallback / mutation authoritative response；不得改變 canonical Item-level 儲存架構，也不得犧牲 Collection 的搜尋、Filter、Sort、狀態篩選功能。
 3. **Verify 發現現有 canonical data 結構不完整**：`data/genshin-impact/o/` 存在 Item `GIo001`，但缺少必要的 `index.json`，導致 `verify-data.mjs` / `verify-new-data.mjs` 在 `Verify #862` 於資料完整性步驟直接失敗。需先確認該 Category 是否應保留，以及正確補齊 Category index 的方式，再修改資料或驗證規則。
 
