@@ -19,7 +19,7 @@
 - [ ] 第 2 段：檔案架構與舊殘留，盤點 `src/`、`public/`、`scripts/`、API / Worker、CSS、HTML、migration，找出未使用檔案、dead code、舊 route、舊 API 與舊資料格式
   - [x] **模組入口／Legacy 依賴**：已確認 `management.ts`、`statistics.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts` 都由 `index.html` 以 module script 載入；`add.ts` 則由目前 production entry 的 `category-display.ts` 直接 import，因此這些模組不是未載入的 dead code。暫不刪除
   - [ ] **HTML / entry loading**：已確認目前 `index.html` 有 Vite module entries，並確認 `add.ts` 的間接載入關係；仍需把所有 entry 與其 CSS／副作用依賴完整交叉整理，確認沒有漏載入或重複載入
-  - [ ] **確認並修正 `MutationObserver` 違反既定 UI 規則**：`src/category-display.ts` 目前以 `MutationObserver` 監聽整個 `document.body`，需改為明確的 render／事件流程，避免以後處理 UI 後續狀態
+  - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，保留其現行 `add.ts` entry 載入責任
   - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
 - [ ] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
