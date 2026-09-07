@@ -49,6 +49,7 @@
    - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
    - [x] **Worker `loadRemote()` 重複 Item ID 複查**：已在建立 remote Item Map 時檢查 `items.has(item.id)`，發現重複 Item ID 立即拒絕資料異常，不再讓後載入項目靜默覆蓋前一筆；Verify #671 已通過。
    - [x] **Worker 孤兒圖片清理與圖片寫入的伺服器端競態複查**：Worker 的 atomic commit 以觀測到的 `remote.headSha` 綁定 commit parent，並以 `force: false` 更新 branch；若清理與圖片寫入同時競爭，過期操作會因 HEAD 不符而失敗，不會靜默覆蓋另一操作。既有 Worker architecture / transaction contract 已驗證此併發保護。
+   - [ ] **Shipping `itemIds` 參照完整性複查**：目前 Store 的 `validateShipping()` 只驗證 `itemIds` 是非空字串陣列，尚未在載入／寫入時確認每個 Item ID 都存在；需確認是否可能產生孤兒運費關聯，以及刪除 Item 時是否會同步處理相關 Shipping。
 2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
 3. **Stage 10｜Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 RULES ↔ TODO ↔ Code ↔ Tests ↔ Data。
    - [x] **`merch-old` 圖片 fallback 舊相容邏輯複查**：目前 canonical data 未引用舊 `merch-old` 圖片路徑，但舊 repo 仍保有舊圖片資料，因此 fallback 仍有相容價值，暫不刪除。
