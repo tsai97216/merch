@@ -18,6 +18,7 @@
 3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
    - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。
    - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。
+   - [ ] **Worker 圖片 mutation 版本語意複查**：確認 replace / cover / reorder 等任何圖片管理 mutation 都會依規則產生 Patch version，且不因「只是替換圖片」而漏增版本。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
 
 ## P1｜UI / UX 與穩定性
