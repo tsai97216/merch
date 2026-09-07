@@ -24,6 +24,12 @@
   - [ ] **CSS entry inventory**：發現 `src/card-enhancements.css` 目前沒有任何 TS / HTML 載入或 import 依賴；檔案本身包含近期卡片 meta、quantity 顯示與 list media 規則，需確認是否為遺漏載入而非 dead CSS，再決定補 import 或刪除
   - [ ] **文件一致性**：`RULES.md` 的主要 route 清單目前未完整列出 `add`、`shipping` 等正式 route，確認是否需要補齊規格文件
 - [ ] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
+  - [x] **Store immutable baseline**：已確認 Store state 透過 `structuredClone` + deep freeze 建立 immutable snapshot，`setUi`／`replaceData` 均建立新 state，不直接修改既有 snapshot
+  - [x] **寫入序列化**：已確認 Item／Shipping 寫入共用 `writeQueue`，避免 Store 內多個遠端寫入同時競爭
+  - [x] **Item 基本寫入防護**：`addItem` 檢查所屬作品、永久 Item ID 格式／作品代碼與重複 ID；`updateItem` 以既有 Item 所屬作品重新確認 ID 與作品一致
+  - [ ] **進一步檢查 API → Store 回寫一致性**：逐一確認 `putItem`／`deleteItem`／`putShipping`／`deleteShipping` 回傳資料是否完整包含最新 works、shipping、version，以及各 UI 模組是否正確套用回傳 state
+  - [ ] **Store fallback / race 深查**：確認 API 失敗後靜態來源 fallback、`sharedStorePromise` reset、寫入期間重新載入與多模組訂閱是否可能產生 stale state 或覆蓋較新的遠端資料
+  - [ ] **UI subscription coverage**：盤點所有 `store.subscribe` 與直接 render 呼叫，確認每個依賴 Store 的頁面都能在資料變更後同步，且不會重複 mount / listener
 - [ ] 第 4 段：Router / Navigation / Detail，檢查 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal 與 focus 管理
 - [ ] 第 5 段：UI / CSS / Responsive，依 Desktop → Tablet → Mobile 檢查各頁面、Modal、Toast、Form、Header / Navigation、dark mode、focus、overflow、z-index、breakpoint、dead CSS 與舊 selector
 - [ ] 第 6 段：Form / Management / CRUD，檢查新增、編輯、刪除、搜尋、分類、ID、quantity、validation、表單 state、selector、Modal、confirmation、error handling 與 frozen data
