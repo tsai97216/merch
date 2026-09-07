@@ -14,20 +14,13 @@
 - [x] External data validation
 
 ## 1. Data Layer
+- [x] Works index
+- [x] Work data split
+- [x] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
 - [ ] **周邊資料改為「一個作品 × 一個類型一個 JSON」的儲存架構**（此項架構方向改由 §16 取代，實作時以 §16 為準）
 - [ ] **建立類型 JSON 的路徑／命名規則與 index 對應規則**（此項架構方向改由 §16 取代）
 - [ ] **Store 改為讀取並合併各類型 JSON，對 UI 維持單一 Item 集合**（此項架構方向改由 §16 取代）
 - [ ] **Store 寫入時只更新受影響的類型 JSON，不再整份作品 JSON 覆寫**（此項架構方向改由 §16 取代）
-- [x] Project structure
-- [x] TypeScript + Vite + ES Modules
-- [x] GitHub Pages deployment
-- [x] Formal domain
-- [x] Work code / Item ID rules
-- [x] Shared Store architecture
-- [x] External data validation
-- [x] Works index
-- [x] Work data split
-- [x] **重建 Item schema：以目前確定的基本／購買／到貨／售後／圖片欄位為唯一規格**
 - [x] Quantity normalization
 - [x] Item ID validation
 - [x] Duplicate Item ID validation
@@ -146,7 +139,7 @@
 - [x] 刪除
 - [x] 返回
 - [x] 不存在的 Item 顯示 Not Found
-- [x] Modal / Detail 狀態與 Router 狀態一致
+- [x] Modal / Detail Router 狀態一致
 - [x] 鍵盤關閉與 focus 管理
 - [x] 「已收到」狀態徽章隱藏文字並保留空間
 
@@ -265,3 +258,4 @@
 - [x] Image management test
 - [ ] Empty/error/loading test
 - [x] Data integrity verification
+- [x] Production deploy verification
