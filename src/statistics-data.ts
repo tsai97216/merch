@@ -69,7 +69,7 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
   const monthlyDetailItems: Record<string, WorkItemDetail[]> = {};
   const categoryDetailItems: Record<string, WorkItemDetail[]> = {};
   items.forEach((item) => { const detail = toDetail(item); const month = monthKey(item.purchase?.date); if (month) (monthlyDetailItems[monthLabel(month)] ||= []).push(detail); const category = categoryName(item.category); (categoryDetailItems[category] ||= []).push(detail); });
-  shipping.forEach((record) => { const month = monthKey(record.date); if (month && Number(record.amount || 0)) (monthlyDetailItems[monthLabel(month)] ||= []).push({ title: '運費', quantity: 1, spend: Number(record.amount || 0), unitPrice: Number(record.amount || 0), currency: record.currency || 'TWD', platform: record.platform || '運費', date: record.date || '未填寫' }); });
+  shipping.forEach((record) => { const month = monthKey(record.date); if (month && Number(record.amount || 0)) (monthlyDetailItems[monthLabel(month)] ||= []).push({ title: '運費', quantity: 1, spend: Number(record.amount || 0), unitPrice: Number(record.amount || 0), currency: record.currency || 'TWD', platform: record.carrier || '運費', date: record.date || '未填寫' }); });
 
   const year = currentYear();
   const monthlyEntries: [string, WorkAggregate][] = Array.from({ length: 12 }, (_, i) => {
