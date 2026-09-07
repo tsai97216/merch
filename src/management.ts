@@ -5,7 +5,7 @@ import { resolveAssetUrl } from './image-source';
 import { buildNextItemId } from './item-id';
 import { getStore, type MerchStore } from './store';
 import type { ImageMeta, Item } from './types';
-import { escapeHtml, qs } from './utils/dom';
+import { qs } from './utils/dom';
 import { showToast } from './utils/toast';
 
 let storeRef: MerchStore | null = null;
@@ -17,6 +17,7 @@ let creating = false;
 let createCategoryCode = 'o';
 let searchQuery = '';
 let saving = false;
+const managementCategoryFieldId = 'management-category';
 
 const categories = [
   ['b', '徽章／吧唧'], ['c', '卡片'], ['d', '立牌／擺件'], ['e', '電子產品'], ['f', '手辦／模型'], ['g', '文具'], ['h', '海報／掛畫／掛軸'], ['k', '掛件／吊飾'], ['l', '文件／資料夾'], ['m', '書籍／漫畫'], ['n', '明信片'], ['o', '其他'], ['p', '毛絨／布偶'], ['q', '鑰匙圈'], ['r', '雷射票'], ['s', '色紙'], ['v', '服飾'], ['w', '餐具／生活用品'], ['y', '特典']
@@ -36,203 +37,36 @@ function blankItem(): Item | undefined {
   const id = buildNextItemId(allItems().map(item => item.id), work.code, createCategoryCode);
   return { id, workId: work.id, workName: work.name, title: '', series: [], characters: [], category: createCategoryCode, manufacturer: '', quantity: 1, status: 'pending', description: '', notes: '', purchase: {}, arrival: {}, afterSales: {}, images: [] };
 }
-
-function setOptions(select: HTMLSelectElement | null, options: Array<{ value: string; label: string }>, selected = ''): void {
-  if (!select) return;
-  const fragment = document.createDocumentFragment();
-  for (const option of options) {
-    const node = document.createElement('option');
-    node.value = option.value;
-    node.textContent = option.label;
-    fragment.appendChild(node);
-  }
-  select.replaceChildren(fragment);
-  if (selected && options.some(option => option.value === selected)) select.value = selected;
-  else if (options[0]) select.value = options[0].value;
-}
-
+function setOptions(select: HTMLSelectElement | null, options: Array<{ value: string; label: string }>, selected = ''): void { if (!select) return; const fragment = document.createDocumentFragment(); for (const option of options) { const node = document.createElement('option'); node.value = option.value; node.textContent = option.label; fragment.appendChild(node); } select.replaceChildren(fragment); if (selected && options.some(option => option.value === selected)) select.value = selected; else if (options[0]) select.value = options[0].value; }
 function fill(item: Item): void {
-  selectedId = item.id;
-  pickerWork = workOf(item);
-  pickerCategory = item.category;
-  pickerSerial = serialOf(item);
-  setValue('management-item-id', item.id);
-  setValue('management-title', item.title);
-  setValue('management-series', item.series.join(', '));
-  setValue('management-characters', item.characters.join(', '));
-  setValue('management-manufacturer', item.manufacturer);
-  setValue('management-quantity', String(item.quantity));
-  setValue('management-status', item.status);
-  setValue('management-description', item.description);
-  setValue('management-notes', item.notes);
-  setValue('management-price', item.purchase?.price == null ? '' : String(item.purchase.price));
-  setValue('management-currency', item.purchase?.currency ?? 'TWD');
-  setValue('management-platform', item.purchase?.platform ?? '');
-  setValue('management-purchase-date', item.purchase?.date ?? '');
-  setValue('management-expected-date', item.arrival?.expectedDate ?? '');
-  setValue('management-received-date', item.arrival?.receivedDate ?? '');
-  setValue('management-after-sales-status', item.afterSales?.status ?? '');
-  setValue('management-after-sales-note', item.afterSales?.note ?? '');
+  selectedId = item.id; pickerWork = workOf(item); pickerCategory = item.category; pickerSerial = serialOf(item);
+  setValue('management-item-id', item.id); setValue('management-title', item.title); setValue('management-series', item.series.join(', ')); setValue('management-characters', item.characters.join(', ')); setValue('management-manufacturer', item.manufacturer); setValue('management-quantity', String(item.quantity)); setValue('management-status', item.status); setValue('management-description', item.description); setValue('management-notes', item.notes); setValue('management-price', item.purchase?.price == null ? '' : String(item.purchase.price)); setValue('management-currency', item.purchase?.currency ?? 'TWD'); setValue('management-platform', item.purchase?.platform ?? ''); setValue('management-purchase-date', item.purchase?.date ?? ''); setValue('management-expected-date', item.arrival?.expectedDate ?? ''); setValue('management-received-date', item.arrival?.receivedDate ?? ''); setValue('management-after-sales-status', item.afterSales?.status ?? ''); setValue('management-after-sales-note', item.afterSales?.note ?? '');
 }
-
 function readFormItem(base: Item): Item {
-  const series = value('management-series').split(',').map(item => item.trim()).filter(Boolean);
-  const characters = value('management-characters').split(',').map(item => item.trim()).filter(Boolean);
-  const priceText = value('management-price');
-  return {
-    ...base,
-    title: value('management-title'),
-    series,
-    characters,
-    manufacturer: value('management-manufacturer'),
-    quantity: Number(value('management-quantity')),
-    status: value('management-status') || 'pending',
-    description: value('management-description'),
-    notes: value('management-notes'),
-    category: value('management-picker-category') || base.category,
-    purchase: { ...(base.purchase ?? {}), ...(priceText ? { price: Number(priceText) } : { price: undefined }), currency: value('management-currency') || undefined, platform: value('management-platform') || undefined, date: value('management-purchase-date') || undefined },
-    arrival: { ...(base.arrival ?? {}), expectedDate: value('management-expected-date') || undefined, receivedDate: value('management-received-date') || undefined },
-    afterSales: { ...(base.afterSales ?? {}), status: value('management-after-sales-status') || undefined, note: value('management-after-sales-note') || undefined }
-  };
+  const series = value('management-series').split(',').map(item => item.trim()).filter(Boolean); const characters = value('management-characters').split(',').map(item => item.trim()).filter(Boolean); const priceText = value('management-price');
+  return { ...base, title: value('management-title'), series, characters, manufacturer: value('management-manufacturer'), quantity: Number(value('management-quantity')), status: value('management-status') || 'pending', description: value('management-description'), notes: value('management-notes'), category: value('management-picker-category') || base.category, purchase: { ...(base.purchase ?? {}), ...(priceText ? { price: Number(priceText) } : { price: undefined }), currency: value('management-currency') || undefined, platform: value('management-platform') || undefined, date: value('management-purchase-date') || undefined }, arrival: { ...(base.arrival ?? {}), expectedDate: value('management-expected-date') || undefined, receivedDate: value('management-received-date') || undefined }, afterSales: { ...(base.afterSales ?? {}), status: value('management-after-sales-status') || undefined, note: value('management-after-sales-note') || undefined } };
 }
-
-function validateItem(item: Item): string[] {
-  const errors: string[] = [];
-  if (!item.title.trim()) errors.push('標題為必填欄位。');
-  if (!Number.isInteger(item.quantity) || item.quantity < 1) errors.push('數量必須是大於等於 1 的整數。');
-  if (item.purchase?.price !== undefined && (!Number.isFinite(item.purchase.price) || item.purchase.price < 0)) errors.push('價格必須是大於等於 0 的數字。');
-  return errors;
-}
-
+function validateItem(item: Item): string[] { const errors: string[] = []; if (!item.title.trim()) errors.push('標題為必填欄位。'); if (!Number.isInteger(item.quantity) || item.quantity < 1) errors.push('數量必須是大於等於 1 的整數。'); if (item.purchase?.price !== undefined && (!Number.isFinite(item.purchase.price) || item.purchase.price < 0)) errors.push('價格必須是大於等於 0 的數字。'); return errors; }
 function imageList(item: Item): ImageMeta[] { return (item.images ?? []).slice(0, 1).map(image => ({ ...image, isCover: undefined })); }
-function imagePath(item: Item, file: File): string {
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/\.[^.]+$/, '').slice(0, 80) || 'image';
-  const ext = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'].includes(file.name.split('.').pop()?.toLowerCase() ?? '') ? file.name.split('.').pop()!.toLowerCase() : 'jpg';
-  return `data/${item.workId}/${item.category}/${item.id}/images/${Date.now()}-${safeName}.${ext}`;
-}
-async function fileToBase64(file: File): Promise<string> {
-  return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); });
-}
+function imagePath(item: Item, file: File): string { const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/\.[^.]+$/, '').slice(0, 80) || 'image'; const ext = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'].includes(file.name.split('.').pop()?.toLowerCase() ?? '') ? file.name.split('.').pop()!.toLowerCase() : 'jpg'; return `data/${item.workId}/${item.category}/${item.id}/images/${Date.now()}-${safeName}.${ext}`; }
+async function fileToBase64(file: File): Promise<string> { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); }); }
 function imageMeta(item: Item, path: string, alt?: string): ImageMeta { const file = path.split('/').pop() || path; return { id: `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}) }; }
-
 async function saveImage(item: Item, image: ImageMeta | null): Promise<void> { if (!storeRef) throw new Error('資料庫尚未載入。'); await storeRef.updateItem({ ...item, images: image ? [image] : [] }); }
-async function uploadImage(file: File): Promise<void> {
-  const item = selectedItem();
-  if (!item) return showToast('請先儲存收藏，再上傳圖片。', 'error');
-  if (imageList(item).length) return showToast('目前已有主圖，請使用「替換」。', 'info');
-  if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) return showToast('只允許上傳不超過 8 MB 的圖片檔案。', 'error');
-  const path = imagePath(item, file);
-  try { await putAsset(path, await fileToBase64(file)); try { await saveImage(item, imageMeta(item, path, item.title)); } catch (error) { try { await deleteAsset(path); } catch {} throw error; } showToast('主圖已上傳。', 'success'); }
-  catch (error) { showToast(error instanceof Error ? error.message : '圖片上傳失敗。', 'error'); }
-}
-async function replaceImage(file: File): Promise<void> {
-  const item = selectedItem(); const current = item ? imageList(item)[0] : undefined;
-  if (!item || !current) return uploadImage(file);
-  if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) return showToast('只允許上傳不超過 8 MB 的圖片檔案。', 'error');
-  const path = imagePath(item, file);
-  try { await putAsset(path, await fileToBase64(file)); try { await saveImage(item, imageMeta(item, path, current.alt || item.title)); } catch (error) { try { await deleteAsset(path); } catch {} throw error; } try { await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${current.file}`); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); } showToast('主圖已成功替換。', 'success'); }
-  catch (error) { showToast(error instanceof Error ? error.message : '圖片替換失敗。', 'error'); }
-}
-async function deleteImage(): Promise<void> {
-  const item = selectedItem(); const image = item ? imageList(item)[0] : undefined;
-  if (!item || !image || !window.confirm(`確定要刪除「${item.title}」的主圖？`)) return;
-  try { await saveImage(item, null); await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`); showToast('主圖已刪除。', 'success'); }
-  catch (error) { showToast(error instanceof Error ? error.message : '圖片刪除失敗。', 'error'); }
-}
-
-function renderImageArea(item: Item | undefined): void {
-  const root = qs<HTMLElement>('[data-management-images]'); if (!root) return;
-  root.replaceChildren();
-  if (!item) { root.textContent = '請先儲存收藏，再管理圖片。'; return; }
-  const image = imageList(item)[0];
-  if (!image) { const notice = document.createElement('div'); notice.className = 'notice'; notice.textContent = '目前沒有圖片。可從下方上傳一張主圖。'; root.appendChild(notice); return; }
-  const row = document.createElement('div'); row.className = 'management-image-row';
-  const preview = document.createElement('div'); preview.className = 'management-image-preview';
-  const url = resolveAssetUrl(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`);
-  if (url) { const img = document.createElement('img'); img.src = url; img.alt = image.alt || item.title; img.loading = 'lazy'; preview.appendChild(img); }
-  else preview.textContent = '無預覽';
-  const info = document.createElement('div'); info.className = 'management-image-info'; const strong = document.createElement('strong'); strong.textContent = '目前主圖'; const small = document.createElement('small'); small.textContent = image.file; info.append(strong, small);
-  const actions = document.createElement('div'); actions.className = 'management-image-actions';
-  const replaceLabel = document.createElement('label'); replaceLabel.className = 'button secondary management-image-replace'; replaceLabel.textContent = '替換'; const replace = document.createElement('input'); replace.type = 'file'; replace.accept = 'image/*'; replace.hidden = true; replace.addEventListener('change', () => { const file = replace.files?.[0]; if (file) void replaceImage(file); }); replaceLabel.appendChild(replace);
-  const remove = document.createElement('button'); remove.className = 'button danger'; remove.type = 'button'; remove.textContent = '刪除'; remove.addEventListener('click', () => void deleteImage()); actions.append(replaceLabel, remove);
-  row.append(preview, info, actions); root.appendChild(row);
-}
-
+async function uploadImage(file: File): Promise<void> { const item = selectedItem(); if (!item) return showToast('請先儲存收藏，再上傳圖片。', 'error'); if (imageList(item).length) return showToast('目前已有主圖，請使用「替換」。', 'info'); if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) return showToast('只允許上傳不超過 8 MB 的圖片檔案。', 'error'); const path = imagePath(item, file); try { await putAsset(path, await fileToBase64(file)); try { await saveImage(item, imageMeta(item, path, item.title)); } catch (error) { try { await deleteAsset(path); } catch {} throw error; } showToast('主圖已上傳。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '圖片上傳失敗。', 'error'); } }
+async function replaceImage(file: File): Promise<void> { const item = selectedItem(); const current = item ? imageList(item)[0] : undefined; if (!item || !current) return uploadImage(file); if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) return showToast('只允許上傳不超過 8 MB 的圖片檔案。', 'error'); const path = imagePath(item, file); try { await putAsset(path, await fileToBase64(file)); try { await saveImage(item, imageMeta(item, path, current.alt || item.title)); } catch (error) { try { await deleteAsset(path); } catch {} throw error; } try { await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${current.file}`); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); } showToast('主圖已成功替換。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '圖片替換失敗。', 'error'); } }
+async function deleteImage(): Promise<void> { const item = selectedItem(); const image = item ? imageList(item)[0] : undefined; if (!item || !image || !window.confirm(`確定要刪除「${item.title}」的主圖？`)) return; try { await saveImage(item, null); await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`); showToast('主圖已刪除。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '圖片刪除失敗。', 'error'); } }
+function renderImageArea(item: Item | undefined): void { const root = qs<HTMLElement>('[data-management-images]'); if (!root) return; root.replaceChildren(); if (!item) { root.textContent = '請先儲存收藏，再管理圖片。'; return; } const image = imageList(item)[0]; if (!image) { const notice = document.createElement('div'); notice.className = 'notice'; notice.textContent = '目前沒有圖片。可從下方上傳一張主圖。'; root.appendChild(notice); return; } const row = document.createElement('div'); row.className = 'management-image-row'; const preview = document.createElement('div'); preview.className = 'management-image-preview'; const url = resolveAssetUrl(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`); if (url) { const img = document.createElement('img'); img.src = url; img.alt = image.alt || item.title; img.loading = 'lazy'; preview.appendChild(img); } else preview.textContent = '無預覽'; const info = document.createElement('div'); info.className = 'management-image-info'; const strong = document.createElement('strong'); strong.textContent = '目前主圖'; const small = document.createElement('small'); small.textContent = image.file; info.append(strong, small); const actions = document.createElement('div'); actions.className = 'management-image-actions'; const replaceLabel = document.createElement('label'); replaceLabel.className = 'button secondary management-image-replace'; replaceLabel.appendChild(document.createTextNode('替換')); const replace = document.createElement('input'); replace.type = 'file'; replace.accept = 'image/*'; replace.hidden = true; replace.addEventListener('change', () => { const file = replace.files?.[0]; if (file) void replaceImage(file); }); replaceLabel.appendChild(replace); const remove = document.createElement('button'); remove.className = 'button danger'; remove.type = 'button'; remove.textContent = '刪除'; remove.addEventListener('click', () => void deleteImage()); actions.append(replaceLabel, remove); row.append(preview, info, actions); root.appendChild(row); }
 function render(): void {
-  if (!storeRef) return;
-  const works = storeRef.snapshot.works;
-  const items = allItems();
-  if (!pickerWork || !works.some(work => work.name === pickerWork)) pickerWork = works[0]?.name ?? '';
-  const workSelect = qs<HTMLSelectElement>('#management-picker-work');
-  setOptions(workSelect, works.map(work => ({ value: work.name, label: work.name })), pickerWork);
-  pickerWork = workSelect?.value ?? pickerWork;
-  const matching = items.filter(item => workOf(item) === pickerWork);
-  const categoryCodes = creating ? categories.map(([code]) => code) : unique(matching.map(item => item.category));
-  if (!categoryCodes.includes(pickerCategory)) pickerCategory = categoryCodes[0] ?? '';
-  const categorySelect = qs<HTMLSelectElement>('#management-picker-category');
-  setOptions(categorySelect, categoryCodes.map(code => ({ value: code, label: categoryName(code) })), pickerCategory);
-  pickerCategory = categorySelect?.value ?? pickerCategory;
-  const serialItems = items.filter(item => workOf(item) === pickerWork && item.category === pickerCategory);
-  if (!pickerSerial || !serialItems.some(item => serialOf(item) === pickerSerial)) pickerSerial = serialOf(serialItems[0]) || '';
-  const serialSelect = qs<HTMLSelectElement>('#management-picker-serial');
-  setOptions(serialSelect, serialItems.map(item => ({ value: serialOf(item), label: `${serialOf(item).padStart(3, '0')} · ${item.title}` })), pickerSerial);
-  pickerSerial = serialSelect?.value ?? pickerSerial;
-  const target = creating ? blankItem() : serialItems.find(item => serialOf(item) === pickerSerial) ?? items.find(item => item.id === selectedId) ?? items[0];
-  if (target && !creating && target.id !== selectedId) fill(target);
-  if (creating) {
-    const blank = target ?? blankItem();
-    if (blank) fill(blank);
-    setValue('management-item-id', blank?.id ?? '');
-  }
-  const title = qs<HTMLElement>('#management-form-title'); if (title) title.textContent = creating ? '新增收藏' : '編輯收藏';
-  const submit = qs<HTMLButtonElement>('#management-submit'); if (submit) submit.textContent = creating ? '＋ 新增收藏' : '儲存修改'; submit && (submit.disabled = saving);
-  const cancel = qs<HTMLButtonElement>('#management-cancel'); if (cancel) cancel.hidden = !creating; if (cancel) cancel.disabled = saving;
-  const del = qs<HTMLButtonElement>('#management-delete'); if (del) del.disabled = saving || creating || !selectedItem();
-  const form = qs<HTMLFormElement>('#management-form'); if (form) form.setAttribute('aria-busy', String(saving));
-  form?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input,textarea,select,button').forEach(el => { if (el.id !== 'management-cancel' && el.id !== 'management-new') el.disabled = saving; });
-  renderImageArea(creating ? undefined : selectedItem());
-  const count = qs<HTMLElement>('#management-search-count'); if (count) count.textContent = searchQuery ? `搜尋「${searchQuery}」` : `共 ${items.length} 筆收藏`;
-  const datalist = qs<HTMLDataListElement>('#management-search-options'); if (datalist) datalist.replaceChildren(...items.filter(item => `${item.id} ${item.title} ${workOf(item)}`.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())).slice(0, 30).map(item => { const option = document.createElement('option'); option.value = `${item.id} · ${item.title}`; return option; }));
+  if (!storeRef) return; const works = storeRef.snapshot.works; const items = allItems(); if (!pickerWork || !works.some(work => work.name === pickerWork)) pickerWork = works[0]?.name ?? '';
+  const workSelect = qs<HTMLSelectElement>('#management-picker-work'); setOptions(workSelect, works.map(work => ({ value: work.name, label: work.name })), pickerWork); pickerWork = workSelect?.value ?? pickerWork;
+  const matching = items.filter(item => workOf(item) === pickerWork); const categoryCodes = creating ? categories.map(([code]) => code) : unique(matching.map(item => item.category)); if (!categoryCodes.includes(pickerCategory)) pickerCategory = categoryCodes[0] ?? '';
+  const categorySelect = qs<HTMLSelectElement>('#management-picker-category'); setOptions(categorySelect, categoryCodes.map(code => ({ value: code, label: categoryName(code) })), pickerCategory); pickerCategory = categorySelect?.value ?? pickerCategory;
+  const serialItems = items.filter(item => workOf(item) === pickerWork && item.category === pickerCategory); if (!pickerSerial || !serialItems.some(item => serialOf(item) === pickerSerial)) pickerSerial = serialOf(serialItems[0]) || ''; const serialSelect = qs<HTMLSelectElement>('#management-picker-serial'); setOptions(serialSelect, serialItems.map(item => ({ value: serialOf(item), label: `${serialOf(item).padStart(3, '0')} · ${item.title}` })), pickerSerial); pickerSerial = serialSelect?.value ?? pickerSerial;
+  const target = creating ? blankItem() : serialItems.find(item => serialOf(item) === pickerSerial) ?? items.find(item => item.id === selectedId) ?? items[0]; if (target && !creating && target.id !== selectedId) fill(target); if (creating && target) fill(target);
+  const title = qs<HTMLElement>('#management-form-title'); if (title) title.textContent = creating ? '新增收藏' : '編輯收藏'; const submit = qs<HTMLButtonElement>('#management-submit'); if (submit) { submit.textContent = creating ? '＋ 新增收藏' : '儲存修改'; submit.disabled = saving; } const cancel = qs<HTMLButtonElement>('#management-cancel'); if (cancel) { cancel.hidden = !creating; cancel.disabled = saving; } const del = qs<HTMLButtonElement>('#management-delete'); if (del) del.disabled = saving || creating || !selectedItem(); const form = qs<HTMLFormElement>('#management-form'); if (form) form.setAttribute('aria-busy', String(saving)); form?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input,textarea,select,button').forEach(el => { if (el.id !== 'management-cancel' && el.id !== 'management-new') el.disabled = saving; }); renderImageArea(creating ? undefined : selectedItem()); const count = qs<HTMLElement>('#management-search-count'); if (count) count.textContent = searchQuery ? `搜尋「${searchQuery}」` : `共 ${items.length} 筆收藏`; const datalist = qs<HTMLDataListElement>('#management-search-options'); if (datalist) { datalist.replaceChildren(...items.filter(item => `${item.id} ${item.title} ${workOf(item)}`.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())).slice(0, 30).map(item => { const option = document.createElement('option'); option.value = `${item.id} · ${item.title}`; return option; })); }
 }
-
-async function handleSubmit(event: SubmitEvent): Promise<void> {
-  event.preventDefault(); if (!storeRef || saving) return;
-  const base = creating ? blankItem() : selectedItem(); if (!base) return showToast('找不到要操作的收藏。', 'error');
-  const item = readFormItem(base); const errors = validateItem(item); if (errors.length) return showToast(errors.join('\n'), 'error');
-  saving = true; render();
-  try { if (creating) { await storeRef.addItem(item); selectedId = item.id; creating = false; pickerWork = item.workName ?? ''; pickerCategory = item.category; pickerSerial = serialOf(item); showToast('收藏已成功新增。', 'success'); } else { await storeRef.updateItem(item); selectedId = item.id; showToast('收藏已成功更新。', 'success'); } }
-  catch (error) { showToast(error instanceof Error ? error.message : '儲存失敗。', 'error'); }
-  finally { saving = false; render(); }
-}
-
-async function handleDelete(): Promise<void> {
-  const item = selectedItem(); if (!storeRef || !item || saving || creating) return;
-  if (!window.confirm(`確定要刪除「${item.title}」？\n此操作會刪除收藏資料，且 Item ID 不會重新編號。`)) return;
-  saving = true; render();
-  try { await storeRef.deleteItem(item.id); selectedId = ''; pickerSerial = ''; showToast('收藏已成功刪除。', 'success'); }
-  catch (error) { showToast(error instanceof Error ? error.message : '刪除失敗。', 'error'); }
-  finally { saving = false; render(); }
-}
-
-function bind(): void {
-  qs<HTMLFormElement>('#management-form')?.addEventListener('submit', event => void handleSubmit(event));
-  qs<HTMLButtonElement>('#management-delete')?.addEventListener('click', () => void handleDelete());
-  qs<HTMLButtonElement>('#management-new')?.addEventListener('click', () => { creating = true; createCategoryCode = 'o'; pickerSerial = ''; render(); });
-  qs<HTMLButtonElement>('#management-cancel')?.addEventListener('click', () => { creating = false; const item = selectedItem() ?? allItems()[0]; if (item) fill(item); render(); });
-  qs<HTMLSelectElement>('#management-picker-work')?.addEventListener('change', event => { pickerWork = (event.target as HTMLSelectElement).value; pickerCategory = ''; pickerSerial = ''; if (!creating) selectedId = ''; render(); });
-  qs<HTMLSelectElement>('#management-picker-category')?.addEventListener('change', event => { pickerCategory = (event.target as HTMLSelectElement).value; pickerSerial = ''; render(); });
-  qs<HTMLSelectElement>('#management-picker-serial')?.addEventListener('change', event => { pickerSerial = (event.target as HTMLSelectElement).value; const item = allItems().find(entry => serialOf(entry) === pickerSerial && workOf(entry) === pickerWork && entry.category === pickerCategory); if (item) fill(item); render(); });
-  qs<HTMLInputElement>('#management-search')?.addEventListener('input', event => { searchQuery = (event.target as HTMLInputElement).value.trim(); const first = allItems().find(item => `${item.id} · ${item.title}` === searchQuery); if (first) fill(first); render(); });
-  qs<HTMLButtonElement>('#management-cleanup-assets')?.addEventListener('click', async () => { if (!window.confirm('確定要掃描並刪除未被任何收藏圖片資料引用的孤兒圖片？')) return; const button = qs<HTMLButtonElement>('#management-cleanup-assets'); if (button) button.disabled = true; try { const result = await cleanupAssets(); showToast(result.count ? `已清理 ${result.count} 張孤兒圖片。` : '掃描完成，沒有孤兒圖片。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '孤兒圖片清理失敗。', 'error'); } finally { if (button) button.disabled = false; } });
-  qs<HTMLInputElement>('#management-image-upload')?.addEventListener('change', event => { const file = (event.target as HTMLInputElement).files?.[0]; if (file) void uploadImage(file); });
-}
-
-async function init(): Promise<void> {
-  storeRef = await getStore();
-  storeRef.subscribe(() => { if (!saving) render(); });
-  bind();
-  const first = allItems()[0]; if (first) fill(first);
-  render();
-}
-
+async function handleSubmit(event: SubmitEvent): Promise<void> { event.preventDefault(); if (!storeRef || saving) return; const base = creating ? blankItem() : selectedItem(); if (!base) return showToast('找不到要操作的收藏。', 'error'); const item = readFormItem(base); const errors = validateItem(item); if (errors.length) return showToast(errors.join('\n'), 'error'); saving = true; render(); try { if (creating) { await storeRef.addItem(item); selectedId = item.id; creating = false; pickerWork = item.workName ?? ''; pickerCategory = item.category; pickerSerial = serialOf(item); showToast('收藏已成功新增。', 'success'); } else { await storeRef.updateItem(item); selectedId = item.id; showToast('收藏已成功更新。', 'success'); } } catch (error) { showToast(error instanceof Error ? error.message : '儲存失敗。', 'error'); } finally { saving = false; render(); } }
+async function handleDelete(): Promise<void> { const item = selectedItem(); if (!storeRef || !item || saving || creating) return; if (!window.confirm(`確定要刪除「${item.title}」？\n此操作會刪除收藏資料，且 Item ID 不會重新編號。`)) return; saving = true; render(); try { await storeRef.deleteItem(item.id); selectedId = ''; pickerSerial = ''; showToast('收藏已成功刪除。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '刪除失敗。', 'error'); } finally { saving = false; render(); } }
+function bind(): void { qs<HTMLFormElement>('#management-form')?.addEventListener('submit', event => void handleSubmit(event)); qs<HTMLButtonElement>('#management-delete')?.addEventListener('click', () => void handleDelete()); qs<HTMLButtonElement>('#management-new')?.addEventListener('click', () => { creating = true; createCategoryCode = 'o'; pickerSerial = ''; render(); }); qs<HTMLButtonElement>('#management-cancel')?.addEventListener('click', () => { creating = false; const item = selectedItem() ?? allItems()[0]; if (item) fill(item); render(); }); qs<HTMLSelectElement>('#management-picker-work')?.addEventListener('change', event => { pickerWork = (event.target as HTMLSelectElement).value; pickerCategory = ''; pickerSerial = ''; if (!creating) selectedId = ''; render(); }); qs<HTMLSelectElement>('#management-picker-category')?.addEventListener('change', event => { pickerCategory = (event.target as HTMLSelectElement).value; pickerSerial = ''; render(); }); qs<HTMLSelectElement>('#management-picker-serial')?.addEventListener('change', event => { pickerSerial = (event.target as HTMLSelectElement).value; const item = allItems().find(entry => serialOf(entry) === pickerSerial && workOf(entry) === pickerWork && entry.category === pickerCategory); if (item) fill(item); render(); }); qs<HTMLInputElement>('#management-search')?.addEventListener('input', event => { searchQuery = (event.target as HTMLInputElement).value.trim(); const first = allItems().find(item => `${item.id} · ${item.title}` === searchQuery); if (first) fill(first); render(); }); qs<HTMLButtonElement>('#management-cleanup-assets')?.addEventListener('click', async () => { if (!window.confirm('確定要掃描並刪除未被任何收藏圖片資料引用的孤兒圖片？')) return; const button = qs<HTMLButtonElement>('#management-cleanup-assets'); if (button) button.disabled = true; try { const result = await cleanupAssets(); showToast(result.count ? `已清理 ${result.count} 張孤兒圖片。` : '掃描完成，沒有孤兒圖片。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '孤兒圖片清理失敗。', 'error'); } finally { if (button) button.disabled = false; } }); qs<HTMLInputElement>('#management-image-upload')?.addEventListener('change', event => { const file = (event.target as HTMLInputElement).files?.[0]; if (file) void uploadImage(file); }); }
+async function init(): Promise<void> { storeRef = await getStore(); storeRef.subscribe(() => { if (!saving) render(); }); bind(); const first = allItems()[0]; if (first) fill(first); render(); }
 void init();
