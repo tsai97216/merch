@@ -1,0 +1,29 @@
+{
+  "id": "ZZZc001",
+  "workId": "zenless-zone-zero",
+  "title": "葉瞬光 線下前500 閃卡",
+  "series": [],
+  "characters": [
+    "葉瞬光"
+  ],
+  "category": "c",
+  "manufacturer": "",
+  "quantity": 2,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
