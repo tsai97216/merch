@@ -6,7 +6,7 @@
 
 ## 1. Current / 目前待處理
 
-- [ ] 修正管理頁 `management-picker-category` 重複 HTML `id`，並確認作品／類型／流水號選擇與表單同步不受影響
+- [x] 修正管理頁 `management-picker-category` 重複 HTML `id`，並確認作品／類型／流水號選擇與表單同步不受影響
 - [ ] **臨時新增：周邊詳情顯示已綁定的運費**：若該周邊有綁定運費資料，Item Detail 內應顯示對應運費資訊；未綁定時不應顯示空白／誤導性內容
 - [ ] **UI 文本精簡：新增表單提示文字**：刪除不必要、過度指定或沒有實際幫助的 placeholder／提示，例如新增周邊標題欄位的「例如：流螢主題立牌」等具體示例；保留真正有助於理解欄位用途的必要提示
 - [ ] **UI 文本精簡：網站多餘說明文字**：移除首頁、統計圖表及其他頁面中不必要的解說／副標／入口描述，例如首頁「收藏資料庫的總覽入口。所有收藏都在這裡整理。」這類對操作沒有實質幫助的文字；保留必要的欄位名稱、狀態與操作提示
@@ -39,11 +39,11 @@
 ## 3. Full Repository Audit / 全倉庫分段健檢
 
 - [x] 第 1 段：Repo 基礎與規則，檢查 `RULES.md`、`TODO.md`、`package.json`、TypeScript / Vite 設定、GitHub Actions / Pages、版本與 CI 基線
-- [ ] 第 2 段：檔案架構與舊殘留，盤點 `src/`、`public/`、`scripts/`、API / Worker、CSS、HTML、migration，找出未使用檔案、dead code、舊 route、舊 API 與舊資料格式
-  - [x] **模組入口／Legacy 依賴**：已確認 `management.ts`、`statistics.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts` 都由 `index.html` 以 module script 載入；`add.ts` 則由 `category-display.ts` 直接 import，因此這些功能都有實際載入路徑，不判定為未載入 dead code
-  - [x] **HTML / entry loading**：已確認 `index.html` 直接載入目前各功能 entry，包含 `version.ts`、`theme.ts`、`image-source.ts`、`main.ts`、`cross-navigation.ts`、`collection-controls.ts`、`detail-focus.ts`、`image-viewer.ts`、`statistics.ts`、`home-enhancements.ts`、`management.ts`、`shipping.ts`、`works-management.ts`、`category-display.ts`、`settings-auth.ts`；功能模組的 CSS 亦由各 TS entry 以 side-effect import 載入。`vite.config.ts` 使用標準 Vite build，未發現額外或異常 entry 設定
-  - [ ] **Entry wrapper cleanup**：`category-display.ts` 現在只剩 `import './add';`，功能上是額外 wrapper entry。可評估改成 `index.html` 直接載入 `add.ts` 後移除 wrapper，但需確認不影響既有部署／載入順序
-  - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，目前僅保留 `add.ts` entry 載入責任
+- [x] 第 2 段：檔案架構與舊殘留，盤點 `src/`、`public/`、`scripts/`、API / Worker、CSS、HTML、migration，找出未使用檔案、dead code、舊 route、舊 API 與舊資料格式
+  - [x] **模組入口／Legacy 依賴**：已確認 `management.ts`、`statistics.ts`、`shipping.ts`、`works-management.ts` 等正式功能 entry 由 `index.html` 以 module script 載入；`add.ts` 現已由 `index.html` 直接載入，原 `category-display.ts` wrapper 已移除；未發現未載入的功能 dead code
+  - [x] **HTML / entry loading**：已確認 `index.html` 直接載入目前各功能 entry，包含 `version.ts`、`theme.ts`、`image-source.ts`、`main.ts`、`cross-navigation.ts`、`collection-controls.ts`、`detail-focus.ts`、`image-viewer.ts`、`statistics.ts`、`home-enhancements.ts`、`management.ts`、`shipping.ts`、`works-management.ts`、`add.ts`、`settings-auth.ts`；功能模組的 CSS 亦由各 TS entry 以 side-effect import 載入。`vite.config.ts` 使用標準 Vite build，未發現額外或異常 entry 設定
+  - [x] **Entry wrapper cleanup**：已確認 `category-display.ts` 僅為 `add.ts` wrapper；現已改為 `index.html` 直接載入 `add.ts` 並移除 wrapper，未發現載入順序／功能路徑問題
+  - [x] **確認並修正 `MutationObserver` 違反既定 UI 規則**：已移除 `src/category-display.ts` 對整個 `document.body` 的 `MutationObserver`，並隨 wrapper cleanup 移除該檔案
   - [x] **CSS entry inventory**：已確認 `src/card-enhancements.css` 不是 dead CSS，且已透過 `src/ui-refinement.css` 的正式 CSS import 載入；檔案內的 `.quantity-mark`、`.item-top`、badge 與 list media 規則現在會進入正式樣式鏈
   - [x] **文件一致性**：`RULES.md` 的主要 route 清單已補齊 `add`、`shipping` 等目前正式 route
 - [x] 第 3 段：Store / State / Data Flow，檢查 API → validation → Store → Router / Page → Render 的一致性、state mutation、stale state、duplicate state、validation 與 race condition
