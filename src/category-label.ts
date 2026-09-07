@@ -6,5 +6,3 @@ export function categoryName(code: string | undefined | null): string {
   if (!code) return '未分類';
   return CATEGORY_NAMES[code] ?? code;
 }
-
-export const categoryNames = CATEGORY_NAMES;
