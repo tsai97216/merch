@@ -20,6 +20,15 @@
       "manufacturer": "庫洛",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "WWc003",
+      "path": "data/wuthering-waves/c/WWc003/data.json",
+      "title": "莫寧 證件照",
+      "characters": ["莫寧"],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
