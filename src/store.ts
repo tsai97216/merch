@@ -138,7 +138,7 @@ export function loadStore(): Promise<MerchStore> {
   sharedStorePromise = (async () => {
     const store = new MerchStore({ works: [], items: [], version: '0.0.0', shipping: [], ui: readSavedUi(), loading: true, error: null });
     try {
-      try { const remote = await getRemoteData(); store.replaceData(remote.works, remote.version); return store; } catch { /* API 尚未切換時使用靜態來源。 */ }
+      try { const remote = await getRemoteData(); store.replaceData(remote.works, remote.version, remote.shipping); return store; } catch { /* API 尚未切換時使用靜態來源。 */ }
       const indexResponse = await fetch('./data/works.json', { cache: 'no-store' });
       if (!indexResponse.ok) throw httpError('works.json', indexResponse.status);
       const index = validateWorksIndex(await indexResponse.json());
