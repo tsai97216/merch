@@ -53,7 +53,7 @@ function normalizeCover(images: ImageMeta[]): ImageMeta[] {
 }
 function imagePath(item: Item, file: File): string { const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/\.[^.]+$/, '').slice(0, 80) || 'image'; const ext = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif'].includes(file.name.split('.').pop()?.toLowerCase() ?? '') ? file.name.split('.').pop()!.toLowerCase() : 'jpg'; return `data/${item.workId}/${item.category}/${item.id}/images/${Date.now()}-${safeName}.${ext}`; }
 async function fileToBase64(file: File): Promise<string> { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); }); }
-function imageMeta(item: Item, path: string, alt?: string, id?: string): ImageMeta { const file = path.split('/').pop() || path; return { id: id ?? `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}) }; }
+function imageMeta(item: Item, path: string, alt?: string, id?: string, isCover = false): ImageMeta { const file = path.split('/').pop() || path; return { id: id ?? `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}), ...(isCover ? { isCover: true } : {}) }; }
 async function saveImages(item: Item, images: ImageMeta[]): Promise<void> { if (!storeRef) throw new Error('資料庫尚未載入。'); await storeRef.updateItem({ ...item, images: normalizeCover(images) }); }
 function validImageFile(file: File): boolean { return file.type.startsWith('image/') && file.size <= 8 * 1024 * 1024; }
 async function uploadImage(file: File): Promise<void> {
@@ -81,7 +81,7 @@ async function replaceImage(file: File, imageId: string): Promise<void> {
   const path = imagePath(item, file);
   try {
     await putAsset(path, await fileToBase64(file));
-    const nextImages = imageList(item).map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id) : image);
+    const nextImages = imageList(item).map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id, image.isCover === true) : image);
     try { await saveImages(item, nextImages); } catch (error) { try { await deleteAsset(path); } catch {} throw error; }
     try { await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${current.file}`); } catch { showToast('新圖片已套用，但舊圖片清理失敗。可稍後使用「清理孤兒圖片」。', 'error'); }
     showToast('圖片已成功替換。', 'success');
