@@ -30,6 +30,21 @@ for (const name of mutationNames) {
   }
 }
 
+const deleteStart = source.indexOf('async function deleteItem');
+const deleteNext = source.indexOf('\nfunction assetParts', deleteStart + 1);
+const deleteBody = source.slice(deleteStart, deleteNext < 0 ? source.length : deleteNext);
+const shippingGuardPatterns = [
+  'remote.shipping.filter(record => record.itemIds.includes(id))',
+  "fail('ITEM_IN_USE'",
+  '409',
+];
+const missingShippingGuard = shippingGuardPatterns.filter(pattern => !deleteBody.includes(pattern));
+if (missingShippingGuard.length) {
+  console.error('Worker transaction verification failed: deleteItem 缺少 Shipping itemIds 參照保護。');
+  for (const pattern of missingShippingGuard) console.error(`- ${pattern}`);
+  process.exit(1);
+}
+
 if (/update-ref[^\n]*force:\s*true/i.test(source) || /force:\s*true/.test(source)) {
   console.error('Worker transaction verification failed: 禁止 force ref update。');
   process.exit(1);
