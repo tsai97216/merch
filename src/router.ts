@@ -29,9 +29,9 @@ export function createRouter({ onNavigate }: RouterOptions) {
   const handleChange = () => {
     const hash = window.location.hash;
     const route = parseHash(hash);
-    if (route.name === 'not-found' && /^#\/?item\//.test(hash)) {
-      window.history.replaceState(null, '', '#/404');
-      onNavigate(route);
+    if (route.name === 'not-found') {
+      window.history.replaceState(null, '', '#/home');
+      onNavigate({ name: 'home' });
       return;
     }
     onNavigate(route);
