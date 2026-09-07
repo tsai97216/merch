@@ -1,0 +1,27 @@
+{
+  "id": "WWc002",
+  "workId": "wuthering-waves",
+  "title": "愛彌斯 證件照",
+  "series": [],
+  "characters": ["愛彌斯"],
+  "category": "c",
+  "manufacturer": "庫洛",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
