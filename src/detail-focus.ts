@@ -1,9 +1,9 @@
 let lastFocusedElement: HTMLElement | null = null;
 
 function getDialog(): HTMLElement | null {
-  const modal = document.querySelector<HTMLElement>('.item-detail-modal');
-  if (!modal || modal.hidden) return null;
-  return modal.querySelector<HTMLElement>('.item-detail-dialog');
+  const modal = document.querySelector<HTMLElement>('.item-detail-modal .item-detail-dialog[data-detail-item-id]');
+  if (!modal || modal.closest<HTMLElement>('.item-detail-modal')?.hidden) return null;
+  return modal;
 }
 
 function focusableElements(dialog: HTMLElement): HTMLElement[] {
