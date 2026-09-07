@@ -13,7 +13,10 @@
   "description": "",
   "notes": "",
   "purchase": {
-    "currency": "TWD"
+    "currency": "TWD",
+    "price": 508,
+    "platform": "米哈遊淘寶",
+    "date": "2026-06-21"
   },
   "arrival": {},
   "afterSales": {},
