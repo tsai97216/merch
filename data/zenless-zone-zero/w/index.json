@@ -5,6 +5,7 @@
   "items": [
     {"id": "ZZZw001", "path": "data/zenless-zone-zero/w/ZZZw001/data.json", "title": "儀玄 扇子", "characters": ["儀玄"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"},
     {"id": "ZZZw002", "path": "data/zenless-zone-zero/w/ZZZw002/data.json", "title": "月曆 壓克力杯墊 星見雅", "characters": ["星見雅"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"},
-    {"id": "ZZZw003", "path": "data/zenless-zone-zero/w/ZZZw003/data.json", "title": "月曆 壓克力杯墊 儀玄", "characters": ["儀玄"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"}
+    {"id": "ZZZw003", "path": "data/zenless-zone-zero/w/ZZZw003/data.json", "title": "月曆 壓克力杯墊 儀玄", "characters": ["儀玄"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"},
+    {"id": "ZZZw004", "path": "data/zenless-zone-zero/w/ZZZw004/data.json", "title": "伊埃斯 手機架", "characters": ["伊埃斯"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"}
   ]
 }
