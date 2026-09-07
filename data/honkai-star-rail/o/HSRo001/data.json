@@ -1,0 +1,27 @@
+{
+  "id": "HSRo001",
+  "workId": "honkai-star-rail",
+  "title": "銀狼 路跑獎牌",
+  "series": [],
+  "characters": ["銀狼"],
+  "category": "o",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
