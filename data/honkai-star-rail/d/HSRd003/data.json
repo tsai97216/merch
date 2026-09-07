@@ -5,23 +5,13 @@
   "series": ["如我所書系列"],
   "characters": ["昔漣"],
   "category": "d",
-  "manufacturer": "",
+  "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {
-    "price": 0,
-    "currency": "TWD",
-    "platform": "線下活動",
-    "date": ""
-  },
-  "arrival": {
-    "receivedDate": null
-  },
-  "afterSales": {
-    "status": "無",
-    "note": ""
-  },
+  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
+  "arrival": {"receivedDate": null},
+  "afterSales": {"status": "無", "note": ""},
   "images": []
 }
