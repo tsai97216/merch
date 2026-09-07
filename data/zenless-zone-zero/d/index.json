@@ -38,6 +38,15 @@
       "manufacturer": "",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZd005",
+      "path": "data/zenless-zone-zero/d/ZZZd005/data.json",
+      "title": "影畫系列 定帧亚克力插片 星見雅",
+      "characters": ["星見雅"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
