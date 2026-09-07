@@ -12,12 +12,18 @@
 - **資料輸入期間可正常新增、編輯、圖片管理與 Shipping。** Item 若仍被 Shipping `itemIds` 參照，Worker 會拒絕刪除。
 - **Verify #866 的 GitHub Actions 結果目前仍無法由目前連線取得，因此不得視為已通過。** 完整 Verify / build / deploy 仍需在後續驗收。
 - 若要修改 Worker，注意 `worker/src/index.ts` 曾有過被不完整重寫的回歸風險；不要根據截斷內容盲目整檔重寫，應先取得可靠完整內容或採安全的最小修改方式。
+- **目前是安全的暫停點。** 本輪尚未新增 Worker production 修改；現有功能可維持使用，下一次直接從 P0-2 的 Worker mutation 效能最佳化繼續，不需要重新調查前情。
+- **下一步固定順序：** ① 先最佳化 `loadRemoteForNewItem()`，移除新增 Item 前的完整 `loadRemote()`，改為只讀 `baseRemote()` + 目標作品 category indexes，並在該作品範圍內確認 Item ID 不重複；② 再處理 mutation 完成後 `dataResponse()` 重新全量 `loadRemote()` 的成本；③ 每個 production 修改後同步版本並做對應 Verify。
+- **Worker 效能最佳化的安全邊界：** 不可拿被截斷的 `worker/src/index.ts` 回傳內容整檔重建；不可把 `public/data/collection.json` 當成 Worker mutation 的權威資料來源；不可用不可靠的 Worker isolate cache 取代 latest-head 驗證；atomic commit、latest-head、完整資料契約與安全驗證必須保留。
+- **目前已確認的核心效能瓶頸：** 新增 Item 會在 commit 前完整掃描遠端資料，commit 後又透過 `dataResponse()` 再完整掃描一次；既有 Item 編輯／刪除以及部分圖片 metadata 操作則至少會在 commit 後觸發一次完整 `loadRemote()`。這是後續效能修正的主要目標。
+- **舊 `loadNewStaticData()` 暫不刪除。** 它仍是 `getRemoteData()` 失敗後的最後 fallback，只有在新的資料載入與 fallback 路徑充分驗證後，才能進行 cleanup。
 
 ## P0｜核心功能與正確性
 
 1. **Shipping `itemIds` 參照完整性複查**：已完成程式層修正。Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合；Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`；Frontend API data 驗證現在也會確認 Shipping `itemIds` 存在於同一份 Collection Item 集合。完整自動化 Verify 仍待確認。
 2. **Collection 初始資料載入效能**：目前已建立 build-time 單一靜態 Collection read model，Frontend `getRemoteData()` 優先讀取 `./data/collection.json`，Worker `/api/data` 保留為 fallback / mutation authoritative response。`sync-public-data.mjs` 與 `generate-collection.mjs` 已納入 build。仍需實際確認部署後初始載入、fallback、搜尋、Filter、Sort 與新增／圖片操作等待時間，並清理舊的逐 Item 靜態載入邏輯。
    - **新增發現：Mutation 回應效能瓶頸**：目前 Item／Work／Shipping mutation 完成後都呼叫 `dataResponse()`；`dataResponse()` 會重新執行完整 `loadRemote()`，遞迴讀取整個 Git tree、所有 category index 與所有 Item JSON，再把完整 Collection 回傳 Frontend。需在不破壞 atomic commit、latest-head、完整資料契約與安全驗證的前提下，評估並降低 mutation 後的全量重新載入成本。
+   - **新增發現：新增 Item 前置讀取也有可安全縮減的成本**：`loadRemoteForNewItem()` 目前先呼叫完整 `loadRemote()`，但新增 Item 只需要 `baseRemote()`、目標作品的 category indexes，以及在該作品範圍確認 ID 不重複；不需要預先載入所有作品的 Item JSON。下一輪優先以最小修改方式處理。
 3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續需以可取得的完整 Verify 結果確認修復後沒有其他資料完整性問題。
 
 ## P1｜UI / UX 與穩定性
