@@ -18,10 +18,11 @@
    - [x] **Management schema verifier selector 名稱複查**：`verify-management-schema.mjs` 已改為檢查實際 `management-picker-category` 欄位，並改由 `category-label.ts` 驗證「其他」分類來源。
    - [x] **Management schema verifier 的 category-label 來源檢查仍硬編碼舊陣列字面值**：已改為驗證實際 `categoryName`／`o` 映射來源，Verify 已通過該項。
 3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
-   - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。**目前已確認 `imageList()` 明確 `slice(0, 1)`，因此管理頁實際只支援單張圖片；需先釐清是否符合目前資料契約。** 已於 1.109.54 改為渲染完整 `images[]`，支援新增、主圖、排序、替換與刪除，待本輪驗證後勾選。
-   - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。已於 1.109.54 增加 imageSaving 鎖與表單同步互斥，待本輪驗證後勾選。
-   - [ ] **Management 圖片刪除失敗後的一致性複查**：目前 `deleteImage()` 先成功寫入空 `images` metadata，再刪除實體檔；若 `deleteAsset()` 失敗，會留下 orphan 實體檔，違反 metadata / files 一致性與刪除 rollback 規則。已於 1.109.54 增加 metadata rollback，待本輪驗證後勾選。
+   - [x] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。已於 1.109.54 改為渲染完整 `images[]`，支援新增、主圖、排序、替換與刪除；Verify #676 已通過。
+   - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。已於 1.109.54 增加 imageSaving 鎖與表單同步互斥；另發現「清理孤兒圖片」可與圖片上傳的 asset → metadata 窗口競態，需在下一版一併防止。
+   - [x] **Management 圖片刪除失敗後的一致性複查**：目前 `deleteImage()` 先成功寫入空 `images` metadata，再刪除實體檔；若 `deleteAsset()` 失敗，會留下 orphan 實體檔，違反 metadata / files 一致性與刪除 rollback 規則。已於 1.109.54 增加 metadata rollback；Verify #676 已通過。
    - [ ] **Management 圖片替換保留 cover 狀態複查**：目前替換圖片時重建 metadata 未保留原圖片的 `isCover`，若替換的不是第一張圖片且原圖是主圖，可能讓主圖狀態錯誤地回到第一張；需保留原 `isCover`。
+   - [ ] **Management 圖片格式限制與 Worker 支援格式一致性複查**：目前前端僅以 `image/*` MIME 判斷，可能接受 SVG/BMP 等 Worker 不支援的格式；需改為只接受 JPG/JPEG/PNG/WebP/GIF/AVIF，並驗證副檔名與 MIME 一致。
    - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
    - [x] **Worker 圖片 mutation verifier 與實作版本語意不一致**：已改為驗證新增與替換都會 `bumpPatch`，不再要求舊的 `if (!exists)` 分支形狀；Verify #671 已通過。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
