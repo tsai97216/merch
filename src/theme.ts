@@ -16,6 +16,17 @@ function getStoredTheme(): Theme | null {
   }
 }
 
+function renderThemePanel(): void {
+  const page = document.querySelector<HTMLElement>('[data-page="settings"]');
+  const statusPanel = page?.querySelector('.settings-list')?.closest<HTMLElement>('.panel');
+  if (!page || !statusPanel || page.querySelector('.settings-theme-panel')) return;
+  const panel = document.createElement('section');
+  panel.className = 'panel settings-theme-panel';
+  panel.setAttribute('aria-labelledby', 'settings-theme-title');
+  panel.innerHTML = `<div class="settings-theme-controls"><div><span class="panel-label">APPEARANCE</span><h2 id="settings-theme-title">顯示模式</h2><p class="settings-theme-copy">選擇網站外觀。未選擇時會跟隨裝置的系統設定。</p></div><span data-theme-status class="muted">—</span></div><div class="theme-choice-group" role="group" aria-label="顯示模式"><button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">☀️ 淺色</button><button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">🌙 深色</button></div>`;
+  statusPanel.insertAdjacentElement('afterend', panel);
+}
+
 function applyTheme(theme: Theme, persist = true): void {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
@@ -34,6 +45,7 @@ function applyTheme(theme: Theme, persist = true): void {
 function init(): void {
   const initial = getStoredTheme() || getSystemTheme();
   applyTheme(initial, false);
+  renderThemePanel();
   document.addEventListener('click', (event) => {
     const target = event.target as Element | null;
     const button = target?.closest<HTMLButtonElement>('[data-theme-choice]');
@@ -45,6 +57,7 @@ function init(): void {
   media?.addEventListener('change', () => {
     if (!getStoredTheme()) applyTheme(getSystemTheme(), false);
   });
+  window.addEventListener('hashchange', () => window.setTimeout(renderThemePanel, 0));
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
