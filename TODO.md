@@ -145,7 +145,6 @@
 
 ## 9. Statistics
 - [x] 按作品統計
-- [x] 按類別統計
 - [ ] 按角色統計（否決）
 - [ ] 按廠商統計（否決）
 - [ ] 按狀態統計（否決）
@@ -263,20 +262,20 @@
 - [ ] **Favicon**：完整檢查並補齊網站 Favicon，確認桌面、手機及各頁面載入一致
 - [ ] **載入動畫**：首次載入網站時顯示載入動畫
 - [ ] **新增／修改載入動畫**：新增或修改內容時顯示載入動畫，直到 API 確認成功
-- [ ] **新增／修改完成提示**：API 確認成功後顯示完成彈窗
-- [ ] **新增／修改失敗處理**：API 失敗時結束載入狀態並顯示錯誤提示
-- [ ] **防止重複提交**：新增／修改處理期間禁止重複提交
+- [x] **新增／修改完成提示**：API 確認成功後顯示完成彈窗
+- [x] **新增／修改失敗處理**：API 失敗時結束載入狀態並顯示錯誤提示
+- [x] **防止重複提交**：新增／修改處理期間禁止重複提交
 
 ## 16. 規格一致性與目前待修正項目
-- [ ] **Collection 排序狀態持久化一致性**：`purchase` 等合法排序值在重新載入後必須正確還原，不得被錯誤 fallback 成其他排序
-- [ ] **Category validation 完整性**：Store / API 驗證除了單一小寫字母格式外，還必須確認 category 屬於 `ITEM_TYPES.md` 定義的有效類型
-- [ ] **String array strict validation**：`series`、`characters`、`images` 等資料遇到錯誤型別時不得靜默過濾成合法資料，外部資料應明確拒絕或回報錯誤
-- [ ] **Canonical Item serialization**：寫回 `data.json` 時只允許 canonical Item 欄位，runtime-only 欄位（例如 `workName`、圖片 runtime URL/path 等）不得被持久化
-- [ ] **Shipping domain isolation**：運費資料維持獨立於 Item schema，並補齊 shipping 資料的 schema validation、載入／新增／編輯／刪除與錯誤處理一致性
+- [x] **Collection 排序狀態持久化一致性**：`purchase` 等合法排序值在重新載入後必須正確還原，不得被錯誤 fallback 成其他排序
+- [x] **Category validation 完整性**：Store / API 驗證除了單一小寫字母格式外，還必須確認 category 屬於 `ITEM_TYPES.md` 定義的有效類型
+- [x] **String array strict validation**：`series`、`characters`、`images` 等資料遇到錯誤型別時不得靜默過濾成合法資料，外部資料應明確拒絕或回報錯誤
+- [x] **Canonical Item serialization**：寫回 `data.json` 時只允許 canonical Item 欄位，runtime-only 欄位（例如 `workName`、圖片 runtime URL/path 等）不得被持久化
+- [x] **Shipping domain isolation**：運費資料維持獨立於 Item schema，並補齊 shipping 資料的 schema validation、載入／新增／編輯／刪除與錯誤處理一致性
 - [ ] **全站 Modal 一致性修正**：統一檢查所有彈出視窗的定位、z-index、遮罩、滾動、focus、Esc 關閉、手機尺寸與背景頁互動，避免不同頁面各自出現不同問題
-- [ ] **Dark mode 表單控制項可讀性**：深色模式下 select、option、input 等原生控制項的背景、文字、選取狀態與 focus 狀態必須保持足夠對比
+- [x] **Dark mode 表單控制項可讀性**：深色模式下 select、option、input 等原生控制項的背景、文字、選取狀態與 focus 狀態必須保持足夠對比
 - [ ] **Statistics UI 完整驗證與修正**：統計圖表、摘要卡、詳細分析與空／載入／錯誤狀態，在 Desktop、Tablet、Mobile 均保持正確排版與可讀性
 - [ ] **Management / Add 表單完整驗證與修正**：新增、編輯、刪除流程的表單排版、欄位狀態、validation、loading、success、failure 與重複提交保護需完整驗證
-- [ ] **Home ranking rendering 完整性**：作品／角色排行在不同資料量、長文字與不同螢幕尺寸下都必須正常顯示名稱，不得發生文字消失或被裁切
+- [x] **Home ranking rendering 完整性**：作品／角色排行在不同資料量、長文字與不同螢幕尺寸下都必須正常顯示名稱，不得發生文字消失或被裁切
 - [ ] **Responsive layout regression**：Desktop、Tablet、Mobile 的 Header、Page title、Navigation、Card、Panel 與表單不得因頁面切換或內容長度產生錯位、溢出或遮擋
 - [ ] **跨頁狀態與 Detail 回復驗證**：從 Home、Collection、統計或其他入口進入 Item Detail 後返回或再次點擊其他 Item，必須正確恢復目標頁面與資料，不得出現空白或錯誤狀態
