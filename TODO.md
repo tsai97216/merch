@@ -17,6 +17,7 @@
 
 1. **Shipping `itemIds` 參照完整性複查**：已完成程式層修正。Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合；Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`；Frontend API data 驗證現在也會確認 Shipping `itemIds` 存在於同一份 Collection Item 集合。完整自動化 Verify 仍待確認。
 2. **Collection 初始資料載入效能**：目前已建立 build-time 單一靜態 Collection read model，Frontend `getRemoteData()` 優先讀取 `./data/collection.json`，Worker `/api/data` 保留為 fallback / mutation authoritative response。`sync-public-data.mjs` 與 `generate-collection.mjs` 已納入 build。仍需實際確認部署後初始載入、fallback、搜尋、Filter、Sort 與新增／圖片操作等待時間，並清理舊的逐 Item 靜態載入邏輯。
+   - **新增發現：Mutation 回應效能瓶頸**：目前 Item／Work／Shipping mutation 完成後都呼叫 `dataResponse()`；`dataResponse()` 會重新執行完整 `loadRemote()`，遞迴讀取整個 Git tree、所有 category index 與所有 Item JSON，再把完整 Collection 回傳 Frontend。需在不破壞 atomic commit、latest-head、完整資料契約與安全驗證的前提下，評估並降低 mutation 後的全量重新載入成本。
 3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續需以可取得的完整 Verify 結果確認修復後沒有其他資料完整性問題。
 
 ## P1｜UI / UX 與穩定性
@@ -55,4 +56,4 @@
 3. **Desktop smoke test**。
 4. **Mobile smoke test**。
 5. **Loading / Empty / Error 狀態驗證**。
-6. **版本／資料／schema／圖片／Worker contract 一致性最終確認**。
+6. **版本／資料／schema／圖片／Worker contract 一致性最終確認。**
