@@ -15,6 +15,7 @@
    - [x] **Management picker 的 Work value / state key 複查**：確認是否應以永久 `work.id` 而非作品名稱作為 selector value，避免名稱重複或改名造成狀態錯綜。
    - [x] **Category mapping duplicate implementation 複查**：`management.ts`、`category-label.ts` 等是否存在重複 category 定義；確認單一來源後再刪除／改寫舊實作。
    - [x] **Management 未使用欄位常數複查**：確認 `managementCategoryFieldId` 無現存引用，屬歷史殘留，無需保留。
+   - [ ] **Management schema verifier selector 名稱複查**：`verify-management-schema.mjs` 仍檢查不存在的 `management-category`，而目前實際欄位為 `management-picker-category`；需修正驗證腳本並重新跑完整 Verify。
 3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
    - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。
    - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。
@@ -39,7 +40,7 @@
 
 ### Full Repository Audit
 
-1. **Stage 8｜API / Worker / GitHub 寫入**：確認 request → validation → read → mutation → transaction → commit、SHA、race condition、rollback、write scope、token 安全與舊 API 殘留。
+1. **Stage 8｜API / Worker / GitHub 寫入**：確認 request → validation → read → mutation → transaction、SHA、race condition、rollback、write scope、token 安全與舊 API 殘留。
    - [x] **Worker Item ID → Work 對應方式複查**：已由 `startsWith(work.code)` 改為解析永久 Item ID 的完整 Work Code 後精確比對，避免作品代碼前綴碰撞誤綁。
    - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
 2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
