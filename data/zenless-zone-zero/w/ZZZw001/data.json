@@ -1,0 +1,26 @@
+{
+  "id": "ZZZw001",
+  "workId": "zenless-zone-zero",
+  "title": "儀玄 扇子",
+  "series": [],
+  "characters": [
+    "儀玄"
+  ],
+  "category": "w",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 500,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
