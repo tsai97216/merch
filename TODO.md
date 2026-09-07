@@ -14,6 +14,7 @@
 2. **Stage 6｜Form / Management / CRUD**：完成新增、編輯、刪除、搜尋、分類、ID、quantity、validation、表單 state、selector、Modal、confirmation、error handling 與 frozen data 驗證。
    - [ ] **Management picker 的 Work value / state key 複查**：確認是否應以永久 `work.id` 而非作品名稱作為 selector value，避免名稱重複或改名造成狀態錯綜。
    - [ ] **Category mapping duplicate implementation 複查**：`management.ts`、`category-label.ts` 等是否存在重複 category 定義；確認單一來源後再刪除／改寫舊實作。
+   - [ ] **Management 未使用欄位常數複查**：確認 `managementCategoryFieldId` 是否為歷史殘留；確認無使用後再刪除。
 3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
    - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。
    - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。
