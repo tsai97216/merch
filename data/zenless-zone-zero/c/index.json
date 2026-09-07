@@ -13,6 +13,17 @@
       "manufacturer": "",
       "quantity": 2,
       "status": "received"
+    },
+    {
+      "id": "ZZZc002",
+      "path": "data/zenless-zone-zero/c/ZZZc002/data.json",
+      "title": "蕾米埃爾 閃卡",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
