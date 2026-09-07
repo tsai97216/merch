@@ -25,6 +25,7 @@
    - **新增發現：Mutation 回應效能瓶頸**：目前 Item／Work／Shipping mutation 完成後都呼叫 `dataResponse()`；`dataResponse()` 會重新執行完整 `loadRemote()`，遞迴讀取整個 Git tree、所有 category index 與所有 Item JSON，再把完整 Collection 回傳 Frontend。需在不破壞 atomic commit、latest-head、完整資料契約與安全驗證的前提下，評估並降低 mutation 後的全量重新載入成本。
    - **新增發現：新增 Item 前置讀取也有可安全縮減的成本**：`loadRemoteForNewItem()` 目前先呼叫完整 `loadRemote()`，但新增 Item 只需要 `baseRemote()`、目標作品的 category indexes，以及在該作品範圍確認 ID 不重複；不需要預先載入所有作品的 Item JSON。下一輪優先以最小修改方式處理。
 3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續需以可取得的完整 Verify 結果確認修復後沒有其他資料完整性問題。
+4. **待新增作品：明日方舟：終末地（Arknights: Endfield）**：ID `arknights-endfield`、代號 `AKE`。目前僅記錄於 TODO，尚未加入正式作品資料。
 
 ## P1｜UI / UX 與穩定性
 
