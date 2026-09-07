@@ -1,0 +1,27 @@
+{
+  "id": "HSRn001",
+  "workId": "honkai-star-rail",
+  "title": "歡愉信號 逼波集章卡明信片",
+  "series": ["歡愉信號"],
+  "characters": [],
+  "category": "n",
+  "manufacturer": "米哈遊",
+  "quantity": 2,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
