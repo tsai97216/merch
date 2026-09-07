@@ -70,23 +70,25 @@ async function loadRemoteTarget(env: Env, id: string): Promise<RemoteState> {
 }
 
 async function loadRemoteForNewItem(env: Env, id: string, workId: string, categoryCode: string): Promise<RemoteState> {
-  const remote = await loadRemote(env);
-  const work = remote.index.works.find(entry => entry.id === workId);
+  const base = await baseRemote(env);
+  const work = base.index.works.find(entry => entry.id === workId);
   if (!work) throw new Error(`找不到 Item 所屬作品：${workId}`);
   const match = /^([A-Z]{2,3})[a-z]\d{3}$/.exec(id);
   if (!match || match[1] !== work.code) throw new Error('Item ID 與作品代碼不一致。');
   if (!CATEGORY_RE.test(categoryCode)) throw new Error('category 格式無效');
-  if (remote.items.has(id)) throw new Error(`Item ID 已存在：${id}`);
-  const targetPath = `data/${work.id}/${categoryCode}/index.json`;
+  const root = work.path.replace(/\/$/, '');
+  const categoryPaths = await categoryDirs(env, root);
   const categories = new Map<string, CategoryIndex>();
-  const category = remote.categories.get(targetPath);
-  if (category) {
-    if (category.workId !== work.id || category.category !== categoryCode) throw new Error(`類型索引格式無效：${targetPath}`);
-    categories.set(targetPath, category);
-  } else {
-    categories.set(targetPath, { schemaVersion: 1, workId: work.id, category: categoryCode, items: [] });
+  const loaded = await Promise.all(categoryPaths.map(async categoryPath => ({ categoryPath, category: await readCategory(env, categoryPath, base.files, base.paths) })));
+  for (const { categoryPath, category } of loaded) {
+    if (!category) continue;
+    if (category.workId !== work.id || category.category !== categoryPath.split('/').at(-2)) throw new Error(`類型索引格式無效：${categoryPath}`);
+    categories.set(categoryPath, category);
+    if (category.items.some(item => item.id === id)) throw new Error(`Item ID 已存在：${id}`);
   }
-  return { ...remote, categories, items: new Map() };
+  const targetPath = `data/${work.id}/${categoryCode}/index.json`;
+  if (!categories.has(targetPath)) categories.set(targetPath, { schemaVersion: 1, workId: work.id, category: categoryCode, items: [] });
+  return { ...base, categories, items: new Map() };
 }
 
 async function loadRemote(env: Env): Promise<RemoteState> {
