@@ -1,0 +1,17 @@
+{
+  "id": "WWd001",
+  "workId": "wuthering-waves",
+  "title": "WW二周年 明信片框",
+  "series": ["WW二周年"],
+  "characters": [],
+  "category": "d",
+  "manufacturer": "庫洛",
+  "quantity": 2,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
+  "arrival": {"receivedDate": null},
+  "afterSales": {"status": "無", "note": ""},
+  "images": []
+}
