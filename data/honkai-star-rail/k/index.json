@@ -14,6 +14,17 @@
       "quantity": 1,
       "status": "pending",
       "cover": "1788754576985-IMG_3447.jpeg"
+    },
+    {
+      "id": "HSRk002",
+      "path": "data/honkai-star-rail/k/HSRk002/data.json",
+      "title": "角色立繪系列 壓克力掛件 符玄款",
+      "characters": [
+        "符玄"
+      ],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
