@@ -1,7 +1,7 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.109.42",
+  "version": "1.109.43",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,15 +18,20 @@
     "verify:images": "node scripts/verify-image-contract.mjs",
     "verify:statistics": "node scripts/verify-statistics-date.mjs",
     "verify:management-schema": "node scripts/verify-management-schema.mjs",
-    "verify:works-management": "node scripts/verify-works-management.mjs",
-    "migrate:new": "node scripts/migrate.mjs public/data data-migrated",
-    "preview": "vite preview",
-    "verify:worker-read": "node scripts/verify-worker-read-scope.mjs",
-    "verify:worker-image": "node scripts/verify-worker-image-semantics.mjs",
-    "verify:worker-transaction": "node scripts/verify-worker-transaction.mjs"
+    "verify:management-images": "node scripts/verify-management-image-contract.mjs",
+    "verify:management-ids": "node scripts/verify-management-id-contract.mjs",
+    "verify:management-picker": "node scripts/verify-management-picker-contract.mjs",
+    "verify:shipping": "node scripts/verify-shipping-contract.mjs",
+    "verify:shipping-images": "node scripts/verify-shipping-image-contract.mjs",
+    "verify:shipping-ids": "node scripts/verify-shipping-id-contract.mjs",
+    "verify:shipping-scope": "node scripts/verify-shipping-write-scope.mjs",
+    "verify:shipping-transaction": "node scripts/verify-shipping-transaction.mjs",
+    "verify:version-sync": "node scripts/verify-version-sync.mjs",
+    "verify:all": "npm run verify && npm run verify:new && npm run verify:migration && npm run verify:worker && npm run verify:worker-scope && npm run verify:version && npm run verify:legacy-fields && npm run verify:schema && npm run verify:category && npm run verify:images && npm run verify:statistics && npm run verify:management-schema && npm run verify:management-images && npm run verify:management-ids && npm run verify:management-picker && npm run verify:shipping && npm run verify:shipping-images && npm run verify:shipping-ids && npm run verify:shipping-scope && npm run verify:shipping-transaction && npm run verify:version-sync"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
-    "vite": "^7.1.3"
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.1.0"
   }
 }
