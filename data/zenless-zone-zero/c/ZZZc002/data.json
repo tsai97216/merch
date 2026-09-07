@@ -1,0 +1,29 @@
+{
+  "id": "ZZZc002",
+  "workId": "zenless-zone-zero",
+  "title": "蕾米埃爾 閃卡",
+  "series": [],
+  "characters": [
+    "蕾米埃爾"
+  ],
+  "category": "c",
+  "manufacturer": "",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
