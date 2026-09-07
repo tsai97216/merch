@@ -1,0 +1,27 @@
+{
+  "id": "GIe001",
+  "workId": "genshin-impact",
+  "title": "原神聯名 Sony DualSense 無線控制器",
+  "series": [],
+  "characters": [],
+  "category": "e",
+  "manufacturer": "Sony",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "MOMO 購物",
+    "date": ""
+  },
+  "arrival": {
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "無",
+    "note": ""
+  },
+  "images": []
+}
