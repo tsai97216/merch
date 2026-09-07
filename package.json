@@ -1,7 +1,7 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.109.80",
+  "version": "1.109.81",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,9 +9,9 @@
     "verify": "node scripts/verify-data.mjs",
     "verify:new": "node scripts/verify-new-data.mjs",
     "verify:migration": "node scripts/verify-migration-completion.mjs",
+    "verify:version": "node scripts/verify-version-sync.mjs",
     "verify:worker": "node scripts/verify-worker-architecture.mjs",
     "verify:worker-scope": "node scripts/verify-worker-write-scope.mjs",
-    "verify:version": "node scripts/verify-version-sync.mjs",
     "verify:legacy-fields": "node scripts/verify-legacy-fields.mjs",
     "verify:schema": "node scripts/verify-schema-contract.mjs",
     "verify:category": "node scripts/verify-category-contract.mjs",
