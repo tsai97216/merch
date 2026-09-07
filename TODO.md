@@ -7,6 +7,7 @@
 ## 1. Current / 目前待處理
 
 - [ ] 修正管理頁 `management-picker-category` 重複 HTML `id`，並確認作品／類型／流水號選擇與表單同步不受影響
+- [ ] **臨時新增：周邊詳情顯示已綁定的運費**：若該周邊有綁定運費資料，Item Detail 內應顯示對應運費資訊；未綁定時不應顯示空白／誤導性內容
 - [ ] 完成 Desktop smoke test
 - [ ] 完成 Mobile smoke test
 - [ ] 完成 Collection search / filter / sort 實機驗證
