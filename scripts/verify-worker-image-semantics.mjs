@@ -12,7 +12,7 @@ function body(name) {
 const put = body('putAsset');
 const del = body('deleteAsset');
 if (!put.includes('const exists = remote.paths.has(asset.path)')) throw new Error('putAsset must distinguish add vs replace.');
-if (!put.includes("if (!exists)")) throw new Error('new image must bump patch version.');
+if (!put.includes('bumpPatch(remote.version)')) throw new Error('every image add/replace must bump patch version.');
 if (!put.includes("${exists ? 'fix: replace' : 'feat: add'} image")) throw new Error('image mutation message must distinguish replace/add.');
 if (!del.includes('bumpPatch(remote.version)')) throw new Error('delete image must bump patch version.');
 if (!del.includes('{ path, delete: true }')) throw new Error('delete image must remove the physical asset atomically.');
