@@ -7,26 +7,7 @@
 
 ## P0｜核心功能與正確性
 
-### 執行順序
-
-1. **Stage 4｜Router / Navigation / Detail**：完成 route、Refresh、Back / Forward、malformed URL、decode、不存在 Item、搜尋狀態轉跳、Detail Modal、focus 與鍵盤行為驗證。
-   - [x] **Router malformed / unknown route 行為複查**：確認目前安全回復策略不會破壞 Back / Forward、404 語意或原始路由狀態；已移除會把未知路由強制 replace 成 `#/home` 的行為，保留 `#/404` 語意並交由主畫面處理。
-2. **Stage 6｜Form / Management / CRUD**：完成新增、編輯、刪除、搜尋、分類、ID、quantity、validation、表單 state、selector、Modal、confirmation、error handling 與 frozen data 驗證。
-   - [x] **Management picker 的 Work value / state key 複查**：確認是否應以永久 `work.id` 而非作品名稱作為 selector value，避免名稱重複或改名造成狀態錯綜。
-   - [x] **Category mapping duplicate implementation 複查**：`management.ts`、`category-label.ts` 等是否存在重複 category 定義；確認單一來源後再刪除／改寫舊實作。
-   - [x] **Management 未使用欄位常數複查**：確認 `managementCategoryFieldId` 無現存引用，屬歷史殘留，無需保留。
-   - [x] **Management schema verifier selector 名稱複查**：`verify-management-schema.mjs` 已改為檢查實際 `management-picker-category` 欄位，並改由 `category-label.ts` 驗證「其他」分類來源。
-   - [x] **Management schema verifier 的 category-label 來源檢查仍硬編碼舊陣列字面值**：已改為驗證實際 `categoryName`／`o` 映射來源，Verify 已通過該項。
-3. **Stage 7｜圖片系統**：完成 upload、metadata、cover、reorder、replace、delete、格式／大小限制、路徑、fallback、orphan / missing image、Worker mutation 與 rollback 驗證。
-   - [x] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。已於 1.109.54 改為渲染完整 `images[]`，支援新增、主圖、排序、替換與刪除；Verify #676 已通過。
-   - [x] **圖片操作與 saving / API queue 狀態複查**：已於 1.109.55 讓孤兒圖片清理與 upload / replace / delete / cover / reorder 共用 `imageSaving` 互斥，並為圖片與管理 CRUD 操作補上同步中提示；同時限制前端圖片格式為 JPG/JPEG、PNG、WebP、GIF、AVIF 且副檔名需與 MIME 一致；Verify #681 已通過。
-   - [x] **Management 圖片刪除失敗後的一致性複查**：目前 `deleteImage()` 先成功寫入空 `images` metadata，再刪除實體檔；若 `deleteAsset()` 失敗，會留下 orphan 實體檔，違反 metadata / files 一致性與刪除 rollback 規則。已於 1.109.54 增加 metadata rollback；Verify #676 已通過。
-   - [x] **Management 圖片替換保留 cover 狀態複查**：替換圖片時已以原圖片的 `isCover` 重建 metadata，保留主圖狀態；Verify #681 已通過。
-   - [x] **Management 圖片格式限制與 Worker 支援格式一致性複查**：已限制為 JPG/JPEG、PNG、WebP、GIF、AVIF，且要求副檔名與 MIME 對應；Verify #681 的 build 與 image contract 均通過。
-   - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
-   - [x] **Worker 圖片 mutation verifier 與實作版本語意不一致**：已改為驗證新增與替換都會 `bumpPatch`，不再要求舊的 `if (!exists)` 分支形狀；Verify #671 已通過。
-4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
-   - [x] **Shipping CRUD 同步回饋複查**：已於 1.109.56 補上新增／修改／刪除運費的同步中 Toast，並保留 saving 鎖與成功／失敗回饋；Verify #689、Deploy #1292 均通過。
+1. **Shipping `itemIds` 參照完整性複查**：確認 Store / API 載入與寫入時的驗證邊界，以及刪除 Item 時如何處理仍被 Shipping 參照的 Item，避免產生孤兒運費關聯。Worker 已有遠端存在性驗證，但 Item deletion 的跨資料參照仍待完整確認。
 
 ## P1｜UI / UX 與穩定性
 
@@ -42,28 +23,26 @@
 
 ## P3｜最終驗收與收尾
 
-### Full Repository Audit
+### Stage 8｜API / Worker / GitHub 寫入
 
-1. **Stage 8｜API / Worker / GitHub 寫入**：確認 request → validation → read → mutation → transaction、SHA、race condition、rollback、write scope、token 安全與舊 API 殘留。
-   - [x] **Worker Item ID → Work 對應方式複查**：已由 `startsWith(work.code)` 改為解析永久 Item ID 的完整 Work Code 後精確比對，避免作品代碼前綴碰撞誤綁。
-   - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
-   - [x] **Worker `loadRemote()` 重複 Item ID 複查**：已在建立 remote Item Map 時檢查 `items.has(item.id)`，發現重複 Item ID 立即拒絕資料異常，不再讓後載入項目靜默覆蓋前一筆；Verify #671 已通過。
-   - [x] **Worker 孤兒圖片清理與圖片寫入的伺服器端競態複查**：Worker 的 atomic commit 以觀測到的 `remote.headSha` 綁定 commit parent，並以 `force: false` 更新 branch；若清理與圖片寫入同時競爭，過期操作會因 HEAD 不符而失敗，不會靜默覆蓋另一操作。既有 Worker architecture / transaction contract 已驗證此併發保護。
-   - [ ] **Shipping `itemIds` 參照完整性複查**：目前 Store 的 `validateShipping()` 只驗證 `itemIds` 是非空字串陣列，尚未在載入／寫入時確認每個 Item ID 都存在；需確認是否可能產生孤兒運費關聯，以及刪除 Item 時是否會同步處理相關 Shipping。
-2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
-3. **Stage 10｜Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 RULES ↔ TODO ↔ Code ↔ Tests ↔ Data。
-   - [x] **`merch-old` 圖片 fallback 舊相容邏輯複查**：目前 canonical data 未引用舊 `merch-old` 圖片路徑，但舊 repo 仍保有舊圖片資料，因此 fallback 仍有相容價值，暫不刪除。
+1. **Shipping 參照刪除策略完成實作與驗證**：在確認參照完整性後，決定並實作 Item deletion 遇到 Shipping reference 時的安全處理，避免自動破壞運費／歷史資料。
+
+### Stage 9｜Verification / Build / Deployment
+
+1. **Verification 範圍複查**：確認 Verify scripts 覆蓋核心資料、schema、category、statistics、management、image、Worker architecture / scope / read / image / transaction、version 等契約，避免測試綠燈但漏測關鍵行為。
+2. **完整 Verify**：在所有待辦完成後重新執行完整自動化檢查。
+3. **Production build / deployment**：最新版本重新確認 Pages build / deploy 與 Worker deploy。
+
+### Stage 10｜Dead Code / Legacy / Consistency Sweep
+
+1. **Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 `RULES.md` ↔ `TODO.md` ↔ Code ↔ Tests ↔ Data。
+2. **`merch-old` 相容邏輯持續複查**：保留目前仍有價值的圖片 fallback，但最終驗收時再次確認沒有已失效的舊路徑或舊 selector。
 
 ### 最終驗收
 
-4. **Item Detail 實機驗證**：Modal、Router、返回、鍵盤與 focus。
-5. **Collection 實機驗證**：search / filter / sort。
-6. **Desktop smoke test**。
-7. **Mobile smoke test**。
-8. **Loading / Empty / Error 狀態驗證**。
-
-### Verification
-
-9. **完整 Verify**：目前版本所有自動化檢查通過。
-10. **Production build / deployment**：最新版本需重新確認 Pages build / deploy 與 Worker deploy。
-11. **版本／資料／schema／圖片／Worker contract 一致性：確認各項契約維持一致。
+1. **Item Detail 實機驗證**：Modal、Router、返回、鍵盤與 focus。
+2. **Collection 實機驗證**：search / filter / sort。
+3. **Desktop smoke test**。
+4. **Mobile smoke test**。
+5. **Loading / Empty / Error 狀態驗證**。
+6. **版本／資料／schema／圖片／Worker contract 一致性最終確認**。
