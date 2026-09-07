@@ -5,7 +5,8 @@ import { formatMoney, formatPercent, formatQuantity } from './utils/format';
 
 export type Row = { label: string; value: number };
 export type DetailRow = { label: string; quantity: number; spend: number; share: number; extra?: string };
-export type Chart = { id: string; title: string; description: string; largeType: 'bar' | 'donut'; smallType: 'bar' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[] };
+export type WorkItemDetail = { title: string; quantity: number; spend: number; unitPrice: number; currency: string; platform: string; date: string };
+export type Chart = { id: string; title: string; description: string; largeType: 'bar' | 'donut'; smallType: 'bar' | 'donut'; rows: Row[]; details: DetailRow[]; format: 'money' | 'count'; summary: { label: string; value: string }[]; workItemDetails?: Record<string, WorkItemDetail[]> };
 type WorkAggregate = { quantity: number; spend: number };
 
 const quantity = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
@@ -17,7 +18,6 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
   const workCount = new Map<string, WorkAggregate>();
   const categoryCount = new Map<string, WorkAggregate>();
   const monthly = new Map<string, WorkAggregate>();
-  const itemMap = new Map(items.map((item) => [item.id, item]));
   const add = (map: Map<string, WorkAggregate>, key: string, row: WorkAggregate) => {
     const old = map.get(key) || { quantity: 0, spend: 0 };
     map.set(key, { quantity: old.quantity + row.quantity, spend: old.spend + row.spend });
@@ -35,19 +35,13 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
   shipping.forEach((record) => {
     const spend = shippingValue(record);
     if (!spend) return;
-    const linked = record.itemIds.map((id) => itemMap.get(id)).filter((item): item is Item => Boolean(item));
     const dateMonth = monthKey(record.date);
     if (dateMonth) add(monthly, dateMonth, { quantity: 0, spend });
-    const linkedWorks = new Map<string, number>();
-    linked.forEach((item) => {
-      const work = item.workName || '未分類作品';
-      linkedWorks.set(work, (linkedWorks.get(work) || 0) + 1);
-    });
-    if (linkedWorks.size) linkedWorks.forEach((count, work) => add(workSpend, work, { quantity: 0, spend: spend * count / linked.length }));
-    else add(workSpend, '運費（未關聯作品）', { quantity: 0, spend });
   });
 
-  const totalSpend = [...workSpend.values()].reduce((sum, row) => sum + row.spend, 0);
+  const productSpend = [...workSpend.values()].reduce((sum, row) => sum + row.spend, 0);
+  const shippingSpend = shipping.reduce((sum, record) => sum + shippingValue(record), 0);
+  const totalSpend = productSpend + shippingSpend;
   const totalQuantity = items.reduce((sum, item) => sum + quantity(item), 0);
   const sortSpend = (map: Map<string, WorkAggregate>) => [...map.entries()].sort((a,b) => b[1].spend - a[1].spend || b[1].quantity - a[1].quantity || a[0].localeCompare(b[0], 'zh-Hant'));
   const sortQuantity = (map: Map<string, WorkAggregate>) => [...map.entries()].sort((a,b) => b[1].quantity - a[1].quantity || b[1].spend - a[1].spend || a[0].localeCompare(b[0], 'zh-Hant'));
@@ -57,6 +51,21 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
   const workSpendEntries = sortSpend(workSpend);
   const workCountEntries = sortQuantity(workCount);
   const categoryEntries = sortQuantity(categoryCount);
+  const workItemDetails: Record<string, WorkItemDetail[]> = {};
+  items.forEach((item) => {
+    const work = item.workName || '未分類作品';
+    (workItemDetails[work] ||= []).push({
+      title: item.title,
+      quantity: quantity(item),
+      spend: value(item),
+      unitPrice: Number(item.purchase?.price || 0),
+      currency: item.purchase?.currency || 'TWD',
+      platform: item.purchase?.platform || '未填寫',
+      date: item.purchase?.date || '未填寫',
+    });
+  });
+  Object.values(workItemDetails).forEach((list) => list.sort((a, b) => b.spend - a.spend || a.title.localeCompare(b.title, 'zh-Hant')));
+
   const year = currentYear();
   const monthlyEntries: [string, WorkAggregate][] = Array.from({ length: 12 }, (_, i) => {
     const key = `${year}-${String(i + 1).padStart(2, '0')}`;
@@ -77,14 +86,14 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
 
   return [
     {
-      id: 'work-spending', title: '作品消費排行', description: '看每個作品實際投入多少預算，商品價格與已登錄運費都會計入。', largeType: 'bar', smallType: 'donut',
-      rows: rows(workSpendEntries, 'spend'), details: details(workSpendEntries, totalSpend), format: 'money',
-      summary: [['總消費', formatMoney(totalSpend)], ['最高作品', topWork?.[0] || '無資料'], ['最高作品消費', topWork ? formatMoney(topWork[1].spend) : 'NT$ 0'], ['作品數', String(workSpendEntries.length)]].map(([label, value]) => ({ label, value }))
+      id: 'work-spending', title: '作品消費排行', description: '只計算作品本身的商品價格，不計入運費。', largeType: 'bar', smallType: 'donut',
+      rows: rows(workSpendEntries, 'spend'), details: details(workSpendEntries, productSpend), format: 'money', workItemDetails,
+      summary: [['總花費', formatMoney(totalSpend)], ['商品消費', formatMoney(productSpend)], ['運費', formatMoney(shippingSpend)], ['最高作品', topWork?.[0] || '無資料'], ['最高作品消費', topWork ? formatMoney(topWork[1].spend) : 'NT$ 0']].map(([label, value]) => ({ label, value }))
     },
     {
       id: 'monthly-spending', title: '每月消費趨勢', description: '商品消費與有日期的運費都會計入今年 12 個月份。', largeType: 'bar', smallType: 'bar',
       rows: monthlyEntries.map(([label, row]) => ({ label: monthLabel(label), value: row.spend })), details: monthlyDetails, format: 'money',
-      summary: [['有消費月份', `${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`], ['最高月份', topMonth ? monthLabel(topMonth[0]) : '無資料'], ['最高月消費', topMonth ? formatMoney(topMonth[1].spend) : 'NT$ 0'], ['月均消費', formatMoney(averageMonth)]].map(([label, value]) => ({ label, value }))
+      summary: [['總花費', formatMoney(totalSpend)], ['有消費月份', `${monthlyEntries.filter(([,r]) => r.spend > 0).length} 個月`], ['最高月份', topMonth ? monthLabel(topMonth[0]) : '無資料'], ['最高月消費', topMonth ? formatMoney(topMonth[1].spend) : 'NT$ 0'], ['月均花費', formatMoney(averageMonth)]].map(([label, value]) => ({ label, value }))
     },
     {
       id: 'work-count', title: '作品收藏數量', description: '看哪些作品收藏最多，數量依每筆資料的 quantity 加總。', largeType: 'bar', smallType: 'donut',
