@@ -11,6 +11,15 @@
       "manufacturer": "米哈遊",
       "quantity": 2,
       "status": "received"
+    },
+    {
+      "id": "ZZZn002",
+      "path": "data/zenless-zone-zero/n/ZZZn002/data.json",
+      "title": "2.5版本線下 明信片",
+      "characters": ["漂泊者", "尤諾", "奧古斯塔"],
+      "manufacturer": "庫洛",
+      "quantity": 3,
+      "status": "received"
     }
   ]
 }
