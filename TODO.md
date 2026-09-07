@@ -21,7 +21,7 @@
    - [ ] **Management 圖片列表 scope 複查**：確認目前只渲染部分圖片是否為刻意 UI 限制；若不是，需支援完整 images metadata、cover、reorder、replace、delete。**目前已確認 `imageList()` 明確 `slice(0, 1)`，因此管理頁實際只支援單張圖片；需先釐清是否符合目前資料契約。**
    - [ ] **圖片操作與 saving / API queue 狀態複查**：確認表單同步期間圖片操作入口與 Store remote write queue 不會產生競態或錯誤狀態。
    - [x] **Worker 圖片 mutation 版本語意複查**：`putAsset()` 的新增與替換圖片現在都會產生 Patch version，避免 replace 漏增版本。
-   - [ ] **Worker 圖片 mutation verifier 與實作版本語意不一致**：Verify #660 顯示 `verify-worker-image-semantics.mjs` 仍要求 `putAsset()` 存在 `if (!exists)` 分支；目前實作已統一讓新增與替換都產生 Patch，因此 verifier 應改驗證「兩種情況皆會 bumpPatch」而非要求舊分支形狀。
+   - [x] **Worker 圖片 mutation verifier 與實作版本語意不一致**：已改為驗證新增與替換都會 `bumpPatch`，不再要求舊的 `if (!exists)` 分支形狀；Verify #671 已通過。
 4. **API 同步強烈回饋**：上傳圖片、修改周邊、新增周邊等透過 API 同步的操作，開始時明確顯示「同步中／上傳中」，完成後明確顯示成功或失敗；同步未完成前不得讓 UI 誤以為資料已完成寫入。
 
 ## P1｜UI / UX 與穩定性
@@ -43,7 +43,7 @@
 1. **Stage 8｜API / Worker / GitHub 寫入**：確認 request → validation → read → mutation → transaction、SHA、race condition、rollback、write scope、token 安全與舊 API 殘留。
    - [x] **Worker Item ID → Work 對應方式複查**：已由 `startsWith(work.code)` 改為解析永久 Item ID 的完整 Work Code 後精確比對，避免作品代碼前綴碰撞誤綁。
    - [x] **Worker 新增 Item 全域 ID 唯一性複查**：新增 Item 前改由完整 repository remote state 驗證 `remote.items.has(id)`，不再只檢查目標 category。
-   - [ ] **Worker `loadRemote()` 重複 Item ID 複查**：目前將 category index 展開後直接以 `items.set(item.id, ...)` 建立 Map；若遠端資料因索引異常出現重複 Item ID，後載入的項目會靜默覆蓋前一筆，需改為明確拒絕資料異常而非繼續寫入。
+   - [x] **Worker `loadRemote()` 重複 Item ID 複查**：已在建立 remote Item Map 時檢查 `items.has(item.id)`，發現重複 Item ID 立即拒絕資料異常，不再讓後載入項目靜默覆蓋前一筆；Verify #671 已通過。
 2. **Stage 9｜Verification / Build / Deployment**：確認 Verify scripts 覆蓋範圍、build、CI 與 production deployment，避免測試綠燈但漏測關鍵行為。
 3. **Stage 10｜Dead Code / Legacy / Consistency Sweep**：搜尋舊 function、變數、class、route、欄位、API、TODO / FIXME、debug code、temporary workaround、duplicate implementation，並交叉比對 RULES ↔ TODO ↔ Code ↔ Tests ↔ Data。
    - [x] **`merch-old` 圖片 fallback 舊相容邏輯複查**：目前 canonical data 未引用舊 `merch-old` 圖片路徑，但舊 repo 仍保有舊圖片資料，因此 fallback 仍有相容價值，暫不刪除。
