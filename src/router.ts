@@ -26,16 +26,7 @@ function parseHash(hash: string): Route {
 }
 
 export function createRouter({ onNavigate }: RouterOptions) {
-  const handleChange = () => {
-    const hash = window.location.hash;
-    const route = parseHash(hash);
-    if (route.name === 'not-found') {
-      window.history.replaceState(null, '', '#/home');
-      onNavigate({ name: 'home' });
-      return;
-    }
-    onNavigate(route);
-  };
+  const handleChange = () => onNavigate(parseHash(window.location.hash));
   return {
     start() { window.addEventListener('hashchange', handleChange); handleChange(); },
     stop() { window.removeEventListener('hashchange', handleChange); },
