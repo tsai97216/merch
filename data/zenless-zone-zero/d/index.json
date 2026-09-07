@@ -11,6 +11,15 @@
       "manufacturer": "",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZd002",
+      "path": "data/zenless-zone-zero/d/ZZZd002/data.json",
+      "title": "虛狩加冕之時 葉瞬光 立牌",
+      "characters": ["葉瞬光"],
+      "manufacturer": "",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
