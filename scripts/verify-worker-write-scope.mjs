@@ -14,7 +14,7 @@ const required = [
   ['old category removal on move', /[A-Za-z_$][\w$]*\.items\.filter\(\s*[A-Za-z_$][\w$]*\s*=>\s*[A-Za-z_$][\w$]*\.id\s*!==\s*id\s*\)/],
   ['target image ownership check', /entry\.workId !== parts\.workId \|\| entry\.item\.category !== parts\.category/],
   ['item data + image atomic write', /path: asset\.path, content: asset\.content, encoding: 'base64'.*path: entry\.path, content: jsonFile\(item\)/s],
-  ['item deletion removes images', /for \(const path of remote\.paths\) if \(path\.startsWith\(prefix\)\) writes\.push\(\{ path, delete: true \}\)/],
+  ['item deletion removes images', /(?:for\s*\(const\s+[A-Za-z_$][\w$]*\s+of\s+remote\.paths\)|remote\.paths).*?startsWith\(prefix\).*?delete:\s*true/s],
   ['stale write rejection', /status === 422.*資料在寫入期間已被其他操作更新/s],
 ];
 
