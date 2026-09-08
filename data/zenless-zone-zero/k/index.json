@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "k",
+  "items": [
+    {
+      "id": "ZZZk001",
+      "path": "data/zenless-zone-zero/k/ZZZk001/data.json",
+      "title": "角色炫彩亞克力掛件 奇趣修行系列 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "ZZZk001",
+  "workId": "zenless-zone-zero",
+  "title": "角色炫彩亞克力掛件 奇趣修行系列 星見雅",
+  "series": [
+    "奇趣修行系列"
+  ],
+  "characters": [
+    "星見雅"
+  ],
+  "category": "k",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 260,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-01-29"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
