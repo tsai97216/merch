@@ -4,39 +4,69 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.95`。** `package.json` 與 `public/data/version.json` 必須保持同步。
-- **目前主要工作：Collection 初始資料載入效能與正式網站實機驗收。**
-- **Worker 修改必須採最小安全修改。** `worker/src/index.ts` 曾有不完整重寫造成回歸的風險，修改前必須取得可靠完整內容。
-- **舊 `loadNewStaticData()` 暫不刪除。** 它仍是 `getRemoteData()` 失敗後的最後 fallback；需等新的資料載入與 fallback 路徑完成驗證後再清理。
+- **目前正式版本：`1.109.103`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前主要工作：UI 基礎整理與新增／管理／運費／設定頁重新設計。**
+- **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
-## P0｜核心功能與正確性
+## P0｜核心功能與資料正確性
 
-1. **Collection 初始資料載入效能**
-   - 正式網站目前優先讀取 build-time 產生的 `./data/collection.json`，Worker `/api/data` 作為 fallback / authoritative read path。
-   - 待實際確認部署後首次載入速度，以及搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作時的等待時間。
-   - 驗證完成後清理不再需要的舊逐 Item 靜態載入 fallback。
-2. **Shipping `itemIds` 參照完整性最終實機驗收**：程式層修正與自動化 Verify 已完成；仍需確認被 Shipping 參照的 Item 無法被刪除，以及一般 Item 刪除流程正常。
-3. **待新增作品：明日方舟：終末地（Arknights: Endfield）**：ID `arknights-endfield`、代號 `AKE`。尚未加入正式作品資料。
+1. **Collection 初始資料載入與 fallback 最終驗收**
+   - 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
+   - 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
+   - 實機驗收完成後，再判斷是否可移除舊 `loadNewStaticData()` fallback。
+2. **Shipping `itemIds` 參照完整性實機驗收**
+   - 確認被 Shipping 參照的 Item 無法被刪除。
+   - 確認一般 Item 刪除流程正常且不破壞其他 Shipping records。
+3. **待新增作品：明日方舟：終末地（Arknights: Endfield）**
+   - ID：`arknights-endfield`
+   - 代號：`AKE`
+   - 尚未加入正式作品資料。
 
-## P1｜UI / UX 與穩定性
+## P1｜UI 基礎與共用架構
 
-1. 首頁角色排行文字顯示問題。
-2. 新增表單、統計、運費、管理表單的版面與彈窗問題。
-3. 收藏排序選擇器在暗色模式下的文字可讀性問題。
-4. 收藏排序選擇器在白天模式下的框選顏色遮擋問題。
-5. 暗色模式背景框圓角問題。
-6. 設定頁跟隨系統深色模式。
-7. 手機版統計／管理／設定頁持續改善。
-8. 電腦版標題位置問題。
-9. 完整檢查 Modal、Toast、Loading、Empty、Error、focus、overflow、z-index、responsive breakpoint 與 dead CSS / legacy selector。
+### 1. 收藏排序控制器
 
-## P2｜Motion
+- 重新整理收藏頁 Sort 控制器的結構與狀態樣式，而非以額外 CSS 覆蓋現有問題。
+- Light：修正選取／框選狀態造成文字可讀性下降。
+- Dark：修正選取狀態背景與文字對比不足。
+- 統一 hover、active、focus-visible、disabled 狀態。
+- Desktop / Mobile 都要驗收。
+- 優先確認是否應抽成共用 UI 控制器／設計 token，避免各頁各自維護。
 
-- 動畫與過渡效果暫不優先處理，待 P0 / P1 完成後再進行最後精修。
+### 2. 新增／管理／運費／設定重新設計
+
+> 不是局部換色或補 CSS，而是從頁面結構、共用元件與互動模型重新整理。
+
+- **新增**：重新設計資訊分組、欄位層級、操作區與表單回饋，降低長表單的認知負擔。
+- **管理**：重新設計作品／周邊管理資訊架構、搜尋／選擇／編輯操作與 CRUD 回饋。
+- **運費**：重新設計運費紀錄、金額／日期／物流／關聯 Item 的資訊呈現與管理流程。
+- **設定**：重新設計設定分類、外觀設定、資料／系統資訊與操作入口。
+- 四頁共用同一套 Page Header、Section、Field、Button、Badge、Modal、Feedback 等 UI 基礎。
+- Desktop / Tablet / Mobile 均須納入設計。
+- Light / Dark 使用同一套設計 token 與狀態語意。
+- 先建立共用 UI 基礎，再由各頁套用，不製造四套獨立 CSS。
+- 保留既有資料模型、Store、API、Worker 契約，除非確認根因位於資料層才修改資料架構。
+
+### 3. 全站 UI 一致性檢查
+
+- Modal、Toast、Loading、Empty、Error、focus、overflow、z-index、responsive breakpoint 等共用互動狀態。
+- 清理已確認無用途的 dead CSS / legacy selector。
+- 確認 HTML `id` 唯一、selector 邊界清楚，避免重複 ID 與模糊 selector。
+
+### 4. 其他既有 UI 問題
+
+- 暗色模式背景框圓角。
+- 設定頁跟隨系統深色模式。
+- 手機版統計／管理／設定的 responsive 精修。
+- 電腦版標題位置。
+
+## P2｜Motion 與視覺精修
+
+- 在 P0 / P1 完成並通過實機驗收後，再統一處理動畫、transition 與細節視覺節奏。
 
 ## P3｜Final acceptance
 
-- 完成 P0 / P1 後進行手機版與電腦版完整流程驗收。
-- 驗收收藏搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片管理、Shipping、統計、管理、設定與深色／淺色模式。
-- 驗收部署後初始載入、Worker fallback 與 mutation 等待時間。
-- 驗收完成後再進行最後 legacy / dead-code cleanup。
+- 手機版與電腦版完整流程驗收。
+- 驗收收藏搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片管理、Shipping、統計、管理、設定與 Light / Dark。
+- 驗收部署後初始載入、Worker fallback 與 mutation 同步等待時間。
+- 驗收完成後進行最後 legacy / dead-code cleanup。
