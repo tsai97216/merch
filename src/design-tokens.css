@@ -104,6 +104,7 @@ html {
   --field-gap: 6px;
   --field-label-size: var(--font-size-sm);
   --field-label-weight: var(--font-weight-semibold);
+  --form-grid-gap: 12px;
 }
 
 html[data-theme='dark'] {
