@@ -11,4 +11,3 @@
 .add-grid label b{color:var(--brand)}
 .add-actions{display:flex;justify-content:flex-end;gap:var(--toolbar-gap);padding:var(--space-1) 0 var(--space-4)}
 .add-actions .button{min-width:120px;text-align:center}
-.management-panel #management-add{display:none!important}
