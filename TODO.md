@@ -30,6 +30,7 @@
   - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
   - [x] `src/styles.css` 的 legacy alias 引用已全部遷移至 semantic tokens，並移除 base layer 中對 legacy vocabulary 的依賴。
   - [x] `settings-auth.css`、`collection.css` 已完成本輪確認到的 legacy token consumer mapping，改用 semantic tokens。
+  - [ ] `management-images.css` 尚有 legacy fallback token 與 page-specific viewport media，需遷移至 semantic tokens 並集中 responsive contract。
 - **Typography**
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**
