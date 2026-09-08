@@ -34,3 +34,12 @@
   .settings-info-list{grid-template-columns:1fr;margin-top:14px}
   .theme-choice-group{grid-template-columns:1fr;margin-top:14px}
 }
+
+/* Settings owns its vertical rhythm. Do not inherit the global page top padding. */
+.content:has(> .settings-page:not([hidden])){padding-top:0!important}
+.settings-page.settings-page{margin-top:0!important}
+.settings-page-header{padding-top:0!important}
+@media(max-width:700px){
+  .content:has(> .settings-page:not([hidden])){padding-top:0!important}
+  .settings-page-header{margin-top:0!important;padding-top:0!important}
+}
