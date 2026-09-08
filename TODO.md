@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.145`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.146`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -44,6 +44,7 @@
 - [x] 已建立 shared content / page spacing tokens，並開始將既有 Toolbar / Form layout 的固定間距收斂至 shared tokens；下一步仍需逐步移除 page-specific layout 規則。
 - [x] Add / Management 的主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation；仍需繼續檢查其他頁面的重複 Field / layout 規則。
 - [ ] Works Management 的 form / row spacing、label、border 與 muted text 規則已確認可進一步收斂至 shared semantic tokens，待完成遷移與驗證。
+- [ ] Management 編輯／新增模式目前仍以 `:has(#management-delete...)` 由 CSS 反推 UI 狀態，已確認應改為由 `management.ts` 明確輸出 state class，再移除這層 CSS state coupling。
 
 ### 3. 七頁同步重新設計
 
