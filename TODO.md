@@ -26,11 +26,12 @@
   - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
   - [x] `theme-refinement.css` 已完成 legacy theme token 遷移，改用 semantic token；已移除被 semantic token 吸收的重複 Dark override。
   - [x] `theme.css` 已移除未使用的 control-group / focus-ring 歷史 token 與重複 Dark selector，只保留 theme state 必要的 `color-scheme` 行為。
-  - [x] `design-tokens.css` 已移除確認無引用的 `--accent / --ink / --muted / --line / --panel / --soft` legacy aliases。
+  - [x] `design-tokens.css` 已移除 `--accent / --ink / --muted / --line / --panel / --soft` legacy alias 定義。
+  - [ ] `src/ui-refinement.css` 仍有 `--muted / --soft / --ink / --line` legacy alias 引用，需先全部遷移至 semantic token，再視為完整清除。
 - **Typography**：統一字體、字級、字重、行高與標題層級。
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**：建立全站一致的間距尺度。
-  - [x] 已建立 `--space-1`～`--space-12` 的 shared spacing scale。
+  - [x] 已建立 `--space-1`～`--space-12` shared spacing scale。
 - **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
   - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
 - **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
@@ -67,6 +68,8 @@
 - **Desktop / Tablet / Mobile 一次納入設計。**
 - 手機版不只是 Desktop 縮小版，而是依螢幕空間重新安排資訊層級、控制項與操作方式。
 - 同步驗證各 breakpoint 的 overflow、可讀性與觸控操作空間。
+- [ ] 將 `ui-refinement.css` 的 viewport breakpoint 規則收斂至 `responsive-refinement.css`，建立單一 responsive contract。
+- [ ] 清查並移除已確認 dead 的 responsive selector，尤其 `management-form-grid`、`management-search-field` 等疑似舊 markup selector，須先完成 mapping 再刪除。
 
 ### 5. Light / Dark
 
@@ -89,11 +92,12 @@
 #### 已確認的架構衝突
 
 1. **多層 refinement 疊加**：`styles.css`、`theme.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css`、`layout-refinement.css` 同時存在，且部分由 `index.html` 或功能模組直接載入。這是目前「改一處、另一處又覆蓋」風險的主要來源，應在共用 foundation 建立後逐步收斂。
-2. **Theme token 尚未單一化**：主要 legacy aliases 已清除，但仍存在多組語意相近的 theme/control token 與部分直接寫死的顏色值；後續應繼續收斂為唯一 semantic token vocabulary。
+2. **Theme token 尚未單一化**：legacy alias 定義已清除，但 `ui-refinement.css` 尚存在舊 alias 消費者，且仍有多組語意相近的 theme/control token 與部分直接寫死的顏色值；後續應繼續收斂為唯一 semantic token vocabulary。
 3. **全站基礎樣式與 refinement 混在同一 layer**：`styles.css` 同時包含 reset、layout、component 與 responsive 行為，導致 shared foundation 與 legacy page styling 邊界不清。
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`。這使 shared layout contract 不完全由全站入口管理，後續應移回 shared foundation。
 5. **Responsive 規則存在重複責任**：`styles.css`、`ui-refinement.css` 與 `responsive-refinement.css` 都有 breakpoint 規則，尤其 Management/Collection/Heading/Content 寬度存在多層調整，應合併為單一 responsive contract。
 6. **Management state coupling 已修正**：原先 `responsive-refinement.css` 使用 `:has(#management-delete...)` 反推新增／編輯模式並透過 `::before` 注入標題，現已改為由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
+7. **Legacy alias 定義與消費者不同步**：`design-tokens.css` 已移除 legacy aliases，但 `ui-refinement.css` 尚有 `var(--muted / --soft / --ink / --line)` 引用；此問題已記錄，必須在下一輪 CSS cleanup 前完成遷移。
 
 #### Shared UI implementation mapping（目前）
 
