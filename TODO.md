@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.160`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.161`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -30,7 +30,7 @@
   - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
   - [x] `src/styles.css` 的 legacy alias 引用已全部遷移至 semantic tokens，並移除 base layer 中對 legacy vocabulary 的依賴。
   - [x] `settings-auth.css`、`collection.css` 已完成本輪確認到的 legacy token consumer mapping，改用 semantic tokens。
-  - [ ] `management-images.css` 尚有 legacy fallback token 與 page-specific viewport media，需遷移至 semantic tokens 並集中 responsive contract。
+  - [x] `management-images.css` 已完成 legacy fallback token 遷移，並將原 page-specific viewport media 搬入 `responsive-refinement.css` 的集中 responsive contract。
 - **Typography**
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**
