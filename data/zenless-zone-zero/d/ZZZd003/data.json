@@ -3,15 +3,23 @@
   "workId": "zenless-zone-zero",
   "title": "葉瞬光 立繪 立牌",
   "series": [],
-  "characters": ["葉瞬光"],
+  "characters": [
+    "葉瞬光"
+  ],
   "category": "d",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 650,
+    "currency": "TWD",
+    "platform": "線下活動"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
