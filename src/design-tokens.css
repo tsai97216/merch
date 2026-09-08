@@ -21,6 +21,12 @@
   --color-border: #E4E7EC;
   --color-focus-ring: rgba(15, 163, 163, .22);
 
+  /* Semantic state colors. */
+  --color-success: #218838;
+  --color-warning: #A86400;
+  --color-danger: #C53030;
+  --color-info: #2563A6;
+
   /* Legacy aliases consumed during the staged migration. */
   --accent: var(--brand);
   --ink: var(--color-text);
@@ -44,14 +50,15 @@ html[data-theme='dark'] {
   --color-text-muted: #AEB7C5;
   --color-border: #2A313D;
   --color-focus-ring: rgba(90, 202, 202, .28);
+
+  --color-success: #62C174;
+  --color-warning: #F0B35A;
+  --color-danger: #F06B6B;
+  --color-info: #72B5F0;
 }
 
 html {
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --control-height: 42px;
-  --control-height-compact: 36px;
+  /* Spacing scale. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -61,4 +68,26 @@ html {
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+
+  /* Radius and border scale. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --border-width: 1px;
+  --border-width-strong: 2px;
+
+  /* Surface elevation. */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
+  --shadow-md: 0 8px 24px rgba(16, 24, 40, .10);
+  --shadow-lg: 0 16px 40px rgba(16, 24, 40, .14);
+
+  /* Shared control geometry. */
+  --control-height: 42px;
+  --control-height-compact: 36px;
+}
+
+html[data-theme='dark'] {
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .24);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .30);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, .38);
 }
