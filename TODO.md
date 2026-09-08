@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.155`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.156`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -22,20 +22,20 @@
 
 ### 1. 全站 Design System
 
-- **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
+- **色彩 Token**
   - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
-  - [x] `theme-refinement.css` 已完成 legacy theme token 遷移，改用 semantic token；已移除被 semantic token 吸收的重複 Dark override。
-  - [x] `theme.css` 已移除未使用的 control-group / focus-ring 歷史 token 與重複 Dark selector，只保留 theme state 必要的 `color-scheme` 行為。
+  - [x] `theme-refinement.css` 已完成 legacy theme token 遷移並移除被 semantic token 吸收的重複 Dark override。
+  - [x] `theme.css` 已移除未使用的歷史 token 與重複 Dark selector，只保留必要 theme state / `color-scheme` 行為。
   - [x] `design-tokens.css` 已移除 `--accent / --ink / --muted / --line / --panel / --soft` legacy alias 定義。
-  - [ ] `src/ui-refinement.css` 仍有 `--muted / --soft / --ink / --line` legacy alias 引用，需先全部遷移至 semantic token，再視為完整清除。
-- **Typography**：統一字體、字級、字重、行高與標題層級。
+  - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
+- **Typography**
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
-- **Spacing**：建立全站一致的間距尺度。
+- **Spacing**
   - [x] 已建立 `--space-1`～`--space-12` shared spacing scale。
-- **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
+- **Radius / Border / Surface**
   - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
-- **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
-  - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`，由 `src/design-tokens.css` 統一載入。
+- **共用元件**
+  - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`。
   - [x] Segmented Control / Card / Panel foundation 已建立於 `src/shared-components.css`。
   - [x] Modal / Badge / Feedback foundation 已建立於 `src/shared-components.css`，尚待逐步把既有 page-specific markup / CSS 遷移至 shared contract。
   - [x] Toast / Feedback 已開始遷移至 semantic tokens。
@@ -45,9 +45,10 @@
 
 - 統一 Header、Page Heading、Section、Content Width、Grid、Toolbar 與操作區。
 - 建立清楚的資訊層級與元件邊界，讓七頁共享同一套版面基礎。
-- [x] 已建立 shared content / page spacing tokens，並開始將既有 Toolbar / Form layout 的固定間距收斂至 shared tokens；下一步仍需逐步移除 page-specific layout 規則。
-- [x] Add / Management 的主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation；仍需繼續檢查其他頁面的重複 Field / layout 規則。
-- [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens，並完成現有結構驗證。
+- [x] 已建立 shared content / page spacing tokens，並開始收斂 Toolbar / Form layout 的固定間距。
+- [x] Add / Management 主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation。
+- [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
+- [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
 
 ### 3. 七頁同步重新設計
 
@@ -68,53 +69,54 @@
 - **Desktop / Tablet / Mobile 一次納入設計。**
 - 手機版不只是 Desktop 縮小版，而是依螢幕空間重新安排資訊層級、控制項與操作方式。
 - 同步驗證各 breakpoint 的 overflow、可讀性與觸控操作空間。
-- [ ] 將 `ui-refinement.css` 的 viewport breakpoint 規則收斂至 `responsive-refinement.css`，建立單一 responsive contract。
-- [ ] 清查並移除已確認 dead 的 responsive selector，尤其 `management-form-grid`、`management-search-field` 等疑似舊 markup selector，須先完成 mapping 再刪除。
+- [x] `ui-refinement.css` 的 viewport breakpoint 規則已集中至 `responsive-refinement.css`。
+- [x] 已確認並移除 `management-form-grid`、`management-search-field` 等目前 markup 不再使用的 responsive selector。
+- [ ] 進一步清理 `styles.css` 與其他 page CSS 的重複 breakpoint 責任。
 
 ### 5. Light / Dark
 
 - Light / Dark 同時設計。
 - 所有共用元件直接使用 semantic tokens，避免「Light 做一套、Dark 再覆蓋一套」。
-- 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 等狀態。
+- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 等狀態。
 
 ### 6. Phase 0 架構盤點結果
 
 #### 已確認的 CSS / Theme layer
 
-- `src/styles.css`：目前仍承擔全站基礎 layout、page layout、card、control、responsive 與部分元件樣式，是最大的 legacy/base layer。
-- `src/theme.css`：目前只保留 theme state 必要行為；主要 semantic token 與 Dark surface/state 已收斂至 shared token / refinement layer。
-- `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail、responsive polish；內容已累積多輪修補規則。
-- `src/responsive-refinement.css`：另一個 refinement layer，針對 Management、Settings、Collection 與 breakpoint 再次覆寫 layout。
-- `src/theme-refinement.css`：已完成 legacy theme token 遷移，目前待後續進一步判斷哪些 selectors 已被 shared foundation 吸收。
-- `src/layout-refinement.css`：目前由 Add 模組直接 import，代表部分全站 layout/refinement 規則仍由頁面模組帶入。
+- `src/styles.css`：仍承擔全站基礎 layout、page layout、card、control、responsive 與部分元件樣式，是最大的 legacy/base layer。
+- `src/theme.css`：目前只保留 theme state 必要行為。
+- `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail 與 accessibility polish。
+- `src/responsive-refinement.css`：目前集中 Management、Settings、Collection 與 breakpoint responsive refinement。
+- `src/theme-refinement.css`：已完成 legacy theme token 遷移，待後續判斷哪些 selectors 已被 shared foundation 吸收。
+- `src/layout-refinement.css`：目前由 Add 模組直接 import，部分 shared layout 仍需移回 shared foundation。
 - 另有頁面／功能專用 CSS，例如 `add.css`、`collection.css`、`statistics.css`、`shipping.css`、`works-management.css`、`management-images.css`、`settings-auth.css`、`item-detail-modal.css`、`image-viewer.css`、`toast.css`、`card-enhancements.css` 等。
 
 #### 已確認的架構衝突
 
-1. **多層 refinement 疊加**：`styles.css`、`theme.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css`、`layout-refinement.css` 同時存在，且部分由 `index.html` 或功能模組直接載入。這是目前「改一處、另一處又覆蓋」風險的主要來源，應在共用 foundation 建立後逐步收斂。
-2. **Theme token 尚未單一化**：legacy alias 定義已清除，但 `ui-refinement.css` 尚存在舊 alias 消費者，且仍有多組語意相近的 theme/control token 與部分直接寫死的顏色值；後續應繼續收斂為唯一 semantic token vocabulary。
-3. **全站基礎樣式與 refinement 混在同一 layer**：`styles.css` 同時包含 reset、layout、component 與 responsive 行為，導致 shared foundation 與 legacy page styling 邊界不清。
-4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`。這使 shared layout contract 不完全由全站入口管理，後續應移回 shared foundation。
-5. **Responsive 規則存在重複責任**：`styles.css`、`ui-refinement.css` 與 `responsive-refinement.css` 都有 breakpoint 規則，尤其 Management/Collection/Heading/Content 寬度存在多層調整，應合併為單一 responsive contract。
-6. **Management state coupling 已修正**：原先 `responsive-refinement.css` 使用 `:has(#management-delete...)` 反推新增／編輯模式並透過 `::before` 注入標題，現已改為由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
-7. **Legacy alias 定義與消費者不同步**：`design-tokens.css` 已移除 legacy aliases，但 `ui-refinement.css` 尚有 `var(--muted / --soft / --ink / --line)` 引用；此問題已記錄，必須在下一輪 CSS cleanup 前完成遷移。
+1. **多層 refinement 疊加**：`styles.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css`、`layout-refinement.css` 仍同時存在，需在 foundation 完成後逐步收斂。
+2. **Theme token 尚未完全單一化**：legacy alias 定義與 `ui-refinement.css` 消費者已完成同步，後續仍需清理其他語意相近 token 與直接寫死的視覺值。
+3. **全站基礎樣式與 refinement 混在 `styles.css`**：需逐步拆分並明確 shared / page-specific 邊界。
+4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`，後續應移回 shared foundation。
+5. **Responsive 規則仍有重複責任**：`styles.css` 與 page-specific CSS 仍存在 breakpoint 行為，需逐步合併為唯一 responsive contract。
+6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
+7. **Legacy alias 定義與消費者不同步問題已修正**：`design-tokens.css` 與 `ui-refinement.css` 現已使用同一 semantic token vocabulary。
 
 #### Shared UI implementation mapping（目前）
 
 - Navigation / Sidebar：`index.html` + `styles.css` + `theme.css`。
-- Page Heading / Hero / Section：主要在 `styles.css`，再由 `ui-refinement.css` / responsive layer 補強。
+- Page Heading / Hero / Section：主要在 `styles.css`，再由 refinement layers 補強。
 - Card / Panel：主要在 `styles.css`，部分 card behavior 在 `ui-refinement.css` / `card-enhancements.css`。
-- Button / Input / Select：`src/controls.css` 已建立 shared foundation，舊版 selector 尚待逐步遷移與收斂。
+- Button / Input / Select：`src/controls.css` shared foundation。
 - Theme：`theme.ts` + `theme.css` + `theme-refinement.css` + `design-tokens.css`。
-- Item Detail：`main.ts` / `item-detail-modal.css`，另有 `image-viewer.ts/css` 與 shipping detail modal。
+- Item Detail：`main.ts` / `item-detail-modal.css`，另有 image viewer 與 shipping detail modal。
 - Toast / Feedback：`utils/toast` + `toast.css`。
-- Management form/editor：`management.ts` / `works-management.ts` + `works-management.css` / `management-images.css` + refinement layers。
+- Management form/editor：`management.ts` / `works-management.ts` + 專用 CSS + refinement layers。
 
 #### 保留／合併／退場方向
 
-- **保留**：Store/API/Worker 契約、資料模型、既有可驗證的互動邏輯；`theme.ts` 的 theme state 行為。
-- **合併**：所有 shared token、base layout、controls、Card/Panel、Feedback、responsive contract、Light/Dark semantic states。
-- **退場候選**：`ui-refinement.css`、`responsive-refinement.css`、`theme-refinement.css`、`layout-refinement.css` 中已被新 shared foundation 吸收的規則；以及被確認為 dead/duplicate 的 selector。
+- **保留**：Store/API/Worker 契約、資料模型、既有可驗證的互動邏輯；`theme.ts` theme state 行為。
+- **合併**：shared token、base layout、controls、Card/Panel、Feedback、responsive contract、Light/Dark semantic states。
+- **退場候選**：已被新 shared foundation 吸收的 refinement 規則，以及被確認為 dead/duplicate 的 selector。
 - **暫不刪除**：任何尚未完成 mapping、仍承擔功能的 selector 或 page-specific CSS，直到遷移與驗證完成。
 
 ### 7. 開始前的架構盤點
@@ -128,9 +130,9 @@
 
 ### 8. 後續執行順序
 
-1. 建立 shared semantic token foundation。
-2. 建立 shared controls / Card / Panel / Feedback 基礎。
-3. 建立唯一 responsive contract。
+1. [x] 建立 shared semantic token foundation。
+2. [x] 建立 shared controls / Card / Panel / Feedback 基礎。
+3. [x] 建立第一版唯一 responsive refinement contract。
 4. 逐步把七頁遷移到 shared foundation，但一次以整站視角驗證，不做單頁補丁。
 5. 每完成一組遷移，再刪除已被吸收且確認 dead 的 refinement 規則。
 6. 最後進行 Light/Dark、Desktop/Tablet/Mobile、keyboard/focus 與功能回歸驗證。
