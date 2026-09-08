@@ -1,5 +1,6 @@
 @import './typography.css';
 @import './controls.css';
+@import './shared-components.css';
 
 :root {
   /* Chi MERCH brand: sourced from tsai97216/chi-brand. */
