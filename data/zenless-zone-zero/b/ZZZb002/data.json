@@ -2,7 +2,9 @@
   "id": "ZZZb002",
   "workId": "zenless-zone-zero",
   "title": "星見雅 影畫系列 吧唧",
-  "series": [],
+  "series": [
+    "影畫系列"
+  ],
   "characters": [
     "星見雅"
   ],
