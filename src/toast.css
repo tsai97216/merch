@@ -46,19 +46,6 @@
   color: var(--color-info);
 }
 
-@media (max-width: 700px) {
-  .toast-host {
-    right: var(--space-3);
-    bottom: var(--space-3);
-    left: var(--space-3);
-  }
-
-  .toast {
-    min-width: 0;
-    width: 100%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .toast {
     transition: none;
