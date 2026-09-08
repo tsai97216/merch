@@ -52,17 +52,3 @@ html[data-theme='dark'] .item-detail-text p{color:var(--color-text-muted)}
 html[data-theme='dark'] .footer,html[data-theme='dark'] .sidebar-footer{color:var(--color-text-muted)}
 html[data-theme='dark'] .item-detail-topbar,html[data-theme='dark'] .item-detail-header,html[data-theme='dark'] .item-detail-grid dl>div,html[data-theme='dark'] .item-detail-text>div+div{border-color:var(--color-border)}
 html[data-theme='dark'] .item-detail-modal{color:var(--color-text)}
-
-@media(max-width:700px){
-  .settings-theme-controls{display:block}
-  .theme-choice-group{grid-template-columns:1fr;margin-top:var(--space-3)}
-  .theme-choice{justify-content:flex-start;padding-inline:var(--space-4)}
-  .item-detail-dialog,.image-viewer-dialog,.statistics-detail-dialog,.shipping-detail-dialog{max-width:calc(100vw - 14px);max-height:calc(100vh - 14px)}
-  .ranking li{grid-template-columns:26px minmax(0,1fr) auto}
-  .statistics-detail-dialog,.shipping-detail-dialog{width:100%;max-height:calc(100vh - 14px);overflow:auto}
-  .statistics-large-chart{height:360px}
-  .statistics-chart-preview{height:260px}
-  .statistics-chart-preview text{font-size:12px}
-  .statistics-chart-preview .donut-legend text{font-size:15px}
-  .statistics-data-table-row{min-width:620px}
-}
