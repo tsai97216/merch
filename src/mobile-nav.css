@@ -1,18 +1,18 @@
 /* Mobile navigation follows the Chi NAV pattern: full-width brand header, then a horizontally scrollable page switcher. */
 @media (max-width:720px){
   body{overflow-x:hidden}
-  .sidebar{position:sticky;top:0;inset-inline:0;width:100%;height:auto;min-height:0;margin:0;padding:0;display:block;background:var(--color-surface);border:0;border-bottom:1px solid var(--color-border);box-shadow:none;z-index:1000;overflow:visible}
-  .sidebar .brand{width:100%;min-height:58px;margin:0;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--color-border)}
-  .sidebar .brand-mark{width:36px;height:36px;flex:0 0 36px;border-radius:9px;font-size:14px}
-  .sidebar .brand strong{font-size:16px;line-height:1.2}
-  .sidebar .brand span{display:none}
-  .sidebar .sidebar-toggle{display:none}
-  .sidebar .nav{width:100%;min-width:0;display:flex;flex-direction:row;align-items:center;gap:4px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:8px 12px;margin:0;background:var(--color-surface)}
-  .sidebar .nav::-webkit-scrollbar{display:none}
-  .sidebar .nav a{flex:0 0 auto;min-height:38px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:0;border-radius:8px;white-space:nowrap;font-size:12px}
-  .sidebar .nav a i{display:none}
-  .sidebar .nav a span{display:block;max-width:none}
-  .sidebar .sidebar-footer{display:none}
-  .main,.sidebar.is-collapsed~.main{width:100%;margin-left:0;padding-left:0}
-  .content{width:100%;padding-top:25px}
+  body .sidebar{position:sticky;top:0;inset-inline:0;width:100%;height:auto;min-height:0;margin:0;padding:0;display:block;background:var(--color-surface);border:0;border-bottom:1px solid var(--color-border);box-shadow:none;z-index:1000;overflow:visible}
+  body .sidebar .brand{width:100%;min-height:58px;margin:0;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--color-border)}
+  body .sidebar .brand-mark{width:36px;height:36px;flex:0 0 36px;border-radius:9px;font-size:14px}
+  body .sidebar .brand strong{font-size:16px;line-height:1.2}
+  body .sidebar .brand span{display:none}
+  body .sidebar .sidebar-toggle{display:none}
+  body .sidebar .nav{width:100%;min-width:0;display:flex;flex-direction:row;align-items:center;gap:4px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;padding:8px 12px;margin:0;background:var(--color-surface)}
+  body .sidebar .nav::-webkit-scrollbar{display:none}
+  body .sidebar .nav a{flex:0 0 auto;min-height:38px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:0;border-radius:8px;white-space:nowrap;font-size:12px}
+  body .sidebar .nav a i{display:none}
+  body .sidebar .nav a span{display:block;max-width:none}
+  body .sidebar .sidebar-footer{display:none}
+  body .main,body .sidebar.is-collapsed~.main{width:100%;margin-left:0;padding-left:0}
+  body .content{width:100%;padding-top:25px}
 }
