@@ -16,7 +16,8 @@
   "purchase": {
     "price": 880,
     "currency": "TWD",
-    "date": "2025-07-27"
+    "date": "2025-07-27",
+    "platform": "線下活動"
   },
   "arrival": {},
   "afterSales": {},
