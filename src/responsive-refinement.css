@@ -282,6 +282,52 @@
   h1{font-size:29px}
 }
 
+@media (max-width:700px){
+  /* Mobile page rhythm: reduce nested density while preserving touch targets. */
+  .shipping-layout{grid-template-columns:1fr;gap:12px}
+  .shipping-editor,.shipping-list{min-width:0}
+  .shipping-editor form{display:grid;gap:10px}
+  .shipping-editor form>label{display:grid;gap:6px;min-width:0}
+  .shipping-editor input,.shipping-editor select,.shipping-editor textarea{width:100%;min-width:0}
+  .shipping-items{max-height:300px;overflow:auto}
+  .shipping-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .shipping-actions .button{width:100%;min-width:0}
+  .shipping-record{min-width:0}
+  .shipping-record .record-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .shipping-record .record-actions .button{width:100%;min-width:0}
+
+  .statistics-chart-grid{grid-template-columns:1fr;gap:12px}
+  .statistics-chart-card{min-width:0;overflow:hidden}
+  .statistics-chart-preview{width:100%;height:240px;overflow:hidden}
+  .statistics-chart-preview svg{max-width:100%}
+  .statistics-large-chart{width:100%;height:320px;min-height:0;overflow:hidden}
+  .statistics-detail-dialog .modal-actions{display:grid;grid-template-columns:1fr;gap:8px}
+  .statistics-detail-dialog .modal-actions .button{width:100%}
+
+  .works-management-grid{min-width:0}
+  .works-management-form,.works-management-grid>div{min-width:0}
+  #works-management-list{overflow-x:auto}
+  .works-management-form-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .works-management-form-actions .button{width:100%;min-width:0}
+
+  .collection-tools .search{min-width:0}
+  .collection-tools .search input{min-width:0;width:100%}
+  .collection-tools .search-clear{flex:0 0 40px}
+  .collection-grid .item-card{min-width:0}
+  .collection-grid .item-body{min-width:0}
+  .collection-grid .item-title{overflow-wrap:anywhere;word-break:break-word}
+  .collection-grid .item-meta{min-width:0;overflow-wrap:anywhere}
+  .list-mode .item-card{min-width:0}
+  .list-mode .item-body{min-width:0}
+
+  .modal-dialog,.dialog{overflow-x:hidden}
+  .modal-dialog .modal-actions,.dialog .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .modal-dialog .modal-actions .button,.dialog .modal-actions .button{min-width:0;width:100%}
+
+  .footer{display:grid;grid-template-columns:1fr auto;align-items:center}
+  .footer span{font-size:10px}
+}
+
 @media (max-width: 380px){
   html{--content-padding-x:16px;--content-padding-top:25px;--content-padding-bottom:18px;--page-heading-gap:18px;--section-gap:12px;--grid-gap:8px;--toolbar-gap:8px;--field-gap:5px}
 }
