@@ -1,32 +1,36 @@
-.settings-auth-panel { margin: 0 0 18px; }
-.settings-auth-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
-.settings-auth-heading h2 { margin: 4px 0 6px; }
-.settings-auth-heading p { margin: 0; color: var(--color-text-muted); }
-.settings-auth-status { flex: 0 0 auto; border: 1px solid currentColor; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; }
-.settings-auth-status[data-authenticated="true"] { color: var(--color-success); }
-.settings-auth-status[data-authenticated="false"] { color: var(--color-warning); }
-.settings-auth-controls { display: flex; align-items: end; gap: 12px; margin-top: 16px; }
-.settings-auth-controls .field { flex: 1; min-width: 0; }
-.settings-auth-buttons { display: flex; gap: 8px; }
-.settings-auth-message { min-height: 1.3em; margin: 10px 0 0; font-size: 13px; }
-.settings-auth-message[data-kind="success"] { color: var(--color-success); }
-.settings-auth-message[data-kind="error"] { color: var(--color-danger); }
-
-/* Settings information architecture: verification first, system version second, appearance last. */
-[data-page="settings"]:not([hidden]) { display: flex; flex-direction: column; gap: var(--section-gap); }
-[data-page="settings"]:not([hidden]) > .page-heading { order: 0; margin-bottom: 0; }
-[data-page="settings"]:not([hidden]) > .settings-auth-panel { order: 1; margin: 0; }
-[data-page="settings"]:not([hidden]) > .panel:not(.settings-auth-panel):not(.settings-theme-panel) { order: 2; margin: 0; }
-[data-page="settings"]:not([hidden]) > .settings-theme-panel { order: 3; margin: 0; }
-
-[data-page="settings"] .settings-auth-panel,
-[data-page="settings"] .settings-theme-panel,
-[data-page="settings"] > .panel { width: 100%; min-width: 0; box-sizing: border-box; }
-
-@media (max-width:700px) {
-  [data-page="settings"]:not([hidden]) { gap: 10px; }
-  [data-page="settings"]:not([hidden]) > .page-heading { margin-bottom: 0; }
-  [data-page="settings"] .settings-auth-panel,
-  [data-page="settings"] .settings-theme-panel,
-  [data-page="settings"] > .panel { padding: var(--space-4); }
+/* Settings page redesign. Layout is owned here so legacy page spacing cannot create a top gap. */
+.settings-page{display:block!important;width:100%;min-width:0;box-sizing:border-box}
+.settings-page-header{margin:0 0 24px;padding:0}
+.settings-page-header h1{margin:6px 0 8px}
+.settings-page-header p{margin:0;color:var(--color-text-muted)}
+.settings-page-body{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;width:100%}
+.settings-card{margin:0!important;padding:24px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);box-sizing:border-box}
+.settings-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.settings-card-header h2{margin:5px 0 7px}
+.settings-card-header p{margin:0;color:var(--color-text-muted);max-width:720px}
+.settings-auth-status{flex:0 0 auto;border:1px solid currentColor;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+.settings-auth-status[data-authenticated="true"]{color:var(--color-success)}
+.settings-auth-status[data-authenticated="false"]{color:var(--color-warning)}
+.settings-auth-controls{display:flex;align-items:end;gap:12px;margin-top:18px}
+.settings-auth-controls .field{flex:1;min-width:0}
+.settings-auth-buttons{display:flex;gap:8px}
+.settings-auth-message{min-height:1.3em;margin:10px 0 0;font-size:13px}
+.settings-auth-message[data-kind="success"]{color:var(--color-success)}
+.settings-auth-message[data-kind="error"]{color:var(--color-danger)}
+.settings-info-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0 0}
+.settings-info-list>div{padding:14px 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-soft)}
+.settings-info-list dt{font-size:12px;color:var(--color-text-muted);margin-bottom:5px}
+.settings-info-list dd{margin:0;font-weight:700}
+.theme-choice-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.theme-choice{min-height:48px}
+@media(max-width:700px){
+  .settings-page-header{margin-bottom:16px}
+  .settings-card{padding:18px;border-radius:var(--radius-md)}
+  .settings-card-header{gap:12px}
+  .settings-card-header p{font-size:13px}
+  .settings-auth-controls{display:grid;grid-template-columns:1fr;gap:10px}
+  .settings-auth-buttons{display:grid;grid-template-columns:1fr 1fr}
+  .settings-auth-buttons .button{width:100%}
+  .settings-info-list{grid-template-columns:1fr;margin-top:14px}
+  .theme-choice-group{grid-template-columns:1fr;margin-top:14px}
 }
