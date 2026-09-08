@@ -30,14 +30,6 @@
   --color-warning: #A86400;
   --color-danger: #C53030;
   --color-info: #2563A6;
-
-  /* Legacy aliases consumed during the staged migration. */
-  --accent: var(--brand);
-  --ink: var(--color-text);
-  --muted: var(--color-text-muted);
-  --line: var(--color-border);
-  --panel: var(--color-surface);
-  --soft: var(--color-surface-soft);
 }
 
 html[data-theme='dark'] {
