@@ -1,0 +1,107 @@
+/* Shared component foundation. Page-specific CSS may arrange components, but should not redefine shared semantic states. */
+
+/* Segmented controls */
+.segmented-control,
+.view-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-soft);
+}
+
+.segmented-control > button,
+.segmented-control > a,
+.view-button {
+  min-height: var(--control-height-compact);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.segmented-control > button:hover,
+.segmented-control > a:hover,
+.view-button:hover {
+  color: var(--brand-text);
+}
+
+.segmented-control > button.is-active,
+.segmented-control > a.is-active,
+.view-button.is-active {
+  background: var(--color-surface);
+  color: var(--brand-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.segmented-control > button:focus-visible,
+.segmented-control > a:focus-visible,
+.view-button:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* Card / Panel */
+.panel,
+.stat-card,
+.card {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel {
+  padding: var(--space-6);
+}
+
+.stat-card,
+.card {
+  padding: var(--space-5);
+}
+
+.panel-heading,
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.panel-heading > :first-child,
+.section-heading > :first-child {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .segmented-control,
+  .view-switch {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .segmented-control > button,
+  .segmented-control > a,
+  .view-button {
+    min-height: 40px;
+    flex: 0 0 auto;
+  }
+
+  .panel {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .stat-card,
+  .card {
+    padding: var(--space-4);
+  }
+}
