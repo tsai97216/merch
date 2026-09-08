@@ -4,15 +4,6 @@
   "category": "d",
   "items": [
     {
-      "id": "ZZZd004",
-      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
-      "title": "影畫系列 壓克力插片展示框",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZd001",
       "path": "data/zenless-zone-zero/d/ZZZd001/data.json",
       "title": "絕區零 時裝系列 流沙雙插立牌 葉瞬光",
@@ -52,6 +43,15 @@
       "characters": [
         "星見雅"
       ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZd004",
+      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
+      "title": "影畫系列 壓克力插片展示框",
+      "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
