@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "o",
+  "items": [
+    {
+      "id": "WWo001",
+      "path": "data/wuthering-waves/o/WWo001/data.json",
+      "title": "TEST",
+      "characters": [
+        "T"
+      ],
+      "manufacturer": "T",
+      "quantity": 1,
+      "status": "pending"
+    }
+  ]
+}

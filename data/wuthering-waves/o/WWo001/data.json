@@ -1,0 +1,29 @@
+{
+  "id": "WWo001",
+  "workId": "wuthering-waves",
+  "title": "TEST",
+  "series": [
+    "T"
+  ],
+  "characters": [
+    "T"
+  ],
+  "category": "o",
+  "manufacturer": "T",
+  "quantity": 1,
+  "status": "pending",
+  "description": "T",
+  "notes": "T",
+  "purchase": {
+    "price": 90,
+    "currency": "TWD",
+    "platform": "T",
+    "date": "2026-09-08"
+  },
+  "arrival": {
+    "expectedDate": "2026-09-08",
+    "receivedDate": "2026-09-08"
+  },
+  "afterSales": {},
+  "images": []
+}
