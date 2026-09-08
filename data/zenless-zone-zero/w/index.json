@@ -37,22 +37,22 @@
       "status": "received"
     },
     {
-      "id": "ZZZw004",
-      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
-      "title": "伊埃斯 手機架",
+      "id": "ZZZw005",
+      "path": "data/zenless-zone-zero/w/ZZZw005/data.json",
+      "title": "2.1夏日快閃 壓克力杯墊",
       "characters": [
-        "伊埃斯"
+        "柚葉"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
     },
     {
-      "id": "ZZZw005",
-      "path": "data/zenless-zone-zero/w/ZZZw005/data.json",
-      "title": "2.1夏日快閃 壓克力杯墊",
+      "id": "ZZZw004",
+      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
+      "title": "伊埃斯 手機架",
       "characters": [
-        "柚葉"
+        "伊埃斯"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,

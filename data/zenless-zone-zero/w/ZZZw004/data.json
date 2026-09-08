@@ -15,7 +15,8 @@
   "purchase": {
     "price": 650,
     "currency": "TWD",
-    "platform": "線下活動"
+    "platform": "線下活動",
+    "date": "2026-01-29"
   },
   "arrival": {},
   "afterSales": {
