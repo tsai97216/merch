@@ -4,8 +4,8 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.132`。** `package.json` 與 `public/data/version.json` 必須保持同步。
-- **目前主要工作：UI 基礎整理與新增／管理／運費／設定頁重新設計。**
+- **目前正式版本：`1.109.133`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
 ## P0｜核心功能與資料正確性
@@ -22,39 +22,55 @@
    - 代號：`AKE`
    - 尚未加入正式作品資料。
 
-## P1｜UI 基礎與共用架構
+## P1｜整站 UI Design System 與七頁同步重構
 
-### 1. 收藏排序控制器
-- **已完成底層 token 重整，待實機驗收。**
-- Light / Dark 的排序控制器改由共用 theme tokens 定義群組、文字、hover、active、focus 狀態。
-- 移除頁面專用的 Dark Sort override，避免同一控制器由多層 CSS 各自定義。
-- 驗收 Light / Dark、hover、active、focus-visible，以及 Desktop / Tablet / Mobile。
-- 若驗收仍有問題，繼續追共用控制器或 token 根因，不新增局部 CSS workaround。
+### 1. 全站 Design System
 
-### 2. 新增／管理／運費／設定重新設計
+- **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
+- **Typography**：統一字體、字級、字重、行高與標題層級。
+- **Spacing**：建立全站一致的間距尺度。
+- **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
+- **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
+- Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
 
-> 不是局部換色或補 CSS，而是從頁面結構、共用元件與互動模型重新整理。
+### 2. 全站 Page Layout
 
-- **新增**：重新設計資訊分組、欄位層級、操作區與表單回饋，降低長表單的認知負擔。
-- **管理**：重新設計作品／周邊管理資訊架構、搜尋／選擇／編輯操作與 CRUD 回饋。
-- **運費**：重新設計運費紀錄、金額／日期／物流／關聯 Item 的資訊呈現與管理流程。
-- **設定**：重新設計設定分類、外觀設定、資料／系統資訊與操作入口。
-- 四頁共用同一套 Page Header、Section、Field、Button、Badge、Modal、Feedback 等 UI 基礎。
-- Desktop / Tablet / Mobile 均須納入設計。
-- Light / Dark 使用同一套設計 token 與狀態語意。
-- 先建立共用 UI 基礎，再由各頁套用，不製造四套獨立 CSS。
+- 統一 Header、Page Heading、Section、Content Width、Grid、Toolbar 與操作區。
+- 建立清楚的資訊層級與元件邊界，讓七頁共享同一套版面基礎。
+
+### 3. 七頁同步重新設計
+
+> **首頁／收藏／統計／新增／管理／運費／設定一起進行，不再一頁一頁補丁式修改。**
+
+- **首頁**：重新整理資訊總覽與視覺層級。
+- **收藏**：重新設計 View / Sort / Filter 控制列與內容呈現。
+- **統計**：重新整理圖表與數據層級。
+- **新增**：重新分組長表單、欄位層級與操作區。
+- **管理**：重新整理搜尋、選擇器、Editor 與 CRUD 回饋。
+- **運費**：重新整理紀錄、金額／日期／物流／關聯 Item 的資訊呈現。
+- **設定**：重新整理分類、外觀設定、資料／系統資訊與操作入口。
+- 七頁共用同一套 Page Header、Section、Field、Button、Badge、Modal、Feedback 等 UI 基礎。
 - 保留既有資料模型、Store、API、Worker 契約，除非確認根因位於資料層才修改資料架構。
 
-### 3. 全站 UI 一致性檢查
-- Modal、Toast、Loading、Empty、Error、focus、overflow、z-index、responsive breakpoint 等共用互動狀態。
-- 清理已確認無用途的 dead CSS / legacy selector。
-- 確認 HTML `id` 唯一、selector 邊界清楚，避免重複 ID 與模糊 selector。
+### 4. Responsive
 
-### 4. 其他既有 UI 問題
-- 暗色模式背景框圓角。
-- 設定頁跟隨系統深色模式。
-- 手機版統計／管理／設定的 responsive 精修。
-- 電腦版標題位置。
+- **Desktop / Tablet / Mobile 一次納入設計。**
+- 手機版不只是 Desktop 縮小版，而是依螢幕空間重新安排資訊層級、控制項與操作方式。
+- 同步驗證各 breakpoint 的 overflow、可讀性與觸控操作空間。
+
+### 5. Light / Dark
+
+- Light / Dark 同時設計。
+- 所有共用元件直接使用 semantic tokens，避免「Light 做一套、Dark 再覆蓋一套」。
+- 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 等狀態。
+
+### 6. 開始前的架構盤點
+
+- 先完整盤點現有 CSS layer、theme tokens、共用 UI refinement 與各頁 CSS。
+- 明確標記 **保留／合併／退場** 的樣式與 selector。
+- 找出重複、互相覆蓋、legacy CSS、dead selector 與不清楚的元件邊界。
+- 先建立共用 UI 基礎，再由七頁同步套用。
+- 不在開始前繼續對單一頁面進行視覺補丁，避免破壞整站設計方向。
 
 ## P2｜Motion 與視覺精修
 - 在 P0 / P1 完成並通過實機驗收後，再統一處理動畫、transition 與細節視覺節奏。
