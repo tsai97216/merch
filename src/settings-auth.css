@@ -11,3 +11,21 @@
 .settings-auth-message { min-height: 1.3em; margin: 10px 0 0; font-size: 13px; }
 .settings-auth-message[data-kind="success"] { color: var(--color-success); }
 .settings-auth-message[data-kind="error"] { color: var(--color-danger); }
+
+/* Settings information architecture: verification first, system version second, appearance last. */
+[data-page="settings"]:not([hidden]) { display: flex; flex-direction: column; gap: var(--section-gap); }
+[data-page="settings"]:not([hidden]) > .page-heading { order: 0; margin-bottom: 0; }
+[data-page="settings"]:not([hidden]) > .settings-auth-panel { order: 1; margin: 0; }
+[data-page="settings"]:not([hidden]) > .panel:not(.settings-auth-panel):not(.settings-theme-panel) { order: 2; margin: 0; }
+[data-page="settings"]:not([hidden]) > .settings-theme-panel { order: 3; margin: 0; }
+
+[data-page="settings"] .settings-auth-panel,
+[data-page="settings"] .settings-theme-panel,
+[data-page="settings"] > .panel { width: 100%; min-width: 0; box-sizing: border-box; }
+
+@media (max-width:700px) {
+  [data-page="settings"]:not([hidden]) { gap: 12px; }
+  [data-page="settings"] .settings-auth-panel,
+  [data-page="settings"] .settings-theme-panel,
+  [data-page="settings"] > .panel { padding: var(--space-4); }
+}
