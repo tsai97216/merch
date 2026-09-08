@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.134`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.136`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -25,8 +25,11 @@
 - **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
   - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
 - **Typography**：統一字體、字級、字重、行高與標題層級。
+  - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**：建立全站一致的間距尺度。
+  - [x] 已建立 `--space-1`～`--space-12` 的 shared spacing scale。
 - **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
+  - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
 - **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
 - Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
 
