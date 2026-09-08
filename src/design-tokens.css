@@ -88,10 +88,38 @@ html {
   /* Shared control geometry. */
   --control-height: 42px;
   --control-height-compact: 36px;
+
+  /* Page layout scale. These are consumed during the staged layout migration. */
+  --content-max-width: 1250px;
+  --content-padding-x: 48px;
+  --content-padding-top: 46px;
+  --content-padding-bottom: 24px;
+  --page-heading-gap: 30px;
+  --section-gap: 18px;
+  --grid-gap: 14px;
+  --form-gap: 10px;
 }
 
 html[data-theme='dark'] {
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, .24);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, .30);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, .38);
+}
+
+@media (max-width: 1000px) {
+  html {
+    --content-padding-x: 28px;
+    --content-padding-top: 34px;
+  }
+}
+
+@media (max-width: 700px) {
+  html {
+    --content-padding-x: 16px;
+    --content-padding-top: 25px;
+    --content-padding-bottom: 18px;
+    --page-heading-gap: 18px;
+    --section-gap: 12px;
+    --grid-gap: 8px;
+  }
 }
