@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "o",
+  "items": [
+    {
+      "id": "ZZZo001",
+      "path": "data/zenless-zone-zero/o/ZZZo001/data.json",
+      "title": "2.1夏日快閃 野餐墊",
+      "characters": [
+        "愛麗絲",
+        "柚葉"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
