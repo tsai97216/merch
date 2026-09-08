@@ -1,5 +1,21 @@
 /* Shared component foundation. Page-specific CSS may arrange components, but should not redefine shared semantic states. */
 
+/* Shared cross-page layout constraints */
+.main,.content,.page,.panel,.stat-card,.item-card,.item-detail-shell,.item-detail-grid,.item-detail-text{min-width:0}
+.content{width:100%;max-width:var(--content-max-width)}
+.hero,.page-heading,.panel-heading,.section-heading{min-width:0}
+.hero>div,.page-heading>div,.panel-heading>div,.section-heading>div{min-width:0}
+.page-heading h1,.hero h1{overflow-wrap:anywhere;word-break:break-word}
+.nav{min-width:0}
+.nav a{min-width:0;overflow:hidden}
+.nav a span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item-card{min-width:0}
+.item-card .item-body,.item-card h3,.item-work{min-width:0}
+.collection-tools,.collection-toolbar{min-width:0}
+.collection-tools>*{min-width:0}
+.search{min-width:0}
+.search input{min-width:0}
+
 /* Segmented controls */
 .segmented-control,
 .view-switch {
