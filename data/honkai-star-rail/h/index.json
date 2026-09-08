@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "h",
+  "items": [
+    {
+      "id": "HSRh001",
+      "path": "data/honkai-star-rail/h/HSRh001/data.json",
+      "title": "銀狼款三周年掛畫",
+      "characters": [
+        "銀狼"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
