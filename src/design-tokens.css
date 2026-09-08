@@ -84,7 +84,7 @@ html {
   /* Page layout scale. These are consumed during the staged layout migration. */
   --content-max-width: 1250px;
   --content-padding-x: 48px;
-  --content-padding-top: 46px;
+  --content-padding-top: 32px;
   --content-padding-bottom: 24px;
   --page-heading-gap: 30px;
   --section-gap: 18px;
