@@ -45,16 +45,16 @@ Shared UI surfaces:
 
 ### Phase 0: Inventory
 
-- [ ] Inventory global CSS and design tokens.
-- [ ] Inventory shared selectors/components.
-- [ ] Inventory page-specific duplicated styles.
-- [ ] Inventory legacy selectors and obsolete visual rules.
-- [ ] Map each shared UI surface to its current implementation.
-- [ ] Record conflicts before changing them.
+- [x] Inventory global CSS and design tokens.
+- [x] Inventory shared selectors/components.
+- [x] Inventory page-specific duplicated styles.
+- [x] Inventory legacy selectors and obsolete visual rules.
+- [x] Map each shared UI surface to its current implementation.
+- [x] Record conflicts before changing them.
 
 ### Phase 1: Shared foundation
 
-- [ ] Define color/theme tokens for Light and Dark.
+- [x] Define color/theme tokens for Light and Dark.
 - [ ] Define typography scale.
 - [ ] Define spacing scale.
 - [ ] Define radius/elevation rules.
