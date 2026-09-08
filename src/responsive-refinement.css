@@ -103,6 +103,13 @@
   .collection-tools>#sort{width:auto;justify-self:end}
 }
 
+@media (max-width:760px){
+  .management-image-row{grid-template-columns:72px minmax(0,1fr)}
+  .management-image-preview{width:72px;height:72px}
+  .management-image-actions{grid-column:1/-1;justify-content:flex-start}
+  .management-image-actions .button{flex:1 1 auto}
+}
+
 @media (max-width:720px){
   .works-management-grid{grid-template-columns:1fr}
   .works-management .section-heading{flex-direction:column}
