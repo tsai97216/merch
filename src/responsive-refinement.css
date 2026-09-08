@@ -16,20 +16,20 @@
 .management-image-info small{overflow-wrap:anywhere;word-break:break-word}
 
 #management-add{font-weight:700;min-width:132px}
-.management-form:has(#management-delete:disabled){border:1px solid color-mix(in srgb,var(--accent,#8b7cff) 28%,transparent);border-radius:18px;padding:18px;background:color-mix(in srgb,var(--accent,#8b7cff) 4%,transparent)}
-.management-form:has(#management-delete:disabled)::before{content:'新增周邊';display:block;margin:0 0 14px;font-size:18px;font-weight:800;letter-spacing:.02em}
+.management-form:has(#management-delete:disabled){border:var(--border-width) solid var(--brand-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--brand-soft)}
+.management-form:has(#management-delete:disabled)::before{content:'新增周邊';display:block;margin:0 0 var(--space-3);font-size:var(--font-size-xl);font-weight:var(--font-weight-extrabold);letter-spacing:.02em}
 .management-form:has(#management-delete:disabled) .management-image-upload{opacity:.62}
 .management-form:has(#management-delete:disabled) #management-cleanup-assets{display:none}
-.management-form:has(#management-delete:not(:disabled)){border:1px solid color-mix(in srgb,var(--text,#222) 10%,transparent);border-radius:18px;padding:18px}
+.management-form:has(#management-delete:not(:disabled)){border:var(--border-width) solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--color-surface)}
 .management-form-grid{gap:var(--grid-gap)}
 .management-form-grid .field{min-width:0}
 .management-form-grid label{line-height:1.35}
-.management-image-upload{margin-top:6px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--text,#222) 9%,transparent)}
-.management-actions{margin-top:20px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--text,#222) 9%,transparent)}
+.management-image-upload{margin-top:var(--space-2);padding-top:var(--space-4);border-top:var(--border-width) solid var(--color-border)}
+.management-actions{margin-top:var(--space-5);padding-top:var(--space-3);border-top:var(--border-width) solid var(--color-border)}
 .management-actions .button{min-width:120px}
 
 /* Management polish: clearer hierarchy and denser desktop form without sacrificing touch targets. */
-.management-toolbar{padding:14px;border:1px solid color-mix(in srgb,var(--text,#222) 8%,transparent);border-radius:16px;background:color-mix(in srgb,var(--text,#222) 2.5%,transparent)}
+.management-toolbar{padding:14px;border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-soft)}
 .management-picker-grid{align-items:end}
 .management-picker-grid .field>span,.management-search-field>span{font-size:var(--field-label-size);font-weight:var(--field-label-weight);letter-spacing:.02em}
 .management-search-row{align-items:end;gap:var(--toolbar-gap)}
@@ -42,9 +42,9 @@
 .management-actions .button{font-weight:700}
 .management-image-upload{display:grid;gap:var(--toolbar-gap)}
 .management-image-upload .management-image-actions{align-items:center}
-.management-image-row{border:1px solid color-mix(in srgb,var(--text,#222) 8%,transparent);border-radius:14px;padding:12px;gap:14px;background:color-mix(in srgb,var(--text,#222) 1.5%,transparent)}
-.management-image-preview{border-radius:10px;overflow:hidden;background:color-mix(in srgb,var(--text,#222) 4%,transparent)}
-.management-image-info{display:grid;gap:4px;align-content:center}
+.management-image-row{border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-3);gap:var(--space-4);background:var(--color-surface-soft)}
+.management-image-preview{border-radius:var(--radius-sm);overflow:hidden;background:var(--color-surface-soft)}
+.management-image-info{display:grid;gap:var(--space-1);align-content:center}
 .management-image-info .badge{width:max-content}
 .management-image-actions{gap:7px;flex-wrap:wrap}
 .management-image-actions .button{min-height:38px;min-width:92px}
