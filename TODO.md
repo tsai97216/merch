@@ -28,6 +28,7 @@
   - [x] `theme.css` 已移除未使用的歷史 token 與重複 Dark selector，只保留必要 theme state / `color-scheme` 行為。
   - [x] `design-tokens.css` 已移除 `--accent / --ink / --muted / --line / --panel / --soft` legacy alias 定義。
   - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
+  - [ ] `src/styles.css` 仍定義並消費舊 alias 與部分 hard-coded theme values，需完成 base layer token 遷移後才能視為全站清除。
 - **Typography**
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**
@@ -71,7 +72,8 @@
 - 同步驗證各 breakpoint 的 overflow、可讀性與觸控操作空間。
 - [x] `ui-refinement.css` 的 viewport breakpoint 規則已集中至 `responsive-refinement.css`。
 - [x] 已確認並移除 `management-form-grid`、`management-search-field` 等目前 markup 不再使用的 responsive selector。
-- [ ] 進一步清理 `styles.css` 與其他 page CSS 的重複 breakpoint 責任。
+- [ ] `styles.css` 的 viewport breakpoint 規則仍與 responsive layer 重複，需完成 mapping 後收斂至單一 responsive contract。
+- [ ] 清查並移除已確認 dead 的 responsive selector，尤其 `management-form-grid`、`management-search-field` 等舊 markup selector，須先完成 mapping 再刪除。
 
 ### 5. Light / Dark
 
@@ -99,7 +101,7 @@
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`，後續應移回 shared foundation。
 5. **Responsive 規則仍有重複責任**：`styles.css` 與 page-specific CSS 仍存在 breakpoint 行為，需逐步合併為唯一 responsive contract。
 6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
-7. **Legacy alias 定義與消費者不同步問題已修正**：`design-tokens.css` 與 `ui-refinement.css` 現已使用同一 semantic token vocabulary。
+7. **Base layer legacy token coupling**：`styles.css` 自身仍定義 `--accent / --ink / --muted / --line / --panel / --soft / --radius`，使 shared semantic token 與 legacy vocabulary 同時存在。必須先完成引用 mapping，再移除定義，避免再次出現未解析 CSS variable。
 
 #### Shared UI implementation mapping（目前）
 
