@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.159`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.160`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -51,7 +51,7 @@
 - [x] Add / Management 主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation。
 - [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
 - [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
-- [ ] 將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 shared foundation；Add 專用規則留在 Add CSS，完成後移除不必要的頁面專用 import。
+- [x] 已將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 `shared-components.css`；Add 專用規則移至 `add.css`，並移除 Add 對該頁面專用 refinement 檔案的 import。
 
 ### 3. 七頁同步重新設計
 
@@ -93,15 +93,15 @@
 - `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail 與 accessibility polish。
 - `src/responsive-refinement.css`：集中全站 viewport responsive contract 與 Management、Settings、Collection 等 responsive refinement。
 - `src/theme-refinement.css`：已完成 legacy theme token 遷移，待後續判斷哪些 selectors 已被 shared foundation 吸收。
-- `src/layout-refinement.css`：目前由 Add 模組直接 import，部分 shared layout 仍需移回 shared foundation。
+- `src/layout-refinement.css`：已退場，原 shared layout 已移入 `shared-components.css`，Add 專用規則已移入 `add.css`。
 - 另有頁面／功能專用 CSS，例如 `add.css`、`collection.css`、`statistics.css`、`shipping.css`、`works-management.css`、`management-images.css`、`settings-auth.css`、`item-detail-modal.css`、`image-viewer.css`、`toast.css`、`card-enhancements.css` 等。
 
 #### 已確認的架構衝突
 
-1. **多層 refinement 疊加**：`styles.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css`、`layout-refinement.css` 仍同時存在，需在 foundation 完成後逐步收斂。
+1. **多層 refinement 疊加**：`styles.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css` 仍同時存在，需在 foundation 完成後逐步收斂。
 2. **Theme token 尚未完全單一化**：legacy alias 定義與 `ui-refinement.css` 消費者已完成同步，後續仍需清理其他語意相近 token 與直接寫死的視覺值。
 3. **全站基礎樣式與 refinement 混在 `styles.css`**：需逐步拆分並明確 shared / page-specific 邊界。
-4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`，本輪已確認其內容可拆成全站 shared layout 與 Add 專用規則兩部分。
+4. **部分 shared layout 由頁面模組載入**：Add 原本直接 import `layout-refinement.css`；本輪已完成 shared / Add-specific 拆分並退場該檔案。
 5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，本輪已清理盤點到的 CSS breakpoint；後續若新增 page-specific breakpoint，必須直接放入 responsive layer。
 6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
 7. **Base layer legacy token coupling 已清除**：`styles.css` 已完成 legacy alias 引用 mapping，改用 semantic tokens。
