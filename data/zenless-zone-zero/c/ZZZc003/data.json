@@ -13,9 +13,10 @@
   "description": "",
   "notes": "",
   "purchase": {
-    "price": 1,
+    "price": 13,
     "currency": "TWD",
-    "platform": "FB交易社"
+    "platform": "FB交易社",
+    "date": "2026-07-09"
   },
   "arrival": {},
   "afterSales": {},
