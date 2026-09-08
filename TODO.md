@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.133`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.134`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -23,6 +23,7 @@
 ### 1. 全站 Design System
 
 - **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
+  - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
 - **Typography**：統一字體、字級、字重、行高與標題層級。
 - **Spacing**：建立全站一致的間距尺度。
 - **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
@@ -87,7 +88,7 @@
 - Page Heading / Hero / Section：主要在 `styles.css`，再由 `ui-refinement.css` / responsive layer 補強。
 - Card / Panel：主要在 `styles.css`，部分 card behavior 在 `ui-refinement.css` / `card-enhancements.css`。
 - Button / Input / Select：主要在 `styles.css`，theme/refinement 再覆寫。
-- Theme：`theme.ts` + `theme.css` + `theme-refinement.css`。
+- Theme：`theme.ts` + `theme.css` + `theme-refinement.css` + `design-tokens.css`。
 - Item Detail：`main.ts` / `item-detail-modal.css`，另有 `image-viewer.ts/css` 與 shipping detail modal。
 - Toast / Feedback：`utils/toast` + `toast.css`。
 - Management form/editor：`management.ts` / `works-management.ts` + `works-management.css` / `management-images.css` + refinement layers。
