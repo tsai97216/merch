@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.157`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.158`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -73,6 +73,8 @@
 - [x] `ui-refinement.css` 的 viewport breakpoint 規則已集中至 `responsive-refinement.css`。
 - [x] 已確認並移除 `management-form-grid`、`management-search-field` 等目前 markup 不再使用的 responsive selector。
 - [x] `styles.css` 的 viewport breakpoint 規則已移至 `responsive-refinement.css`，由單一 responsive layer 承擔 viewport contract。
+- [ ] 盤點並收斂其餘 CSS 中的 viewport `@media` 至 `responsive-refinement.css`；目前已確認 `design-tokens.css`、`typography.css`、`controls.css`、`shared-components.css`、`add.css`、`works-management.css`、`settings-auth.css` 等仍存在 viewport breakpoint，需逐一 mapping 後遷移。
+- [ ] 清理 `responsive-refinement.css` 內遷移過程產生的重複／dead responsive selector，包含目前仍存在的 `management-form-grid` 規則；刪除前需確認 markup 與現有 contract。
 
 ### 5. Light / Dark
 
@@ -98,7 +100,7 @@
 2. **Theme token 尚未完全單一化**：legacy alias 定義與 `ui-refinement.css` 消費者已完成同步，後續仍需清理其他語意相近 token 與直接寫死的視覺值。
 3. **全站基礎樣式與 refinement 混在 `styles.css`**：需逐步拆分並明確 shared / page-specific 邊界。
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`，後續應移回 shared foundation。
-5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，後續仍需清理 page-specific CSS 中重複或過度寬泛的 breakpoint 行為。
+5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，後續仍需清理其餘 CSS 中的 viewport breakpoint，並處理 responsive layer 內的重複／dead selector。
 6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
 7. **Base layer legacy token coupling 已清除**：`styles.css` 已完成 legacy alias 引用 mapping，改用 semantic tokens。
 
