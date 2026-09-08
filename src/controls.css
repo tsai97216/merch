@@ -161,23 +161,3 @@ input[type='radio'] {
 select {
   cursor: pointer;
 }
-
-@media (max-width: 700px) {
-  .button,
-  button.button,
-  a.button {
-    min-height: 44px;
-  }
-
-  input,
-  select,
-  textarea {
-    min-height: 44px;
-  }
-
-  .button.compact,
-  button.button.compact,
-  a.button.compact {
-    min-height: 40px;
-  }
-}
