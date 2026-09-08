@@ -52,7 +52,6 @@
 - [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
 - [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
 - [x] 已將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 `shared-components.css`；Add 專用規則移至 `add.css`，並移除 Add 對該頁面專用 refinement 檔案的 import。
-- [ ] `add.css` 仍有 `.management-panel #management-add` 的跨頁 selector；確認其已無實際 DOM 契約後移除，避免 Add CSS 反向承擔 Management 行為。
 
 ### 3. 七頁同步重新設計
 
