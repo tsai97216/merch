@@ -25,3 +25,7 @@
   [data-page="settings"] .settings-auth-buttons .button{width:100%}
   [data-page="settings"] .settings-info-list,.theme-choice-group{grid-template-columns:1fr}
 }
+
+[data-page="settings"] .settings-auth-status{flex:0 0 auto;padding:5px 10px;border:var(--border-width) solid currentColor;border-radius:999px;font-size:12px;font-weight:700}
+[data-page="settings"] .settings-auth-status[data-authenticated="true"]{color:var(--color-success)}
+[data-page="settings"] .settings-auth-status[data-authenticated="false"]{color:var(--color-warning)}
