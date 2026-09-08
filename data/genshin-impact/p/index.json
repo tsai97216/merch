@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "genshin-impact",
+  "category": "p",
+  "items": [
+    {
+      "id": "GIp001",
+      "path": "data/genshin-impact/p/GIp001/data.json",
+      "title": "澎澎獸 娃娃",
+      "characters": [
+        "澎澎獸"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}

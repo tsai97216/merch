@@ -1,0 +1,24 @@
+{
+  "id": "GIp001",
+  "workId": "genshin-impact",
+  "title": "澎澎獸 娃娃",
+  "series": [],
+  "characters": [
+    "澎澎獸"
+  ],
+  "category": "p",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "price": 300,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-01-16"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
