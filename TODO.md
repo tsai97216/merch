@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.137`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.138`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -32,7 +32,8 @@
   - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
 - **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
   - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`，由 `src/design-tokens.css` 統一載入。
-  - [ ] Segmented Control / Card / Panel / Modal / Badge / Feedback 尚待建立與遷移。
+  - [x] Segmented Control / Card / Panel foundation 已建立於 `src/shared-components.css`。
+  - [x] Modal / Badge / Feedback foundation 已建立於 `src/shared-components.css`，尚待逐步把既有 page-specific markup / CSS 遷移至 shared contract。
 - Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
 
 ### 2. 全站 Page Layout
