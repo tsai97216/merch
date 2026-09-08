@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.161`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.166`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -53,6 +53,7 @@
 - [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
 - [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
 - [x] 已將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 `shared-components.css`；Add 專用規則移至 `add.css`，並移除 Add 對該頁面專用 refinement 檔案的 import。
+- [ ] 修正設定頁在 Desktop / Mobile 頂部出現異常大片空白，並重新確認 shared content / page-heading spacing contract，避免以設定頁專用補丁處理。
 
 ### 3. 七頁同步重新設計
 
