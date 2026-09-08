@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.146`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.148`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
