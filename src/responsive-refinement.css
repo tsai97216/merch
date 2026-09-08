@@ -4,12 +4,12 @@
 .page-heading h1,.hero h1{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 
 .management-panel{min-width:0}
-.management-toolbar{gap:14px}
-.management-picker-grid{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(160px,1fr) minmax(120px,.7fr);gap:10px;min-width:0}
+.management-toolbar{gap:var(--toolbar-gap)}
+.management-picker-grid{display:grid;grid-template-columns:minmax(180px,1.2fr) minmax(160px,1fr) minmax(120px,.7fr);gap:var(--toolbar-gap);min-width:0}
 .management-picker-grid .field{min-width:0}
 .management-picker-grid select{width:100%;min-width:0}
 .management-readonly{overflow-wrap:anywhere;word-break:break-word}
-.management-actions{gap:10px;flex-wrap:wrap}
+.management-actions{gap:var(--toolbar-gap);flex-wrap:wrap}
 .management-actions .button{min-height:40px}
 .management-image-row{min-width:0}
 .management-image-info{min-width:0}
@@ -21,7 +21,7 @@
 .management-form:has(#management-delete:disabled) .management-image-upload{opacity:.62}
 .management-form:has(#management-delete:disabled) #management-cleanup-assets{display:none}
 .management-form:has(#management-delete:not(:disabled)){border:1px solid color-mix(in srgb,var(--text,#222) 10%,transparent);border-radius:18px;padding:18px}
-.management-form-grid{gap:18px}
+.management-form-grid{gap:var(--grid-gap)}
 .management-form-grid .field{min-width:0}
 .management-form-grid label{line-height:1.35}
 .management-image-upload{margin-top:6px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--text,#222) 9%,transparent)}
@@ -31,16 +31,16 @@
 /* Management polish: clearer hierarchy and denser desktop form without sacrificing touch targets. */
 .management-toolbar{padding:14px;border:1px solid color-mix(in srgb,var(--text,#222) 8%,transparent);border-radius:16px;background:color-mix(in srgb,var(--text,#222) 2.5%,transparent)}
 .management-picker-grid{align-items:end}
-.management-picker-grid .field>span,.management-search-field>span{font-size:12px;font-weight:750;letter-spacing:.02em}
-.management-search-row{align-items:end;gap:10px}
-.management-search-count{white-space:nowrap;font-size:12px;font-weight:650;opacity:.72}
+.management-picker-grid .field>span,.management-search-field>span{font-size:var(--field-label-size);font-weight:var(--field-label-weight);letter-spacing:.02em}
+.management-search-row{align-items:end;gap:var(--toolbar-gap)}
+.management-search-count{white-space:nowrap;font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);opacity:.72}
 .management-form-grid{align-items:start}
-.management-form-grid .field>span{font-size:12px;font-weight:700;letter-spacing:.01em}
+.management-form-grid .field>span{font-size:var(--field-label-size);font-weight:var(--field-label-weight);letter-spacing:.01em}
 .management-form-grid textarea{min-height:96px;resize:vertical}
 .management-form-grid .field:has(textarea){grid-column:span 2}
 .management-actions{align-items:center}
 .management-actions .button{font-weight:700}
-.management-image-upload{display:grid;gap:12px}
+.management-image-upload{display:grid;gap:var(--toolbar-gap)}
 .management-image-upload .management-image-actions{align-items:center}
 .management-image-row{border:1px solid color-mix(in srgb,var(--text,#222) 8%,transparent);border-radius:14px;padding:12px;gap:14px;background:color-mix(in srgb,var(--text,#222) 1.5%,transparent)}
 .management-image-preview{border-radius:10px;overflow:hidden;background:color-mix(in srgb,var(--text,#222) 4%,transparent)}
@@ -61,7 +61,7 @@
   .hero h1{font-size:44px}
   .page-heading{gap:14px}
   .management-panel{overflow:hidden}
-  .management-toolbar{align-items:stretch;flex-direction:column;gap:10px}
+  .management-toolbar{align-items:stretch;flex-direction:column;gap:var(--toolbar-gap)}
   .management-toolbar .field.compact{width:100%;flex:1 1 auto}
   .management-picker-grid{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
   .management-readonly{max-width:none}
@@ -92,19 +92,19 @@
   .statistics-chart-heading small{overflow-wrap:anywhere}
   .settings-auth-panel{overflow:hidden}
   .management-toolbar{padding:10px;border-radius:14px}
-  .management-picker-grid{grid-template-columns:1fr;gap:8px}
-  .management-toolbar{gap:10px}
-  .management-search-row{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .management-picker-grid{grid-template-columns:1fr;gap:var(--toolbar-gap)}
+  .management-toolbar{gap:var(--toolbar-gap)}
+  .management-search-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--toolbar-gap)}
   .management-search-field{width:100%;min-width:0}
   .management-search-count{justify-self:start}
   #management-add{width:100%;min-height:44px}
-  .management-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+  .management-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:var(--toolbar-gap)}
   .management-actions .button{width:100%;min-height:44px}
   .management-form-grid .field:has(textarea){grid-column:auto}
   .management-image-row{grid-template-columns:1fr}
   .management-image-preview{max-width:100%;width:100%;aspect-ratio:16/9}
   .management-image-preview img{width:100%;height:100%;object-fit:contain}
-  .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:8px}
+  .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:var(--toolbar-gap)}
   .management-image-actions .button{width:100%;min-height:42px}
   .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:14px;border-radius:14px}
   .management-actions{position:static;margin-top:14px;padding-top:12px}
