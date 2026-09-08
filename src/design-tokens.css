@@ -98,6 +98,12 @@ html {
   --section-gap: 18px;
   --grid-gap: 14px;
   --form-gap: 10px;
+
+  /* Shared form / toolbar rhythm. */
+  --toolbar-gap: 10px;
+  --field-gap: 6px;
+  --field-label-size: var(--font-size-sm);
+  --field-label-weight: var(--font-weight-semibold);
 }
 
 html[data-theme='dark'] {
@@ -121,5 +127,7 @@ html[data-theme='dark'] {
     --page-heading-gap: 18px;
     --section-gap: 12px;
     --grid-gap: 8px;
+    --toolbar-gap: 8px;
+    --field-gap: 5px;
   }
 }
