@@ -332,70 +332,66 @@
   html{--content-padding-x:16px;--content-padding-top:25px;--content-padding-bottom:18px;--page-heading-gap:18px;--section-gap:12px;--grid-gap:8px;--toolbar-gap:8px;--field-gap:5px}
 }
 
-@media (max-width:700px){
-  /* Mobile navigation follows the Chi NAV horizontal navigation pattern. */
-  body{padding-bottom:76px}
+@media (max-width:720px){
+  body{overflow-x:hidden;padding-bottom:0}
   .sidebar{
-    position:fixed;
-    top:auto;
-    right:0;
-    bottom:0;
-    left:0;
+    position:sticky;
+    top:0;
+    bottom:auto;
     z-index:1000;
     width:100%;
     height:auto;
-    min-height:64px;
-    padding:8px max(10px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right));
+    min-height:0;
+    padding:10px 12px;
+    display:block;
+    background:var(--color-surface);
+    border-right:0;
+    border-bottom:1px solid var(--color-border);
+    box-shadow:none;
+    overflow:hidden;
+  }
+  .sidebar .brand{
     display:flex;
     align-items:center;
-    gap:8px;
-    border-right:0;
-    border-top:1px solid var(--color-border);
-    box-shadow:var(--shadow-lg);
-    overflow-x:auto;
-    overflow-y:hidden;
-    background:var(--color-surface);
+    padding:0 3px 10px;
   }
-  .sidebar .brand,
+  .sidebar .brand-mark{width:32px;height:32px;border-radius:8px;font-size:14px}
+  .sidebar .brand h1{font-size:15px}
+  .sidebar .brand p{display:none}
   .sidebar .sidebar-toggle{display:none}
   .sidebar .nav-menu{
     width:100%;
-    min-width:max-content;
+    min-width:0;
     display:flex;
-    align-items:stretch;
-    justify-content:flex-start;
-    gap:6px;
+    flex-direction:row;
+    align-items:center;
+    gap:3px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    padding:0 0 1px;
     margin:0;
-    padding:0;
   }
-  .sidebar .nav-menu > *{
-    flex:0 0 auto;
-  }
-  .sidebar .nav-menu a,
-  .sidebar .nav-menu button{
-    min-height:48px;
-    min-width:72px;
-    padding:7px 10px;
+  .sidebar .nav-menu::-webkit-scrollbar{display:none}
+  .sidebar .nav-menu > *{flex:0 0 auto}
+  .sidebar .nav-menu a,.sidebar .nav-menu button{
+    min-height:34px;
+    min-width:auto;
+    padding:7px 9px;
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     align-items:center;
     justify-content:center;
-    gap:3px;
-    border-radius:var(--radius-md);
+    gap:0;
+    border-radius:6px;
     white-space:nowrap;
-    text-align:center;
+    font-size:12px;
   }
-  .sidebar .nav-menu i{
-    font-size:17px;
-    line-height:1;
-  }
-  .sidebar .nav-menu span{
-    font-size:11px;
-    line-height:1.2;
-  }
-  .main-content{
-    width:100%;
-    margin-left:0;
-    padding-bottom:12px;
-  }
+  .sidebar .nav-menu i{display:none}
+  .sidebar .nav-menu span{font-size:12px;line-height:1.2}
+  .sidebar .nav-divider{display:none}
+  .sidebar .theme-control{margin-top:8px;padding:8px 3px 0;border-top:1px solid var(--color-border)}
+  .sidebar .theme-label{display:inline-block;margin:0 7px 0 0}
+  .sidebar .theme-select{width:calc(100% - 58px);height:32px;vertical-align:middle}
+  .main-content{width:100%;margin-left:0;padding-bottom:12px}
 }
