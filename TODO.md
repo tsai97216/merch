@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.154`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.155`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -25,6 +25,8 @@
 - **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
   - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
   - [x] `theme-refinement.css` 已完成 legacy theme token 遷移，改用 semantic token；已移除被 semantic token 吸收的重複 Dark override。
+  - [x] `theme.css` 已移除未使用的 control-group / focus-ring 歷史 token 與重複 Dark selector，只保留 theme state 必要的 `color-scheme` 行為。
+  - [x] `design-tokens.css` 已移除確認無引用的 `--accent / --ink / --muted / --line / --panel / --soft` legacy aliases。
 - **Typography**：統一字體、字級、字重、行高與標題層級。
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**：建立全站一致的間距尺度。
@@ -77,7 +79,7 @@
 #### 已確認的 CSS / Theme layer
 
 - `src/styles.css`：目前仍承擔全站基礎 layout、page layout、card、control、responsive 與部分元件樣式，是最大的 legacy/base layer。
-- `src/theme.css`：已移除重複的主要 semantic legacy token 宣告，但仍保留部分控制項歷史 token 與既有 Dark selector 規則，待後續收斂。
+- `src/theme.css`：目前只保留 theme state 必要行為；主要 semantic token 與 Dark surface/state 已收斂至 shared token / refinement layer。
 - `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail、responsive polish；內容已累積多輪修補規則。
 - `src/responsive-refinement.css`：另一個 refinement layer，針對 Management、Settings、Collection 與 breakpoint 再次覆寫 layout。
 - `src/theme-refinement.css`：已完成 legacy theme token 遷移，目前待後續進一步判斷哪些 selectors 已被 shared foundation 吸收。
@@ -87,7 +89,7 @@
 #### 已確認的架構衝突
 
 1. **多層 refinement 疊加**：`styles.css`、`theme.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css`、`layout-refinement.css` 同時存在，且部分由 `index.html` 或功能模組直接載入。這是目前「改一處、另一處又覆蓋」風險的主要來源，應在共用 foundation 建立後逐步收斂。
-2. **Theme token 尚未單一化**：目前存在多組語意相近但名稱不同的 token，並有部分直接寫死的顏色值；Dark mode 仍有 selector override。後續應先建立唯一 semantic token vocabulary，再移除重複 token 與頁面級顏色覆寫。
+2. **Theme token 尚未單一化**：主要 legacy aliases 已清除，但仍存在多組語意相近的 theme/control token 與部分直接寫死的顏色值；後續應繼續收斂為唯一 semantic token vocabulary。
 3. **全站基礎樣式與 refinement 混在同一 layer**：`styles.css` 同時包含 reset、layout、component 與 responsive 行為，導致 shared foundation 與 legacy page styling 邊界不清。
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`。這使 shared layout contract 不完全由全站入口管理，後續應移回 shared foundation。
 5. **Responsive 規則存在重複責任**：`styles.css`、`ui-refinement.css` 與 `responsive-refinement.css` 都有 breakpoint 規則，尤其 Management/Collection/Heading/Content 寬度存在多層調整，應合併為單一 responsive contract。
