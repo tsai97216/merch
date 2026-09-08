@@ -25,6 +25,17 @@
       "manufacturer": "米哈遊",
       "quantity": 2,
       "status": "received"
+    },
+    {
+      "id": "ZZZb003",
+      "path": "data/zenless-zone-zero/b/ZZZb003/data.json",
+      "title": "絕區零 立繪系列 馬口鐵徽章 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
