@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.152`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.153`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -24,6 +24,7 @@
 
 - **色彩 Token**：建立品牌色、背景、Surface、文字、Border、狀態與語意化色彩 Token。
   - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
+  - [ ] 完成 legacy theme token 遷移，讓 `theme-refinement.css` 不再依賴 `--accent / --ink / --muted / --line / --panel / --soft` 等歷史 alias，並移除已被 semantic token 吸收的重複 Dark override。
 - **Typography**：統一字體、字級、字重、行高與標題層級。
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**：建立全站一致的間距尺度。
@@ -76,10 +77,10 @@
 #### 已確認的 CSS / Theme layer
 
 - `src/styles.css`：目前仍承擔全站基礎 layout、page layout、card、control、responsive 與部分元件樣式，是最大的 legacy/base layer。
-- `src/theme.css`：提供 Light/Dark token 與大量 `.dark` selector override，同時仍混用 `--text` / `--ink`、`--surface` / `--panel`、`--border` / `--line` 等同義 token。
+- `src/theme.css`：已移除重複的主要 semantic legacy token 宣告，但仍保留部分控制項歷史 token 與既有 Dark selector 規則，待後續收斂。
 - `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail、responsive polish；內容已累積多輪修補規則。
 - `src/responsive-refinement.css`：另一個 refinement layer，針對 Management、Settings、Collection 與 breakpoint 再次覆寫 layout。
-- `src/theme-refinement.css`：存在獨立 theme refinement layer，需在後續整理時與 `theme.css` 的 token/semantic 規則合併評估。
+- `src/theme-refinement.css`：存在獨立 theme refinement layer，已確認仍大量依賴 legacy semantic aliases 與重複 Dark override，為下一個 token 收斂目標。
 - `src/layout-refinement.css`：目前由 Add 模組直接 import，代表部分全站 layout/refinement 規則仍由頁面模組帶入。
 - 另有頁面／功能專用 CSS，例如 `add.css`、`collection.css`、`statistics.css`、`shipping.css`、`works-management.css`、`management-images.css`、`settings-auth.css`、`item-detail-modal.css`、`image-viewer.css`、`toast.css`、`card-enhancements.css` 等。
 
