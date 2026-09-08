@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.148`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.152`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -43,8 +43,7 @@
 - 建立清楚的資訊層級與元件邊界，讓七頁共享同一套版面基礎。
 - [x] 已建立 shared content / page spacing tokens，並開始將既有 Toolbar / Form layout 的固定間距收斂至 shared tokens；下一步仍需逐步移除 page-specific layout 規則。
 - [x] Add / Management 的主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation；仍需繼續檢查其他頁面的重複 Field / layout 規則。
-- [ ] Works Management 的 form / row spacing、label、border 與 muted text 規則已確認可進一步收斂至 shared semantic tokens，待完成遷移與驗證。
-- [ ] Management 編輯／新增模式目前仍以 `:has(#management-delete...)` 由 CSS 反推 UI 狀態，已確認應改為由 `management.ts` 明確輸出 state class，再移除這層 CSS state coupling。
+- [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens，並完成現有結構驗證。
 
 ### 3. 七頁同步重新設計
 
@@ -91,7 +90,7 @@
 3. **全站基礎樣式與 refinement 混在同一 layer**：`styles.css` 同時包含 reset、layout、component 與 responsive 行為，導致 shared foundation 與 legacy page styling 邊界不清。
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`。這使 shared layout contract 不完全由全站入口管理，後續應移回 shared foundation。
 5. **Responsive 規則存在重複責任**：`styles.css`、`ui-refinement.css` 與 `responsive-refinement.css` 都有 breakpoint 規則，尤其 Management/Collection/Heading/Content 寬度存在多層調整，應合併為單一 responsive contract。
-6. **Management 已出現結構性 CSS workaround 訊號**：`responsive-refinement.css` 使用 `:has(#management-delete...)` 改變整個表單外觀並透過 `::before` 注入「新增周邊」標題。這類依按鈕 disabled 狀態反推頁面模式的 CSS 耦合，應在重構時改為明確的 UI state/class，而非繼續擴充 selector。
+6. **Management state coupling 已修正**：原先 `responsive-refinement.css` 使用 `:has(#management-delete...)` 反推新增／編輯模式並透過 `::before` 注入標題，現已改為由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
 
 #### Shared UI implementation mapping（目前）
 
