@@ -13,17 +13,6 @@
       "status": "received"
     },
     {
-      "id": "ZZZd005",
-      "path": "data/zenless-zone-zero/d/ZZZd005/data.json",
-      "title": "影畫系列 定帧亚克力插片 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZd001",
       "path": "data/zenless-zone-zero/d/ZZZd001/data.json",
       "title": "絕區零 時裝系列 流沙雙插立牌 葉瞬光",
@@ -51,6 +40,17 @@
       "title": "葉瞬光 立繪 立牌",
       "characters": [
         "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZd005",
+      "path": "data/zenless-zone-zero/d/ZZZd005/data.json",
+      "title": "影畫系列 定帧亚克力插片 星見雅",
+      "characters": [
+        "星見雅"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
