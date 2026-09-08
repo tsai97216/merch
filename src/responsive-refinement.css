@@ -16,11 +16,10 @@
 .management-image-info small{overflow-wrap:anywhere;word-break:break-word}
 
 #management-add{font-weight:700;min-width:132px}
-.management-form:has(#management-delete:disabled){border:var(--border-width) solid var(--brand-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--brand-soft)}
-.management-form:has(#management-delete:disabled)::before{content:'新增周邊';display:block;margin:0 0 var(--space-3);font-size:var(--font-size-xl);font-weight:var(--font-weight-extrabold);letter-spacing:.02em}
-.management-form:has(#management-delete:disabled) .management-image-upload{opacity:.62}
-.management-form:has(#management-delete:disabled) #management-cleanup-assets{display:none}
-.management-form:has(#management-delete:not(:disabled)){border:var(--border-width) solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--color-surface)}
+.management-form.is-creating{border:var(--border-width) solid var(--brand-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--brand-soft)}
+.management-form.is-creating .management-image-upload{opacity:.62}
+.management-form.is-creating #management-cleanup-assets{display:none}
+.management-form.is-editing{border:var(--border-width) solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-5);background:var(--color-surface)}
 .management-form-grid{gap:var(--grid-gap)}
 .management-form-grid .field{min-width:0}
 .management-form-grid label{line-height:1.35}
@@ -106,7 +105,7 @@
   .management-image-preview img{width:100%;height:100%;object-fit:contain}
   .management-image-actions{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:var(--toolbar-gap)}
   .management-image-actions .button{width:100%;min-height:42px}
-  .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:14px;border-radius:14px}
+  .management-form.is-creating,.management-form.is-editing{padding:14px;border-radius:14px}
   .management-actions{position:static;margin-top:14px;padding-top:12px}
   .management-form .form-section{min-width:0}
   .management-form input,.management-form select,.management-form textarea{max-width:100%;min-width:0}
@@ -116,5 +115,5 @@
   .content{padding-left:12px;padding-right:12px}
   .page-heading h1,.hero h1{max-width:calc(100vw - 24px)}
   .management-actions,.management-image-actions{grid-template-columns:1fr}
-  .management-form:has(#management-delete:disabled),.management-form:has(#management-delete:not(:disabled)){padding:12px}
+  .management-form.is-creating,.management-form.is-editing{padding:12px}
 }
