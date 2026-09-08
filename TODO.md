@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.158`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.159`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -29,6 +29,7 @@
   - [x] `design-tokens.css` 已移除 `--accent / --ink / --muted / --line / --panel / --soft` legacy alias 定義。
   - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
   - [x] `src/styles.css` 的 legacy alias 引用已全部遷移至 semantic tokens，並移除 base layer 中對 legacy vocabulary 的依賴。
+  - [x] `settings-auth.css`、`collection.css` 已完成本輪確認到的 legacy token consumer mapping，改用 semantic tokens。
 - **Typography**
   - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
 - **Spacing**
@@ -73,8 +74,8 @@
 - [x] `ui-refinement.css` 的 viewport breakpoint 規則已集中至 `responsive-refinement.css`。
 - [x] 已確認並移除 `management-form-grid`、`management-search-field` 等目前 markup 不再使用的 responsive selector。
 - [x] `styles.css` 的 viewport breakpoint 規則已移至 `responsive-refinement.css`，由單一 responsive layer 承擔 viewport contract。
-- [ ] 盤點並收斂其餘 CSS 中的 viewport `@media` 至 `responsive-refinement.css`；目前已確認 `design-tokens.css`、`typography.css`、`controls.css`、`shared-components.css`、`add.css`、`collection.css`、`works-management.css`、`settings-auth.css`、`layout-refinement.css`、`toast.css`、`theme-refinement.css` 等仍有 viewport breakpoint，需逐一 mapping 後遷移。
-- [ ] 清理 `responsive-refinement.css` 內遷移過程產生的重複／dead responsive selector，包含目前仍存在的 `management-form-grid` 規則；刪除前需確認 markup 與現有 contract。
+- [x] 已將本輪盤點到的 `design-tokens.css`、`typography.css`、`controls.css`、`shared-components.css`、`add.css`、`collection.css`、`works-management.css`、`settings-auth.css`、`layout-refinement.css`、`toast.css`、`theme-refinement.css` 的 viewport `@media` 集中至 `responsive-refinement.css`；`prefers-*` accessibility media 依用途保留在原檔。
+- [x] 已清理 `responsive-refinement.css` 本輪發現的 dead `management-form-grid` responsive selector，並整合本輪遷移造成的主要重複 breakpoint 規則。
 
 ### 5. Light / Dark
 
@@ -100,10 +101,10 @@
 2. **Theme token 尚未完全單一化**：legacy alias 定義與 `ui-refinement.css` 消費者已完成同步，後續仍需清理其他語意相近 token 與直接寫死的視覺值。
 3. **全站基礎樣式與 refinement 混在 `styles.css`**：需逐步拆分並明確 shared / page-specific 邊界。
 4. **部分 shared layout 由頁面模組載入**：例如 Add 直接 import `layout-refinement.css`，後續應移回 shared foundation。
-5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，後續仍需清理其餘 CSS 中的 viewport breakpoint，並處理 responsive layer 內的重複／dead selector。
+5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，本輪已清理盤點到的 CSS breakpoint；後續若新增 page-specific breakpoint，必須直接放入 responsive layer。
 6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
 7. **Base layer legacy token coupling 已清除**：`styles.css` 已完成 legacy alias 引用 mapping，改用 semantic tokens。
-8. **其他 page/shared CSS 仍存在 legacy token 使用**：已確認 `settings-auth.css` 仍使用 `--muted` fallback，`collection.css` 仍使用 `--accent`、`--focus-ring` 與 control-group legacy tokens；已先記錄，待完成 mapping 後清除。
+8. **其他 page/shared CSS 的 legacy token 使用已清理本輪確認項目**：`settings-auth.css` 與 `collection.css` 已完成 semantic token mapping。
 
 #### Shared UI implementation mapping（目前）
 
