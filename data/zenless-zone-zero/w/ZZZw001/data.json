@@ -3,15 +3,24 @@
   "workId": "zenless-zone-zero",
   "title": "儀玄 扇子",
   "series": [],
-  "characters": ["儀玄"],
+  "characters": [
+    "儀玄"
+  ],
   "category": "w",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 500, "currency": "TWD", "platform": "線下活動", "date": ""},
+  "purchase": {
+    "price": 500,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2025-07-27"
+  },
   "arrival": {},
-  "afterSales": {"status": "無"},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
