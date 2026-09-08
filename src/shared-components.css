@@ -81,6 +81,37 @@
   min-width: 0;
 }
 
+/* Shared field */
+.field {
+  display: grid;
+  gap: var(--field-gap);
+  min-width: 0;
+}
+
+.field > span {
+  color: var(--color-text-muted);
+  font-size: var(--field-label-size);
+  font-weight: var(--field-label-weight);
+  line-height: var(--line-height-normal);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.field textarea {
+  line-height: var(--line-height-relaxed);
+}
+
+.field input[readonly] {
+  background: var(--color-surface-soft);
+  color: var(--color-text-muted);
+}
+
 /* Shared form field layout */
 .form-grid,
 .management-grid,
