@@ -16,14 +16,11 @@
     "price": 25,
     "currency": "TWD",
     "platform": "FB交易社",
-    "date": ""
+    "date": "2026-07-09"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
