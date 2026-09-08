@@ -83,7 +83,8 @@
 
 /* Shared form field layout */
 .form-grid,
-.management-grid {
+.management-grid,
+.add-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--form-grid-gap);
@@ -94,14 +95,16 @@
 }
 
 .form-grid > .field,
-.management-grid > label {
+.management-grid > label,
+.add-grid > label {
   display: grid;
   gap: var(--field-gap);
   min-width: 0;
 }
 
 .form-grid > .field > span,
-.management-grid > label > span {
+.management-grid > label > span,
+.add-grid > label > span {
   color: var(--color-text-muted);
   font-size: var(--field-label-size);
   font-weight: var(--field-label-weight);
@@ -109,7 +112,8 @@
 }
 
 .form-grid > .field.full,
-.management-grid > label.wide {
+.management-grid > label.wide,
+.add-grid > label.wide {
   grid-column: 1 / -1;
 }
 
@@ -118,19 +122,24 @@
 .form-grid textarea,
 .management-grid input,
 .management-grid select,
-.management-grid textarea {
+.management-grid textarea,
+.add-grid input,
+.add-grid select,
+.add-grid textarea {
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
 }
 
 .form-grid textarea,
-.management-grid textarea {
+.management-grid textarea,
+.add-grid textarea {
   line-height: var(--line-height-relaxed);
 }
 
 .form-grid input[readonly],
-.management-grid input[readonly] {
+.management-grid input[readonly],
+.add-grid input[readonly] {
   background: var(--color-surface-soft);
   color: var(--color-text-muted);
 }
@@ -287,12 +296,14 @@
 
 @media (max-width: 700px) {
   .form-grid,
-  .management-grid {
+  .management-grid,
+  .add-grid {
     grid-template-columns: 1fr;
   }
 
   .form-grid .field.full,
-  .management-grid > label.wide {
+  .management-grid > label.wide,
+  .add-grid > label.wide {
     grid-column: auto;
   }
 
