@@ -22,10 +22,3 @@
 [data-page="settings"] .settings-auth-panel,
 [data-page="settings"] .settings-theme-panel,
 [data-page="settings"] > .panel { width: 100%; min-width: 0; box-sizing: border-box; }
-
-@media (max-width:700px) {
-  [data-page="settings"]:not([hidden]) { gap: 12px; }
-  [data-page="settings"] .settings-auth-panel,
-  [data-page="settings"] .settings-theme-panel,
-  [data-page="settings"] > .panel { padding: var(--space-4); }
-}
