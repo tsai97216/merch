@@ -3,15 +3,24 @@
   "workId": "honkai-star-rail",
   "title": "銀狼 路跑獎牌",
   "series": [],
-  "characters": ["銀狼"],
+  "characters": [
+    "銀狼"
+  ],
   "category": "o",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 100,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-09"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
