@@ -4,17 +4,6 @@
   "category": "c",
   "items": [
     {
-      "id": "ZZZc001",
-      "path": "data/zenless-zone-zero/c/ZZZc001/data.json",
-      "title": "葉瞬光 線下前500 閃卡",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 2,
-      "status": "received"
-    },
-    {
       "id": "ZZZc002",
       "path": "data/zenless-zone-zero/c/ZZZc002/data.json",
       "title": "蕾米埃爾 閃卡",
@@ -34,6 +23,17 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZc001",
+      "path": "data/zenless-zone-zero/c/ZZZc001/data.json",
+      "title": "葉瞬光 線下前500 閃卡",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
       "status": "received"
     }
   ]

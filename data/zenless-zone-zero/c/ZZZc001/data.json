@@ -3,15 +3,24 @@
   "workId": "zenless-zone-zero",
   "title": "葉瞬光 線下前500 閃卡",
   "series": [],
-  "characters": ["葉瞬光"],
+  "characters": [
+    "葉瞬光"
+  ],
   "category": "c",
   "manufacturer": "米哈遊",
   "quantity": 2,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-01-29"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
