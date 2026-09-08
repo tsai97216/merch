@@ -81,6 +81,141 @@
   min-width: 0;
 }
 
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--brand-border);
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge.is-success,
+.badge-success,
+.toast-success {
+  border-color: color-mix(in srgb, var(--color-success) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
+  color: var(--color-success);
+}
+
+.badge.is-warning,
+.badge-warning,
+.toast-warning {
+  border-color: color-mix(in srgb, var(--color-warning) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-surface));
+  color: var(--color-warning);
+}
+
+.badge.is-danger,
+.badge-danger,
+.toast-error {
+  border-color: color-mix(in srgb, var(--color-danger) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+  color: var(--color-danger);
+}
+
+.badge.is-info,
+.badge-info,
+.toast-info {
+  border-color: color-mix(in srgb, var(--color-info) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-info) 10%, var(--color-surface));
+  color: var(--color-info);
+}
+
+/* Modal / Dialog foundation */
+.modal,
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: rgba(18, 23, 31, .56);
+  backdrop-filter: blur(3px);
+}
+
+.modal[hidden],
+.dialog-overlay[hidden] {
+  display: none;
+}
+
+.modal-dialog,
+.dialog {
+  width: min(720px, calc(100vw - var(--space-8)));
+  max-height: calc(100vh - var(--space-8));
+  overflow: auto;
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-close,
+.dialog-close {
+  min-height: var(--control-height-compact);
+  min-width: var(--control-height-compact);
+  display: inline-grid;
+  place-items: center;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.modal-close:hover,
+.dialog-close:hover {
+  background: var(--color-surface-soft);
+  color: var(--brand-text);
+  border-color: var(--brand-border);
+}
+
+.modal-close:focus-visible,
+.dialog-close:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* Feedback / Toast foundation */
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.feedback-success {
+  border-color: color-mix(in srgb, var(--color-success) 42%, var(--color-border));
+}
+
+.feedback-warning {
+  border-color: color-mix(in srgb, var(--color-warning) 42%, var(--color-border));
+}
+
+.feedback-error {
+  border-color: color-mix(in srgb, var(--color-danger) 42%, var(--color-border));
+}
+
+.feedback-info {
+  border-color: color-mix(in srgb, var(--color-info) 42%, var(--color-border));
+}
+
 @media (max-width: 700px) {
   .segmented-control,
   .view-switch {
@@ -103,5 +238,25 @@
   .stat-card,
   .card {
     padding: var(--space-4);
+  }
+
+  .modal,
+  .dialog-overlay {
+    padding: var(--space-2);
+  }
+
+  .modal-dialog,
+  .dialog {
+    width: 100%;
+    max-height: calc(100vh - var(--space-4));
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-dialog,
+  .dialog {
+    scroll-behavior: auto;
   }
 }
