@@ -4,8 +4,8 @@
 
 :root {
   /* Chi MERCH brand: sourced from tsai97216/chi-brand. */
-  --chi-brand: #356AE6;
-  --chi-nav: #1687E8;
+  --chi-brand: #0FA3A3;
+  --chi-nav: #0FA3A3;
   --chi-merch: #0FA3A3;
 
   /* Shared semantic brand roles. */
@@ -29,7 +29,7 @@
   --color-success: #218838;
   --color-warning: #A86400;
   --color-danger: #C53030;
-  --color-info: #2563A6;
+  --color-info: #0B8E8E;
 }
 
 html[data-theme='dark'] {
@@ -50,7 +50,7 @@ html[data-theme='dark'] {
   --color-success: #62C174;
   --color-warning: #F0B35A;
   --color-danger: #F06B6B;
-  --color-info: #72B5F0;
+  --color-info: #5ACACA;
 }
 
 html {
