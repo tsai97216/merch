@@ -34,6 +34,7 @@
   - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`，由 `src/design-tokens.css` 統一載入。
   - [x] Segmented Control / Card / Panel foundation 已建立於 `src/shared-components.css`。
   - [x] Modal / Badge / Feedback foundation 已建立於 `src/shared-components.css`，尚待逐步把既有 page-specific markup / CSS 遷移至 shared contract。
+  - [x] Toast / Feedback 已開始遷移至 semantic tokens。
 - Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
 
 ### 2. 全站 Page Layout
