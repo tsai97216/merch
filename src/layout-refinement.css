@@ -1,6 +1,6 @@
 /* Final cross-site layout pass. Keep every route inside the same responsive geometry. */
 .main,.content,.page,.panel,.stat-card,.item-card,.item-detail-shell,.item-detail-grid,.item-detail-text{min-width:0}
-.content{width:100%;max-width:1250px}
+.content{width:100%;max-width:var(--content-max-width)}
 .hero,.page-heading,.panel-heading,.section-heading{min-width:0}
 .hero>div,.page-heading>div,.panel-heading>div,.section-heading>div{min-width:0}
 .page-heading h1,.hero h1{overflow-wrap:anywhere;word-break:break-word}
@@ -21,7 +21,7 @@
 [data-page="add"] .add-section{box-shadow:0 10px 35px rgba(30,40,60,.04)}
 
 @media (min-width:1001px){
-  .content{padding-left:48px;padding-right:48px}
+  .content{padding-left:var(--content-padding-x);padding-right:var(--content-padding-x)}
   .hero{margin-bottom:40px}
   .page-heading{margin-bottom:32px}
 }
@@ -33,7 +33,7 @@
 }
 
 @media (max-width:700px){
-  .content{padding-left:16px;padding-right:16px}
+  .content{padding-left:var(--content-padding-x);padding-right:var(--content-padding-x)}
   .hero p{max-width:100%}
   .page-heading h1,.hero h1{max-width:100%}
 
