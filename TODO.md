@@ -10,21 +10,21 @@
 - **目前已暫停大量資料輸入，先處理資料載入效能。** 使用者確認目前載入速度已實際影響透過網站新增 Item 與圖片上傳，因此本次可開始進行效能修正。
 - **目前正式版本以 `public/data/version.json` 為準；修改前需同步 `package.json`。** 目前版本為 `1.109.95`。
 - **資料輸入期間可正常新增、編輯、圖片管理與 Shipping。** Item 若仍被 Shipping `itemIds` 參照，Worker 會拒絕刪除。
-- **Verify #866 的 GitHub Actions 結果目前仍無法由目前連線取得，因此不得視為已通過。** 完整 Verify / build / deploy 仍需在後續驗收。
+- **1.109.95 的 GitHub Actions 已確認：Verify、Build、Deploy 全部成功。** Verify job 的所有驗證 steps 均成功，不再視為待確認。
 - 若要修改 Worker，注意 `worker/src/index.ts` 曾有過被不完整重寫的回歸風險；不要根據截斷內容盲目整檔重寫，應先取得可靠完整內容或採安全的最小修改方式。
-- **目前已完成兩輪 Worker mutation 效能最佳化，但 Verify 尚待取得可判定結果。** 現有功能可維持使用；下一步從 Verify 結果與 Item mutation response 路徑複查繼續。
-- **本輪已完成：** ① `loadRemoteForNewItem()` 已改為只讀 `baseRemote()` + 目標作品 category indexes，並在該作品範圍內確認 Item ID 不重複；② Work / Shipping mutation 已改為 commit 後直接套用 mutation snapshot 產生 response，避免再次完整 `loadRemote()`。**尚待：** ③ 取得可判定的 GitHub Actions Verify；④ 再評估 Item mutation response 的全量 reload 成本；⑤ 每個 production 修改後同步版本並做對應 Verify。
+- **目前已完成兩輪 Worker mutation 效能最佳化。** ① `loadRemoteForNewItem()` 已改為只讀 `baseRemote()` + 目標作品 category indexes，並在該作品範圍內確認 Item ID 不重複；② Work / Shipping mutation 已改為 commit 後直接套用 mutation snapshot 產生 response，避免再次完整 `loadRemote()`。
 - **Worker 效能最佳化的安全邊界：** 不可拿被截斷的 `worker/src/index.ts` 回傳內容整檔重建；不可把 `public/data/collection.json` 當成 Worker mutation 的權威資料來源；不可用不可靠的 Worker isolate cache 取代 latest-head 驗證；atomic commit、latest-head、完整資料契約與安全驗證必須保留。
-- **目前已確認的核心效能瓶頸：** 新增 Item 會在 commit 前完整掃描遠端資料，commit 後又透過 `dataResponse()` 再完整掃描一次；既有 Item 編輯／刪除以及部分圖片 metadata 操作則至少會在 commit 後觸發一次完整 `loadRemote()`。這是後續效能修正的主要目標。
+- **目前已確認的主要剩餘效能瓶頸：** Item 新增／編輯／刪除在 commit 後仍需要透過 `dataResponse()` 建立完整 Collection response，會再次完整掃描 Git tree、所有 category index 與所有 Item JSON。這是下一個評估目標。
+- **Item mutation response 優化必須先完成 API contract / Store mutation semantics 設計與驗證，再決定是否實作。** 不得直接把 target-scoped `RemoteState` 當成完整 Collection response，也不得直接以靜態 `public/data/collection.json` 取代 Worker 權威資料。
 - **舊 `loadNewStaticData()` 暫不刪除。** 它仍是 `getRemoteData()` 失敗後的最後 fallback，只有在新的資料載入與 fallback 路徑充分驗證後，才能進行 cleanup。
 
 ## P0｜核心功能與正確性
 
-1. **Shipping `itemIds` 參照完整性複查**：已完成程式層修正。Worker 寫入時驗證所有 `itemIds` 都存在於遠端 Item 集合；Item deletion 遇到 Shipping 參照時回傳 409 `ITEM_IN_USE`；Frontend API data 驗證現在也會確認 Shipping `itemIds` 存在於同一份 Collection Item 集合。完整自動化 Verify 仍待確認。
+1. **Shipping `itemIds` 參照完整性複查**：程式層修正已完成，且 1.109.95 Verify 已成功；最終仍需在實機驗收中確認使用者流程。
 2. **Collection 初始資料載入效能**：目前已建立 build-time 單一靜態 Collection read model，Frontend `getRemoteData()` 優先讀取 `./data/collection.json`，Worker `/api/data` 保留為 fallback / mutation authoritative response。`sync-public-data.mjs` 與 `generate-collection.mjs` 已納入 build。仍需實際確認部署後初始載入、fallback、搜尋、Filter、Sort 與新增／圖片操作等待時間，並清理舊的逐 Item 靜態載入邏輯。
-   - **新增發現：Mutation 回應效能瓶頸**：目前 Item／Work／Shipping mutation 完成後都呼叫 `dataResponse()`；`dataResponse()` 會重新執行完整 `loadRemote()`，遞迴讀取整個 Git tree、所有 category index 與所有 Item JSON，再把完整 Collection 回傳 Frontend。Work / Shipping mutation 已完成第一輪 post-commit snapshot response 最佳化，保留 atomic commit 與既有資料契約；Item mutation 的完整 response reload 仍待後續評估與驗證。
-   - **新增發現：新增 Item 前置讀取也有可安全縮減的成本**：`loadRemoteForNewItem()` 已完成最小化讀取：使用 `baseRemote()` + 目標作品 category indexes，避免預先載入所有作品的 Item JSON；仍保留該作品範圍的 ID 重複檢查。
-3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續需以可取得的完整 Verify 結果確認修復後沒有其他資料完整性問題。
+   - **Item mutation response 效能瓶頸**：已確認 Item mutation 完成後仍透過 `dataResponse()` 重新完整載入 Collection。下一步先設計並驗證 API contract / Store 精確更新方案，再決定是否修改。
+   - **新增 Item 前置讀取縮減**：已完成最小化讀取，使用 `baseRemote()` + 目標作品 category indexes，避免預先載入所有作品 Item JSON；仍保留該作品範圍的 ID 重複檢查。
+3. **Verify #862 發現的 Genshin `o/index.json` 缺失**：已補齊 `data/genshin-impact/o/index.json`，並同步版本至 `1.109.92`；後續完整 Verify 已通過，沒有因此保留未確認狀態。
 4. **待新增作品：明日方舟：終末地（Arknights: Endfield）**：ID `arknights-endfield`、代號 `AKE`。目前僅記錄於 TODO，尚未加入正式作品資料。
 
 ## P1｜UI / UX 與穩定性
@@ -43,7 +43,7 @@
 
 ### Stage 8｜API / Worker / GitHub 寫入
 
-1. **Shipping 參照刪除策略完成實作與驗證**：實作已完成，Item 被 Shipping `itemIds` 參照時安全拒絕刪除；仍需在完整 Verify / deployment 驗收中確認。
+1. **Shipping 參照刪除策略完成實作與驗證**：實作與自動化 Verify 已完成；Item 被 Shipping `itemIds` 參照時安全拒絕刪除，仍需在最終實機流程確認。
 
 ### Stage 9｜Verification / Build / Deployment
 
