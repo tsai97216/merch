@@ -1,7 +1,7 @@
 {
   "id": "GIe001",
   "workId": "genshin-impact",
-  "title": "原神聯名 Sony DualSense 無線控制器",
+  "title": "￼￼SONY 索尼 PS5 DualSense 原廠無線控制器(《原神》限量版)",
   "series": [],
   "characters": [],
   "category": "e",
@@ -11,17 +11,13 @@
   "description": "",
   "notes": "",
   "purchase": {
-    "price": 0,
+    "price": 2429,
     "currency": "TWD",
-    "platform": "MOMO 購物",
-    "date": ""
+    "platform": "MOMO 購物"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
