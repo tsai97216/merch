@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.136`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.137`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -31,6 +31,8 @@
 - **Radius / Border / Surface**：統一圓角、邊框、表面層級與陰影語意。
   - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
 - **共用元件**：Button、Input / Select、Segmented Control、Card / Panel、Modal、Badge、Feedback。
+  - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`，由 `src/design-tokens.css` 統一載入。
+  - [ ] Segmented Control / Card / Panel / Modal / Badge / Feedback 尚待建立與遷移。
 - Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
 
 ### 2. 全站 Page Layout
@@ -90,7 +92,7 @@
 - Navigation / Sidebar：`index.html` + `styles.css` + `theme.css`。
 - Page Heading / Hero / Section：主要在 `styles.css`，再由 `ui-refinement.css` / responsive layer 補強。
 - Card / Panel：主要在 `styles.css`，部分 card behavior 在 `ui-refinement.css` / `card-enhancements.css`。
-- Button / Input / Select：主要在 `styles.css`，theme/refinement 再覆寫。
+- Button / Input / Select：`src/controls.css` 已建立 shared foundation，舊版 selector 尚待逐步遷移與收斂。
 - Theme：`theme.ts` + `theme.css` + `theme-refinement.css` + `design-tokens.css`。
 - Item Detail：`main.ts` / `item-detail-modal.css`，另有 `image-viewer.ts/css` 與 shipping detail modal。
 - Toast / Feedback：`utils/toast` + `toast.css`。
