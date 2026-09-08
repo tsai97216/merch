@@ -31,7 +31,7 @@ const versionData = await readJson(path.join(publicDataRoot, 'version.json'));
 let shipping = [];
 try {
   const shippingData = await readJson(path.join(publicDataRoot, 'shipping.json'));
-  if (Array.isArray(shippingData)) shipping = shippingData;
+  if (shippingData?.schemaVersion === 1 && Array.isArray(shippingData.records)) shipping = shippingData.records;
 } catch {}
 
 const works = [];
