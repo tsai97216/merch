@@ -16,17 +16,6 @@
       "cover": "image-1788517269456-b9dv5w.jpg"
     },
     {
-      "id": "ZZZb003",
-      "path": "data/zenless-zone-zero/b/ZZZb003/data.json",
-      "title": "立繪系列 馬口鐵徽章 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZb002",
       "path": "data/zenless-zone-zero/b/ZZZb002/data.json",
       "title": "星見雅 影畫系列 吧唧",
@@ -35,6 +24,17 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 2,
+      "status": "received"
+    },
+    {
+      "id": "ZZZb003",
+      "path": "data/zenless-zone-zero/b/ZZZb003/data.json",
+      "title": "立繪系列 馬口鐵徽章 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
       "status": "received"
     }
   ]
