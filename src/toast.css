@@ -1,1 +1,66 @@
-.toast-host{position:fixed;right:22px;bottom:22px;z-index:100;display:grid;gap:8px;pointer-events:none}.toast{min-width:220px;max-width:min(420px,calc(100vw - 32px));padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);box-shadow:0 14px 40px rgba(20,28,42,.14);font-size:13px;opacity:0;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease}.toast.is-visible{opacity:1;transform:none}.toast-success{border-color:#b9ddc5}.toast-error{border-color:#e6b8b8}.toast-info{border-color:#cbd7f2}@media(max-width:700px){.toast-host{right:12px;bottom:12px;left:12px}.toast{min-width:0;width:100%}}@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+.toast-host {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 100;
+  display: grid;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.toast {
+  min-width: 220px;
+  max-width: min(420px, calc(100vw - var(--space-8)));
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-md);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.toast-success {
+  border-color: color-mix(in srgb, var(--color-success) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
+  color: var(--color-success);
+}
+
+.toast-error {
+  border-color: color-mix(in srgb, var(--color-danger) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+  color: var(--color-danger);
+}
+
+.toast-info {
+  border-color: color-mix(in srgb, var(--color-info) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--color-info) 10%, var(--color-surface));
+  color: var(--color-info);
+}
+
+@media (max-width: 700px) {
+  .toast-host {
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+  }
+
+  .toast {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}
