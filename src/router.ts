@@ -26,7 +26,14 @@ function parseHash(hash: string): Route {
 }
 
 export function createRouter({ onNavigate }: RouterOptions) {
-  const handleChange = () => onNavigate(parseHash(window.location.hash));
+  const handleChange = () => {
+    const route = parseHash(window.location.hash);
+    onNavigate(route);
+    if (route.name === 'management') {
+      const pendingId = sessionStorage.getItem('merch-management-selected-id');
+      if (pendingId) window.dispatchEvent(new CustomEvent('merch-management-select', { detail: pendingId }));
+    }
+  };
   return {
     start() { window.addEventListener('hashchange', handleChange); handleChange(); },
     stop() { window.removeEventListener('hashchange', handleChange); },
