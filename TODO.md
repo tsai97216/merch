@@ -160,3 +160,59 @@
 - 驗收收藏搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片管理、Shipping、統計、管理、設定與 Light / Dark。
 - 驗收部署後初始載入、Worker fallback 與 mutation 同步等待時間。
 - 驗收完成後進行最後 legacy / dead-code cleanup。
+
+## 🔄 交接紀錄（換對話後從這裡繼續）
+
+### Repo / Branch
+- Repo：`tsai97216/merch`
+- Branch：`main`
+- 正式網址：`https://merch.chi.qzz.io`
+- 目前正式版本：`1.109.171`
+- `package.json` 與 `public/data/version.json` 必須同步。
+
+### 本輪已完成
+1. **Mobile Navigation**
+   - 手機版已改為「第一列 Chi MERCH 品牌 Header + 第二列水平可滑動頁面切換」。
+   - 手機版不再保留側欄空間，`.main` 在 mobile 應為 full width。
+   - `src/mobile-nav.css` 已建立並由 `src/styles.css` 載入。
+   - 已修正 `responsive-refinement.css` 舊有 max-width 1000 的 sidebar/main offset 導致手機內容右移問題。
+2. **Settings 完整重建**
+   - 舊 Settings 內容已整頁清空後重新建立，不採用局部補丁修補。
+   - 新 Settings 使用 shared page / panel / field / button 架構。
+   - `src/settings-auth.css` 已重寫為 shared-layout foundation 導向的樣式。
+   - Settings markup 已加入「顯示模式／管理驗證／系統資訊」三個主要區塊。
+   - 三種 theme choice：`system` / `light` / `dark`。
+   - Admin Secret：輸入、驗證、清除。
+3. **Index 結構修正**
+   - Settings 重建時曾誤傷 Home / Shipping markup，後續 commit `c353e1f0f790ae4d0026ea54e22e8525a27dc43c` 已修正對應 closing tag / 結構問題。
+4. **TODO 已整理**
+   - 最新前一筆 TODO commit：`941dfaaccbb53d53cda10ea1ffd98128858c57a6`。
+   - 本次新增這份交接紀錄，讓換對話後可以直接從下方「下一步」繼續。
+
+### 目前 Settings 相關檔案 / Contract
+- `index.html`：Settings page markup。
+- `src/settings-auth.css`：Settings layout / panel / auth / theme choice 樣式。
+- `src/settings-auth.ts`：既有 Admin Secret 驗證互動，必須確認 selector contract 是否與新 markup 一致。
+- `src/theme.ts`：既有 theme state / 三種顯示模式邏輯，必須確認與新 markup 一致。
+- `src/theme.css`：theme state 必要樣式。
+- `src/design-tokens.css`：semantic tokens。
+- `src/shared-components.css` / `src/controls.css`：shared UI foundation。
+- `src/responsive-refinement.css`：唯一集中 viewport responsive contract。
+
+### 下一步，換對話後直接做
+**不要直接改 code。先重新讀 `RULES.md` + `TODO.md`，再檢查：**
+1. `index.html` 最新 Settings markup 與 Home / Shipping 結構是否真的正確。
+2. `src/settings-auth.ts` 的 selector、狀態更新與 session 行為是否匹配新 Settings markup。
+3. `src/theme.ts` 的 selector、三種模式切換與 active state 是否匹配新 Settings markup。
+4. `src/settings-auth.css`、`src/shared-components.css`、`src/controls.css`、`src/responsive-refinement.css` 是否有重複／衝突／舊 selector。
+5. `package.json` / `public/data/version.json` 是否仍為 `1.109.171` 且同步。
+6. 若發現確定問題，**先寫入 TODO，再修改 code。**
+7. 若修改 code/config/data，版本必須 Patch +1，並同步兩個 version 檔。
+8. 修改後做 build / typecheck / schema / data integrity / relevant Worker verification；UX 改動還要實際確認正式網站，不可只看「看起來可以」。
+
+### 特別注意
+- 使用者明確要求：**Settings 要徹底重做，不要用 patch、不要用 CSS hack、不要用延遲／重複事件／條件補丁。**
+- 使用者也要求：**寫法要跟其他頁面一致，其他頁面已有正常的 shared foundation 就直接沿用。**
+- 不要因為「修一個畫面」就回頭重寫整個 `main.ts` 或其他核心資料流。
+- 不要把未驗證的 build / deploy / Verify 當成成功。
+- `TODO.md` 是交接的主要真實來源之一，換對話後以它為準並繼續更新。
