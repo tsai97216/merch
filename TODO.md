@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.166`。** `package.json` 與 `public/data/version.json` 必須保持同步。
+- **目前正式版本：`1.109.171`。** `package.json` 與 `public/data/version.json` 必須保持同步。
 - **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
 - **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
 
@@ -53,7 +53,7 @@
 - [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
 - [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
 - [x] 已將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 `shared-components.css`；Add 專用規則移至 `add.css`，並移除 Add 對該頁面專用 refinement 檔案的 import。
-- [ ] 修正設定頁在 Desktop / Mobile 頂部出現異常大片空白，並重新確認 shared content / page-heading spacing contract，避免以設定頁專用補丁處理。
+- [x] Settings 舊頁面內容已清空並重新建立為 shared page / panel / field / button 架構；原先「頂部異常大片空白」項目改為等待實機驗收，不再以設定頁專用補丁處理。
 
 ### 3. 七頁同步重新設計
 
@@ -79,14 +79,21 @@
 - [x] `styles.css` 的 viewport breakpoint 規則已移至 `responsive-refinement.css`，由單一 responsive layer 承擔 viewport contract。
 - [x] 已將本輪盤點到的 `design-tokens.css`、`typography.css`、`controls.css`、`shared-components.css`、`add.css`、`collection.css`、`works-management.css`、`settings-auth.css`、`layout-refinement.css`、`toast.css`、`theme-refinement.css` 的 viewport `@media` 集中至 `responsive-refinement.css`；`prefers-*` accessibility media 依用途保留在原檔。
 - [x] 已清理 `responsive-refinement.css` 本輪發現的 dead `management-form-grid` responsive selector，並整合本輪遷移造成的主要重複 breakpoint 規則。
+- [ ] 完成 Settings Desktop / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控空間問題。
 
 ### 5. Light / Dark
 
 - Light / Dark 同時設計。
 - 所有共用元件直接使用 semantic tokens，避免「Light 做一套、Dark 再覆蓋一套」。
 - [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 等狀態。
+- [ ] 驗證 Settings 的三種顯示模式切換與目前模式狀態是否正確反映。
 
-### 6. Phase 0 架構盤點結果
+### 6. Settings 功能驗收
+
+- [ ] 驗證 Admin Secret 輸入、驗證、清除與工作階段保存行為。
+- [ ] 驗證 Settings 系統資訊、版本顯示與既有 `theme.ts` / `settings-auth.ts` 的 selector contract。
+
+### 7. Phase 0 架構盤點結果
 
 #### 已確認的 CSS / Theme layer
 
@@ -127,7 +134,7 @@
 - **退場候選**：已被新 shared foundation 吸收的 refinement 規則，以及被確認為 dead/duplicate 的 selector。
 - **暫不刪除**：任何尚未完成 mapping、仍承擔功能的 selector 或 page-specific CSS，直到遷移與驗證完成。
 
-### 7. 開始前的架構盤點
+### 8. 開始前的架構盤點
 
 - [x] Inventory global CSS and design tokens.
 - [x] Inventory shared selectors/components.
@@ -136,7 +143,7 @@
 - [x] Map each shared UI surface to its current implementation.
 - [x] Record conflicts before changing them.
 
-### 8. 後續執行順序
+### 9. 後續執行順序
 
 1. [x] 建立 shared semantic token foundation。
 2. [x] 建立 shared controls / Card / Panel / Feedback 基礎。
