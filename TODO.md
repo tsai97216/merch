@@ -1,279 +1,118 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作不留在 TODO；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
 
 ## Current state
 
-- **目前正式版本：`1.109.171`。** `package.json` 與 `public/data/version.json` 必須保持同步。
-- **目前主要工作：七頁整站 UI 重新設計與共用 Design System 建立。**
-- **開發方向：優先修正底層結構與共用元件，不以局部補丁掩蓋根本問題。**
+- **目前正式版本：`1.109.171`**。
+- `package.json` 與 `public/data/version.json` 必須保持同步。
+- 目前主軸：七頁 UI / Design System 收尾、Responsive 驗收，以及新增的 Collection / Statistics / Management / Shipping 功能整理。
 
 ## P0｜核心功能與資料正確性
 
-1. **Collection 初始資料載入與 fallback 最終驗收**
-   - 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
-   - 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
-   - 實機驗收完成後，再判斷是否可移除舊 `loadNewStaticData()` fallback。
-2. **Shipping `itemIds` 參照完整性實機驗收**
-   - 確認被 Shipping 參照的 Item 無法被刪除。
-   - 確認一般 Item 刪除流程正常且不破壞其他 Shipping records。
+### 1. Collection 初始資料載入與 fallback 最終驗收
 
-## P1｜整站 UI Design System 與七頁同步重構
+- [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
+- [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
+- [ ] 完成實機驗收後，再決定是否移除舊 `loadNewStaticData()` fallback。
 
-### 1. 全站 Design System
+### 2. Shipping `itemIds` 參照完整性實機驗收
 
-- **色彩 Token**
-  - [x] 已建立 `src/design-tokens.css`，以 `tsai97216/chi-brand` 的 Merch 色彩為品牌基準。
-  - [x] `theme-refinement.css` 已完成 legacy theme token 遷移並移除被 semantic token 吸收的重複 Dark override。
-  - [x] `theme.css` 已移除未使用的歷史 token 與重複 Dark selector，只保留必要 theme state / `color-scheme` 行為。
-  - [x] `design-tokens.css` 已移除 `--accent / --ink / --muted / --line / --panel / --soft` legacy alias 定義。
-  - [x] `ui-refinement.css` 的 legacy alias 引用已全部遷移至 semantic tokens，包含 focus ring。
-  - [x] `src/styles.css` 的 legacy alias 引用已全部遷移至 semantic tokens，並移除 base layer 中對 legacy vocabulary 的依賴。
-  - [x] `settings-auth.css`、`collection.css` 已完成本輪確認到的 legacy token consumer mapping，改用 semantic tokens。
-  - [x] `management-images.css` 已完成 legacy fallback token 遷移，並將原 page-specific viewport media 搬入 `responsive-refinement.css` 的集中 responsive contract。
-- **Typography**
-  - [x] 已建立 `src/typography.css`，並由 shared design tokens 載入。
-- **Spacing**
-  - [x] 已建立 `--space-1`～`--space-12` shared spacing scale。
-- **Radius / Border / Surface**
-  - [x] 已建立 radius、border width、surface、focus ring 與 shadow tokens，並提供 Light / Dark semantic values。
-- **共用元件**
-  - [x] Button / Input / Select shared control foundation 已建立於 `src/controls.css`。
-  - [x] Segmented Control / Card / Panel foundation 已建立於 `src/shared-components.css`。
-  - [x] Modal / Badge / Feedback foundation 已建立於 `src/shared-components.css`，尚待逐步把既有 page-specific markup / CSS 遷移至 shared contract。
-  - [x] Toast / Feedback 已開始遷移至 semantic tokens。
-- Light / Dark 直接共用 semantic tokens，不再以大量頁面專用 override 疊加。
+- [ ] 被 Shipping 參照的 Item 不可直接刪除。
+- [ ] 一般 Item 刪除流程正常，且不破壞其他 Shipping records。
 
-### 2. 全站 Page Layout
+## P1｜整站 UI / Design System 收尾
 
-- 統一 Header、Page Heading、Section、Content Width、Grid、Toolbar 與操作區。
-- 建立清楚的資訊層級與元件邊界，讓七頁共享同一套版面基礎。
-- [x] 已建立 shared content / page spacing tokens，並開始收斂 Toolbar / Form layout 的固定間距。
-- [x] Add / Management 主要表單 Grid、Field label 與控制項尺寸已遷移至 shared form foundation。
-- [x] Works Management 的 form / row spacing、label、border 與 muted text 規則已收斂至 shared semantic tokens。
-- [ ] 繼續檢查其他頁面的重複 Field / layout 規則。
-- [x] 已將 `layout-refinement.css` 中真正屬於全站 shared layout 的規則移回 `shared-components.css`；Add 專用規則移至 `add.css`，並移除 Add 對該頁面專用 refinement 檔案的 import。
-- [x] Settings 舊頁面內容已清空並重新建立為 shared page / panel / field / button 架構；原先「頂部異常大片空白」項目改為等待實機驗收，不再以設定頁專用補丁處理。
+### 3. 其他頁面的 shared Field / layout 收斂
 
-### 3. 七頁同步重新設計
+- [ ] 繼續檢查其他頁面的重複 Field、layout、control 尺寸與 spacing 規則。
+- [ ] 已被 shared foundation 吸收的舊 refinement 規則，完成驗證後再清理。
+- [ ] 繼續清理語意重複 token 與已確認的 dead / duplicate selector。
 
-> **首頁／收藏／統計／新增／管理／運費／設定一起進行，不再一頁一頁補丁式修改。**
+### 4. Responsive：Mobile / Tablet / iPad
 
-- **首頁**：重新整理資訊總覽與視覺層級。
-- **收藏**：重新設計 View / Sort / Filter 控制列與內容呈現。
-- **統計**：重新整理圖表與數據層級。
-- **新增**：重新分組長表單、欄位層級與操作區。
-- **管理**：重新整理搜尋、選擇器、Editor 與 CRUD 回饋。
-- **運費**：重新整理紀錄、金額／日期／物流／關聯 Item 的資訊呈現。
-- **設定**：重新整理分類、外觀設定、資料／系統資訊與操作入口。
-- 七頁共用同一套 Page Header、Section、Field、Button、Badge、Modal、Feedback 等 UI 基礎。
-- 保留既有資料模型、Store、API、Worker 契約，除非確認根因位於資料層才修改資料架構。
+- [ ] 完成全站手機版適配調整。
+- [ ] 針對 iPad / Tablet viewport 檢查七頁欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
+- [ ] 確認 Mobile 不是單純縮小 Desktop，而是依空間重新安排資訊層級與操作方式。
+- [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 
-### 4. Responsive
+### 5. Light / Dark 與 Settings 功能驗收
 
-- **Desktop / Tablet / Mobile 一次納入設計。**
-- 手機版不只是 Desktop 縮小版，而是依螢幕空間重新安排資訊層級、控制項與操作方式。
-- 同步驗證各 breakpoint 的 overflow、可讀性與觸控操作空間。
-- [x] `ui-refinement.css` 的 viewport breakpoint 規則已集中至 `responsive-refinement.css`。
-- [x] 已確認並移除 `management-form-grid`、`management-search-field` 等目前 markup 不再使用的 responsive selector。
-- [x] `styles.css` 的 viewport breakpoint 規則已移至 `responsive-refinement.css`，由單一 responsive layer 承擔 viewport contract。
-- [x] 已將本輪盤點到的 `design-tokens.css`、`typography.css`、`controls.css`、`shared-components.css`、`add.css`、`collection.css`、`works-management.css`、`settings-auth.css`、`layout-refinement.css`、`toast.css`、`theme-refinement.css` 的 viewport `@media` 集中至 `responsive-refinement.css`；`prefers-*` accessibility media 依用途保留在原檔。
-- [x] 已清理 `responsive-refinement.css` 本輪發現的 dead `management-form-grid` responsive selector，並整合本輪遷移造成的主要重複 breakpoint 規則。
-- [ ] 完成 Settings Desktop / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控空間問題。
+- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
+- [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
+- [ ] 驗證 Admin Secret 輸入、驗證、清除與 session 保存。
+- [ ] 驗證 Settings 系統資訊、版本顯示及 `theme.ts` / `settings-auth.ts` selector contract。
 
-### 5. Light / Dark
+## P1｜本輪功能整理
 
-- Light / Dark 同時設計。
-- 所有共用元件直接使用 semantic tokens，避免「Light 做一套、Dark 再覆蓋一套」。
-- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 等狀態。
-- [ ] 驗證 Settings 的三種顯示模式切換與目前模式狀態是否正確反映。
+### 6. 新增／管理／運費顯示驗證狀態
 
-### 6. Settings 功能驗收
+- [ ] 在「新增」、「管理」、「運費」相關表單／流程中明確顯示驗證狀態。
+- [ ] 驗證中、成功、失敗需有一致的 Feedback 呈現。
+- [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
 
-- [ ] 驗證 Admin Secret 輸入、驗證、清除與工作階段保存行為。
-- [ ] 驗證 Settings 系統資訊、版本顯示與既有 `theme.ts` / `settings-auth.ts` 的 selector contract。
+### 7. 首頁角色排行平手規則
 
-### 7. Phase 0 架構盤點結果
+- [ ] 數量相同的角色顯示相同名次／數字。
+- [ ] 後續名次依實際排名規則遞延，不可直接使用陣列索引當名次。
+- [ ] 確認排序與顯示邏輯一致。
 
-#### 已確認的 CSS / Theme layer
+### 8. 新增表單整理
 
-- `src/styles.css`：全站基礎 layout、page layout、card 與 base component 樣式；viewport responsive 已移至 `src/responsive-refinement.css`。
-- `src/theme.css`：目前只保留 theme state 必要行為。
-- `src/ui-refinement.css`：共用 refinement layer，包含 typography、control、card、form、management、detail 與 accessibility polish。
-- `src/responsive-refinement.css`：集中全站 viewport responsive contract 與 Management、Settings、Collection 等 responsive refinement。
-- `src/theme-refinement.css`：已完成 legacy theme token 遷移，待後續判斷哪些 selectors 已被 shared foundation 吸收。
-- `src/layout-refinement.css`：已退場，原 shared layout 已移入 `shared-components.css`，Add 專用規則已移入 `add.css`。
-- 另有頁面／功能專用 CSS，例如 `add.css`、`collection.css`、`statistics.css`、`shipping.css`、`works-management.css`、`management-images.css`、`settings-auth.css`、`item-detail-modal.css`、`image-viewer.css`、`toast.css`、`card-enhancements.css` 等。
+- [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
+- [ ] 「狀態」最上方預設為「已收到」。
+- [ ] 移除「例如：流螢主題立牌」等提示文字。
+- [ ] 確認修改後仍符合 schema 與 validation contract。
 
-#### 已確認的架構衝突
+### 9. 管理頁重新設計
 
-1. **多層 refinement 疊加**：`styles.css`、`theme-refinement.css`、`ui-refinement.css`、`responsive-refinement.css` 仍同時存在，需在 foundation 完成後逐步收斂。
-2. **Theme token 尚未完全單一化**：legacy alias 定義與 `ui-refinement.css` 消費者已完成同步，後續仍需清理其他語意相近 token 與直接寫死的視覺值。
-3. **全站基礎樣式與 refinement 混在 `styles.css`**：需逐步拆分並明確 shared / page-specific 邊界。
-4. **部分 shared layout 由頁面模組載入**：Add 原本直接 import `layout-refinement.css`；本輪已完成 shared / Add-specific 拆分並退場該檔案。
-5. **Responsive 規則仍有重複責任**：主要 viewport contract 已集中至 `responsive-refinement.css`，本輪已清理盤點到的 CSS breakpoint；後續若新增 page-specific breakpoint，必須直接放入 responsive layer。
-6. **Management state coupling 已修正**：已改由 `management.ts` 明確輸出 `.is-creating` / `.is-editing` state class，CSS 不再依按鈕 disabled 狀態推導頁面模式。
-7. **Base layer legacy token coupling 已清除**：`styles.css` 已完成 legacy alias 引用 mapping，改用 semantic tokens。
-8. **其他 page/shared CSS 的 legacy token 使用已清理本輪確認項目**：`settings-auth.css` 與 `collection.css` 已完成 semantic token mapping。
+- [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
+- [ ] 重新整理上方搜尋 Toolbar，避免 Desktop / Tablet / Mobile 跑版。
+- [ ] 「新增」按鈕改為直接跳轉 `#/add`，不再在管理頁切換新增表單。
+- [ ] 移除「清理孤兒照片」UI；若仍存在相關專用程式碼，先依規則確認 dead code 後再清理。
 
-#### Shared UI implementation mapping（目前）
+### 10. 運費表單與紀錄重新設計
 
-- Navigation / Sidebar：`index.html` + `styles.css` + `theme.css`。
-- Page Heading / Hero / Section：主要在 `styles.css`，再由 refinement layers 補強。
-- Card / Panel：主要在 `styles.css`，部分 card behavior 在 `ui-refinement.css` / `card-enhancements.css`。
-- Button / Input / Select：`src/controls.css` shared foundation。
-- Theme：`theme.ts` + `theme.css` + `theme-refinement.css` + `design-tokens.css`。
-- Item Detail：`main.ts` / `item-detail-modal.css`，另有 image viewer 與 shipping detail modal。
-- Toast / Feedback：`utils/toast` + `toast.css`。
-- Management form/editor：`management.ts` / `works-management.ts` + 專用 CSS + refinement layers。
+- [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
+- [ ] 關聯 Item 數量可能達上百筆，需提供搜尋、Filter、分組或其他大量資料選擇方式，不可依賴超長選單滑動。
+- [ ] 運費紀錄加入分頁或等效的大量資料呈現機制。
+- [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
 
-#### 保留／合併／退場方向
+### 11. 收藏分頁
 
-- **保留**：Store/API/Worker 契約、資料模型、既有可驗證的互動邏輯；`theme.ts` theme state 行為。
-- **合併**：shared token、base layout、controls、Card/Panel、Feedback、responsive contract、Light/Dark semantic states。
-- **退場候選**：已被新 shared foundation 吸收的 refinement 規則，以及被確認為 dead/duplicate 的 selector。
-- **暫不刪除**：任何尚未完成 mapping、仍承擔功能的 selector 或 page-specific CSS，直到遷移與驗證完成。
+- [ ] 收藏頁加入分頁或等效的分批呈現機制，避免單頁資料過多。
+- [ ] 與搜尋、Filter、Sort、View、Detail 正確整合。
+- [ ] 條件切換後目前頁碼、總筆數與資料內容保持一致。
 
-### 8. 開始前的架構盤點
+### 12. 每月消費趨勢與年度資料
 
-- [x] Inventory global CSS and design tokens.
-- [x] Inventory shared selectors/components.
-- [x] Inventory page-specific duplicated styles.
-- [x] Inventory legacy selectors and obsolete visual rules.
-- [x] Map each shared UI surface to its current implementation.
-- [x] Record conflicts before changing them.
+- [ ] 修正每月消費趨勢圖 2026 與 1 月數字重疊問題。
+- [ ] 詳細圖表加入年份切換。
+- [ ] 下方明細依年份分開，不可把去年同月份資料混入目前年份。
+- [ ] 圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
 
-### 9. 後續執行順序
+### 13. 新增作品：明日方舟：終末地
 
-1. [x] 建立 shared semantic token foundation。
-2. [x] 建立 shared controls / Card / Panel / Feedback 基礎。
-3. [x] 建立第一版唯一 responsive refinement contract。
-4. 逐步把七頁遷移到 shared foundation，但一次以整站視角驗證，不做單頁補丁。
-5. 每完成一組遷移，再刪除已被吸收且確認 dead 的 refinement 規則。
-6. 最後進行 Light/Dark、Desktop/Tablet/Mobile、keyboard/focus 與功能回歸驗證。
+- [ ] 新增「明日方舟：終末地」及對應作品資料。
+- [ ] 檢查所有相關表單、作品選擇器、分類／作品 Filter 與 validation。
+- [ ] 統計／圖表納入此作品，不可只新增作品清單。
+- [ ] 確認 Work ID、Work Code、資料路徑、schema 與既有資料不衝突。
 
-### 10. 本輪新增待辦
+## P2｜最終驗收
 
-0. **手機版適配調整**
-   - 全站重新檢查手機尺寸下的版面、欄位、控制項、表格／卡片、彈出視窗與操作區。
-   - 手機版應以重新安排資訊層級為原則，不以單純縮小或局部 CSS patch 處理。
-   - 與既有 `responsive-refinement.css` contract 整合，避免新增分散的 viewport 規則。
+### 14. 全站功能回歸
 
-1. **新增／管理／運費加入驗證狀態顯示**
-   - 在「新增」、「管理」、「運費」相關表單／流程中明確顯示目前驗證狀態。
-   - 驗證中、成功、失敗等狀態需有清楚且一致的 Feedback 呈現。
-   - 沿用 shared Feedback / Badge / Field foundation，不各頁自行建立一套。
+- [ ] 收藏：搜尋、Filter、Sort、分頁、Detail、Add/Edit/Delete、圖片管理。
+- [ ] 統計：圖表、年度切換、明細、排名與 Collection 轉跳。
+- [ ] 新增：欄位、驗證狀態、預設值、日期／文字控制項一致性。
+- [ ] 管理：搜尋、CRUD、驗證狀態、新增跳轉、圖片相關功能。
+- [ ] 運費：新增、Item 關聯、驗證狀態、紀錄分頁與詳細資訊。
+- [ ] 設定：Theme、Admin Secret、系統資訊。
+- [ ] Light / Dark / Desktop / Tablet / Mobile / keyboard / focus regression。
+- [ ] 正式網站初始載入、Worker fallback、mutation 同步等待時間。
 
-2. **iPad 尺寸適配**
-   - 針對 iPad / Tablet viewport 重新檢查七頁版面。
-   - 特別確認欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
-   - 與手機／Desktop responsive contract 一起設計，不另建互相衝突的 breakpoint 邏輯。
+### 15. 驗證後清理
 
-3. **角色排行同數量應平手**
-   - 首頁角色排行中，數量相同的角色應顯示相同名次／數字。
-   - 後續名次需依實際排名規則正確遞延，不可因陣列索引直接產生不同名次。
-   - 需確認排序與顯示邏輯一致，避免只修畫面文字。
-
-4. **新增作品：明日方舟：終末地**
-   - 新增作品「明日方舟：終末地」及對應作品資料。
-   - 需同步檢查新增作品後所有相關表單、選擇器、分類／作品篩選與資料驗證。
-   - 統計／圖表也必須能正確納入此作品，不可只新增作品清單而遺漏圖表或統計來源。
-   - 需確認既有資料模型、Work Code、ID 與相關 schema／驗證契約，不可破壞既有資料。
-
-5. **收藏分頁／分批顯示**
-   - 收藏頁目前單頁顯示資料過多，需要加入分頁或等效的分批呈現機制。
-   - 需與搜尋、Filter、Sort、View、Detail 等既有操作正確整合。
-   - 切換條件後分頁狀態、總筆數與目前頁碼需保持一致。
-
-6. **每月消費趨勢圖與年度明細**
-   - 修正「每月消費趨勢圖」2026 與 1 月數字重疊的顯示問題。
-   - 詳細圖表新增年份切換功能，讓不同年份資料可以獨立查看。
-   - 下方明細也必須依年份分開，不可在查看某年份某月份時混入去年同月份資料。
-   - 需確認圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
-
-7. **新增表單欄位統一與預設值調整**
-   - 日期欄位目前與文字輸入欄位的長寬不一致，需統一 shared control 尺寸與版面。
-   - 日期／文字／Select 等控制項在相同 Field layout 下應維持一致的高度、寬度與對齊。
-   - 「狀態」欄位最上方預設值改為「已收到」。
-   - 移除「例如：流螢主題立牌」這類 placeholder／提示文字。
-   - 需確認修改後仍符合既有資料 schema 與表單驗證契約。
-
-8. **管理表單重新設計**
-   - 管理表單整體設計重新整理，視覺與操作結構應跟「新增」頁一致並沿用 shared foundation。
-   - 上方搜尋區目前容易跑版，需要重新設計 Toolbar / Search layout，並兼顧 Desktop、Tablet、Mobile。
-   - 「新增」按鈕改為跳轉至「新增」頁面，不再在管理頁切換／展開新增表單。
-   - 移除「清理孤兒照片」功能與相關 UI／入口；若發現其背後仍有專用程式碼，需先確認是否為 dead code 後再依規則清理。
-
-9. **運費表單與紀錄重新設計**
-   - 運費表單與紀錄區整體重新設計，重新整理資訊層級與操作流程。
-   - 表單的「關聯周邊」選擇需考慮未來可能有上百筆 Item，不可讓使用者在超長選單中一直滑動尋找。
-   - 應評估搜尋、Filter、分組或其他適合大量資料的選擇方式，並沿用既有 Item ID / referential integrity 規則。
-   - 運費紀錄需考慮資料量持續增加，加入分頁或等效的大量資料呈現機制。
-   - 分頁、搜尋／篩選與紀錄詳細資訊需保持資料一致，不可因 UI 分批而遺漏或混淆 records。
-
-## P2｜Motion 與視覺精修
-
-- 在 P0 / P1 完成並通過實機驗收後，再統一處理動畫、transition 與細節視覺節奏。
-
-## P3｜Final acceptance
-
-- 手機版與電腦版完整流程驗收。
-- 驗收收藏搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片管理、Shipping、統計、管理、設定與 Light / Dark。
-- 驗收部署後初始載入、Worker fallback 與 mutation 同步等待時間。
-- 驗收完成後進行最後 legacy / dead-code cleanup。
-
-## 🔄 交接紀錄（換對話後從這裡繼續）
-
-### Repo / Branch
-- Repo：`tsai97216/merch`
-- Branch：`main`
-- 正式網址：`https://merch.chi.qzz.io`
-- 目前正式版本：`1.109.171`
-- `package.json` 與 `public/data/version.json` 必須同步。
-
-### 本輪已完成
-1. **Mobile Navigation**
-   - 手機版已改為「第一列 Chi MERCH 品牌 Header + 第二列水平可滑動頁面切換」。
-   - 手機版不再保留側欄空間，`.main` 在 mobile 應為 full width。
-   - `src/mobile-nav.css` 已建立並由 `src/styles.css` 載入。
-   - 已修正 `responsive-refinement.css` 舊有 max-width 1000 的 sidebar/main offset 導致手機內容右移問題。
-2. **Settings 完整重建**
-   - 舊 Settings 內容已整頁清空後重新建立，不採用局部補丁修補。
-   - 新 Settings 使用 shared page / panel / field / button 架構。
-   - `src/settings-auth.css` 已重寫為 shared-layout foundation 導向的樣式。
-   - Settings markup 已加入「顯示模式／管理驗證／系統資訊」三個主要區塊。
-   - 三種 theme choice：`system` / `light` / `dark`。
-   - Admin Secret：輸入、驗證、清除。
-3. **Index 結構修正**
-   - Settings 重建時曾誤傷 Home / Shipping markup，後續 commit `c353e1f0f790ae4d0026ea54e22e8525a27dc43c` 已修正對應 closing tag / 結構問題。
-4. **TODO 已整理**
-   - 最新前一筆 TODO commit：`941dfaaccbb53d53cda10ea1ffd98128858c57a6`。
-   - 本次新增這份交接紀錄，讓換對話後可以直接從下方「下一步」繼續。
-
-### 目前 Settings 相關檔案 / Contract
-- `index.html`：Settings page markup。
-- `src/settings-auth.css`：Settings layout / panel / auth / theme choice 樣式。
-- `src/settings-auth.ts`：既有 Admin Secret 驗證互動，必須確認 selector contract 是否與新 markup 一致。
-- `src/theme.ts`：既有 theme state / 三種顯示模式邏輯，必須確認與新 markup 一致。
-- `src/theme.css`：theme state 必要樣式。
-- `src/design-tokens.css`：semantic tokens。
-- `src/shared-components.css` / `src/controls.css`：shared UI foundation。
-- `src/responsive-refinement.css`：唯一集中 viewport responsive contract。
-
-### 下一步，換對話後直接做
-**不要直接改 code。先重新讀 `RULES.md` + `TODO.md`，再檢查：**
-1. `index.html` 最新 Settings markup 與 Home / Shipping 結構是否真的正確。
-2. `src/settings-auth.ts` 的 selector、狀態更新與 session 行為是否匹配新 Settings markup。
-3. `src/theme.ts` 的 selector、三種模式切換與 active state 是否匹配新 Settings markup。
-4. `src/settings-auth.css`、`src/shared-components.css`、`src/controls.css`、`src/responsive-refinement.css` 是否有重複／衝突／舊 selector。
-5. `package.json` / `public/data/version.json` 是否仍為 `1.109.171` 且同步。
-6. 若發現確定問題，**先寫入 TODO，再修改 code。**
-7. 若修改 code/config/data，版本必須 Patch +1，並同步兩個 version 檔。
-8. 修改後做 build / typecheck / schema / data integrity / relevant Worker verification；UX 改動還要實際確認正式網站，不可只看「看起來可以」。
-
-### 特別注意
-- 使用者明確要求：**Settings 要徹底重做，不要用 patch、不要用 CSS hack、不要用延遲／重複事件／條件補丁。**
-- 使用者也要求：**寫法要跟其他頁面一致，其他頁面已有正常的 shared foundation 就直接沿用。**
-- 不要因為「修一個畫面」就回頭重寫整個 `main.ts` 或其他核心資料流。
-- 不要把未驗證的 build / deploy / Verify 當成成功。
-- `TODO.md` 是交接的主要真實來源之一，換對話後以它為準並繼續更新。
+- [ ] 完成適用的 build、typecheck、schema、data integrity、Worker verification。
+- [ ] 涉及部署時確認 GitHub Actions 成功。
+- [ ] 實際 UX 驗收完成後，清理已被 shared foundation 吸收的 legacy / dead code。
