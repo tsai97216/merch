@@ -10,7 +10,6 @@
 .management-picker-grid select{width:100%;min-width:0}
 .management-readonly{overflow-wrap:anywhere;word-break:break-word}
 .management-actions{gap:var(--toolbar-gap);flex-wrap:wrap}
-.management-actions .button{min-height:40px}
 .management-image-row{min-width:0}
 .management-image-info{min-width:0}
 .management-image-info small{overflow-wrap:anywhere;word-break:break-word}
@@ -39,7 +38,7 @@
 .management-image-info{display:grid;gap:var(--space-1);align-content:center}
 .management-image-info .badge{width:max-content}
 .management-image-actions{gap:7px;flex-wrap:wrap}
-.management-image-actions .button{min-height:38px;min-width:92px}
+.management-image-actions .button{min-height:var(--control-height-compact);min-width:92px}
 
 /* Page-level responsive contract previously kept in ui-refinement.css. */
 @media (min-width:1001px){
@@ -198,7 +197,7 @@
   .management-image-row{grid-template-columns:64px minmax(0,1fr);gap:10px}
   .management-image-preview{width:64px;height:64px}
   .management-image-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-  .management-image-actions .button{width:100%;min-height:40px}
+  .management-image-actions .button{width:100%}
   .settings-auth-heading{gap:10px;flex-direction:column}
   .settings-auth-controls{gap:8px;align-items:stretch;flex-direction:column}
   .settings-auth-buttons{display:grid;grid-template-columns:1fr 1fr;width:100%}
