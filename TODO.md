@@ -17,6 +17,7 @@
 - [ ] 確認 Mobile 不是單純縮小 Desktop，而是依空間重新安排資訊層級與操作方式。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於既定 responsive layer，不新增分散 breakpoint。
+- [ ] `statistics.css` 目前仍內含自己的 `900px / 560px / 360px` responsive media queries；需移入既定 `responsive-refinement.css`，避免頁面級 breakpoint 分散。
 
 ### 2. Shared Field / Layout 最後收斂
 
