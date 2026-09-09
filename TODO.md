@@ -22,6 +22,7 @@
 
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
+- [ ] 管理頁 `.management-actions .button` 目前額外覆寫 `min-height:40px`，圖片操作按鈕另有 `38px` 固定高度；需改為沿用 shared control / compact token，避免 page-specific control 尺寸分叉。
 - [x] 清理已被 shared foundation 吸收、且經驗證確定可移除的 legacy / duplicate selector。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
