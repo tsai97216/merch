@@ -69,14 +69,30 @@ function getCharacterRows(store: MerchStore) {
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
 }
 
+function rankAt(rows: Array<[string, number]>, index: number): number {
+  if (index === 0) return 1;
+  return rows[index][1] === rows[index - 1][1] ? rankAt(rows, index - 1) : index + 1;
+}
+
+function renderCharacterRanking(list: HTMLOListElement, rows: Array<[string, number]>): void {
+  list.innerHTML = rows.length
+    ? rows.map(([character, count], index) => `<li><span>${rankAt(rows, index)}</span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><b>${count}</b></li>`).join('')
+    : '<li class="empty-state">目前沒有資料</li>';
+}
+
+function syncHomeCharacterRanking(): void {
+  if (!storeRef) return;
+  const list = document.querySelector<HTMLOListElement>('#character-ranking');
+  if (!list) return;
+  renderCharacterRanking(list, getCharacterRows(storeRef).slice(0, 5));
+}
+
 function openCharacterModal() {
   if (!storeRef) return;
   const modal = ensureCharacterModal();
   const list = modal.querySelector<HTMLOListElement>('#character-ranking-all');
   const rows = getCharacterRows(storeRef);
-  if (list) list.innerHTML = rows.length
-    ? rows.map(([character, count], index) => `<li><span>${index + 1}</span><strong>${escapeHtml(character)}</strong><b>${count}</b></li>`).join('')
-    : '<li class="empty-state">目前沒有資料</li>';
+  if (list) renderCharacterRanking(list, rows);
   modal.hidden = false;
   document.body.classList.add('detail-modal-open');
 }
@@ -125,4 +141,6 @@ function install() {
 void getStore().then((store) => {
   storeRef = store;
   install();
+  syncHomeCharacterRanking();
+  store.subscribe(syncHomeCharacterRanking);
 }).catch(() => undefined);
