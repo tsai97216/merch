@@ -76,6 +76,14 @@
 - 錯誤訊息應讓使用者理解，不直接把原始 exception 當 UI HTML。
 - API 驅動的新增、編輯、刪除、圖片操作等，在同步尚未完成前必須有明確的同步／上傳狀態；只有成功收到完成結果後才可顯示成功狀態。
 
+### 已確立的共用 UI 基礎
+
+- 全站色彩、Typography、Spacing、Radius、Border、Surface、Focus、Shadow 等視覺基礎以 semantic design tokens 為單一來源；不得重新建立舊式 page-specific token alias。
+- Button、Input、Select、Segmented Control、Card、Panel、Modal、Badge、Feedback 等共用元件優先使用 shared foundation，不得為單一頁面重建相同語意的第二套元件。
+- 全站 viewport responsive contract 集中於 `src/responsive-refinement.css`；新增 page-specific viewport 規則也必須放在此 responsive layer，不得散落在各頁 CSS。
+- Mobile Navigation 採「品牌 Header + 可水平滑動的頁面導覽列」結構；mobile 不保留 Desktop sidebar 的佔位空間，主內容使用可用寬度。
+- Responsive 設計以 Desktop、Tablet、Mobile 同時考慮；Mobile 不以單純縮小 Desktop 為唯一策略，應依可用空間重新安排資訊層級與操作方式。
+
 ## 4. Search / Collection / Statistics
 
 ### Search
