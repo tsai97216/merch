@@ -218,4 +218,11 @@
   .item-detail-grid>section,.item-detail-text{border-radius:14px}
   .management-actions .button,.management-image-actions .button{min-height:44px}
   .add-actions{position:sticky;bottom:0;padding:var(--space-3);background:color-mix(in srgb,var(--color-bg) 92%,transparent);backdrop-filter:blur(10px);z-index:3}
+  [data-page="settings"] .settings-panel,[data-page="settings"] .settings-panel-featured{padding:var(--space-4)}
+  [data-page="settings"] .settings-panel-heading{gap:var(--space-3)}
+  [data-page="settings"] .settings-columns{grid-template-columns:1fr}
+  [data-page="settings"] .settings-auth-controls{display:grid;grid-template-columns:1fr;gap:var(--space-2)}
+  [data-page="settings"] .settings-auth-buttons{display:grid;grid-template-columns:1fr 1fr}
+  [data-page="settings"] .settings-auth-buttons .button{width:100%}
+  [data-page="settings"] .settings-info-list,[data-page="settings"] .theme-choice-group{grid-template-columns:1fr}
 }
