@@ -42,8 +42,10 @@ function clearForm(): void {
   form.reset();
   const quantity = qs<HTMLInputElement>('#add-quantity');
   const currency = qs<HTMLInputElement>('#add-currency');
+  const status = qs<HTMLSelectElement>('#add-status');
   if (quantity) quantity.value = '1';
   if (currency) currency.value = 'TWD';
+  if (status) status.value = 'received';
 }
 
 async function submit(event: SubmitEvent): Promise<void> {
@@ -139,6 +141,8 @@ function render(): void {
   page.hidden = location.hash !== '#/add' && location.hash !== '#add';
   if (page.hidden) return;
   bind();
+  const status = qs<HTMLSelectElement>('#add-status');
+  if (status && !status.value) status.value = 'received';
   populateWorkOptions();
 }
 
