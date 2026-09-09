@@ -22,6 +22,7 @@
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
 - [x] 管理頁 `.management-actions .button` 與圖片操作按鈕已移除固定 `40px` / `38px` 高度覆寫，改為沿用 shared control / compact token；仍需隨整體 Field / Layout 驗收確認視覺結果。
 - [x] 清理已被 shared foundation 吸收、且經驗證確定可移除的 legacy / duplicate selector。
+- [x] 已確認 `ui-refinement.css` 中 Management / Collection 的 `min-height:42px` control 覆寫與 shared `controls.css` 重複，已記錄後移除，避免 page-specific control 尺寸規則分散。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
 ### 3. Collection 初始資料載入與 fallback 最終驗收
