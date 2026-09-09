@@ -94,7 +94,7 @@
 - [ ] Light / Dark / Desktop / Tablet / Mobile / keyboard / focus regression。
 - [ ] 正式網站初始載入、Worker fallback、mutation 同步等待時間。
 
-## P2｜最終驗收與清理
+### 14. 驗證後清理與發布驗證
 - [ ] 完成適用的 build、typecheck、schema、data integrity、Worker verification。
 - [ ] 涉及部署時確認 GitHub Actions 成功。
 - [ ] 實際 UX 驗收完成後，清理已被 shared foundation 吸收的 legacy / dead code。
