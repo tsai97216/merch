@@ -1,8 +1,8 @@
 .add-form{display:grid;gap:var(--section-gap)}
 [data-page="add"]{width:100%;max-width:960px}
-[data-page="add"] .page-heading{margin-bottom:24px}
+[data-page="add"] .page-heading{margin-bottom:var(--space-6)}
 [data-page="add"] .add-form{width:100%;max-width:960px}
-[data-page="add"] .add-section{box-shadow:0 10px 35px rgba(30,40,60,.04)}
+[data-page="add"] .add-section{box-shadow:var(--shadow-sm)}
 .add-section{padding:var(--space-5);border:var(--border-width) solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-surface)}
 .add-section-heading{display:flex;gap:var(--space-3);align-items:flex-start;margin-bottom:var(--space-4)}
 .add-section-heading>span{font-size:var(--font-size-sm);font-weight:var(--font-weight-extrabold);color:var(--color-text-muted);padding-top:var(--space-1)}
