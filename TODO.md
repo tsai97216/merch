@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.192`。**
+- **目前正式版本：`1.109.194`。**
 - **目前保留：50 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
@@ -20,6 +20,7 @@
 - [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
+- [ ] 實機確認手機內容框仍可再放寬；目前內容區左右邊界已較前版改善，但 Header／Mobile Navigation 的內部水平留白未與內容框同步收斂，需統一 mobile frame spacing。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
@@ -49,6 +50,8 @@
 - [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
 - [ ] 已確認 Add / Management 目前驗證失敗主要依賴 Toast，未實際使用既有 shared `.form-errors`；需補上共用表單錯誤呈現，並讓 Toast 保留同步／操作結果用途。
 - [ ] 已確認 Shipping 仍只以 Toast 呈現 amount／關聯 Item 驗證失敗；需接入同一 `form-feedback` foundation，並保持 Toast 僅作摘要／同步／操作結果回饋。
+
+## P1｜各頁功能
 
 ### 7. 新增表單整理
 - [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
