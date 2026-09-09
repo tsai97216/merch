@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.185`**。
+- **目前正式版本：`1.109.186`**。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
 
