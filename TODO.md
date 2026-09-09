@@ -44,6 +44,7 @@
 - [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
 - [ ] 驗證 Admin Secret 輸入、驗證、清除與 session 保存。
 - [ ] 驗證 Settings 系統資訊、版本顯示及 `theme.ts` / `settings-auth.ts` selector contract。
+- [ ] 修正 Settings 管理驗證區塊 DOM class 與 `settings-auth.ts` 綁定 selector 不一致，完成後重新驗證整個驗證流程。
 
 ### 6. 新增／管理／運費顯示驗證狀態
 
