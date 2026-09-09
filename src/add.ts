@@ -76,7 +76,6 @@ async function submit(event: SubmitEvent): Promise<void> {
   const item: Item = {
     id: buildNextItemId(store.snapshot.items.map(x => x.id), work.code, category),
     workId: work.id,
-    workName: work.name,
     title,
     series: value('add-series').split(',').map(x => x.trim()).filter(Boolean),
     characters: value('add-characters').split(',').map(x => x.trim()).filter(Boolean),
