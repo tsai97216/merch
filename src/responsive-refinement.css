@@ -118,3 +118,20 @@
   .stat-card{padding:13px 11px}
   .stat-card strong{font-size:20px}
 }
+
+/* Item-detail modal responsive contract: keep the dialog inside the viewport without page-specific overrides. */
+@media (max-width:700px){
+  .item-detail-modal{padding:10px}
+  .item-detail-dialog{width:100%;max-height:calc(100vh - 20px);border-radius:18px;padding:20px 16px}
+  .item-detail-close{top:10px;right:10px}
+  .item-detail-header{grid-template-columns:1fr;gap:16px;padding:4px 42px 20px 0}
+  .item-detail-image{width:min(100%,280px);margin:auto}
+  .item-detail-heading h2{font-size:26px}
+  .item-detail-grid,.item-detail-text{grid-template-columns:1fr;gap:10px}
+  .item-detail-grid>section,.item-detail-text{padding:15px}
+  .item-detail-text>div+div{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:16px}
+  .item-detail-footer{justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .item-detail-shipping{padding:15px}
+  .item-detail-shipping-list{grid-template-columns:1fr;gap:8px}
+  .item-detail-shipping-list article{padding:11px 12px}
+}
