@@ -48,6 +48,7 @@
 - [ ] 驗證中、成功、失敗需有一致的 Feedback 呈現。
 - [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
 - [ ] 已確認 Add / Management 目前驗證失敗主要依賴 Toast，未實際使用既有 shared `.form-errors`；需補上共用表單錯誤呈現，並讓 Toast 保留同步／操作結果用途。
+- [ ] 已確認 Shipping 仍只以 Toast 呈現 amount／關聯 Item 驗證失敗；需接入同一 `form-feedback` foundation，並保持 Toast 僅作摘要／同步／操作結果回饋。
 
 ### 7. 新增表單整理
 - [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
