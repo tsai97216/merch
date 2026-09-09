@@ -24,6 +24,7 @@
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
 - [ ] 清理已被 shared foundation 吸收、且經驗證確定可移除的 legacy / duplicate selector。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
+- [ ] 已發現 `responsive-refinement.css` 的 mobile `.form-grid input,.form-grid select,.form-grid textarea{min-height:44px}` 與同一 breakpoint 前面的全域 `input,select,textarea{min-height:44px}` 重複，待移除並驗證 cascade 不變。
 
 ### 3. Collection 初始資料載入與 fallback 最終驗收
 
