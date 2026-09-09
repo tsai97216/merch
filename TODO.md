@@ -4,8 +4,8 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.187`。**
-- **目前保留：57 項未完成工作。**
+- **目前正式版本：`1.109.188`。**
+- **目前保留：58 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
@@ -13,6 +13,7 @@
 ## P0｜先處理共用根基與核心資料正確性
 
 ### 1. 全站 Responsive：Mobile / Tablet / iPad
+- [ ] **Responsive 架構重整：禁止以新增 CSS 疊加／覆蓋修補既有規則；直接整理 shared base、mobile navigation 與 responsive contract 的責任邊界。**
 - [ ] 完成全站手機版適配調整；目前實機已發現部分卡片型內容在手機直向過度擁擠，文字會溢出。
 - [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，並重新安排資訊層級。
 - [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修 Collection。
