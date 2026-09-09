@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.178`**。
+- **目前正式版本：`1.109.179`**。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
 
@@ -22,7 +22,7 @@
 
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
-- [ ] 管理頁 `.management-actions .button` 目前額外覆寫 `min-height:40px`，圖片操作按鈕另有 `38px` 固定高度；需改為沿用 shared control / compact token，避免 page-specific control 尺寸分叉。
+- [x] 管理頁 `.management-actions .button` 與圖片操作按鈕已移除固定 `40px` / `38px` 高度覆寫，改為沿用 shared control / compact token；仍需隨整體 Field / Layout 驗收確認視覺結果。
 - [x] 清理已被 shared foundation 吸收、且經驗證確定可移除的 legacy / duplicate selector。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
@@ -38,7 +38,6 @@
 - [ ] 一般 Item 刪除流程正常，且不破壞其他 Shipping records。
 
 ## P1｜共用功能與表單
-
 ### 5. Light / Dark 與 Settings 功能驗收
 - [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
 - [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
@@ -69,7 +68,6 @@
 - [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
 
 ## P1｜資料與頁面功能
-
 ### 10. 每月消費趨勢與年度資料
 - [ ] 修正每月消費趨勢圖 2026 與 1 月數字重疊問題。
 - [ ] 詳細圖表加入年份切換。
@@ -93,7 +91,6 @@
 - [ ] 確認 Work ID、Work Code、資料路徑、schema 與既有資料不衝突。
 
 ## P2｜最終驗收與清理
-
 ### 14. 全站功能回歸
 - [ ] 收藏：搜尋、Filter、Sort、分頁、Detail、Add/Edit/Delete、圖片管理。
 - [ ] 統計：圖表、年度切換、明細、排名與 Collection 轉跳。
