@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.183`**。
+- **目前正式版本：`1.109.185`**。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
 
@@ -51,7 +51,7 @@
 - [x] 「狀態」新增流程預設為「已收到」，並在表單初始化／重置時維持該預設。
 - [ ] 移除「例如：流螢主題立牌」等提示文字。
 - [ ] 確認修改後仍符合 schema 與 validation contract。
-- [ ] 新增流程建立的 `Item` 不得包含正式 schema 已淘汰的 `workName` 欄位；目前 `src/add.ts` 仍在建立 Item 時寫入該欄位。
+- [x] 新增流程建立的 `Item` 不得包含正式 schema 已淘汰的 `workName` 欄位；已從 `src/add.ts` 建立 payload 移除。
 
 ### 8. 管理頁重新設計
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
