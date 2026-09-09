@@ -3,6 +3,7 @@ import './design-tokens.css';
 import './item-detail-modal.css';
 import './collection.css';
 import './item-detail-shipping';
+import './mobile-nav.css';
 import { createRouter } from './router';
 import { loadStore, MerchStore } from './store';
 import { toAppError } from './error';
