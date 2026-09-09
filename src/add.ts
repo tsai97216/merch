@@ -80,7 +80,7 @@ async function submit(event: SubmitEvent): Promise<void> {
     if (result) result.hidden = false;
     qs<HTMLButtonElement>('#add-result-management')?.focus();
   } catch (error) {
-    const message = error instanceof Error ? error.message : '新增收藏失敗.';
+    const message = error instanceof Error ? error.message : '新增收藏失敗。';
     setFormErrors(feedback, [message]); showToast(message, 'error');
   } finally { setBusy(false); }
 }
