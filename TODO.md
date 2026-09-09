@@ -28,6 +28,7 @@
 - [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
 - [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
 - [ ] 完成實機驗收後，再決定是否移除舊 `loadNewStaticData()` fallback。
+- [x] 已確認目前 `loadStore()` 只經由 `getRemoteData()` 載入資料，舊 `loadNewStaticData()` 沒有實際呼叫鏈；刪除前已記錄此結論，下一步可移除 dead fallback。
 
 ### 4. Shipping `itemIds` 參照完整性實機驗收
 - [ ] 被 Shipping 參照的 Item 不可直接刪除。
