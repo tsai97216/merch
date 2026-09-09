@@ -14,6 +14,11 @@
 
 ### 1. 全站 Responsive：Mobile / Tablet / iPad
 - [ ] 完成全站手機版適配調整。
+  - 實機驗收目前已發現手機直向部分頁面內容過度擁擠，卡片可能以 4 欄排列，導致文字溢出容器。
+  - 手機直向的收藏等卡片型內容應依 viewport 重新排列，原則上由 4 欄調整為 2 欄，避免文字跑出、內容互相擠壓。
+  - 此問題不只限於 Collection，首頁、Statistics、Add、Management、Shipping、Settings 等頁面均需逐頁檢查並統一處理。
+  - 同時檢查各頁共用 Grid / Card / Field / Toolbar / Layout，優先修正共用 responsive 根因，不以單頁 CSS workaround 個別遮問題。
+  - 手機版需以實際資訊層級重新排版，而不是單純壓縮 Desktop 欄位。
 - [ ] 針對 iPad / Tablet viewport 檢查七頁欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] 確認 Mobile 不是單純縮小 Desktop，而是依空間重新安排資訊層級與操作方式。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
