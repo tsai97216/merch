@@ -104,6 +104,13 @@
   .collection-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .collection-tools .view-switch{grid-column:1/-1;justify-self:end}
   .collection-tools>#sort{width:auto;justify-self:end}
+  .statistics-chart-grid{grid-template-columns:1fr}
+  .statistics-chart-card{padding:19px}
+  .statistics-chart-preview{height:300px}
+  .statistics-detail{padding:14px}
+  .statistics-detail-dialog{max-height:calc(100vh - 28px);padding:20px}
+  .statistics-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .statistics-large-chart{height:450px}
 }
 
 @media (max-width:760px){
@@ -176,7 +183,6 @@
   .collection-grid{grid-template-columns:1fr 1fr}
   .settings-list>div{display:grid;grid-template-columns:90px minmax(0,1fr);gap:12px;padding:13px 0}
   .settings-list dd{text-align:right;min-width:0;overflow-wrap:anywhere}
-  .form-grid{gap:10px}
   .button{padding:0 14px}
   .notice{padding:12px 13px;font-size:11px}
   .item-detail-grid>section{padding:17px 15px}
@@ -216,4 +222,36 @@
   [data-page="settings"] .settings-auth-buttons{display:grid;grid-template-columns:1fr 1fr}
   [data-page="settings"] .settings-auth-buttons .button{width:100%}
   [data-page="settings"] .settings-info-list,[data-page="settings"] .theme-choice-group{grid-template-columns:1fr}
+}
+
+@media (max-width:560px){
+  .statistics-chart-card{padding:15px;border-radius:16px}
+  .statistics-chart-heading{gap:10px}
+  .statistics-chart-heading b{font-size:16px}
+  .statistics-chart-heading small{font-size:10px}
+  .statistics-chart-preview{height:250px;margin-top:12px}
+  .statistics-detail{padding:7px}
+  .statistics-detail-dialog{max-height:calc(100vh - 14px);padding:15px;border-radius:15px}
+  .statistics-detail-header{gap:10px}
+  .statistics-detail-header h2{font-size:22px;line-height:1.25}
+  .statistics-detail-header p{font-size:11px}
+  .statistics-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:14px}
+  .statistics-summary-card{padding:10px 11px}
+  .statistics-summary-card strong{font-size:14px}
+  .statistics-large-chart{height:360px;margin-top:11px;padding:7px}
+  .statistics-work-items{margin-top:11px;padding:11px}
+  .statistics-work-items-head{display:block}
+  .statistics-work-items-summary{margin-top:8px;justify-content:space-between}
+  .statistics-work-item{display:block;padding:11px 2px}
+  .statistics-work-item-meta{justify-content:flex-start;flex-wrap:wrap;gap:8px;margin-top:7px;text-align:left}
+  .statistics-data{margin-top:11px;padding:11px}
+  .statistics-data-table-row{gap:9px;padding:10px 2px}
+  .statistics-chart-hint{font-size:9px;margin-top:6px}
+}
+
+@media (max-width:360px){
+  .statistics-chart-preview{height:225px}
+  .statistics-detail-dialog{padding:12px}
+  .statistics-summary-card{padding:9px}
+  .statistics-large-chart{height:330px}
 }
