@@ -141,7 +141,7 @@ function render(): void {
   if (page.hidden) return;
   bind();
   const status = qs<HTMLSelectElement>('#add-status');
-  if (status && !status.value) status.value = 'received';
+  if (status) status.value = 'received';
   populateWorkOptions();
 }
 
