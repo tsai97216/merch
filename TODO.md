@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.182`**。
+- **目前正式版本：`1.109.183`**。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
 
@@ -55,13 +55,14 @@
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
 - [ ] 重新整理上方搜尋 Toolbar，避免 Desktop / Tablet / Mobile 跑版。
 - [x] 「新增」按鈕已改為直接跳轉 `#/add`，不再在管理頁切換新增表單。
-- [ ] 移除「清理孤兒照片」UI；若仍存在相關專用程式碼，先依規則確認 dead code 後再清理。
-- [x] 已確認孤兒圖片清理功能目前只由管理頁 UI 鏈結至 `api.ts` `/assets/cleanup` 與 Worker `cleanupAssets()`，未發現其他前端呼叫點；可進入整條功能鏈移除階段。
+- [x] 「清理孤兒圖片」管理頁 UI 已移除。
+- [x] 前端 `api.ts` 的 `/assets/cleanup` API 與相關 validator 已移除。
+- [x] `src/responsive-refinement.css` 的 `#management-add`、`.is-creating` 與 cleanup 專用 legacy selector 已移除。
+- [ ] Worker `cleanupAssets()` 與 `/api/assets/cleanup` endpoint 尚未移除，需確認無其他服務依賴後一併清理。
 - [x] 已移除 `src/utils/toast.ts` 以 `MutationObserver` 監看 `aria-busy`，以及 capture-phase `change`／`click` listener 推測圖片同步狀態的全域機制；新增、編輯、運費與圖片 mutation 改由各自實際 lifecycle 顯示同步 Feedback。
 - [x] 已移除 `src/utils/toast.ts` 的圖片刪除 capture-phase listener，避免刪除確認取消時仍顯示錯誤的同步提示。
-- [ ] 已發現 `src/responsive-refinement.css` 存在目前 DOM 未使用的 `#management-add` selector；已確認搜尋未找到其他 HTML / TS 引用，待清理 dead CSS。
 - [x] `scripts/verify-management-schema.mjs` 已同步改為驗證新的 Management edit-only contract，不再要求已移除的 `createCategoryCode = 'o'`。
-- [ ] Management TypeScript 已移除舊新增狀態機與孤兒圖片清理前端鏈，但 HTML 仍有舊的「清理孤兒圖片」控制項與相關 legacy CSS；需完成 UI / CSS / API / Worker dead code 的整條清理並驗證。
+- [ ] Management TypeScript 已移除舊新增狀態機與孤兒圖片清理前端鏈，但 Worker dead code 尚待清理與驗證。
 
 ### 9. 運費表單與紀錄重新設計
 - [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
