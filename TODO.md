@@ -21,6 +21,8 @@
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；目前內容區左右邊界已較前版改善，但 Header／Mobile Navigation 的內部水平留白未與內容框同步收斂，需統一 mobile frame spacing。
+- [ ] Mobile Header 品牌區的水平內距需與 mobile content frame 對齊，避免 Logo 貼近 viewport 邊緣。
+- [ ] Mobile Navigation 的 7 個主導覽項目需由共用導覽結構平均分配整列可用寬度，不得因內容 intrinsic width 留下右側空白；同時維持各項目的可點擊與文字截斷能力。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
