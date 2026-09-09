@@ -16,6 +16,13 @@
 .search{min-width:0}
 .search input{min-width:0}
 
+/* Management layout foundation */
+.management-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:var(--section-gap);min-width:0}
+.management-panel{min-width:0}
+.management-toolbar{display:grid;gap:var(--toolbar-gap);min-width:0}
+.management-search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;min-width:0}
+.management-search-row>*{min-width:0}
+
 /* Segmented controls */
 .segmented-control,
 .view-switch {
