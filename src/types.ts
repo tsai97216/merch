@@ -141,6 +141,7 @@ export type UiState = {
   collectionManufacturer: string;
   /** `purchase` is the canonical newest-first sort; `created` remains readable for old saved UI state. */
   collectionSort: 'purchase' | 'created' | 'title' | 'price';
+  collectionPage: number;
 };
 
 export type StoreState = {
@@ -162,4 +163,5 @@ export const defaultUiState: UiState = {
   collectionCharacter: 'all',
   collectionManufacturer: 'all',
   collectionSort: 'purchase',
+  collectionPage: 1,
 };
