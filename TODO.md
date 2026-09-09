@@ -5,7 +5,7 @@
 ## Current state
 
 - **目前正式版本：`1.109.187`。**
-- **目前保留：57 項未完成工作。**
+- **目前保留：50 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
@@ -20,13 +20,6 @@
 - [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
-- [ ] 修正上方 Mobile 導覽切換欄過度擁擠，確保圖示與文字可辨識且可水平滑動。
-- [ ] 修正首頁「我的收藏」標題在窄螢幕跑行／斷行異常。
-- [ ] 統計卡片的「本月花費」與「總花費」金額區塊固定相同的兩行高度。
-- [ ] 首頁角色排行標題與內容維持左上起始對齊。
-- [ ] 收藏頁「排序」與「顯示方式」控制維持同一行。
-- [ ] 管理頁「現有作品」區塊在窄螢幕文字與操作不跑版。
-- [ ] 設定頁「顯示模式」與「系統資訊」在窄螢幕分排呈現，不互相擠壓。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
