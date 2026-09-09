@@ -11,7 +11,6 @@
 ## P0｜先處理共用根基與核心資料正確性
 
 ### 1. 全站 Responsive：Mobile / Tablet / iPad
-
 - [ ] 完成全站手機版適配調整。
 - [ ] 針對 iPad / Tablet viewport 檢查七頁欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] 確認 Mobile 不是單純縮小 Desktop，而是依空間重新安排資訊層級與操作方式。
@@ -19,7 +18,6 @@
 - [ ] Responsive 相關修改集中於既定 responsive layer，不新增分散 breakpoint。
 
 ### 2. Shared Field / Layout 最後收斂
-
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
 - [x] 管理頁 `.management-actions .button` 與圖片操作按鈕已移除固定 `40px` / `38px` 高度覆寫，改為沿用 shared control / compact token；仍需隨整體 Field / Layout 驗收確認視覺結果。
@@ -27,13 +25,11 @@
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
 ### 3. Collection 初始資料載入與 fallback 最終驗收
-
 - [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
 - [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
 - [ ] 完成實機驗收後，再決定是否移除舊 `loadNewStaticData()` fallback。
 
 ### 4. Shipping `itemIds` 參照完整性實機驗收
-
 - [ ] 被 Shipping 參照的 Item 不可直接刪除。
 - [ ] 一般 Item 刪除流程正常，且不破壞其他 Shipping records。
 
@@ -64,6 +60,7 @@
 - [x] 已移除 `src/utils/toast.ts` 以 `MutationObserver` 監看 `aria-busy`，以及 capture-phase `change`／`click` listener 推測圖片同步狀態的全域機制；新增、編輯、運費與圖片 mutation 改由各自實際 lifecycle 顯示同步 Feedback。
 - [x] 已移除 `src/utils/toast.ts` 的圖片刪除 capture-phase listener，避免刪除確認取消時仍顯示錯誤的同步提示。
 - [ ] 已發現 `src/responsive-refinement.css` 存在目前 DOM 未使用的 `#management-add` selector；已確認搜尋未找到其他 HTML / TS 引用，待清理 dead CSS。
+- [ ] `scripts/verify-management-schema.mjs` 目前仍強制要求 Management 保留 `createCategoryCode = 'o'`；移除 Management 舊新增模式時，需同步調整這項舊 contract，避免驗證腳本反過來阻止已完成的架構收斂。
 
 ### 9. 運費表單與紀錄重新設計
 - [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
