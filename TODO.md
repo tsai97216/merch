@@ -5,6 +5,8 @@
 ## Current state
 
 - **目前正式版本：`1.109.186`**。
+- **TODO 完成率：`15 / 72`（`20.8%`）**。
+- 每次更新 TODO 時，需重新計算並在本區上方顯示最新完成率。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
 
