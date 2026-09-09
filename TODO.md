@@ -4,8 +4,8 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.186`**。
-- **TODO 完成率：`15 / 72`（`20.8%`）**。
+- **目前正式版本：`1.109.187`**。
+- **TODO 完成率：`18 / 71`（`25.4%`）。**
 - 每次更新 TODO 時，需重新計算並在本區上方顯示最新完成率。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
 - 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
@@ -83,10 +83,10 @@
 - [ ] 圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
 
 ### 11. 收藏分頁
-- [ ] 收藏頁加入分頁或等效的分批呈現機制，避免單頁資料過多。
-- [ ] 與搜尋、Filter、Sort、View、Detail 正確整合。
-- [ ] 條件切換後目前頁碼、總筆數與資料內容保持一致。
-- [ ] 已確認 `src/main.ts` 的 Collection render 目前會將排序後的全部結果一次寫入 DOM；實作分頁前需保留現有搜尋／Filter／Sort／View／Detail 行為，並讓條件變更重設頁碼。
+- [x] 收藏頁加入分頁或等效的分批呈現機制，避免單頁資料過多。
+- [x] 與搜尋、Filter、Sort、View、Detail 正確整合。
+- [x] 條件切換後目前頁碼、總筆數與資料內容保持一致。
+- 已確認 `src/main.ts` 的 Collection render 原本會將排序後的全部結果一次寫入 DOM；現已改為固定每頁 24 筆，並保留搜尋／Filter／Sort／View／Detail 行為，條件變更會重設頁碼，資料縮減時會自動校正至有效頁碼。
 
 ### 12. 首頁角色排行平手規則
 - [ ] 數量相同的角色顯示相同名次／數字。
