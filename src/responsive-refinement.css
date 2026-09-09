@@ -177,7 +177,6 @@
   .settings-list>div{display:grid;grid-template-columns:90px minmax(0,1fr);gap:12px;padding:13px 0}
   .settings-list dd{text-align:right;min-width:0;overflow-wrap:anywhere}
   .form-grid{gap:10px}
-  .form-grid input,.form-grid select,.form-grid textarea{min-height:44px}
   .button{padding:0 14px}
   .notice{padding:12px 13px;font-size:11px}
   .item-detail-grid>section{padding:17px 15px}
