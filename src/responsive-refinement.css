@@ -87,3 +87,34 @@
   body .main,body .sidebar.is-collapsed~.main{width:100%;margin-left:0;padding-left:0}
   body .content{width:100%;padding-top:25px}
 }
+
+/* Card/stat responsive convergence: prevent narrow columns from forcing text outside their surface. */
+@media (max-width:700px){
+  .card-grid,.stat-grid,.collection-grid{min-width:0}
+  .item-card,.stat-card,.card{min-width:0;overflow:hidden}
+  .item-card>*{min-width:0}
+  .item-top,.item-bottom{min-width:0;flex-wrap:wrap}
+  .item-content,.item-title,.item-work,.item-meta{min-width:0;max-width:100%}
+  .item-title,.item-work{overflow-wrap:anywhere;word-break:break-word}
+  .item-work{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+  .item-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  .item-meta{overflow-wrap:anywhere;word-break:break-word}
+  .item-actions{min-width:0;max-width:100%;display:flex;flex-wrap:wrap;gap:6px}
+  .item-actions .button{min-width:0;flex:1 1 auto}
+  .stat-card strong,.stat-card span,.stat-card small{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+  .stat-card strong{line-height:1.15}
+  .ranking,.ranking li,.ranking li>*{min-width:0}
+  .ranking li>span,.ranking li>b{overflow-wrap:anywhere;word-break:break-word}
+}
+@media (max-width:560px){
+  .item-media{height:155px}
+  .list-mode .item-media{height:96px}
+  .stat-card strong{font-size:22px}
+}
+@media (max-width:390px){
+  .item-media{height:138px}
+  .list-mode .item-card{grid-template-columns:88px minmax(0,1fr)}
+  .list-mode .item-media{height:88px}
+  .stat-card{padding:13px 11px}
+  .stat-card strong{font-size:20px}
+}
