@@ -4,45 +4,39 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.187`**。
-- **TODO 完成率：`18 / 71`（`25.4%`）。**
-- 每次更新 TODO 時，需重新計算並在本區上方顯示最新完成率。
+- **目前正式版本：`1.109.187`。**
+- **目前保留：50 項未完成工作。**
+- 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
-- 目前主軸：Responsive / Design System 收尾，以及 Collection / Statistics / Add / Management / Shipping 功能整理。
+- 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
 
 ## P0｜先處理共用根基與核心資料正確性
 
 ### 1. 全站 Responsive：Mobile / Tablet / iPad
-- [ ] 完成全站手機版適配調整。
-  - 實機驗收目前已發現手機直向部分頁面內容過度擁擠，卡片可能以 4 欄排列，導致文字溢出容器。
-  - 手機直向的收藏等卡片型內容應依 viewport 重新排列，原則上由 4 欄調整為 2 欄，避免文字跑出、內容互相擠壓。
-  - 此問題不只限於 Collection，首頁、Statistics、Add、Management、Shipping、Settings 等頁面均需逐頁檢查並統一處理。
-  - 同時檢查各頁共用 Grid / Card / Field / Toolbar / Layout，優先修正共用 responsive 根因，不以單頁 CSS workaround 個別遮問題。
-  - 手機版需以實際資訊層級重新排版，而不是單純壓縮 Desktop 欄位。
-- [ ] 針對 iPad / Tablet viewport 檢查七頁欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
-- [ ] 確認 Mobile 不是單純縮小 Desktop，而是依空間重新安排資訊層級與操作方式。
+- [ ] 完成全站手機版適配調整；目前實機已發現部分卡片型內容在手機直向過度擁擠，文字會溢出。
+- [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，並重新安排資訊層級。
+- [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修 Collection。
+- [ ] 針對手機橫向檢查橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport 等問題。
+- [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
-- [ ] Responsive 相關修改集中於既定 responsive layer，不新增分散 breakpoint。
+- [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
-- [x] 管理頁 `.management-actions .button` 與圖片操作按鈕已移除固定 `40px` / `38px` 高度覆寫，改為沿用 shared control / compact token；仍需隨整體 Field / Layout 驗收確認視覺結果。
-- [x] 清理已被 shared foundation 吸收、且經驗證確定可移除的 legacy / duplicate selector。
-- [x] 已確認 `ui-refinement.css` 中 Management / Collection 的 `min-height:42px` control 覆寫與 shared `controls.css` 重複，已記錄後移除，避免 page-specific control 尺寸規則分散。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
 ### 3. Collection 初始資料載入與 fallback 最終驗收
 - [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
 - [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
 - [ ] 完成實機驗收後，再決定是否移除舊 `loadNewStaticData()` fallback。
-- [x] 已確認目前 `loadStore()` 只經由 `getRemoteData()` 載入資料，舊 `loadNewStaticData()` 沒有實際呼叫鏈；刪除前已記錄此結論，下一步可移除 dead fallback。
 
 ### 4. Shipping `itemIds` 參照完整性實機驗收
 - [ ] 被 Shipping 參照的 Item 不可直接刪除。
 - [ ] 一般 Item 刪除流程正常，且不破壞其他 Shipping records。
 
 ## P1｜共用功能與表單
+
 ### 5. Light / Dark 與 Settings 功能驗收
 - [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
 - [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
@@ -56,23 +50,12 @@
 
 ### 7. 新增表單整理
 - [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
-- [x] 「狀態」新增流程預設為「已收到」，並在表單初始化／重置時維持該預設。
 - [ ] 移除「例如：流螢主題立牌」等提示文字。
 - [ ] 確認修改後仍符合 schema 與 validation contract。
-- [x] 新增流程建立的 `Item` 不得包含正式 schema 已淘汰的 `workName` 欄位；已從 `src/add.ts` 建立 payload 移除。
 
 ### 8. 管理頁重新設計
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
 - [ ] 重新整理上方搜尋 Toolbar，避免 Desktop / Tablet / Mobile 跑版。
-- [x] 「新增」按鈕已改為直接跳轉 `#/add`，不再在管理頁切換新增表單。
-- [x] 「清理孤兒圖片」管理頁 UI 已移除。
-- [x] 前端 `api.ts` 的 `/assets/cleanup` API 與相關 validator 已移除。
-- [x] `src/responsive-refinement.css` 的 `#management-add`、`.is-creating` 與 cleanup 專用 legacy selector 已移除。
-- [x] Worker `cleanupAssets()` 與 `/api/assets/cleanup` endpoint 已移除，並確認目前 repo 搜尋不到該 endpoint 的其他使用者。
-- [x] 已移除 `src/utils/toast.ts` 以 `MutationObserver` 監看 `aria-busy`，以及 capture-phase `change`／`click` listener 推測圖片同步狀態的全域機制；新增、編輯、運費與圖片 mutation 改由各自實際 lifecycle 顯示同步 Feedback。
-- [x] 已移除 `src/utils/toast.ts` 的圖片刪除 capture-phase listener，避免刪除確認取消時仍顯示錯誤的同步提示。
-- [x] `scripts/verify-management-schema.mjs` 已同步改為驗證新的 Management edit-only contract，不再要求已移除的 `createCategoryCode = 'o'`。
-- [x] Management TypeScript 已移除舊新增狀態機與孤兒圖片清理前端鏈。
 
 ### 9. 運費表單與紀錄重新設計
 - [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
@@ -81,31 +64,27 @@
 - [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
 
 ## P1｜資料與頁面功能
+
 ### 10. 每月消費趨勢與年度資料
 - [ ] 修正每月消費趨勢圖 2026 與 1 月數字重疊問題。
 - [ ] 詳細圖表加入年份切換。
 - [ ] 下方明細依年份分開，不可把去年同月份資料混入目前年份。
 - [ ] 圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
 
-### 11. 收藏分頁
-- [x] 收藏頁加入分頁或等效的分批呈現機制，避免單頁資料過多。
-- [x] 與搜尋、Filter、Sort、View、Detail 正確整合。
-- [x] 條件切換後目前頁碼、總筆數與資料內容保持一致。
-- 已確認 `src/main.ts` 的 Collection render 原本會將排序後的全部結果一次寫入 DOM；現已改為固定每頁 24 筆，並保留搜尋／Filter／Sort／View／Detail 行為，條件變更會重設頁碼，資料縮減時會自動校正至有效頁碼。
-
-### 12. 首頁角色排行平手規則
+### 11. 首頁角色排行平手規則
 - [ ] 數量相同的角色顯示相同名次／數字。
 - [ ] 後續名次依實際排名規則遞延，不可直接使用陣列索引當名次。
 - [ ] 確認排序與顯示邏輯一致。
 
-### 13. 新增作品：明日方舟：終末地
+### 12. 新增作品：明日方舟：終末地
 - [ ] 新增「明日方舟：終末地」及對應作品資料。
 - [ ] 檢查所有相關表單、作品選擇器、分類／作品 Filter 與 validation。
 - [ ] 統計／圖表納入此作品，不可只新增作品清單。
 - [ ] 確認 Work ID、Work Code、資料路徑、schema 與既有資料不衝突。
 
 ## P2｜最終驗收與清理
-### 14. 全站功能回歸
+
+### 13. 全站功能回歸
 - [ ] 收藏：搜尋、Filter、Sort、分頁、Detail、Add/Edit/Delete、圖片管理。
 - [ ] 統計：圖表、年度切換、明細、排名與 Collection 轉跳。
 - [ ] 新增：欄位、驗證狀態、預設值、日期／文字控制項一致性。
@@ -115,7 +94,7 @@
 - [ ] Light / Dark / Desktop / Tablet / Mobile / keyboard / focus regression。
 - [ ] 正式網站初始載入、Worker fallback、mutation 同步等待時間。
 
-### 15. 驗證後清理與發布驗證
+### 14. 驗證後清理與發布驗證
 - [ ] 完成適用的 build、typecheck、schema、data integrity、Worker verification。
 - [ ] 涉及部署時確認 GitHub Actions 成功。
 - [ ] 實際 UX 驗收完成後，清理已被 shared foundation 吸收的 legacy / dead code。
