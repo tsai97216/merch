@@ -4,7 +4,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.194`。**
+- **目前正式版本：`1.109.205`。**
 - **目前保留：50 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 必須保持同步。
@@ -21,8 +21,10 @@
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；目前內容區左右邊界已較前版改善，但 Header／Mobile Navigation 的內部水平留白未與內容框同步收斂，需統一 mobile frame spacing。
-- [ ] Mobile Header 品牌區的水平內距需與 mobile content frame 對齊，避免 Logo 貼近 viewport 邊緣。
-- [ ] Mobile Navigation 的 7 個主導覽項目需由共用導覽結構平均分配整列可用寬度，不得因內容 intrinsic width 留下右側空白；同時維持各項目的可點擊與文字截斷能力。
+- [x] Mobile Header 品牌區的水平內距需與 mobile content frame 對齊，避免 Logo 貼近 viewport 邊緣。
+- [x] Mobile Navigation 的 7 個主導覽項目需由共用導覽結構平均分配整列可用寬度，不得因內容 intrinsic width 留下右側空白；同時維持各項目的可點擊與文字截斷能力。
+- [x] 首頁 Hero 移除冗餘說明文字，並確保 `Collection.` 英文標題在手機維持完整單行顯示。
+- [ ] 首頁／統計「本月花費」需與「總花費」維持一致的雙行資訊層級；目前兩頁 HTML 結構相同，但 Statistics 的 `data-stat="month"` 尚未由 `renderStatistics()` 實際填值，需先收斂共用月度消費計算／呈現邏輯。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
