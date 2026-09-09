@@ -47,6 +47,7 @@
 - [ ] 在「新增」、「管理」、「運費」相關表單／流程中明確顯示驗證狀態。
 - [ ] 驗證中、成功、失敗需有一致的 Feedback 呈現。
 - [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
+- [ ] 已確認 Add / Management 目前驗證失敗主要依賴 Toast，未實際使用既有 shared `.form-errors`；需補上共用表單錯誤呈現，並讓 Toast 保留同步／操作結果用途。
 
 ### 7. 新增表單整理
 - [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
@@ -78,24 +79,3 @@
 
 ### 12. 新增作品：明日方舟：終末地
 - [ ] 新增「明日方舟：終末地」及對應作品資料。
-- [ ] 檢查所有相關表單、作品選擇器、分類／作品 Filter 與 validation。
-- [ ] 統計／圖表納入此作品，不可只新增作品清單。
-- [ ] 確認 Work ID、Work Code、資料路徑、schema 與既有資料不衝突。
-
-## P2｜最終驗收與清理
-
-### 13. 全站功能回歸
-- [ ] 收藏：搜尋、Filter、Sort、分頁、Detail、Add/Edit/Delete、圖片管理。
-- [ ] 統計：圖表、年度切換、明細、排名與 Collection 轉跳。
-- [ ] 新增：欄位、驗證狀態、預設值、日期／文字控制項一致性。
-- [ ] 管理：搜尋、CRUD、驗證狀態、新增跳轉、圖片相關功能。
-- [ ] 運費：新增、Item 關聯、驗證狀態、紀錄分頁與詳細資訊。
-- [ ] 設定：Theme、Admin Secret、系統資訊。
-- [ ] Light / Dark / Desktop / Tablet / Mobile / keyboard / focus regression。
-- [ ] 正式網站初始載入、Worker fallback、mutation 同步等待時間。
-
-### 14. 驗證後清理與發布驗證
-- [ ] 完成適用的 build、typecheck、schema、data integrity、Worker verification。
-- [ ] 涉及部署時確認 GitHub Actions 成功。
-- [ ] 實際 UX 驗收完成後，清理已被 shared foundation 吸收的 legacy / dead code。
-- [ ] 確認 `package.json` 與 `public/data/version.json` 版本一致。
