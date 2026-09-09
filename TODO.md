@@ -58,11 +58,11 @@
 - [x] 「清理孤兒圖片」管理頁 UI 已移除。
 - [x] 前端 `api.ts` 的 `/assets/cleanup` API 與相關 validator 已移除。
 - [x] `src/responsive-refinement.css` 的 `#management-add`、`.is-creating` 與 cleanup 專用 legacy selector 已移除。
-- [ ] Worker `cleanupAssets()` 與 `/api/assets/cleanup` endpoint 尚未移除，需確認無其他服務依賴後一併清理。
+- [x] Worker `cleanupAssets()` 與 `/api/assets/cleanup` endpoint 已移除，並確認目前 repo 搜尋不到該 endpoint 的其他使用者。
 - [x] 已移除 `src/utils/toast.ts` 以 `MutationObserver` 監看 `aria-busy`，以及 capture-phase `change`／`click` listener 推測圖片同步狀態的全域機制；新增、編輯、運費與圖片 mutation 改由各自實際 lifecycle 顯示同步 Feedback。
 - [x] 已移除 `src/utils/toast.ts` 的圖片刪除 capture-phase listener，避免刪除確認取消時仍顯示錯誤的同步提示。
 - [x] `scripts/verify-management-schema.mjs` 已同步改為驗證新的 Management edit-only contract，不再要求已移除的 `createCategoryCode = 'o'`。
-- [ ] Management TypeScript 已移除舊新增狀態機與孤兒圖片清理前端鏈，但 Worker dead code 尚待清理與驗證。
+- [x] Management TypeScript 已移除舊新增狀態機與孤兒圖片清理前端鏈。
 
 ### 9. 運費表單與紀錄重新設計
 - [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
