@@ -61,7 +61,8 @@
 - [ ] 「新增」按鈕改為直接跳轉 `#/add`，不再在管理頁切換新增表單。
 - [ ] 移除「清理孤兒照片」UI；若仍存在相關專用程式碼，先依規則確認 dead code 後再清理。
 - [x] 已確認孤兒圖片清理功能目前只由管理頁 UI 鏈結至 `api.ts` `/assets/cleanup` 與 Worker `cleanupAssets()`，未發現其他前端呼叫點；可進入整條功能鏈移除階段。
-- [ ] 已發現 `src/utils/toast.ts` 以 capture-phase click listener 在圖片刪除按鈕點擊當下直接顯示「正在同步圖片刪除」，但管理頁刪除流程仍可能先進行確認／取消；需改為由實際刪除 mutation 的生命週期觸發同步 Feedback，避免取消操作也顯示同步中。
+- [ ] 已發現 `src/utils/toast.ts` 以 `MutationObserver` 監看 `aria-busy`，並以 capture-phase `change`／`click` listener 推測圖片同步狀態；這違反共用 UI 不使用 MutationObserver／後處理與不以事件猜測 mutation lifecycle 的規則。實際新增、編輯、運費與圖片 mutation 已各自有明確同步 Feedback，需移除這套全域推測式機制。
+- [ ] `src/utils/toast.ts` 的圖片刪除 capture-phase listener 會在管理頁刪除確認前先顯示「正在同步圖片刪除」，取消確認時也可能留下錯誤同步提示；需與上項一併移除。
 - [ ] 已發現 `src/management.css` 存在目前 DOM 未使用的 `#management-add` selector；需確認無其他引用後清理，避免保留 dead CSS。
 
 ### 9. 運費表單與紀錄重新設計
