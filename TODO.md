@@ -1,6 +1,6 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先修正本輪實機明確抓到的問題，再處理會影響多頁的共用 UI 根基，接著完成 Statistics Detail 與全站 Responsive 收尾，再做核心資料／流程驗收，最後處理各頁功能整理、統計資料邏輯與完整回歸發布。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先收斂會被多頁共用的 UI 根基，再修正本輪實機明確抓到的問題，接著完成 Statistics Detail 與全站 Responsive 收尾，再做核心資料／流程驗收，最後處理各頁功能整理、統計資料邏輯與完整回歸發布。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
 
 ## Current state
 
@@ -12,35 +12,44 @@
 - 本輪已確認問題：Collection 搜尋 focus 重複綠色框、Item Detail 背景透明、Statistics Detail 手機版資訊過度擁擠、Add 日期控制項版面問題、Management「共 N 筆收藏」跑版。
 - Shipping 本輪未發現新增問題；Settings 本輪未發現新增問題，但兩者仍需在最終 Responsive 驗收時逐尺寸確認。
 
-## P0｜立即修正：本輪實機明確問題
+## P0｜共用 UI 根基
 
-### 1. Collection 搜尋 focus
+### 1. Shared Field / Layout 最後收斂
+- [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
+- [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
+- [ ] 檢查共用 Input 的 focus／outline、Modal / Surface、Toolbar / count 等基礎結構，確保後續頁面修正都建立在同一 foundation 上。
+- [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
+
+## P0｜本輪實機明確問題
+
+### 2. Collection 搜尋 focus
 - [ ] 修正 Collection 搜尋框 focus 時出現兩個綠色框的重複 focus／outline 視覺問題。
 - [ ] 從共用 Input / focus foundation 或正確 DOM 結構處理，不以 page-specific CSS workaround 掩蓋。
 
-### 2. Item Detail Modal
+### 3. Item Detail Modal
 - [ ] 修正 Item Detail Modal 背景透明導致內容辨識度不足的問題。
 - [ ] 確認 Modal surface、遮罩、文字對比與圖片內容在 Light / Dark / Mobile 下均清楚。
 - [ ] 沿用既有 shared Modal / Surface foundation，不建立 Detail 專用的第二套 Modal 視覺系統。
 
-### 3. Add 日期控制項
+### 4. Add 日期控制項
 - [ ] 修正 Add 頁日期控制項仍存在的實機版面問題。
 - [ ] 確認日期 input、外框、原生日期 UI 在手機尺寸下不再錯位、異常佔位或產生不自然的「日期方塊」。
 - [ ] 從共用 Field / Date control 根因處理，不以 Add page-specific workaround 掩蓋。
 
-### 4. Management「共 N 筆收藏」
+### 5. Management「共 N 筆收藏」
 - [ ] 修正 Management 手機版「共 N 筆收藏」文字跑版。
 - [ ] 確認共享計數／Toolbar layout 在小尺寸下可正常收縮、換行或重新排列。
 - [ ] 從共用 Toolbar / layout 結構處理，不只針對該文字加局部定位。
 
-## P0｜共用 UI 根基收斂
+## P0｜Responsive 與資訊架構
 
-### 5. Shared Field / Layout 最後收斂
-- [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
-- [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
+### 6. Statistics Detail Mobile 重新設計
+- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
+- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
+- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
+- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
 
-### 6. 全站 Responsive：Mobile / Tablet / iPad
+### 7. 全站 Responsive：Mobile / Tablet / iPad
 - [ ] 完成全站手機版適配調整；本輪實機已逛過七頁，先完成明確問題修正，再針對修正後結果再次驗收。
 - [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，並重新安排資訊層級。
 - [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修已發現的頁面。
@@ -50,14 +59,6 @@
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 修補共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；Header、Mobile Navigation 與主內容的水平留白需維持同一 mobile frame spacing。
 - [ ] 手機版首頁「作品消費排行」長條與右側金額需保留明確獨立空間，避免長條壓縮／擠到金額。
-
-## P0｜Statistics Detail 手機版資訊架構
-
-### 7. Statistics Detail Mobile 重新設計
-- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
-- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
-- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
-- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
 
 ## P0｜核心資料與流程驗收
 
