@@ -20,7 +20,7 @@
 [data-page="settings"] .settings-info-list>div{padding:14px 16px;border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-soft)}
 [data-page="settings"] .settings-info-list dt{font-size:12px;color:var(--color-text-muted);margin-bottom:5px}
 [data-page="settings"] .settings-info-list dd{margin:0;font-weight:700}
-[data-page="settings"] .theme-choice-group{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-2)}
+[data-page="settings"] .theme-choice-group{display:grid;grid-template-columns:1fr;gap:var(--space-2)}
 [data-page="settings"] .theme-choice{min-height:68px;padding:12px 14px;display:flex;align-items:center;justify-content:flex-start;gap:12px;text-align:left;border:var(--border-width) solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-soft);color:var(--color-text);cursor:pointer}
 [data-page="settings"] .theme-choice i{width:20px;text-align:center;color:var(--color-text-muted)}
 [data-page="settings"] .theme-choice span{display:grid;gap:3px}
@@ -32,4 +32,5 @@
 @media (min-width:1001px){
   [data-page="settings"] .settings-columns{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
   [data-page="settings"] .settings-info-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  [data-page="settings"] .theme-choice-group{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
