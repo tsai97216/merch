@@ -12,7 +12,13 @@ function chartSvg(chart: Chart, large = false): string {
   const type = large ? chart.largeType : chart.smallType;
   const mobile = large && window.matchMedia('(max-width: 560px)').matches;
   const width = mobile ? 680 : large ? 1100 : 920;
-  const height = mobile ? 390 : large ? 520 : 430;
+  const height = mobile
+    ? type === 'donut'
+      ? 300
+      : chart.id === 'monthly-spending'
+        ? 300
+        : Math.max(170, 38 + chart.rows.length * 32)
+    : large ? 520 : 430;
   if (!chart.rows.length) return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${width / 2}" y="${height / 2}" text-anchor="middle" class="chart-empty">目前沒有足夠資料</text></svg>`;
   if (type === 'donut') return donutSvg(chart, width, height, large, mobile);
   return barSvg(chart, width, height, large, mobile);
@@ -49,8 +55,8 @@ function barSvg(chart: Chart, width: number, height: number, large: boolean, mob
   const plotH = height - top - bottom;
   const max = Math.max(...chart.rows.map(r => r.value), 0);
   const gap = mobile ? 8 : large ? 12 : 10;
-  const rowH = Math.max(mobile ? 34 : 25, (plotH - gap * Math.max(0, chart.rows.length - 1)) / chart.rows.length);
-  const barH = Math.min(rowH - (mobile ? 8 : 5), mobile ? 24 : large ? 30 : 24);
+  const rowH = Math.max(mobile ? 24 : 25, (plotH - gap * Math.max(0, chart.rows.length - 1)) / chart.rows.length);
+  const barH = Math.min(rowH - (mobile ? 5 : 5), mobile ? 22 : large ? 30 : 24);
   const labels = chart.rows.map((r, i) => {
     const y = top + i * (rowH + gap);
     const barW = max ? Math.max(r.value === 0 ? 0 : 2, r.value / max * (plotW - 15)) : 0;
@@ -64,8 +70,8 @@ function barSvg(chart: Chart, width: number, height: number, large: boolean, mob
 function donutSvg(chart: Chart, width: number, height: number, large: boolean, mobile = false): string {
   const cx = mobile ? 190 : 300;
   const cy = height / 2;
-  const radius = mobile ? 125 : large ? 175 : 190;
-  const inner = mobile ? 76 : large ? 105 : 112;
+  const radius = mobile ? Math.min(125, Math.max(78, height / 2 - 20)) : large ? 175 : 190;
+  const inner = mobile ? Math.max(48, radius * 0.61) : large ? 105 : 112;
   const total = chart.rows.reduce((s, r) => s + r.value, 0) || 1;
   let angle = -Math.PI / 2;
   const arcs = chart.rows.map((r, i) => {
@@ -102,7 +108,7 @@ function workItemsDetail(workName: string, items: WorkItemDetail[]): string {
 function openWorkItemsPopup(workName: string, items: WorkItemDetail[]): void {
   const modal = document.createElement('div');
   modal.className = 'statistics-detail statistics-work-popup';
-  modal.innerHTML = `<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="statistics-work-popup-title"><header class="statistics-detail-header"><div><span class="eyebrow">DETAIL</span><h2 id="statistics-work-popup-title">${escapeHtml(workName)}</h2><p>此項目的完整明細。</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細明細"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header>${workItemsDetail(workName, items)}</section>`;
+  modal.innerHTML = `<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog statistics-work-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="statistics-work-popup-title"><header class="statistics-detail-header"><div><span class="eyebrow">DETAIL</span><h2 id="statistics-work-popup-title">${escapeHtml(workName)}</h2><p>此項目的完整明細。</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細明細"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header>${workItemsDetail(workName, items)}</section>`;
   document.body.appendChild(modal);
   document.body.classList.add('statistics-detail-open');
   const close = () => { modal.remove(); document.body.classList.remove('statistics-detail-open'); document.removeEventListener('keydown', keydown); };
@@ -117,7 +123,7 @@ function openDetail(chart: Chart): void {
   const modal = document.createElement('div');
   modal.className = 'statistics-detail';
   const mobile = window.matchMedia('(max-width: 560px)').matches;
-  modal.innerHTML = `<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog${mobile ? ' statistics-detail-dialog-mobile' : ''}" role="dialog" aria-modal="true" aria-labelledby="statistics-detail-title"><header class="statistics-detail-header"><div><span class="eyebrow">STATISTICS DETAIL</span><h2 id="statistics-detail-title">${escapeHtml(chart.title)}</h2><p>${escapeHtml(chart.description)}</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細統計"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header><div class="statistics-summary-grid">${chart.summary.map(item => `<div class="statistics-summary-card"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></div>`).join('')}</div><div class="statistics-large-chart">${chartSvg(chart, true)}</div>${detailTable(chart)}</section>`;
+  modal.innerHTML = `<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog${mobile ? ' statistics-detail-dialog-mobile' : ''}" role="dialog" aria-modal="true" aria-labelledby="statistics-detail-title"><header class="statistics-detail-header"><div><span class="eyebrow">STATISTICS DETAIL</span><h2 id="statistics-detail-title">${escapeHtml(chart.title)}</h2><p>${escapeHtml(chart.description)}</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細統計"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header><div class="statistics-summary-grid">${chart.summary.map(item => `<div class="statistics-summary-card"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></div>`).join('')}</div><div class="statistics-large-chart statistics-large-chart-${escapeHtml(chart.id)}" style="--statistics-row-count:${chart.rows.length}">${chartSvg(chart, true)}</div>${detailTable(chart)}</section>`;
   document.body.appendChild(modal);
   document.body.classList.add('statistics-detail-open');
   const close = () => { modal.remove(); document.body.classList.remove('statistics-detail-open'); document.removeEventListener('keydown', keydown); };
