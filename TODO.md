@@ -4,13 +4,13 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.230`。**
+- **目前正式版本：`1.109.233`。**
 - **目前保留：45 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 已確認同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
 - Shipping 已完成一輪 Mobile / Tablet 版面重整，並修正 Shipping 頁未載入 `shipping.css` 的根因；仍需實機逐尺寸驗收。
-- Settings 已補上 Tablet（701–820px）單欄資訊區與驗證控制項的 responsive contract；並將 `settings-columns` 的手機／Tablet 預設 layout 收斂為單欄，避免「顯示設定／系統資訊」在小尺寸下被並排擠壓；仍需實機逐尺寸驗收。
+- Settings 已補上 Tablet（701–820px）單欄資訊區與驗證控制項的 responsive contract；並將 `settings-columns`、版本／資料來源資訊與三種顯示模式的手機／Tablet 預設 layout 收斂為單欄，避免小尺寸下被並排擠壓；仍需實機逐尺寸驗收。
 
 ## P0｜先處理共用根基與核心資料正確性
 
