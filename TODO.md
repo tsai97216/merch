@@ -1,6 +1,6 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先處理本輪實機明確抓到的問題，再收斂共用 UI 根基，接著完成全站 Responsive／核心資料驗收，再處理各頁功能與統計資料邏輯，最後做完整回歸與發布驗證。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先修正本輪實機明確抓到的問題，再處理會影響多頁的共用 UI 根基，接著完成 Statistics Detail 與全站 Responsive 收尾，再做核心資料／流程驗收，最後處理各頁功能整理、統計資料邏輯與完整回歸發布。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
 
 ## Current state
 
@@ -8,17 +8,15 @@
 - **目前保留：49 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 目前主軸：先修正本輪手機實機驗收抓到的問題，再完成 Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
 - 本輪手機實機已完整逛過七頁；未特別指出的頁面／區域，本輪視為未發現問題，不重複列為驗收項目。
-- 本輪已確認問題：Collection 搜尋 focus 出現重複綠色框、Item Detail 背景透明導致內容不清楚、Statistics Detail 手機版資訊過度擁擠、Add 日期控制項仍有版面問題、Management「共 N 筆收藏」跑版。
-- Shipping 已完成一輪 Mobile / Tablet 版面重整，並修正 Shipping 頁未載入 `shipping.css` 的根因；本輪手機實機未發現新增問題，仍需後續逐尺寸驗收。
-- Settings 已補上 Tablet（701–820px）單欄資訊區與驗證控制項的 responsive contract；本輪手機實機未發現新增問題，仍需後續逐尺寸驗收。
+- 本輪已確認問題：Collection 搜尋 focus 重複綠色框、Item Detail 背景透明、Statistics Detail 手機版資訊過度擁擠、Add 日期控制項版面問題、Management「共 N 筆收藏」跑版。
+- Shipping 本輪未發現新增問題；Settings 本輪未發現新增問題，但兩者仍需在最終 Responsive 驗收時逐尺寸確認。
 
-## P0｜本輪實機明確問題：先修
+## P0｜立即修正：本輪實機明確問題
 
 ### 1. Collection 搜尋 focus
 - [ ] 修正 Collection 搜尋框 focus 時出現兩個綠色框的重複 focus／outline 視覺問題。
-- [ ] 從共用 Input / focus foundation 或正確 DOM 結構處理，不以額外 page-specific CSS workaround 掩蓋。
+- [ ] 從共用 Input / focus foundation 或正確 DOM 結構處理，不以 page-specific CSS workaround 掩蓋。
 
 ### 2. Item Detail Modal
 - [ ] 修正 Item Detail Modal 背景透明導致內容辨識度不足的問題。
@@ -35,29 +33,31 @@
 - [ ] 確認共享計數／Toolbar layout 在小尺寸下可正常收縮、換行或重新排列。
 - [ ] 從共用 Toolbar / layout 結構處理，不只針對該文字加局部定位。
 
-### 5. Statistics Detail Mobile 重新設計
-- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
-- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
-- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
-- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
+## P0｜共用 UI 根基收斂
 
-## P0｜Shared UI / Responsive 根基收斂
-
-### 6. Shared Field / Layout 最後收斂
+### 5. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
-### 7. 全站 Responsive：Mobile / Tablet / iPad
-- [ ] 完成全站手機版適配調整；目前實機已逛過七頁，後續需針對修正後結果再次驗收。
+### 6. 全站 Responsive：Mobile / Tablet / iPad
+- [ ] 完成全站手機版適配調整；本輪實機已逛過七頁，先完成明確問題修正，再針對修正後結果再次驗收。
 - [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，並重新安排資訊層級。
-- [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修 Collection。
+- [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修已發現的頁面。
 - [ ] 針對手機橫向檢查橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport 等問題。
 - [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 修補共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；Header、Mobile Navigation 與主內容的水平留白需維持同一 mobile frame spacing。
 - [ ] 手機版首頁「作品消費排行」長條與右側金額需保留明確獨立空間，避免長條壓縮／擠到金額。
+
+## P0｜Statistics Detail 手機版資訊架構
+
+### 7. Statistics Detail Mobile 重新設計
+- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
+- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
+- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
+- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
 
 ## P0｜核心資料與流程驗收
 
