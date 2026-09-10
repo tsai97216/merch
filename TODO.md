@@ -4,12 +4,12 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.226`。**
+- **目前正式版本：`1.109.227`。**
 - **目前保留：45 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 已確認同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
-- Shipping 已完成一輪共用 responsive layer 的 Mobile / Tablet 版面適配；仍需實機逐尺寸驗收。
+- Shipping 已完成一輪 Mobile / Tablet 版面重整；仍需實機逐尺寸驗收。
 
 ## P0｜先處理共用根基與核心資料正確性
 
