@@ -179,8 +179,11 @@ input[type='date'] {
   min-width: 0;
   height: var(--control-height);
   min-height: var(--control-height);
-  padding-inline: var(--space-3);
-  line-height: normal;
+  box-sizing: border-box;
+  padding: 0 var(--space-3);
+  font: inherit;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
   -webkit-appearance: auto;
   appearance: auto;
 }
@@ -188,6 +191,7 @@ input[type='date'] {
 input[type='date']::-webkit-date-and-time-value {
   min-width: 0;
   text-align: left;
+  line-height: var(--line-height-normal);
 }
 
 input[type='date']::-webkit-calendar-picker-indicator {
