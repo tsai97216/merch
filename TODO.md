@@ -4,27 +4,23 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.214`。**
-- **目前保留：52 項未完成工作。**
+- **目前正式版本：`1.109.217`。**
+- **目前保留：45 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
-- `package.json` 與 `public/data/version.json` 必須保持同步。
+- `package.json` 與 `public/data/version.json` 已確認同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
 
 ## P0｜先處理共用根基與核心資料正確性
 
 ### 1. 全站 Responsive：Mobile / Tablet / iPad
-- [ ] 完成全站手機版適配調整；目前實機已發現部分卡片型內容在手機直向過度擁擠，文字會溢出。
+- [ ] 完成全站手機版適配調整；目前實機仍需逐頁驗收，尤其卡片型內容在手機直向的欄位密度與文字溢出。
 - [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，並重新安排資訊層級。
 - [ ] 全面檢查首頁、收藏、統計、新增、管理、運費、設定七頁，不只修 Collection。
 - [ ] 針對手機橫向檢查橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport 等問題。
 - [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
-- [ ] 實機確認手機內容框仍可再放寬；目前內容區左右邊界已較前版改善，但 Header／Mobile Navigation 的內部水平留白未與內容框同步收斂，需統一 mobile frame spacing。
-- [x] Mobile Header 品牌區的水平內距需與 mobile content frame 對齊，避免 Logo 貼近 viewport 邊緣。
-- [x] Mobile Navigation 的 7 個主導覽項目需由共用導覽結構平均分配整列可用寬度，不得因內容 intrinsic width 留下右側空白；同時維持各項目的可點擊與文字截斷能力。
-- [x] 首頁 Hero 移除冗餘說明文字，並確保 `Collection.` 英文標題在手機維持完整單行顯示。
-- [ ] 首頁／統計「本月花費」需與「總花費」維持一致的雙行資訊層級；此項僅涉及呈現方式，不修改既有月度消費計算邏輯。
+- [ ] 實機確認手機內容框仍可再放寬；Header、Mobile Navigation 與主內容的水平留白需維持同一 mobile frame spacing。
 - [ ] 手機版首頁「作品消費排行」長條與右側金額需保留明確獨立空間，避免長條壓縮／擠到金額。
 
 ### 2. Shared Field / Layout 最後收斂
@@ -53,8 +49,8 @@
 - [ ] 在「新增」、「管理」、「運費」相關表單／流程中明確顯示驗證狀態。
 - [ ] 驗證中、成功、失敗需有一致的 Feedback 呈現。
 - [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
-- [ ] 已確認 Add / Management 目前驗證失敗主要依賴 Toast，未實際使用既有 shared `.form-errors`；需補上共用表單錯誤呈現，並讓 Toast 保留同步／操作結果用途。
-- [ ] 已確認 Shipping 仍只以 Toast 呈現 amount／關聯 Item 驗證失敗；需接入同一 `form-feedback` foundation，並保持 Toast 僅作摘要／同步／操作結果回饋。
+- [ ] Add / Management 需補上共用表單錯誤呈現，讓既有 `.form-errors` 真正承擔欄位／表單錯誤；Toast 保留同步／操作結果用途。
+- [ ] Shipping 的 amount／關聯 Item 驗證失敗需接入同一 `form-feedback` foundation；Toast 僅作摘要／同步／操作結果回饋。
 
 ## P1｜各頁功能
 
@@ -72,18 +68,20 @@
 ### 9. 管理頁重新設計
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
 - [ ] 重新整理上方搜尋 Toolbar，避免 Desktop / Tablet / Mobile 跑版。
+- [ ] 修正管理頁底部「作品管理」區塊的位置與版面結構，確保 Desktop / Mobile 都不脫離內容流。
 
 ### 10. 運費表單與紀錄重新設計
 - [ ] 重新整理運費表單與紀錄的資訊層級與操作流程。
 - [ ] 關聯 Item 數量可能達上百筆，需提供搜尋、Filter、分組或其他大量資料選擇方式，不可依賴超長選單滑動。
 - [ ] 運費紀錄加入分頁或等效的大量資料呈現機制。
 - [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
+- [ ] 完成 Mobile / Tablet / Desktop responsive 驗收。
 
 ## P1｜資料與頁面功能
 
 ### 11. 每月消費趨勢與年度資料
 - [ ] 修正每月消費趨勢圖 2026 與 1 月數字重疊問題。
-- [ ] 詳細圖表加入年份切換。
+- [ ] 年份切換只控制「每月消費趨勢」，並移到該圖表標題區；圖表標題顯示目前年份，左右箭頭切換年份。
 - [ ] 下方明細依年份分開，不可把去年同月份資料混入目前年份。
 - [ ] 圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
 
