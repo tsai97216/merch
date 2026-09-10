@@ -264,7 +264,8 @@
 
 /* Modal / Dialog foundation */
 .modal,
-.dialog-overlay {
+.dialog-overlay,
+.item-detail-modal {
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -276,12 +277,14 @@
 }
 
 .modal[hidden],
-.dialog-overlay[hidden] {
+.dialog-overlay[hidden],
+.item-detail-modal[hidden] {
   display: none;
 }
 
 .modal-dialog,
-.dialog {
+.dialog,
+.item-detail-dialog {
   width: min(720px, calc(100vw - var(--space-8)));
   max-height: calc(100vh - var(--space-8));
   overflow: auto;
@@ -294,7 +297,8 @@
 }
 
 .modal-close,
-.dialog-close {
+.dialog-close,
+.item-detail-close {
   min-height: var(--control-height-compact);
   min-width: var(--control-height-compact);
   display: inline-grid;
@@ -307,14 +311,16 @@
 }
 
 .modal-close:hover,
-.dialog-close:hover {
+.dialog-close:hover,
+.item-detail-close:hover {
   background: var(--color-surface-soft);
   color: var(--brand-text);
   border-color: var(--brand-border);
 }
 
 .modal-close:focus-visible,
-.dialog-close:focus-visible {
+.dialog-close:focus-visible,
+.item-detail-close:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
@@ -350,7 +356,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .modal-dialog,
-  .dialog {
+  .dialog,
+  .item-detail-dialog {
     scroll-behavior: auto;
   }
 }
