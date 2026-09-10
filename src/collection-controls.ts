@@ -53,17 +53,6 @@ function setupCollectionControlGroups(): void {
   viewGroup.append(viewLabel, viewBody);
   viewBody.appendChild(view);
   sortGroup.after(viewGroup);
-
-  if (window.matchMedia('(max-width: 700px)').matches) {
-    tools.querySelectorAll<HTMLElement>('.collection-control-label').forEach((label) => {
-      label.style.display = 'flex';
-      label.style.width = '100%';
-      label.style.justifySelf = 'stretch';
-      label.style.alignItems = 'center';
-      label.style.justifyContent = 'center';
-      label.style.textAlign = 'center';
-    });
-  }
 }
 
 function ensureStatusOptions(): void {
