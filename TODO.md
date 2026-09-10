@@ -11,6 +11,7 @@
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
 - Shipping 已完成一輪 Mobile / Tablet 版面重整，並修正 Shipping 頁未載入 `shipping.css` 的根因；仍需實機逐尺寸驗收。
 - Settings 已補上 Tablet（701–820px）單欄資訊區與驗證控制項的 responsive contract；並將 `settings-columns`、版本／資料來源資訊與三種顯示模式的手機／Tablet 預設 layout 收斂為單欄，避免小尺寸下被並排擠壓；管理驗證的標題／狀態與輸入／按鈕也已改為小尺寸逐層排列；仍需實機逐尺寸驗收。
+- 本輪手機實機驗收已確認 Collection 搜尋 focus 出現重複綠色框、Item Detail 背景透明導致內容不清楚、Statistics Detail 手機版資訊區過度擁擠、Add 日期控制項仍有版面問題、Management「共 N 筆收藏」跑版；均列入後續修正，未先以局部 workaround 掩蓋。
 
 ## P0｜先處理共用根基與核心資料正確性
 
@@ -24,11 +25,14 @@
 - [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 修補共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；Header、Mobile Navigation 與主內容的水平留白需維持同一 mobile frame spacing。
 - [ ] 手機版首頁「作品消費排行」長條與右側金額需保留明確獨立空間，避免長條壓縮／擠到金額。
+- [ ] 修正 Collection 搜尋框 focus 時出現兩個綠色框的重複 focus／outline 視覺問題，應從共用 Input / focus foundation 或正確 DOM 結構處理。
+- [ ] 修正 Management 手機版「共 N 筆收藏」文字跑版，確認共享計數／Toolbar layout 在小尺寸下可正常收縮或換行。
 
 ### 2. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
+- [ ] 修正 Add 頁日期控制項仍存在的實機版面問題，確認日期 input／外框／原生日期 UI 在手機尺寸下不再錯位或異常佔位。
 
 ### 3. Collection 初始資料載入與 fallback 最終驗收
 - [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
@@ -85,6 +89,7 @@
 - [ ] 年份切換只控制「每月消費趨勢」，並移到該圖表標題區；圖表標題顯示目前年份，左右箭頭切換年份。
 - [ ] 下方明細依年份分開，不可把去年同月份資料混入目前年份。
 - [ ] 圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
+- [ ] Statistics Detail 手機版需重新整理資訊架構與版面，不可直接將 Desktop 統計資訊壓縮到手機；上方統計資訊需重新分層，Detail 內容需以手機可讀性與操作空間為優先。
 
 ### 12. 首頁角色排行平手規則與版面
 - [ ] 數量相同的角色顯示相同名次／數字。
