@@ -43,7 +43,7 @@ function verticalMonthlySvg(chart: Chart, width: number, height: number, large: 
     const value = chart.format === 'money' ? formatMoney(r.value) : formatQuantity(r.value);
     return `<g class="chart-bar-item"><title>${escapeHtml(r.label)}：${escapeHtml(value)}</title><rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="5" class="bar-fill"></rect><text x="${x + barW / 2}" y="${height - bottom + 20}" text-anchor="middle">${escapeHtml(r.label)}</text>${large ? `<text x="${x + barW / 2}" y="${Math.max(18, y - 7)}" text-anchor="middle" class="bar-value">${escapeHtml(value)}</text>` : ''}</g>`;
   }).join('');
-  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${left}" y="16" class="chart-year">${chart.year ?? currentYear()} 年</text><line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" class="chart-axis"></line>${labels}</svg>`;
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><line x1="${left}" y1="${top + plotH}" x2="${width - right}" y2="${top + plotH}" class="chart-axis"></line>${labels}</svg>`;
 }
 
 function barSvg(chart: Chart, width: number, height: number, large: boolean, mobile = false): string {
@@ -163,50 +163,65 @@ function openDetail(chart: Chart): void {
   modal.focus();
 }
 
-function renderYearControl(years: number[]): void {
-  const page = qs<HTMLElement>('[data-page="statistics"]');
-  const heading = page?.querySelector<HTMLElement>('.page-heading');
-  if (!heading) return;
-  let control = qs<HTMLLabelElement>('#statistics-year-control', heading);
-  if (!control) {
-    control = document.createElement('label');
-    control.id = 'statistics-year-control';
-    control.className = 'statistics-year-control';
-    control.innerHTML = '<span>月度年份</span><select id="statistics-year" aria-label="統計月份年份"></select>';
-    heading.appendChild(control);
-    control.querySelector('select')?.addEventListener('change', event => {
-      const value = Number((event.currentTarget as HTMLSelectElement).value);
-      if (Number.isInteger(value)) { selectedYear = value; void renderCurrentStats(); }
-    });
+function render(charts: Chart[], years: number[]): void {
+  const host = qs<HTMLElement>('#statistics-charts');
+  if (!host) return;
+  host.innerHTML = charts.map(chart => {
+    const isMonthly = chart.id === 'monthly-spending';
+    const yearControl = isMonthly
+      ? `<div class="statistics-year-control" role="group" aria-label="月度年份"><button type="button" class="statistics-year-step" data-stat-year-prev aria-label="上一年">‹</button><span data-stat-year-label>${chart.year ?? currentYear()} 年</span><button type="button" class="statistics-year-step" data-stat-year-next aria-label="下一年">›</button></div>`
+      : '';
+    return `<article class="statistics-chart-card" data-chart-id="${escapeHtml(chart.id)}"><div class="statistics-chart-heading"><button type="button" class="statistics-chart-open" data-chart-open><span><b>${escapeHtml(chart.title)}</b><small>${escapeHtml(chart.description)}</small></span><i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i></button>${yearControl}</div><button type="button" class="statistics-chart-preview" data-chart-open aria-label="查看${escapeHtml(chart.title)}完整分析">${chartSvg(chart)}</button><span class="statistics-chart-hint">點擊查看完整分析</span></article>`;
+  }).join('');
+
+  const monthly = charts.find(chart => chart.id === 'monthly-spending');
+  const prev = qs<HTMLButtonElement>('[data-stat-year-prev]', host);
+  const next = qs<HTMLButtonElement>('[data-stat-year-next]', host);
+  if (monthly) {
+    const index = years.indexOf(monthly.year ?? selectedYear);
+    if (prev) prev.disabled = index < 0 || index >= years.length - 1;
+    if (next) next.disabled = index <= 0;
   }
-  const select = control.querySelector<HTMLSelectElement>('select');
-  if (!select) return;
-  select.innerHTML = years.map(year => `<option value="${year}"${year === selectedYear ? ' selected' : ''}>${year} 年</option>`).join('');
-  select.value = String(selectedYear);
 }
 
 let currentRender: (() => void) | null = null;
 async function renderCurrentStats(): Promise<void> { currentRender?.(); }
 
-function render(charts: Chart[]): void {
-  const host = qs<HTMLElement>('#statistics-charts');
-  if (!host) return;
-  host.innerHTML = charts.map(chart => `<button type="button" class="statistics-chart-card" data-chart-id="${escapeHtml(chart.id)}"><span class="statistics-chart-heading"><span><b>${escapeHtml(chart.title)}</b><small>${escapeHtml(chart.description)}</small></span><i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i></span><span class="statistics-chart-preview">${chartSvg(chart)}</span><span class="statistics-chart-hint">點擊查看完整分析</span></button>`).join('');
-  qsa<HTMLElement>('[data-chart-id]', host).forEach(button => button.addEventListener('click', () => {
-    const chart = charts.find(item => item.id === button.dataset.chartId);
-    if (chart) openDetail(chart);
-  }));
-}
-
 let unsubscribe: (() => void) | null = null;
 function mount(store: MerchStore): void {
   unsubscribe?.();
+  const host = qs<HTMLElement>('#statistics-charts');
+  if (!host) return;
+  if (!host.dataset.statisticsInteractionsBound) {
+    host.dataset.statisticsInteractionsBound = 'true';
+    host.addEventListener('click', event => {
+      const target = event.target as HTMLElement;
+      const prev = target.closest<HTMLButtonElement>('[data-stat-year-prev]');
+      const next = target.closest<HTMLButtonElement>('[data-stat-year-next]');
+      if (prev || next) {
+        const years = statisticsYears(store.snapshot.items, store.snapshot.shipping ?? []);
+        const index = years.indexOf(selectedYear);
+        const nextIndex = prev ? index + 1 : index - 1;
+        if (nextIndex >= 0 && nextIndex < years.length) {
+          selectedYear = years[nextIndex];
+          void renderCurrentStats();
+        }
+        return;
+      }
+      const open = target.closest<HTMLElement>('[data-chart-open]');
+      if (!open) return;
+      const card = open.closest<HTMLElement>('[data-chart-id]');
+      if (!card) return;
+      const charts = aggregateStatistics(store.snapshot.items, store.snapshot.shipping ?? [], selectedYear);
+      const chart = charts.find(item => item.id === card.dataset.chartId);
+      if (chart) openDetail(chart);
+    });
+  }
   const renderCurrent = () => {
     const years = statisticsYears(store.snapshot.items, store.snapshot.shipping ?? []);
     if (!years.includes(selectedYear)) selectedYear = years[0] ?? currentYear();
-    renderYearControl(years);
     const charts = aggregateStatistics(store.snapshot.items, store.snapshot.shipping ?? [], selectedYear);
-    render(charts);
+    render(charts, years);
     const currentCharts = aggregateStatistics(store.snapshot.items, store.snapshot.shipping ?? [], currentYear());
     const monthly = currentCharts.find(chart => chart.id === 'monthly-spending');
     const monthValue = monthly?.rows[new Date().getMonth()]?.value ?? 0;
