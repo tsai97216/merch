@@ -171,6 +171,26 @@ input[type='radio'] {
   accent-color: var(--brand);
 }
 
+input[type='date'] {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-height);
+  padding-inline: var(--space-3);
+  line-height: normal;
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
+input[type='date']::-webkit-date-and-time-value {
+  min-width: 0;
+  text-align: left;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  margin: 0;
+  flex: 0 0 auto;
+}
+
 select {
   cursor: pointer;
 }
