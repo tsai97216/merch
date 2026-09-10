@@ -54,13 +54,13 @@ function setupCollectionControlGroups(): void {
   viewBody.appendChild(view);
   sortGroup.after(viewGroup);
 
-  [
-    ...tools.querySelectorAll<HTMLElement>('.collection-control-label'),
-  ].forEach((label) => {
-    label.style.width = '100%';
-    label.style.justifySelf = 'stretch';
-    label.style.textAlign = 'center';
-  });
+  if (window.matchMedia('(max-width: 700px)').matches) {
+    tools.querySelectorAll<HTMLElement>('.collection-control-label').forEach((label) => {
+      label.style.width = '100%';
+      label.style.justifySelf = 'stretch';
+      label.style.textAlign = 'center';
+    });
+  }
 }
 
 function ensureStatusOptions(): void {
