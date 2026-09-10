@@ -102,7 +102,12 @@ function detailTable(chart: Chart): string {
 function workItemsDetail(workName: string, items: WorkItemDetail[]): string {
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalSpend = items.reduce((sum, item) => sum + item.spend, 0);
-  return `<div class="statistics-work-items"><div class="statistics-work-items-head"><div><span class="eyebrow">WORK ITEM DETAIL</span><h3>${escapeHtml(workName)}</h3></div><div class="statistics-work-items-summary"><span>${formatQuantity(totalQuantity)} 件</span><strong>${formatMoney(totalSpend)}</strong></div></div><div class="statistics-work-items-list">${items.map(item => `<article class="statistics-work-item"><div class="statistics-work-item-main"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.date)} · ${escapeHtml(item.platform)}</span></div><div class="statistics-work-item-meta"><span>${formatQuantity(item.quantity)} 件</span><span>${escapeHtml(item.currency)} ${formatMoney(item.unitPrice)} / 件</span><strong>${escapeHtml(item.currency)} ${formatMoney(item.spend)}</strong></div></article>`).join('')}</div></div>`;
+  return `<div class="statistics-work-items"><div class="statistics-work-items-head"><div><span class="eyebrow">WORK ITEM DETAIL</span><h3>${escapeHtml(workName)}</h3></div><div class="statistics-work-items-summary"><span>${formatQuantity(totalQuantity)} 件</span><strong>${formatMoney(totalSpend)}</strong></div></div><div class="statistics-work-items-list">${items.map(item => {
+    const quantity = formatQuantity(item.quantity);
+    const total = formatMoney(item.spend);
+    const unit = item.quantity > 1 ? `${escapeHtml(item.currency)} ${formatMoney(item.unitPrice)} / 件` : '';
+    return `<article class="statistics-work-item"><div class="statistics-work-item-main"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.date)} · ${escapeHtml(item.platform)}</span></div><div class="statistics-work-item-meta"><span>${quantity} 件${unit ? ` · ${unit}` : ''}</span><strong>${escapeHtml(item.currency)} ${total}</strong></div></article>`;
+  }).join('')}</div></div>`;
 }
 
 function openWorkItemsPopup(workName: string, items: WorkItemDetail[]): void {
