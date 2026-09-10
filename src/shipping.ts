@@ -4,6 +4,7 @@ import { escapeHtml, qs } from './utils/dom';
 import { showToast } from './utils/toast';
 import { ensureFormErrors, setFormErrors, clearFormErrors } from './utils/form-feedback';
 import { openShippingDetail } from './shipping-detail-modal';
+import './shipping.css';
 
 let storeRef: MerchStore | null = null;
 let editingId = '';
