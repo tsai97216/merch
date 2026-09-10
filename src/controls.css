@@ -110,7 +110,10 @@ a.button.compact {
 input,
 select,
 textarea {
+  width: 100%;
+  min-width: 0;
   min-height: var(--control-height);
+  box-sizing: border-box;
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
