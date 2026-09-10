@@ -1,6 +1,6 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先處理這輪實機明確抓到的問題，再收斂共用 UI 根基，接著完成全站 Responsive／核心資料驗收，最後處理各頁功能與正式回歸。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。以下順序即目前建議執行順序：先處理本輪實機明確抓到的問題，再收斂共用 UI 根基，接著完成全站 Responsive／核心資料驗收，再處理各頁功能與統計資料邏輯，最後做完整回歸與發布驗證。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
 
 ## Current state
 
@@ -25,21 +25,21 @@
 - [ ] 確認 Modal surface、遮罩、文字對比與圖片內容在 Light / Dark / Mobile 下均清楚。
 - [ ] 沿用既有 shared Modal / Surface foundation，不建立 Detail 專用的第二套 Modal 視覺系統。
 
-### 3. Statistics Detail Mobile 重新設計
-- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
-- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
-- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
-- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
-
-### 4. Add 日期控制項
+### 3. Add 日期控制項
 - [ ] 修正 Add 頁日期控制項仍存在的實機版面問題。
 - [ ] 確認日期 input、外框、原生日期 UI 在手機尺寸下不再錯位、異常佔位或產生不自然的「日期方塊」。
 - [ ] 從共用 Field / Date control 根因處理，不以 Add page-specific workaround 掩蓋。
 
-### 5. Management「共 N 筆收藏」
+### 4. Management「共 N 筆收藏」
 - [ ] 修正 Management 手機版「共 N 筆收藏」文字跑版。
 - [ ] 確認共享計數／Toolbar layout 在小尺寸下可正常收縮、換行或重新排列。
 - [ ] 從共用 Toolbar / layout 結構處理，不只針對該文字加局部定位。
+
+### 5. Statistics Detail Mobile 重新設計
+- [ ] 重新整理 Statistics Detail 的手機版資訊架構與版面。
+- [ ] 上方統計資訊不得直接將 Desktop 版壓縮成一團；需重新分層、排列資訊。
+- [ ] Detail 內容以手機可讀性、資訊層級與操作空間為優先。
+- [ ] 同時確認 Desktop / Tablet 不因手機版重整而被破壞。
 
 ## P0｜Shared UI / Responsive 根基收斂
 
@@ -72,18 +72,18 @@
 
 ## P1｜共用功能與表單回饋
 
-### 10. Light / Dark 與 Settings 功能驗收
-- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
-- [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
-- [ ] 驗證 Admin Secret 輸入、驗證、清除與 session 保存。
-- [ ] 驗證 Settings 系統資訊、版本顯示及 `theme.ts` / `settings-auth.ts` selector contract。
-
-### 11. 新增／管理／運費顯示驗證狀態
+### 10. 新增／管理／運費顯示驗證狀態
 - [ ] 在「新增」、「管理」、「運費」相關表單／流程中明確顯示驗證狀態。
 - [ ] 驗證中、成功、失敗需有一致的 Feedback 呈現。
 - [ ] 沿用 shared Feedback / Badge / Field foundation，不建立各頁獨立版本。
 - [ ] Add / Management 需補上共用表單錯誤呈現，讓既有 `.form-errors` 真正承擔欄位／表單錯誤；Toast 保留同步／操作結果用途。
 - [ ] Shipping 的 amount／關聯 Item 驗證失敗需接入同一 `form-feedback` foundation；Toast 僅作摘要／同步／操作結果回饋。
+
+### 11. Light / Dark 與 Settings 功能驗收
+- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
+- [ ] 驗證 Settings 三種顯示模式切換與目前模式狀態。
+- [ ] 驗證 Admin Secret 輸入、驗證、清除與 session 保存。
+- [ ] 驗證 Settings 系統資訊、版本顯示及 `theme.ts` / `settings-auth.ts` selector contract。
 
 ## P1｜各頁功能整理
 
