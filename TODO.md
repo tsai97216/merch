@@ -4,11 +4,12 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.217`。**
+- **目前正式版本：`1.109.226`。**
 - **目前保留：45 項未完成工作。**
 - 每次更新 TODO 時，需重新檢查剩餘項目與優先級。
 - `package.json` 與 `public/data/version.json` 已確認同步。
 - 目前主軸：Responsive / Design System 收尾，以及核心資料驗收、各頁功能整理與最終回歸。
+- Shipping 已完成一輪共用 responsive layer 的 Mobile / Tablet 版面適配；仍需實機逐尺寸驗收。
 
 ## P0｜先處理共用根基與核心資料正確性
 
@@ -19,7 +20,7 @@
 - [ ] 針對手機橫向檢查橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport 等問題。
 - [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
 - [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收，確認無頂部大片空白、overflow、斷版與觸控問題。
-- [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 掩蓋共用問題。
+- [ ] Responsive 相關修改集中於 `src/responsive-refinement.css`，不新增分散 breakpoint，也不以 page-specific workaround 修補共用問題。
 - [ ] 實機確認手機內容框仍可再放寬；Header、Mobile Navigation 與主內容的水平留白需維持同一 mobile frame spacing。
 - [ ] 手機版首頁「作品消費排行」長條與右側金額需保留明確獨立空間，避免長條壓縮／擠到金額。
 
