@@ -10,14 +10,14 @@ let selectedYear = currentYear();
 
 function chartSvg(chart: Chart, large = false): string {
   const type = large ? chart.largeType : chart.smallType;
-  const mobile = large && window.matchMedia('(max-width: 560px)').matches;
+  const mobile = large && window.matchMedia('(max-width: 700px)').matches;
   const width = mobile ? 680 : large ? 1100 : 920;
   const height = mobile
     ? type === 'donut'
-      ? 300
+      ? 260
       : chart.id === 'monthly-spending'
-        ? 300
-        : Math.max(170, 38 + chart.rows.length * 32)
+        ? 260
+        : Math.max(150, 32 + chart.rows.length * 28)
     : large ? 520 : 430;
   if (!chart.rows.length) return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(chart.title)}"><text x="${width / 2}" y="${height / 2}" text-anchor="middle" class="chart-empty">目前沒有足夠資料</text></svg>`;
   if (type === 'donut') return donutSvg(chart, width, height, large, mobile);
@@ -56,7 +56,7 @@ function barSvg(chart: Chart, width: number, height: number, large: boolean, mob
   const max = Math.max(...chart.rows.map(r => r.value), 0);
   const gap = mobile ? 8 : large ? 12 : 10;
   const rowH = Math.max(mobile ? 24 : 25, (plotH - gap * Math.max(0, chart.rows.length - 1)) / chart.rows.length);
-  const barH = Math.min(rowH - (mobile ? 5 : 5), mobile ? 22 : large ? 30 : 24);
+  const barH = Math.min(rowH - 5, mobile ? 22 : large ? 30 : 24);
   const labels = chart.rows.map((r, i) => {
     const y = top + i * (rowH + gap);
     const barW = max ? Math.max(r.value === 0 ? 0 : 2, r.value / max * (plotW - 15)) : 0;
@@ -70,8 +70,8 @@ function barSvg(chart: Chart, width: number, height: number, large: boolean, mob
 function donutSvg(chart: Chart, width: number, height: number, large: boolean, mobile = false): string {
   const cx = mobile ? 190 : 300;
   const cy = height / 2;
-  const radius = mobile ? Math.min(125, Math.max(78, height / 2 - 20)) : large ? 175 : 190;
-  const inner = mobile ? Math.max(48, radius * 0.61) : large ? 105 : 112;
+  const radius = mobile ? Math.min(110, Math.max(72, height / 2 - 18)) : large ? 175 : 190;
+  const inner = mobile ? Math.max(44, radius * 0.61) : large ? 105 : 112;
   const total = chart.rows.reduce((s, r) => s + r.value, 0) || 1;
   let angle = -Math.PI / 2;
   const arcs = chart.rows.map((r, i) => {
@@ -102,12 +102,22 @@ function detailTable(chart: Chart): string {
 function workItemsDetail(workName: string, items: WorkItemDetail[]): string {
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalSpend = items.reduce((sum, item) => sum + item.spend, 0);
-  return `<div class="statistics-work-items"><div class="statistics-work-items-head"><div><span class="eyebrow">WORK ITEM DETAIL</span><h3>${escapeHtml(workName)}</h3></div><div class="statistics-work-items-summary"><span>${formatQuantity(totalQuantity)} 件</span><strong>${formatMoney(totalSpend)}</strong></div></div><div class="statistics-work-items-list">${items.map(item => {
+  const desktopItems = items.map(item => {
     const quantity = formatQuantity(item.quantity);
     const total = formatMoney(item.spend);
-    const unit = item.quantity > 1 ? `${escapeHtml(item.currency)} ${formatMoney(item.unitPrice)} / 件` : '';
-    return `<article class="statistics-work-item"><div class="statistics-work-item-main"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.date)} · ${escapeHtml(item.platform)}</span></div><div class="statistics-work-item-meta"><span>${quantity} 件${unit ? ` · ${unit}` : ''}</span><strong>${escapeHtml(item.currency)} ${total}</strong></div></article>`;
-  }).join('')}</div></div>`;
+    const unit = item.quantity > 1 ? `${formatMoney(item.unitPrice)} / 件` : '';
+    const cost = unit ? `${quantity} 件 · ${unit} · 小計 ${total}` : `${quantity} 件 · ${total}`;
+    return `<article class="statistics-work-item"><div class="statistics-work-item-main"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.date)} · ${escapeHtml(item.platform)}</span></div><div class="statistics-work-item-meta"><span>${escapeHtml(cost)}</span></div></article>`;
+  }).join('');
+  const mobileItems = items.map(item => {
+    const quantity = formatQuantity(item.quantity);
+    const total = formatMoney(item.spend);
+    const cost = item.quantity > 1
+      ? `${quantity} 件 · ${formatMoney(item.unitPrice)} / 件 · 小計 ${total}`
+      : `${quantity} 件 · ${total}`;
+    return `<article class="statistics-work-item-mobile"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.date)} · ${escapeHtml(item.platform)}</span><b>${escapeHtml(cost)}</b></article>`;
+  }).join('');
+  return `<div class="statistics-work-items"><div class="statistics-work-items-head"><div><span class="eyebrow">WORK ITEM DETAIL</span><h3>${escapeHtml(workName)}</h3></div><div class="statistics-work-items-summary"><span>${formatQuantity(totalQuantity)} 件</span><strong>${formatMoney(totalSpend)}</strong></div></div><div class="statistics-work-items-list statistics-work-items-desktop">${desktopItems}</div><div class="statistics-work-items-mobile-list">${mobileItems}</div></div>`;
 }
 
 function openWorkItemsPopup(workName: string, items: WorkItemDetail[]): void {
@@ -127,7 +137,7 @@ function openWorkItemsPopup(workName: string, items: WorkItemDetail[]): void {
 function openDetail(chart: Chart): void {
   const modal = document.createElement('div');
   modal.className = 'statistics-detail';
-  const mobile = window.matchMedia('(max-width: 560px)').matches;
+  const mobile = window.matchMedia('(max-width: 700px)').matches;
   modal.innerHTML = `<div class="statistics-detail-backdrop" data-stat-close></div><section class="statistics-detail-dialog${mobile ? ' statistics-detail-dialog-mobile' : ''}" role="dialog" aria-modal="true" aria-labelledby="statistics-detail-title"><header class="statistics-detail-header"><div><span class="eyebrow">STATISTICS DETAIL</span><h2 id="statistics-detail-title">${escapeHtml(chart.title)}</h2><p>${escapeHtml(chart.description)}</p></div><button type="button" class="statistics-detail-close" data-stat-close aria-label="關閉詳細統計"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></header><div class="statistics-summary-grid">${chart.summary.map(item => `<div class="statistics-summary-card"><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></div>`).join('')}</div><div class="statistics-large-chart statistics-large-chart-${escapeHtml(chart.id)}" style="--statistics-row-count:${chart.rows.length}">${chartSvg(chart, true)}</div>${detailTable(chart)}</section>`;
   document.body.appendChild(modal);
   document.body.classList.add('statistics-detail-open');
