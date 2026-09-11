@@ -1,5 +1,4 @@
 import './statistics.css';
-import './statistics-mobile.css';
 import { getStore, type MerchStore } from './store';
 import { aggregateStatistics, statisticsYears, type Chart, type WorkItemDetail } from './statistics-data';
 import { currentYear } from './utils/date';
