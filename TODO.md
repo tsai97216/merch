@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.266`。**
+- **目前正式版本：`1.109.267`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`d624ad8f5054ec9aa1e2f4af37168085b5015a08`。
+- 最新程式修改 commit：`bd07946212c16ebd4d385151741fb9ed5029c4e5`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認、角色排行驗證，以及無法由現有 CI 覆蓋的實機驗收。
 
