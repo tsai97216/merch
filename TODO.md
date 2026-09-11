@@ -8,9 +8,10 @@
 
 - **目前正式版本：`1.109.265`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新修改 commit：`49d1c3ee99d0bf7aabdc608df722ad7f2ba41a3d`。
+- 最新修改 commit：`fb6d72cb4761097763c8d3e9e3f5d17e71d6b3b1`。
 - Works Management Mobile 已確認正常：「新增／編輯作品」與「現有作品」已改為上下單欄，不再互相擠壓。
 - Shipping records 已加入分頁，Item 選擇器與 Shipping records 都會依目前資料量自動限制頁碼。
+- Shipping 分頁、Item 搜尋／Filter、編輯／刪除與 Detail 都使用同一份 Store snapshot；目前未發現 state 污染或 stale record 問題。
 - 最新修改尚無可宣稱「CI 已通過」的 workflow run，發布前需重新確認。
 
 # P0｜共用 UI 與 Responsive
@@ -19,19 +20,19 @@
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
 - [x] 日期、文字、Select 等共用控制項高度、寬度與對齊統一。
 - [ ] 持續確認共用 Input focus／outline、Modal / Surface、Toolbar / count 沒有重複實作。
-- [x] Collection Select／View Button semantic state 已收斂至 shared foundation。
-- [x] Responsive layer 中確認無效的舊 Flex-only 宣告已清理。
-- [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
+- [x] Collection Select / View Button 的 semantic state 已移到 shared foundation。
+- [x] Responsive layer 舊 Flex-only 宣告已清理。
+- [ ] 不使用 page-specific CSS workaround 掩蓋 shared component 問題。
 
-## 2. 全站 Responsive 最後整理
-- [ ] 依 shared foundation 完成最後 Responsive 結構整理，不再新增不必要的分散 breakpoint。
-- [x] Works Management viewport CSS 已集中至 `responsive-refinement.css`，Mobile 單欄已完成並驗收。
-- [x] Statistics viewport CSS 已集中至 `responsive-refinement.css`，舊 `statistics-mobile.css` 已移除。
-- [x] Settings auth viewport CSS 已集中至 `responsive-refinement.css`。
-- [x] Mobile Navigation 已改為水平滑動內容流。
-- [x] Mobile `main` 701–820px full-width frame 已修正。
-- [x] Mobile Navigation <=820px 左右 frame spacing 已統一。
-- [x] `src/styles.css` 殘留 Mobile viewport 規則已清理。
+## 2. Responsive
+- [ ] 最終 Responsive 結構清理，持續以 shared foundation 為主。
+- [x] Works Management viewport CSS 已集中，Mobile 單欄已確認。
+- [x] Statistics viewport CSS 已集中，舊 `statistics-mobile.css` 已移除。
+- [x] Settings auth viewport CSS 已集中。
+- [x] Mobile Navigation 已改為可橫向捲動。
+- [x] Mobile 701–820px main frame full-width 已修正。
+- [x] Mobile Navigation <=820px frame spacing 已統一。
+- [x] `src/styles.css` 殘留 mobile viewport rules 已清理。
 - [x] Home「作品消費排行」Mobile spacing 已修正。
 - [ ] 驗證 360 / 390 / 430 / 768 / 820 / 1024px Responsive contract。
 - [ ] 全面驗證 Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁。
@@ -67,7 +68,7 @@
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
 - [ ] Item 大量資料選擇提供搜尋／Filter／分組等機制。
 - [x] Shipping records 已加入分頁，頁碼會依實際資料量限制，且刪除／資料更新後會自動校正目前頁碼。
-- [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
+- [x] 分頁、搜尋／篩選與詳細資訊保持資料一致；目前 state、record lookup 與 Detail 均以 Store snapshot 為單一資料來源。
 
 ## 14. Home 角色排行
 - [ ] 相同數量顯示相同名次。
@@ -100,31 +101,9 @@
 - [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius。
 
 ## 20. Functional Regression
-- [ ] 七頁基本流程：Home / Collection / Statistics / Add / Shipping / Management / Settings。
-- [ ] Search / Filter / Sort / Detail / Add / Edit / Delete。
-- [ ] 圖片新增／替換／刪除／主圖／排序與同步狀態。
-- [ ] Work / Category / Serial selectors 與管理操作。
-- [ ] Error / Loading / Empty / Success / Failure feedback。
+- [ ] 全站核心流程回歸：載入、搜尋、篩選、排序、Detail、Add/Edit/Delete、圖片同步、Shipping。
+- [ ] Worker mutation / transaction / write scope 驗證。
 
-## 21. Release Final Checks
-- [ ] TypeScript check。
-- [ ] Production build。
-- [ ] Schema / data integrity。
-- [ ] Worker relevant checks。
-- [ ] 版本號與 `public/data/version.json` 同步。
-- [ ] GitHub Actions / deployment workflow 通過。
-- [ ] 正式部署後版本與關鍵頁面確認。
-
-## 執行順序
-
-1. P0 #1 Shared Field / Layout
-2. P0 #2 Responsive
-3. P1 #9 Collection
-4. P1 #10 Add
-5. P1 #11 Management
-6. P1 #12 Shipping
-7. P1 #14 Home ranking
-8. P2 #16–18 Data / Flow
-9. P2 #19 Responsive final
-10. P2 #20 Functional regression
-11. P2 #21 Release
+## 21. Release
+- [ ] TypeScript / build / schema / data / Worker 相關驗證全部通過。
+- [ ] GitHub Actions 成功後再宣告 release。
