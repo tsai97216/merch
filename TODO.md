@@ -6,12 +6,12 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.272`。**
+- **目前正式版本：`1.109.273`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`38a3443960c8567f03414c3106580d571853d0e9`。
+- 最新程式修改 commit：`9e0ac4e63a8c3cab8fd2a052325ec42819b41fa7`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - Home 角色排行已改為依累計花費金額排序；多角色商品的金額按唯一角色平均分攤，並補上平手／競賽排名、排序與分攤契約驗證。
-- Ranking detail rows 已統一為緊湊的「排名／名稱／金額」欄位結構，桌面與手機版都進一步縮短名稱與金額之間的距離。
+- Ranking detail rows 已統一為緊湊的「排名／名稱／金額」欄位結構，桌面與手機版都進一步縮短名稱與金額之間的距離；手機首頁未展開的排行預覽也縮為較短的三列。
 - 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
@@ -51,6 +51,7 @@
 - [x] 驗證排序與顯示邏輯一致。
 - [x] 驗證角色排行與作品消費排行 Panel 內部結構。
 - [x] 詳情排行表格名稱與金額欄距離調整為更緊湊排列。
+- [x] 首頁手機排行預覽縮短為前三名，避免未展開時佔用過多高度。
 
 # P2｜自動化驗證與資料完整性
 
