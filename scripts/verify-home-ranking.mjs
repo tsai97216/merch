@@ -10,23 +10,33 @@ function sortCharacterRanking(rows) {
 }
 
 const rows = sortCharacterRanking([
-  ['乙', 2],
-  ['甲', 5],
-  ['丙', 5],
-  ['丁', 2],
-  ['戊', 1],
+  ['乙', 200],
+  ['甲', 500],
+  ['丙', 500],
+  ['丁', 200],
+  ['戊', 100],
 ]);
 
 assert.deepEqual(rows.map(([name]) => name), ['丙', '甲', '丁', '乙', '戊']);
 assert.deepEqual(rows.map((_, index) => rankAt(rows, index)), [1, 1, 3, 3, 5]);
 
 const tieAfterTop = sortCharacterRanking([
-  ['A', 4],
-  ['B', 4],
-  ['C', 2],
-  ['D', 2],
-  ['E', 1],
+  ['A', 400],
+  ['B', 400],
+  ['C', 200],
+  ['D', 200],
+  ['E', 100],
 ]);
 assert.deepEqual(tieAfterTop.map((_, index) => rankAt(tieAfterTop, index)), [1, 1, 3, 3, 5]);
 
-console.log('Home character ranking contract passed.');
+function allocateItemSpending(characters, value) {
+  const uniqueCharacters = [...new Set(characters.map((character) => String(character).trim()).filter(Boolean))];
+  if (!uniqueCharacters.length) return [];
+  const share = value / uniqueCharacters.length;
+  return uniqueCharacters.map((character) => [character, share]);
+}
+
+const allocated = allocateItemSpending(['流螢', '流螢', '銀狼'], 1000);
+assert.deepEqual(allocated, [['流螢', 500], ['銀狼', 500]]);
+
+console.log('Home character spending ranking contract passed.');
