@@ -1,5 +1,6 @@
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
+import { rankAt, sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
 
 const money = (n: number) => `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n))}`;
 const quantityOf = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
@@ -63,18 +64,13 @@ function ensureCharacterModal() {
   return modal;
 }
 
-function getCharacterRows(store: MerchStore) {
+function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
   const counts = new Map<string, number>();
   store.snapshot.items.forEach((item) => (item.characters || []).forEach((character) => counts.set(character, (counts.get(character) || 0) + quantityOf(item))));
-  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
+  return sortCharacterRanking([...counts.entries()]);
 }
 
-function rankAt(rows: Array<[string, number]>, index: number): number {
-  if (index === 0) return 1;
-  return rows[index][1] === rows[index - 1][1] ? rankAt(rows, index - 1) : index + 1;
-}
-
-function renderCharacterRanking(list: HTMLOListElement, rows: Array<[string, number]>): void {
+function renderCharacterRanking(list: HTMLOListElement, rows: CharacterRankingRow[]): void {
   list.innerHTML = rows.length
     ? rows.map(([character, count], index) => `<li><span>${rankAt(rows, index)}</span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><b>${count}</b></li>`).join('')
     : '<li class="empty-state">目前沒有資料</li>';
