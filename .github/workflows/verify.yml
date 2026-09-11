@@ -62,6 +62,8 @@ jobs:
         run: npm run verify:worker-image
       - name: Verify worker transaction semantics
         run: npm run verify:worker-transaction
+      - name: Verify API load and fallback contract
+        run: npm run verify:api-load
       - name: Verify version consistency
         run: npm run verify:version
       - name: Verify statistics date boundaries
