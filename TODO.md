@@ -66,7 +66,7 @@
 
 ## 12. Shipping
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
-- [ ] Item 大量資料選擇提供搜尋／Filter／分組等機制。
+- [x] Item 大量資料選擇已具備搜尋與「只顯示已選」Filter，並與 Item pagination 分離；目前沒有明確需要額外分組層的問題。
 - [x] Shipping records 已加入分頁，頁碼會依實際資料量限制，且刪除／資料更新後會自動校正目前頁碼。
 - [x] 分頁、搜尋／篩選與詳細資訊保持資料一致；目前 state、record lookup 與 Detail 均以 Store snapshot 為單一資料來源。
 
