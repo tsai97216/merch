@@ -4,9 +4,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.245`。**
+- **目前正式版本：`1.109.249`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新 HEAD：`524f41dec61d0d4bda04697bd9db0c9fc01e1440`。
+- 最新 HEAD：`d0c36b75b71f8fa912ebbe3afef482ac815acd6c`。
 - 本輪已完成多項共用 UI、Responsive、Statistics、Feedback 與資料結構修正；目前剩餘工作以最終實機／回歸／發布驗收為主。
 - P1 #14 角色排行平手規則與版面已完成程式修正，保留至最終驗收確認。
 - P2 #16～#20 已完成主要程式碼／契約檢查；尚未將靜態檢查視為實機驗收結果。
@@ -81,6 +81,7 @@
 ### 17. Collection 初始資料載入與 fallback 最終驗收
 - [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的實際等待時間。
 - [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
+- [ ] 確認 Static Store fallback 即使 Remote Data 載入失敗，也會獨立載入 `shipping.json`，不得把既有運費紀錄降為空陣列。
 - [ ] 實機驗收後再決定是否移除舊 `loadNewStaticData()` fallback。
 
 ### 18. Shipping `itemIds` 參照完整性實機驗收
