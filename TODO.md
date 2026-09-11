@@ -36,6 +36,7 @@
 - [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
 - [ ] Mobile landscape 處理橫向滾動、按鈕切割、文字重疊與 Modal 超出 viewport。
 - [ ] Header、Mobile Navigation 與主內容維持一致的 frame spacing。
+- [ ] **Mobile Navigation 目前使用固定 7 欄 Grid 並 `overflow:hidden`，與既定「可水平滑動的頁面導覽列」契約不符；需改為可橫向滾動的內容流，避免窄螢幕七個頁籤被硬擠。**
 - [ ] 首頁「作品消費排行」的長條與右側金額保留獨立空間。
 - [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
 
