@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.258`。**
+- **目前正式版本：`1.109.259`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`433e892d2d1f01f920ba39226ba8689dcf7fd6ef`。
+- 最新功能／版本修改 commit：`10b30f7eed18c5237aa3735344dd632e5784e0f2`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
@@ -35,8 +35,8 @@
 - [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 Responsive contract。
 - [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
 - [ ] Mobile landscape 處理橫向滾動、按鈕切割、文字重疊與 Modal 超出 viewport。
+- [x] Mobile Navigation 已改為可水平滑動的內容流，不再以固定 7 欄 Grid 硬擠窄螢幕頁籤。
 - [ ] Header、Mobile Navigation 與主內容維持一致的 frame spacing。
-- [ ] **Mobile Navigation 目前使用固定 7 欄 Grid 並 `overflow:hidden`，與既定「可水平滑動的頁面導覽列」契約不符；需改為可橫向滾動的內容流，避免窄螢幕七個頁籤被硬擠。**
 - [ ] 首頁「作品消費排行」的長條與右側金額保留獨立空間。
 - [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
 
