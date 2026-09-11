@@ -8,10 +8,10 @@
 
 - **目前正式版本：`1.109.265`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`6653297a044ad30b6582f200f263a14625a45055`。
-- 該 commit 的 Verify 與 Deploy workflow 均已成功；TypeScript、Vite build、資料／Schema、Management、Worker architecture / scope / read / image / transaction、Statistics date boundary 等 CI checks 全部通過。
+- 最新驗證／CI 修改 commit：`a3434e451392138696e9948864b59205b7d47b18`。
+- 該 commit 的 Verify 與 Deploy workflow 均已成功；TypeScript、Vite build、資料／Schema、Management、Worker architecture / scope / read / image / transaction、Statistics date boundary、API load / fallback contract 等 CI checks 全部通過。
 - Shipping Item deletion 的 `itemIds` 關聯保護已由 Worker 與 `verify-worker-transaction` 覆蓋並通過 CI。
-- 尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認、Collection load/fallback 契約補驗、角色排行驗證，以及無法由現有 CI 覆蓋的實機驗收。
+- 尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認、角色排行驗證，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -59,9 +59,9 @@
 
 ## 9. Collection Load / Fallback
 - [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
-- [ ] `collection.json` 與 Worker `/api/data` fallback。
-- [ ] Remote Data 失敗時 Static Store 仍獨立載入 `shipping.json`。
-- [ ] 為上述 fallback／load 契約補上適當的自動化驗證；完成後再結案。
+- [x] `collection.json` 與 Worker `/api/data` fallback 已由自動化測試驗證。
+- [x] Remote Data 失敗時 Static Store 仍獨立載入 `shipping.json` 的資料載入契約已由自動化測試驗證。
+- [x] 已新增 `verify:api-load`，實際載入 `src/api.ts` 並以 mock fetch 驗證成功、JSON／schema 異常、Shipping 單獨失敗與 Worker fallback 路徑。
 
 ## 10. Functional Regression
 - [ ] 全站核心流程回歸：載入、搜尋、篩選、排序、Detail、Add/Edit/Delete、圖片同步、Shipping。
