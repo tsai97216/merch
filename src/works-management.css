@@ -12,8 +12,3 @@
 #works-management-list .data-list-main span, #works-management-list .data-list-main small { color:var(--color-text-muted); }
 #works-management-list .data-list-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:var(--space-2); width:auto; }
 #works-management-list .data-list-actions .button { min-width:84px; white-space:nowrap; }
-@media (max-width:720px) {
-  #works-management-list .data-list-row { grid-template-columns:1fr; align-items:stretch; }
-  #works-management-list .data-list-actions { width:100%; justify-content:stretch; }
-  #works-management-list .data-list-actions .button { flex:1 1 0; min-width:0; }
-}
