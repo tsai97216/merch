@@ -29,8 +29,3 @@
 [data-page="settings"] .theme-choice:hover{border-color:var(--color-border-strong)}
 [data-page="settings"] .theme-choice.is-active{border-color:var(--color-accent);background:var(--color-accent-soft)}
 [data-page="settings"] .theme-choice.is-active i{color:var(--color-accent)}
-@media (min-width:1001px){
-  [data-page="settings"] .settings-columns{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)}
-  [data-page="settings"] .settings-info-list{grid-template-columns:repeat(3,minmax(0,1fr))}
-  [data-page="settings"] .theme-choice-group{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
