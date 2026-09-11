@@ -6,12 +6,13 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.273`。**
+- **目前正式版本：`1.109.274`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`9e0ac4e63a8c3cab8fd2a052325ec42819b41fa7`。
+- 最新程式修改 commit：`6f865e89181ef162d513ab5bcfe443af6399001f`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - Home 角色排行已改為依累計花費金額排序；多角色商品的金額按唯一角色平均分攤，並補上平手／競賽排名、排序與分攤契約驗證。
-- Ranking detail rows 已統一為緊湊的「排名／名稱／金額」欄位結構，桌面與手機版都進一步縮短名稱與金額之間的距離；手機首頁未展開的排行預覽也縮為較短的三列。
+- Ranking 預覽固定顯示前 5 名；桌面與手機均採更緊湊的列高與欄距，文字與金額改用完整文字色，視覺參考作品消費排行。
+- 角色排行點入後仍顯示完整排行，但 Dialog 與明細列進一步壓縮垂直空間。
 - 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
@@ -51,11 +52,10 @@
 - [x] 驗證排序與顯示邏輯一致。
 - [x] 驗證角色排行與作品消費排行 Panel 內部結構。
 - [x] 詳情排行表格名稱與金額欄距離調整為更緊湊排列。
-- [x] 首頁手機排行預覽縮短為前三名，避免未展開時佔用過多高度。
+- [x] 首頁手機排行預覽調整為前五名，並與作品消費排行採一致的較實色文字層級。
+- [x] 桌面／手機完整排行進一步壓縮列高、欄距與 Dialog 內距。
 
 # P2｜自動化驗證與資料完整性
-
-## 8. Schema / Data / Statistics
 - [ ] 新增／管理修改後 schema 與 validation contract 的完整覆蓋仍需持續確認。
 - [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 每月消費趨勢年度切換不污染明細資料。
