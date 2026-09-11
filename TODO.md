@@ -8,7 +8,7 @@
 
 - **目前正式版本：`1.109.258`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`ef9cb4b6256f9c6bcb96dbb01957cb0d468b460c`。
+- 最新功能／版本修改 commit：`433e892d2d1f01f920ba39226ba8689dcf7fd6ef`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
