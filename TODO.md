@@ -6,13 +6,13 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.253`。**
+- **目前正式版本：`1.109.254`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新 HEAD：`215d5dbe153b06d52b34b1c0c340bdcc903669af`。
+- 最新功能／版本修改 commit：`f4e8bce14f551fc4dade5bf3cf8ad6bc6f9eaec2`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
-- 最新 HEAD 目前沒有可供宣稱「CI 已通過」的 workflow run；發布前仍需重新確認。
+- 最新修改目前沒有可供宣稱「CI 已通過」的 workflow run；發布前仍需重新確認。
 
 # 第一階段｜尚未完成的開發與結構整理
 
@@ -20,10 +20,10 @@
 
 ### 1. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [ ] 日期、文字、Select 等共用控制項高度、寬度與對齊統一，尤其處理日期 input 與一般文字 input 的 frame 差異。
+- [x] 日期、文字、Select 等共用控制項高度、寬度與對齊統一，尤其處理日期 input 與一般文字 input 的 frame 差異。
 - [ ] 持續確認共用 Input 的 focus／outline、Modal / Surface、Toolbar / count 等基礎結構沒有重複實作。
-- [ ] Collection 控制項目前仍有頁面專用的 Select／View Button semantic state，需收斂回 shared control foundation。
-- [ ] 清理 Responsive layer 中已改為 Grid 後仍殘留的舊 Flex-only 宣告，避免死 CSS 與錯誤結構訊號。
+- [x] Collection 控制項目前仍有頁面專用的 Select／View Button semantic state，已收斂回 shared control foundation。
+- [x] 清理 Responsive layer 中已改為 Grid 後仍殘留的舊 Flex-only 宣告，已移除確認無效的 `.management-toolbar` 與 `.management-image-upload` responsive flex 宣告。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
 ### 2. 全站 Responsive：Mobile / Tablet / iPad 結構整理
