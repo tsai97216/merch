@@ -57,7 +57,7 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-ranking-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="character-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER RANKING</span><h2 id="character-ranking-title">角色完整排行</h2><p>依收藏數量排序，顯示全部角色。</p></div><ol id="character-ranking-all" class="ranking"></ol></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-ranking-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="character-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING RANKING</span><h2 id="character-ranking-title">角色花費排行</h2><p>依累計消費金額排序，顯示全部角色。</p></div><ol id="character-ranking-all" class="ranking"></ol></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-character-ranking-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
@@ -65,14 +65,19 @@ function ensureCharacterModal() {
 }
 
 function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
-  const counts = new Map<string, number>();
-  store.snapshot.items.forEach((item) => (item.characters || []).forEach((character) => counts.set(character, (counts.get(character) || 0) + quantityOf(item))));
-  return sortCharacterRanking([...counts.entries()]);
+  const spendingByCharacter = new Map<string, number>();
+  store.snapshot.items.forEach((item) => {
+    const characters = [...new Set((item.characters || []).map((character) => String(character).trim()).filter(Boolean))];
+    if (!characters.length) return;
+    const share = itemValue(item) / characters.length;
+    characters.forEach((character) => spendingByCharacter.set(character, (spendingByCharacter.get(character) || 0) + share));
+  });
+  return sortCharacterRanking([...spendingByCharacter.entries()]);
 }
 
 function renderCharacterRanking(list: HTMLOListElement, rows: CharacterRankingRow[]): void {
   list.innerHTML = rows.length
-    ? rows.map(([character, count], index) => `<li><span>${rankAt(rows, index)}</span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><b>${count}</b></li>`).join('')
+    ? rows.map(([character, spending], index) => `<li><span>${rankAt(rows, index)}</span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><b>${escapeHtml(money(spending))}</b></li>`).join('')
     : '<li class="empty-state">目前沒有資料</li>';
 }
 
@@ -105,7 +110,7 @@ function install() {
     rankingPanel.dataset.enhancementInstalled = 'true';
     rankingPanel.setAttribute('role', 'button');
     rankingPanel.setAttribute('tabindex', '0');
-    rankingPanel.setAttribute('aria-label', '查看全部角色排行');
+    rankingPanel.setAttribute('aria-label', '查看全部角色花費排行');
     rankingPanel.addEventListener('click', openCharacterModal);
     rankingPanel.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
