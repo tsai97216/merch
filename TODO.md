@@ -8,7 +8,7 @@
 
 - **目前正式版本：`1.109.265`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新修改 commit：`fb6d72cb4761097763c8d3e9e3f5d17e71d6b3b1`。
+- 最新修改 commit：`a132655029fe16bce8e75dce1dab0af7cfd4da2b`。
 - Works Management Mobile 已確認正常：「新增／編輯作品」與「現有作品」已改為上下單欄，不再互相擠壓。
 - Shipping records 已加入分頁，Item 選擇器與 Shipping records 都會依目前資料量自動限制頁碼。
 - Shipping 分頁、Item 搜尋／Filter、編輯／刪除與 Detail 都使用同一份 Store snapshot；目前未發現 state 污染或 stale record 問題。
