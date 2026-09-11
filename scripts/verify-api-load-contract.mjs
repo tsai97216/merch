@@ -30,7 +30,7 @@ const item = {
 };
 
 const collection = (shipping) => ({
-  version: '1.109.265',
+  version: '1.109.266',
   works: [{ id: 'test-work', name: 'Test Work', code: 'TEST', items: [item] }],
   shipping,
 });
