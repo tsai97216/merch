@@ -44,6 +44,12 @@ if (!/editingId/.test(ui) || !/immutable|不可|不能|disabled/.test(ui)) {
   errors.push('src/works-management.ts: missing explicit edit-state / immutable work-code handling');
 }
 
+const workMutationsPreserveShipping =
+  (ui.match(/replaceData\(data\.works,data\.version,data\.shipping\)/g) || []).length >= 3;
+if (!workMutationsPreserveShipping) {
+  errors.push('src/works-management.ts: work refresh/create/update/delete paths must preserve returned shipping data');
+}
+
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
