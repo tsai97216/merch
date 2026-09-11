@@ -57,9 +57,9 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-ranking-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">FAVORITE CHARACTERS</span><h2 id="character-ranking-title">角色偏愛</h2><p>收藏裡出現的角色，都是喜歡的存在。</p></div><ul id="character-ranking-all" class="ranking favorite-character-list"></ul></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTERS</span><h2 id="character-title">角色</h2><p>收藏裡出現的角色。</p></div><ul id="character-list-all" class="favorite-character-list"></ul></section>`;
   document.body.appendChild(modal);
-  modal.querySelectorAll('[data-character-ranking-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
+  modal.querySelectorAll('[data-character-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
   return modal;
 }
@@ -75,26 +75,25 @@ function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
   return sortCharacterRanking([...spendingByCharacter.entries()]);
 }
 
-function renderCharacterRanking(list: HTMLElement, rows: CharacterRankingRow[]): void {
-  list.className = 'ranking favorite-character-list';
+function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[]): void {
+  list.className = 'favorite-character-list';
   list.innerHTML = rows.length
-    ? rows.map(([character]) => `<li class="favorite-character-item"><span class="badge is-danger favorite-character-heart" aria-hidden="true"><i class="fa-solid fa-heart"></i></span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
+    ? rows.map(([character]) => `<li class="favorite-character-item"><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
     : '<li class="empty-state">目前沒有資料</li>';
 }
 
-function syncHomeCharacterRanking(): void {
+function syncHomeCharacterList(): void {
   if (!storeRef) return;
   const list = document.querySelector<HTMLElement>('#favorite-character-list');
   if (!list) return;
-  renderCharacterRanking(list, getCharacterRows(storeRef).slice(0, 5));
+  renderCharacterList(list, getCharacterRows(storeRef).slice(0, 5));
 }
 
 function openCharacterModal() {
   if (!storeRef) return;
   const modal = ensureCharacterModal();
-  const list = modal.querySelector<HTMLElement>('#character-ranking-all');
-  const rows = getCharacterRows(storeRef);
-  if (list) renderCharacterRanking(list, rows);
+  const list = modal.querySelector<HTMLElement>('#character-list-all');
+  if (list) renderCharacterList(list, getCharacterRows(storeRef));
   modal.hidden = false;
   document.body.classList.add('detail-modal-open');
 }
@@ -113,15 +112,15 @@ function install() {
     const label = rankingPanel.querySelector<HTMLElement>('.panel-label');
     const heading = rankingPanel.querySelector<HTMLElement>('h2');
     const list = rankingPanel.querySelector<HTMLElement>('#character-ranking');
-    if (label) label.textContent = 'FAVORITES';
-    if (heading) heading.textContent = '角色偏愛';
+    if (label) label.textContent = 'CHARACTERS';
+    if (heading) heading.textContent = '角色';
     if (list) {
       list.id = 'favorite-character-list';
-      list.className = 'ranking favorite-character-list';
+      list.className = 'favorite-character-list';
     }
     rankingPanel.setAttribute('role', 'button');
     rankingPanel.setAttribute('tabindex', '0');
-    rankingPanel.setAttribute('aria-label', '查看全部角色偏愛');
+    rankingPanel.setAttribute('aria-label', '查看全部角色');
     rankingPanel.addEventListener('click', openCharacterModal);
     rankingPanel.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -153,6 +152,6 @@ function install() {
 void getStore().then((store) => {
   storeRef = store;
   install();
-  syncHomeCharacterRanking();
-  store.subscribe(syncHomeCharacterRanking);
+  syncHomeCharacterList();
+  store.subscribe(syncHomeCharacterList);
 }).catch(() => undefined);
