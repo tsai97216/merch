@@ -6,11 +6,11 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.268`。**
+- **目前正式版本：`1.109.269`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`0951d1a9b34377156cb4adc2e15eed819e5bdec9`。
+- 最新程式修改 commit：`a367371ffe0ae03b37dd3b5f6708e6c1e9da18b7`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
-- Home 角色排行已抽離為獨立 ranking foundation，並補上平手／競賽排名與排序契約驗證。
+- Home 角色排行已改為依累計花費金額排序；多角色商品的金額按唯一角色平均分攤，並補上平手／競賽排名、排序與分攤契約驗證。
 - 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
@@ -43,7 +43,9 @@
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
 
 ## 7. Home 角色排行
-- [x] 驗證相同數量顯示相同名次。
+- [x] 改為依角色累計花費金額排序，免費周邊以 NT$0 計算。
+- [x] 多角色商品的消費金額按唯一角色平均分攤，避免同一筆消費被重複計算。
+- [x] 驗證相同花費顯示相同名次。
 - [x] 驗證後續名次依競賽排名規則遞延。
 - [x] 驗證排序與顯示邏輯一致。
 - [x] 驗證角色排行與作品消費排行 Panel 內部結構。
@@ -55,7 +57,7 @@
 - [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 每月消費趨勢年度切換不污染明細資料。
 - [ ] 圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
-- [x] 角色排行平手與後續名次規則驗證。
+- [x] 角色排行改以花費金額計算，並驗證平手、後續名次與多角色金額分攤規則。
 
 ## 9. Collection Load / Fallback
 - [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
@@ -92,7 +94,5 @@
 - [ ] Worker／Remote Data 相關流程在正式環境實際操作後，確認 UI 狀態與資料結果一致。
 
 # P4｜Release
-
-## 13. Release
 - [ ] TODO 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後再宣告 release。
