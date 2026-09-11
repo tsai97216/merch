@@ -1,17 +1,17 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。開發項目優先處理共用根基與跨頁結構；程式已完成但尚未實機確認的項目集中放在第二階段驗收。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。開發優先處理共用根基與跨頁結構；程式已完成但尚未實機確認的項目集中到最終驗收。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
 
 ## Current state
 
-- **目前正式版本：`1.109.249`。**
+- **目前正式版本：`1.109.250`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新 HEAD：`d0c36b75b71f8fa912ebbe3afef482ac815acd6c`。
-- 本輪已完成多項共用 UI、Responsive、Statistics、Feedback 與資料結構修正；目前剩餘工作以最終實機／回歸／發布驗收為主。
+- 最新 HEAD：`10c47aca16fc50de034082e5fd76b53c01262295`。
+- 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
+- Management 最上方搜尋區已完成第一層分層：搜尋／結果數量與作品／類型／流水號／新增不再共用同一橫排；第二層選擇器的 Desktop / Tablet 寬度與排列仍需繼續整理。
 - P1 #14 角色排行平手規則與版面已完成程式修正，保留至最終驗收確認。
-- P2 #16～#20 已完成主要程式碼／契約檢查；尚未將靜態檢查視為實機驗收結果。
-- 正式網站目前無法由本環境可靠執行實機驗收，因此不得在沒有實際證據時標記 runtime 驗收通過。
-- 最新 HEAD 目前沒有可供宣稱「CI 已通過」的 workflow run／combined status；發布前仍需重新確認。
+- 目前沒有足夠的實機證據可將 Responsive、正式網站 runtime 或整體回歸標記為完成。
+- 最新 HEAD 目前沒有可供宣稱「CI 已通過」的 workflow run；發布前仍需重新確認。
 
 # 第一階段｜尚未完成的開發與結構整理
 
@@ -19,19 +19,21 @@
 
 ### 1. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [ ] 日期、文字、Select 等共用控制項尺寸與對齊統一。
+- [ ] 日期、文字、Select 等共用控制項高度、寬度與對齊統一，尤其處理日期 input 與一般文字 input 的 frame 差異。
 - [ ] 持續確認共用 Input 的 focus／outline、Modal / Surface、Toolbar / count 等基礎結構沒有重複實作。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
 ### 2. 全站 Responsive：Mobile / Tablet / iPad 結構整理
-- [ ] 完成全站 Responsive 的最後結構整理，優先處理 shared foundation，不新增分散 breakpoint 或 page-specific workaround。
-- [ ] 手機直向卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄並重新安排資訊層級。
-- [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 responsive 結構。
-- [ ] 手機橫向處理橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport 等結構問題。
-- [ ] Header、Mobile Navigation 與主內容維持一致的 mobile frame spacing。
+- [ ] 依 shared foundation 完成最後 Responsive 結構整理，不新增分散 breakpoint 或 page-specific workaround。
+- [ ] 實際確認 360 / 390 / 430 / 768 / 820 / 1024px。
+- [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁。
+- [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
+- [ ] Mobile landscape 處理橫向滾動、按鈕切割、文字重疊與 Modal 超出 viewport。
+- [ ] Header、Mobile Navigation 與主內容維持一致的 frame spacing。
 - [ ] 首頁「作品消費排行」的長條與右側金額保留獨立空間。
+- [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
 
-## P1｜各頁共用控制與頁面結構
+## P1｜各頁控制與頁面結構
 
 ### 9. 收藏控制列重新設計
 - [ ] 重新確認「狀態、類型、排序、顯示方式」四組 Collection controls 的資訊層級與操作方式。
@@ -48,9 +50,12 @@
 
 ### 11. 管理頁重新設計
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
-- [ ] 重新確認上方搜尋 Toolbar 在 Desktop / Tablet / Mobile 的結構。
+- [ ] **上方搜尋 Toolbar 第一層結構已修正，保留 Desktop / Tablet / Mobile 最終驗收。**
+- [ ] 第二層作品／類型／流水號／新增控制列在 Desktop / Tablet 不得擠壓或讓新增按鈕掉到不合理的換行位置；依 Responsive contract 調整欄位配置。
+- [ ] Tablet / iPad 確認搜尋、結果數量與選擇器的寬度、間距及換行合理。
+- [ ] Mobile 確認搜尋、結果數量與選擇器維持清楚的內容流，不產生文字溢出。
 - [ ] 確認底部「作品管理」區塊在 Desktop / Mobile 都位於正確內容流。
-- [ ] **新增：管理頁最上方檢索區目前搜尋列與作品／類型／流水號選擇器在不同寬度下容易互相擠壓，需重新整理成清楚的分層 Toolbar 結構；搜尋、結果數量與選擇器不可再以同一橫排互相壓縮。**
+- [ ] **本項目前不處理圖片管理區塊布局，避免混入不同問題。**
 
 ### 12. 運費表單與紀錄重新設計
 - [ ] 重新確認運費表單與紀錄的資訊層級與操作流程。
@@ -66,9 +71,9 @@
 - [ ] 確認排序與顯示邏輯一致。
 - [ ] 確認角色排行與「作品消費排行」的 Panel 內部結構正常，標題與排行內容均位於面板上方。
 
-# 第二階段｜最終驗收與發布
+# 第二階段｜最終驗收、回歸與發布
 
-> 以下全部屬於驗收／回歸／發布工作。程式修正完成後，集中由上往下執行，不再把 runtime 驗收穿插到開發 TODO。
+> 以下集中處理已完成程式修正但尚未取得實機證據的項目。不得以靜態檢查代替 runtime 驗收，也不得在沒有 workflow／production 證據時宣稱發布完成。
 
 ## P2｜核心資料與流程驗收
 
@@ -88,3 +93,37 @@
 ### 18. Shipping `itemIds` 參照完整性實機驗收
 - [ ] 被 Shipping 參照的 Item 不可直接刪除，並確認錯誤回饋正常。
 - [ ] 移除 Shipping 關聯後，Item 刪除流程正常且不破壞其他 Shipping records。
+
+## P2｜全站 UI / 功能回歸
+
+### 19. Responsive 最終實機驗收
+- [ ] 依 360 / 390 / 430 / 768 / 820 / 1024px 逐一驗收七頁。
+- [ ] 驗收 4→2 卡片、控制列換行、文字溢出、按鈕切割、Modal overflow、landscape 等問題。
+- [ ] 驗收 Light / Dark mode 下 shared controls、focus、surface、border、radius 是否一致。
+
+### 20. 完整功能回歸
+- [ ] Home / Collection / Statistics / Add / Shipping / Management / Settings 基本流程。
+- [ ] Search / Filter / Sort / Detail / Add / Edit / Delete。
+- [ ] 圖片新增／替換／刪除／主圖／排序與同步狀態。
+- [ ] Work / Category / Serial selectors 與管理資料操作。
+- [ ] Shipping 關聯、刪除保護與資料一致性。
+
+### 21. 發布前最終檢查
+- [ ] TypeScript、build、schema／data integrity、Worker 相關檢查全部通過。
+- [ ] 確認 `package.json`、`public/data/version.json` 與 TODO current state 版本一致。
+- [ ] 確認最新 commit 有對應 GitHub Actions workflow run，且結果成功。
+- [ ] 確認正式網站實際行為與本地／build 結果一致後才標記完成。
+
+## 執行順序
+
+1. **P0 #1 Shared Field / Layout**
+2. **P0 #2 全站 Responsive**
+3. **P1 #9 Collection controls**
+4. **P1 #10 Add form**
+5. **P1 #11 Management toolbar / layout**
+6. **P1 #12 Shipping**
+7. **P1 #14 Home ranking**
+8. **P2 #16～#18 資料與流程驗收**
+9. **P2 #19 Responsive 最終實機驗收**
+10. **P2 #20 完整功能回歸**
+11. **P2 #21 發布前最終檢查**
