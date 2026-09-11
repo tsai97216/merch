@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.261`。**
+- **目前正式版本：`1.109.262`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`d37e94a12776d75bb43419931acb522ce7074166`。
+- 最新功能／版本修改 commit：`3d0dc0aac51d083a2e8ad32879c8cfbe500cb01d`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
@@ -41,7 +41,7 @@
 - [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
 - [x] Collection 的 viewport `@media` 已從 `src/collection.css` 移回 `responsive-refinement.css`，避免 Responsive contract 雙重維護。
 - [x] Mobile `main` 在 701–820px 與 Header／Navigation 使用相同 full-width frame，避免沿用 Desktop `padding-right` 造成右側多餘空間。
-- [ ] 清理 `src/styles.css` 內殘留的 Mobile viewport 規則，避免 Home 作品消費排行的 `bar-row` Responsive contract 與 `responsive-refinement.css` 雙重維護。
+- [x] 清理 `src/styles.css` 內殘留的 Mobile viewport 規則，已將 Home `bar-row` 的 Responsive contract 完全收斂至 `responsive-refinement.css`，避免雙重維護與 `!important` 覆蓋。
 
 ## P1｜各頁控制與頁面結構
 
