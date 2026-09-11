@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.254`。**
+- **目前正式版本：`1.109.255`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`f4e8bce14f551fc4dade5bf3cf8ad6bc6f9eaec2`。
+- 最新功能／版本修改 commit：`6b0b2df433bad5f7e1623ef5fe2592aa8f9e25b6`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
@@ -28,7 +28,7 @@
 
 ### 2. 全站 Responsive：Mobile / Tablet / iPad 結構整理
 - [ ] 依 shared foundation 完成最後 Responsive 結構整理，不新增分散 breakpoint 或 page-specific workaround。
-- [ ] **發現 `works-management.css` 仍直接持有 viewport `@media (max-width:720px)`；已確認 Responsive contract 應集中於 `src/responsive-refinement.css`，需先移回 centralized responsive layer，並補齊作品管理清單在 Mobile 的單欄結構。**
+- [x] `works-management.css` 原本直接持有 viewport `@media (max-width:720px)`，已移回 `src/responsive-refinement.css` centralized responsive layer，並補齊作品管理清單 Mobile 單欄結構。
 - [ ] 確認 360 / 390 / 430 / 768 / 820 / 1024px 的 Responsive contract 已由程式與 CI 驗證涵蓋。
 - [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 Responsive contract。
 - [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
