@@ -8,32 +8,20 @@
 
 - **目前正式版本：`1.109.265`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新修改 commit：`52c467625c132fab77430e01276568c952754b84`。
-- Works Management Mobile 已確認正常：「新增／編輯作品」與「現有作品」已改為上下單欄，不再互相擠壓。
-- Shipping records 已加入分頁，Item 選擇器與 Shipping records 都會依目前資料量自動限制頁碼。
-- Shipping 分頁、Item 搜尋／Filter、編輯／刪除與 Detail 都使用同一份 Store snapshot；目前未發現 state 污染或 stale record 問題。
-- 最新修改尚無可宣稱「CI 已通過」的 workflow run，發布前需重新確認。
+- 最新程式修改 commit：`6653297a044ad30b6582f200f263a14625a45055`。
+- 該 commit 的 Verify 與 Deploy workflow 均已成功；TypeScript、Vite build、資料／Schema、Management、Worker architecture / scope / read / image / transaction、Statistics date boundary 等 CI checks 全部通過。
+- Shipping Item deletion 的 `itemIds` 關聯保護已由 Worker 與 `verify-worker-transaction` 覆蓋並通過 CI。
+- 尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認、Collection load/fallback 契約補驗、角色排行驗證，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
 
 ## 1. Shared Field / Layout
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [x] 日期、文字、Select 等共用控制項高度、寬度與對齊統一。
 - [ ] 持續確認共用 Input focus／outline、Modal / Surface、Toolbar / count 沒有重複實作。
-- [x] Collection Select / View Button 的 semantic state 已移到 shared foundation。
-- [x] Responsive layer 舊 Flex-only 宣告已清理。
 - [ ] 不使用 page-specific CSS workaround 掩蓋 shared component 問題。
 
 ## 2. Responsive 結構
 - [ ] 最終 Responsive 結構清理，持續以 shared foundation 為主。
-- [x] Works Management viewport CSS 已集中，Mobile 單欄已確認。
-- [x] Statistics viewport CSS 已集中，舊 `statistics-mobile.css` 已移除。
-- [x] Settings auth viewport CSS 已集中。
-- [x] Mobile Navigation 已改為可橫向捲動。
-- [x] Mobile 701–820px main frame full-width 已修正。
-- [x] Mobile Navigation <=820px frame spacing 已統一。
-- [x] `src/styles.css` 殘留 mobile viewport rules 已清理。
-- [x] Home「作品消費排行」Mobile spacing 已修正。
 
 # P1｜頁面結構與互動
 
@@ -43,30 +31,27 @@
 - [ ] 移除 Collection intro 多餘說明。
 
 ## 4. Add 表單
-- [ ] 沿用 shared Field foundation，不建立 Add 專用控制項尺寸。
+- [ ] 確認所有 Add 控制項持續沿用 shared Field foundation，不建立 Add 專用尺寸或重複元件。
 
 ## 5. Management
 - [ ] 管理表單整體結構與視覺跟 Add 一致，沿用 shared foundation。
-- [ ] 上方搜尋 Toolbar 第一層結構，待 CI 驗收。
-- [ ] 作品／類型／流水號／新增的 Desktop / Tablet 欄位配置，待 CI 驗收。
+- [ ] 上方搜尋 Toolbar 第一層結構，待實際驗收。
+- [ ] 作品／類型／流水號／新增的 Desktop / Tablet 欄位配置，待實際驗收。
 - [ ] 圖片管理區塊布局暫不處理，避免混入不同問題。
 
 ## 6. Shipping
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
-- [x] Item 大量資料選擇已具備搜尋與「只顯示已選」Filter，並與 Item pagination 分離；目前沒有明確需要額外分組層的問題。
-- [x] Shipping records 已加入分頁，頁碼會依實際資料量限制，且刪除／資料更新後會自動校正目前頁碼。
-- [x] 分頁、搜尋／篩選與詳細資訊保持資料一致；目前 state、record lookup 與 Detail 均以 Store snapshot 為單一資料來源。
 
 ## 7. Home 角色排行
-- [ ] 相同數量顯示相同名次。
-- [ ] 後續名次依競賽排名規則遞延。
+- [ ] 驗證相同數量顯示相同名次。
+- [ ] 驗證後續名次依競賽排名規則遞延。
 - [ ] 驗證排序與顯示邏輯一致。
 - [ ] 驗證角色排行與作品消費排行 Panel 內部結構。
 
 # P2｜自動化驗證與資料完整性
 
 ## 8. Schema / Data / Statistics
-- [ ] 新增／管理修改後 schema 與 validation contract。
+- [ ] 新增／管理修改後 schema 與 validation contract 的完整覆蓋仍需持續確認。
 - [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 每月消費趨勢年度切換不污染明細資料。
 - [ ] 圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
@@ -76,21 +61,17 @@
 - [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
 - [ ] `collection.json` 與 Worker `/api/data` fallback。
 - [ ] Remote Data 失敗時 Static Store 仍獨立載入 `shipping.json`。
-- [ ] 適用 build／CI 通過後結案。
+- [ ] 為上述 fallback／load 契約補上適當的自動化驗證；完成後再結案。
 
-## 10. Shipping itemIds integrity
-- [ ] 被 Shipping 參照的 Item 不可直接刪除，錯誤回饋契約正常。
-- [ ] 移除 Shipping 關聯後 Item 刪除不破壞其他 Shipping records。
-
-## 11. Functional Regression
+## 10. Functional Regression
 - [ ] 全站核心流程回歸：載入、搜尋、篩選、排序、Detail、Add/Edit/Delete、圖片同步、Shipping。
-- [ ] Worker mutation / transaction / write scope 驗證。
+- [x] Worker mutation / transaction / write scope 已由現有 CI 驗證通過。
 
 # P3｜實機驗收
 
-> 以下項目 CI／靜態檢查無法可靠覆蓋，必須在實際瀏覽器／實際裝置尺寸驗收。驗收完成後再移除對應 TODO。
+> 以下項目現有 CI／靜態檢查無法可靠覆蓋，必須在實際瀏覽器／實際裝置尺寸驗收。驗收完成後再移除對應 TODO。
 
-## 12. Responsive 實機驗收
+## 11. Responsive 實機驗收
 - [ ] 360 / 390 / 430 / 768 / 820 / 1024px Responsive contract。
 - [ ] Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁。
 - [ ] 手機卡片必要時由 4 欄降為 2 欄，確認卡片寬度、文字可讀性與操作空間。
@@ -103,7 +84,7 @@
 - [ ] Shipping：表單、紀錄與 Detail 的資訊層級及操作流程。
 - [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius 的實際顯示。
 
-## 13. 實機功能驗收
+## 12. 實機功能驗收
 - [ ] Item Detail Modal、Router 與 focus 狀態在實際瀏覽器操作下保持一致。
 - [ ] 圖片新增、替換、刪除、主圖與排序的實際同步／錯誤／成功回饋。
 - [ ] Shipping Item 選擇、搜尋、Filter、pagination、編輯／刪除／Detail 的實際操作流程。
@@ -112,6 +93,6 @@
 
 # P4｜Release
 
-## 14. Release
-- [ ] TypeScript / build / schema / data / Worker 相關驗證全部通過。
+## 13. Release
+- [ ] TODO 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後再宣告 release。
