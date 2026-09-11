@@ -78,7 +78,7 @@ function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
 function renderCharacterRanking(list: HTMLOListElement, rows: CharacterRankingRow[]): void {
   list.className = 'ranking favorite-character-list';
   list.innerHTML = rows.length
-    ? rows.map(([character]) => `<li class="favorite-character-item"><span class="favorite-character-heart" aria-hidden="true"><i class="fa-solid fa-heart"></i></span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
+    ? rows.map(([character]) => `<li class="favorite-character-item"><span class="badge favorite-character-heart" aria-hidden="true"><i class="fa-solid fa-heart"></i></span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
     : '<li class="empty-state">目前沒有資料</li>';
 }
 
