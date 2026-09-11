@@ -1,4 +1,4 @@
-export type CharacterRankingRow = [character: string, count: number];
+export type CharacterRankingRow = [character: string, spending: number];
 
 export function rankAt(rows: CharacterRankingRow[], index: number): number {
   if (index === 0) return 1;
