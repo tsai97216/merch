@@ -109,10 +109,10 @@
 /* Ranking rows */
 .ranking li {
   display: grid;
-  grid-template-columns: 2rem max-content auto;
+  grid-template-columns: 2rem max-content max-content;
   align-items: center;
   justify-content: start;
-  column-gap: var(--space-3);
+  column-gap: var(--space-2);
 }
 
 .ranking li strong {
@@ -262,7 +262,7 @@
 .badge-warning,
 .toast-warning {
   border-color: color-mix(in srgb, var(--color-warning) 42%, var(--color-border));
-  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-surface));
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-border));
   color: var(--color-warning);
 }
 
