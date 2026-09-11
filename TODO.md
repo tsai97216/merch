@@ -50,6 +50,7 @@
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
 - [ ] 重新確認上方搜尋 Toolbar 在 Desktop / Tablet / Mobile 的結構。
 - [ ] 確認底部「作品管理」區塊在 Desktop / Mobile 都位於正確內容流。
+- [ ] **新增：管理頁最上方檢索區目前搜尋列與作品／類型／流水號選擇器在不同寬度下容易互相擠壓，需重新整理成清楚的分層 Toolbar 結構；搜尋、結果數量與選擇器不可再以同一橫排互相壓縮。**
 
 ### 12. 運費表單與紀錄重新設計
 - [ ] 重新確認運費表單與紀錄的資訊層級與操作流程。
@@ -87,51 +88,3 @@
 ### 18. Shipping `itemIds` 參照完整性實機驗收
 - [ ] 被 Shipping 參照的 Item 不可直接刪除，並確認錯誤回饋正常。
 - [ ] 移除 Shipping 關聯後，Item 刪除流程正常且不破壞其他 Shipping records。
-
-## P2｜表單、主題與 Responsive 驗收
-
-### 19. 新增／管理／運費 Feedback 驗收
-- [ ] 驗證中、成功、失敗均有一致的 Feedback 呈現。
-- [ ] 驗證 Add / Management 的 `.form-errors` 實際承擔欄位／表單錯誤，Toast 不取代欄位錯誤。
-- [ ] 驗證 Shipping 的 amount／關聯 Item 錯誤進入 `form-feedback`，Toast 僅作摘要／同步／操作結果用途。
-- [ ] 驗證 API 失敗時表單內容保留，sync 中不可重複提交。
-
-### 20. Light / Dark 與 Settings 功能驗收
-- [ ] 驗證文字對比、Surface 層級、Active / Hover / Focus / Disabled 狀態。
-- [ ] 驗證 Settings 三種顯示模式切換、目前模式狀態與 Reload 後保存。
-- [ ] 驗證 system 模式跟隨 OS 深／淺色切換。
-- [ ] 驗證 Admin Secret 輸入、成功／失敗、清除與 session 狀態。
-- [ ] 驗證 Settings 系統資訊、版本顯示及 `theme.ts` / `settings-auth.ts` selector contract。
-
-### 21. 全站 Responsive：Mobile / Tablet / iPad 最終驗收
-- [ ] 針對 360 / 390 / 430 / 768 / 820 / 1024px 檢查欄位排列、Toolbar、表格／卡片、Modal、導航與觸控空間。
-- [ ] 完整驗收首頁、收藏、統計、新增、管理、運費、設定七頁。
-- [ ] 驗證手機直向卡片必要時由 4 欄降為 2 欄，沒有文字跑出、卡片過度擁擠或資訊層級失衡。
-- [ ] 驗證手機橫向沒有橫向滾動、按鈕切割、文字重疊、Modal 超出 viewport。
-- [ ] Settings 完成 Desktop / Tablet / Mobile 實機驗收。
-- [ ] 驗證 Collection 控制列三列結構：搜尋；狀態／類型；排序／顯示方式，且排序／顯示方式同組靠右。
-- [ ] 驗證首頁「作品消費排行」長條與右側金額保留明確獨立空間。
-- [ ] 驗證 Header、Mobile Navigation 與主內容的水平留白維持一致 mobile frame spacing。
-- [ ] 驗證 Statistics Detail 手機版資訊重新分層，不是單純壓縮 Desktop。
-- [ ] 驗證 Item Detail Modal 在 Light / Dark / Mobile 下 surface、遮罩、文字對比與圖片內容清楚。
-- [ ] 驗證 Add 日期 input、外框與原生日期 UI 在手機尺寸下不錯位、不異常佔位。
-- [ ] 驗證 Management「共 N 筆收藏」在小尺寸下可正常收縮、換行或重新排列。
-
-### 22. 全站功能回歸
-- [ ] 收藏：搜尋、Filter、Sort、分頁、Detail、Add/Edit/Delete、圖片管理。
-- [ ] 統計：圖表、年度切換、明細、排名與 Collection 轉跳。
-- [ ] 新增：欄位、驗證狀態、預設值、日期／文字控制項一致性。
-- [ ] 管理：搜尋、CRUD、驗證狀態、新增跳轉、圖片相關功能。
-- [ ] 運費：新增、Item 關聯、驗證狀態、紀錄分頁與詳細資訊。
-- [ ] 設定：Theme、Admin Secret、系統資訊。
-- [ ] Light / Dark / Desktop / Tablet / Mobile / keyboard / focus regression。
-- [ ] 正式網站初始載入、Worker fallback、mutation 同步等待時間。
-
-## P2｜驗證後清理與發布驗證
-
-### 23. 驗證後清理與發布驗證
-- [ ] 完成適用的 build、typecheck、schema、data integrity、Worker verification。
-- [ ] 涉及部署時確認 GitHub Actions 成功。
-- [ ] 實際 UX 驗收完成後，清理已被 shared foundation 吸收的 legacy / dead code。
-- [ ] 確認 `package.json` 與 `public/data/version.json` 版本一致。
-- [ ] 最終確認版本、HEAD、部署內容與 TODO 狀態一致後，再視為 Release Ready。
