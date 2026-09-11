@@ -46,6 +46,7 @@ const makeResponse = (status, payload, jsonError = false) => ({
   },
 });
 
+const originalFetch = globalThis.fetch;
 const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'merch-api-verify-'));
 try {
   const apiSource = await fs.readFile(path.join(root, 'src', 'api.ts'), 'utf8');
@@ -65,7 +66,6 @@ try {
   const apiOutput = transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'");
   await fs.writeFile(path.join(tempDir, 'api.mjs'), apiOutput, 'utf8');
 
-  const originalFetch = globalThis.fetch;
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = {
     getItem: () => null,
@@ -114,7 +114,7 @@ try {
   assert(result.calls.includes('/api/data'), 'collection fetch failure must call Worker /data');
 
   result = await load({
-    './data/collection.json': makeResponse(200, collectionShipping, true),
+    './data/collection.json': makeResponse(200, collection(collectionShipping), true),
     '/api/data': makeResponse(200, apiResponse(collection(workerShipping))),
   });
   assert(result.data.shipping[0].id === 'worker-ship', 'invalid static collection JSON must use Worker /data fallback');
