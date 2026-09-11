@@ -22,7 +22,8 @@
     "verify:works-management": "node scripts/verify-works-management.mjs",
     "verify:worker-read": "node scripts/verify-worker-read-scope.mjs",
     "verify:worker-image": "node scripts/verify-worker-image-semantics.mjs",
-    "verify:worker-transaction": "node scripts/verify-worker-transaction.mjs"
+    "verify:worker-transaction": "node scripts/verify-worker-transaction.mjs",
+    "verify:api-load": "node scripts/verify-api-load-contract.mjs"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
