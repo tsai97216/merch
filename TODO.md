@@ -4,9 +4,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.252`。**
+- **目前正式版本：`1.109.253`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新 HEAD：`bad7268b8b587138bd176a5bc3d287d79bd551d0`。
+- 最新 HEAD：`215d5dbe153b06d52b34b1c0c340bdcc903669af`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，仍需實機驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，保留至最終驗收確認。
