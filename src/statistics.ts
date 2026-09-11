@@ -88,8 +88,8 @@ function donutSvg(chart: Chart, width: number, height: number, large: boolean, m
 }
 
 function detailInfo(chart: Chart): string {
-  if (!chart.details.length) return '<div class="statistics-detail-info"><div class="empty-state">目前沒有資料</div></div>';
-  return `<section class="statistics-detail-info" aria-labelledby="statistics-detail-info-title"><div class="statistics-detail-info-head"><div><span class="eyebrow">DETAIL INFORMATION</span><h3 id="statistics-detail-info-title">詳細資訊</h3></div><span>${chart.details.length} 筆</span></div><div class="statistics-detail-info-grid">${chart.details.map(row => `<article class="statistics-detail-info-card"><strong>${escapeHtml(row.label)}</strong><div><span>數量 ${escapeHtml(formatQuantity(row.quantity))}</span><span>消費 ${escapeHtml(formatMoney(row.spend))}</span><span>占比 ${formatPercent(row.share)}</span></div>${row.extra ? `<small>${escapeHtml(row.extra)}</small>` : ''}</article>`).join('')}</div></section>`;
+  if (!chart.details.length) return '<div class="statistics-data"><div class="empty-state">目前沒有資料</div></div>';
+  return `<div class="statistics-data"><div class="statistics-data-head"><span>詳細資訊</span><span>${chart.details.length} 筆</span></div><div class="statistics-summary-grid">${chart.details.map(row => `<article class="statistics-summary-card"><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(formatQuantity(row.quantity))} 件 · ${escapeHtml(formatMoney(row.spend))}</strong><small>占比 ${formatPercent(row.share)}${row.extra ? ` · ${escapeHtml(row.extra)}` : ''}</small></article>`).join('')}</div></div>`;
 }
 
 function openDetail(chart: Chart): void {
