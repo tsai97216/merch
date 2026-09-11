@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.257`。**
+- **目前正式版本：`1.109.258`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`58a766386b1bbb16a68272cff0bb63392ac31f5a`。
+- 最新功能／版本修改 commit：`ef9cb4b6256f9c6bcb96dbb01957cb0d468b460c`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
 - Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
@@ -30,7 +30,7 @@
 - [ ] 依 shared foundation 完成最後 Responsive 結構整理，不新增分散 breakpoint 或 page-specific workaround。
 - [x] `works-management.css` 原本直接持有 viewport `@media (max-width:720px)`，已移回 `src/responsive-refinement.css` centralized responsive layer，並補齊作品管理清單 Mobile 單欄結構。
 - [x] Statistics 專用 viewport CSS 已搬入 `responsive-refinement.css`，`statistics.ts` 的冗餘 import 已移除，舊 `statistics-mobile.css` 已刪除，避免同一 Responsive contract 雙重維護。
-- [ ] 設定頁 `settings-auth.css` 仍保留 Desktop viewport `@media`，需依 centralized responsive contract 移入 `responsive-refinement.css`，避免 viewport 規則散落。
+- [x] 設定頁 `settings-auth.css` 原本保留的 Desktop viewport `@media` 已移入 `responsive-refinement.css`，避免 viewport 規則散落。
 - [ ] 確認 360 / 390 / 430 / 768 / 820 / 1024px 的 Responsive contract 已由程式與 CI 驗證涵蓋。
 - [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 Responsive contract。
 - [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
