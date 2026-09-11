@@ -39,6 +39,7 @@
 - [ ] Header、Mobile Navigation 與主內容維持一致的 frame spacing。
 - [ ] 首頁「作品消費排行」的長條與右側金額保留獨立空間。
 - [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
+- [ ] Collection 的 viewport `@media` 目前仍散落於 `src/collection.css`；需移回 `responsive-refinement.css`，避免 Responsive contract 雙重維護。
 
 ## P1｜各頁控制與頁面結構
 
