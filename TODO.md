@@ -30,6 +30,7 @@
 - [ ] 依 shared foundation 完成最後 Responsive 結構整理，不新增分散 breakpoint 或 page-specific workaround。
 - [x] `works-management.css` 原本直接持有 viewport `@media (max-width:720px)`，已移回 `src/responsive-refinement.css` centralized responsive layer，並補齊作品管理清單 Mobile 單欄結構。
 - [x] Statistics 專用 viewport CSS 已搬入 `responsive-refinement.css`，`statistics.ts` 的冗餘 import 已移除，舊 `statistics-mobile.css` 已刪除，避免同一 Responsive contract 雙重維護。
+- [ ] 設定頁 `settings-auth.css` 仍保留 Desktop viewport `@media`，需依 centralized responsive contract 移入 `responsive-refinement.css`，避免 viewport 規則散落。
 - [ ] 確認 360 / 390 / 430 / 768 / 820 / 1024px 的 Responsive contract 已由程式與 CI 驗證涵蓋。
 - [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 Responsive contract。
 - [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
