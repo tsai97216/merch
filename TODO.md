@@ -6,11 +6,12 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.267`。**
+- **目前正式版本：`1.109.268`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`bd07946212c16ebd4d385151741fb9ed5029c4e5`。
+- 最新程式修改 commit：`0951d1a9b34377156cb4adc2e15eed819e5bdec9`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
-- 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認、角色排行驗證，以及無法由現有 CI 覆蓋的實機驗收。
+- Home 角色排行已抽離為獨立 ranking foundation，並補上平手／競賽排名與排序契約驗證。
+- 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -42,10 +43,10 @@
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
 
 ## 7. Home 角色排行
-- [ ] 驗證相同數量顯示相同名次。
-- [ ] 驗證後續名次依競賽排名規則遞延。
-- [ ] 驗證排序與顯示邏輯一致。
-- [ ] 驗證角色排行與作品消費排行 Panel 內部結構。
+- [x] 驗證相同數量顯示相同名次。
+- [x] 驗證後續名次依競賽排名規則遞延。
+- [x] 驗證排序與顯示邏輯一致。
+- [x] 驗證角色排行與作品消費排行 Panel 內部結構。
 
 # P2｜自動化驗證與資料完整性
 
@@ -54,7 +55,7 @@
 - [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 每月消費趨勢年度切換不污染明細資料。
 - [ ] 圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
-- [ ] 角色排行平手與後續名次規則驗證。
+- [x] 角色排行平手與後續名次規則驗證。
 
 ## 9. Collection Load / Fallback
 - [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
