@@ -41,7 +41,39 @@ function renderItems(selected:ShippingRecord|undefined):void{
   const next=document.createElement('button');next.className='button secondary compact';next.type='button';next.textContent='下一頁';next.disabled=saving||itemPage>=totalPages;next.dataset.shippingItemPage=String(itemPage+1);
   pager.append(summary,prev,pageLabel,next);root.appendChild(pager);
 }
-function renderRecords():void{const root=qs<HTMLElement>('[data-shipping-records]');if(!root||!storeRef)return;const records=storeRef.snapshot.shipping??[];root.innerHTML=records.length?records.map(r=>`<article class="shipping-card" data-shipping-detail="${escapeHtml(r.id)}"><div><strong>${escapeHtml(money(r.amount,r.currency))}</strong><span>${escapeHtml(r.date||'未填日期')}</span></div><p>${escapeHtml(r.carrier||'未設定物流')}${r.note?` · ${escapeHtml(r.note)}`:''}</p><small>關聯 ${r.itemIds.length} 件周邊</small><div class="shipping-card-actions"><button class="button secondary" type="button" data-shipping-edit="${escapeHtml(r.id)}" ${saving?'disabled':''}>編輯</button><button class="button danger" type="button" data-shipping-delete="${escapeHtml(r.id)}" ${saving?'disabled':''}>刪除</button></div></article>`).join(''):'<div class="empty-state">目前沒有運費紀錄。</div>';}
+function renderRecords():void{
+  if(!storeRef)return;
+  const listSection=qs<HTMLElement>('.shipping-list');
+  if(!listSection)return;
+  let root=qs<HTMLElement>('[data-shipping-records]');
+  if(!root){
+    root=document.createElement('div');
+    root.setAttribute('data-shipping-records','true');
+    root.className='shipping-records';
+    listSection.appendChild(root);
+  }
+  const records=storeRef.snapshot.shipping??[];
+  root.replaceChildren();
+  if(!records.length){
+    const empty=document.createElement('div');
+    empty.className='empty-state';
+    empty.textContent='目前沒有運費紀錄。';
+    root.appendChild(empty);
+    return;
+  }
+  const fragment=document.createDocumentFragment();
+  for(const r of records){
+    const card=document.createElement('article');card.className='shipping-card';card.dataset.shippingDetail=r.id;
+    const head=document.createElement('div');const amount=document.createElement('strong');amount.textContent=money(r.amount,r.currency);const date=document.createElement('span');date.textContent=r.date||'未填日期';head.append(amount,date);
+    const note=document.createElement('p');note.textContent=`${r.carrier||'未設定物流'}${r.note?` · ${r.note}`:''}`;
+    const count=document.createElement('small');count.textContent=`關聯 ${r.itemIds.length} 件周邊`;
+    const actions=document.createElement('div');actions.className='shipping-card-actions';
+    const edit=document.createElement('button');edit.className='button secondary';edit.type='button';edit.dataset.shippingEdit=r.id;edit.disabled=saving;edit.textContent='編輯';
+    const del=document.createElement('button');del.className='button danger';del.type='button';del.dataset.shippingDelete=r.id;del.disabled=saving;del.textContent='刪除';
+    actions.append(edit,del);card.append(head,note,count,actions);fragment.appendChild(card);
+  }
+  root.appendChild(fragment);
+}
 function render():void{if(!storeRef)return;const records=storeRef.snapshot.shipping??[];const selected=records.find(x=>x.id===editingId);const title=qs<HTMLElement>('[data-shipping-editor-title]');if(title)title.textContent=selected?'編輯運費':'新增運費';setValue('shipping-amount',selected?String(selected.amount):'');setValue('shipping-currency',selected?.currency??'TWD');setValue('shipping-date',selected?.date??'');setValue('shipping-carrier',selected?.carrier??'');setValue('shipping-note',selected?.note??'');const form=qs<HTMLFormElement>('#shipping-form');if(form)form.setAttribute('aria-busy',String(saving));form?.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('input,textarea,select').forEach(el=>{if(!el.matches('[data-shipping-item-checkbox],[data-shipping-item-search],[data-shipping-show-selected]'))el.disabled=saving;});const submit=qs<HTMLButtonElement>('#shipping-form button[type="submit"]');if(submit){submit.disabled=saving;submit.textContent=saving?'同步中…':selected?'儲存修改':'新增運費';}const cancel=qs<HTMLButtonElement>('#shipping-cancel');if(cancel){cancel.hidden=!selected;cancel.disabled=saving;}renderItems(selected);renderRecords();}
 async function save(e:SubmitEvent){e.preventDefault();if(!storeRef||saving)return;const form=qs<HTMLFormElement>('#shipping-form');const feedback=ensureFormErrors(form);clearFormErrors(feedback);const amountText=qs<HTMLInputElement>('#shipping-amount')?.value.trim()??'';const amount=Number(amountText);const currency=qs<HTMLInputElement>('#shipping-currency')?.value.trim()||'TWD';const itemIds=[...draftItemIds];const availableItemIds=new Set(allItems().map(item=>item.id));const errors:string[]=[];if(!amountText||!Number.isFinite(amount)||amount<0)errors.push('運費金額必須是大於等於 0 的數字。');if(!itemIds.length)errors.push('請至少選擇一個關聯周邊。');else if(itemIds.some(id=>!availableItemIds.has(id)))errors.push('關聯周邊包含不存在的 Item，請重新選擇。');if(errors.length){setFormErrors(feedback,errors);showToast('請先修正表單中的錯誤。','error');return;}const record:ShippingRecord={id:editingId||`ship-${Date.now().toString(36)}`,amount,currency,date:qs<HTMLInputElement>('#shipping-date')?.value||undefined,carrier:qs<HTMLInputElement>('#shipping-carrier')?.value.trim()||undefined,note:qs<HTMLTextAreaElement>('#shipping-note')?.value.trim()||undefined,itemIds};saving=true;render();showToast(editingId?'運費修改同步中，請稍候。':'運費新增同步中，請稍候。','info');try{await storeRef.saveShipping(record);editingId='';draftRecordId=null;clearFormErrors(ensureFormErrors(form));showToast('運費紀錄已儲存。','success');}catch(e){const message=e instanceof Error?e.message:'儲存運費失敗。';setFormErrors(ensureFormErrors(form),[message]);showToast(message,'error');}finally{saving=false;render();}}
 async function remove(id:string){if(!storeRef||saving)return;saving=true;render();showToast('運費刪除同步中，請稍候。','info');try{await storeRef.deleteShipping(id);if(editingId===id){editingId='';draftRecordId=null;}showToast('運費紀錄已刪除。','success');}catch(e){showToast(e instanceof Error?e.message:'刪除運費失敗。','error');}finally{saving=false;render();}}
