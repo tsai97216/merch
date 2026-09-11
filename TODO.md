@@ -6,10 +6,11 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.264`。**
+- **目前正式版本：`1.109.265`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新修改 commit：`dd828246b0426c402c80c779d843726462c70483`。
+- 最新修改 commit：`49d1c3ee99d0bf7aabdc608df722ad7f2ba41a3d`。
 - Works Management Mobile 已確認正常：「新增／編輯作品」與「現有作品」已改為上下單欄，不再互相擠壓。
+- Shipping records 已加入分頁，Item 選擇器與 Shipping records 都會依目前資料量自動限制頁碼。
 - 最新修改尚無可宣稱「CI 已通過」的 workflow run，發布前需重新確認。
 
 # P0｜共用 UI 與 Responsive
@@ -65,7 +66,7 @@
 ## 12. Shipping
 - [ ] 重新確認表單與紀錄資訊層級及操作流程。
 - [ ] Item 大量資料選擇提供搜尋／Filter／分組等機制。
-- [ ] Shipping records 加入分頁或等效的大量資料呈現機制。
+- [x] Shipping records 已加入分頁，頁碼會依實際資料量限制，且刪除／資料更新後會自動校正目前頁碼。
 - [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
 
 ## 14. Home 角色排行
