@@ -1,6 +1,6 @@
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
-import { rankAt, sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
+import { sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
 
 const money = (n: number) => `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n))}`;
 const quantityOf = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
@@ -57,7 +57,7 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-ranking-close></div><section class="item-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="character-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING RANKING</span><h2 id="character-ranking-title">角色花費排行</h2><p>依累計消費金額排序，顯示全部角色。</p></div><ol id="character-ranking-all" class="ranking"></ol></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-ranking-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">FAVORITE CHARACTERS</span><h2 id="character-ranking-title">角色偏愛</h2><p>收藏裡出現的角色，都是喜歡的存在。</p></div><ol id="character-ranking-all" class="favorite-character-list"></ol></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-character-ranking-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
@@ -76,8 +76,9 @@ function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
 }
 
 function renderCharacterRanking(list: HTMLOListElement, rows: CharacterRankingRow[]): void {
+  list.className = 'favorite-character-list';
   list.innerHTML = rows.length
-    ? rows.map(([character, spending], index) => `<li><span>${rankAt(rows, index)}</span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><b>${escapeHtml(money(spending))}</b></li>`).join('')
+    ? rows.map(([character]) => `<li class="favorite-character-item"><span class="favorite-character-heart" aria-hidden="true"><i class="fa-solid fa-heart"></i></span><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
     : '<li class="empty-state">目前沒有資料</li>';
 }
 
@@ -108,9 +109,14 @@ function install() {
   const rankingPanel = document.querySelector<HTMLElement>('.ranking-panel');
   if (rankingPanel && !rankingPanel.dataset.enhancementInstalled) {
     rankingPanel.dataset.enhancementInstalled = 'true';
+    rankingPanel.classList.add('favorite-character-panel');
+    const label = rankingPanel.querySelector<HTMLElement>('.panel-label');
+    const heading = rankingPanel.querySelector<HTMLElement>('h2');
+    if (label) label.textContent = 'FAVORITES';
+    if (heading) heading.textContent = '角色偏愛';
     rankingPanel.setAttribute('role', 'button');
     rankingPanel.setAttribute('tabindex', '0');
-    rankingPanel.setAttribute('aria-label', '查看全部角色花費排行');
+    rankingPanel.setAttribute('aria-label', '查看全部角色偏愛');
     rankingPanel.addEventListener('click', openCharacterModal);
     rankingPanel.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
