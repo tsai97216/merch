@@ -106,6 +106,24 @@
   min-width: 0;
 }
 
+/* Ranking rows */
+.ranking li {
+  display: grid;
+  grid-template-columns: 2rem max-content auto;
+  align-items: center;
+  justify-content: start;
+  column-gap: var(--space-3);
+}
+
+.ranking li strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ranking li b {
+  white-space: nowrap;
+}
+
 /* Shared field */
 .field {
   display: grid;
