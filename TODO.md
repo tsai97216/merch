@@ -48,22 +48,25 @@
 - [ ] 驗證排序與顯示邏輯一致。
 - [ ] 驗證角色排行與作品消費排行 Panel 內部結構。
 
+## 8. Statistics 詳細圖表資訊
+- [ ] 修正「統計 → 圖表 → 詳細圖表 → 詳細資訊」中多餘的完整表格與表格內文字，確認 Detail 的資訊只保留應顯示內容，不以 CSS 隱藏多餘 DOM。
+
 # P2｜自動化驗證與資料完整性
 
-## 8. Schema / Data / Statistics
+## 9. Schema / Data / Statistics
 - [ ] 新增／管理修改後 schema 與 validation contract 的完整覆蓋仍需持續確認。
 - [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 每月消費趨勢年度切換不污染明細資料。
 - [ ] 圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
 - [ ] 角色排行平手與後續名次規則驗證。
 
-## 9. Collection Load / Fallback
+## 10. Collection Load / Fallback
 - [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
 - [x] `collection.json` 與 Worker `/api/data` fallback 已由自動化測試驗證。
 - [x] Remote Data 失敗時 Static Store 仍獨立載入 `shipping.json` 的資料載入契約已由自動化測試驗證。
 - [x] 已新增 `verify:api-load`，實際載入 `src/api.ts` 並以 mock fetch 驗證成功、JSON／schema 異常、Shipping 單獨失敗與 Worker fallback 路徑。
 
-## 10. Functional Regression
+## 11. Functional Regression
 - [ ] 全站核心流程回歸：載入、搜尋、篩選、排序、Detail、Add/Edit/Delete、圖片同步、Shipping。
 - [x] Worker mutation / transaction / write scope 已由現有 CI 驗證通過。
 
@@ -71,7 +74,7 @@
 
 > 以下項目現有 CI／靜態檢查無法可靠覆蓋，必須在實際瀏覽器／實際裝置尺寸驗收。驗收完成後再移除對應 TODO。
 
-## 11. Responsive 實機驗收
+## 12. Responsive 實機驗收
 - [ ] 360 / 390 / 430 / 768 / 820 / 1024px Responsive contract。
 - [ ] Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁。
 - [ ] 手機卡片必要時由 4 欄降為 2 欄，確認卡片寬度、文字可讀性與操作空間。
@@ -84,7 +87,7 @@
 - [ ] Shipping：表單、紀錄與 Detail 的資訊層級及操作流程。
 - [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius 的實際顯示。
 
-## 12. 實機功能驗收
+## 13. 實機功能驗收
 - [ ] Item Detail Modal、Router 與 focus 狀態在實際瀏覽器操作下保持一致。
 - [ ] 圖片新增、替換、刪除、主圖與排序的實際同步／錯誤／成功回饋。
 - [ ] Shipping Item 選擇、搜尋、Filter、pagination、編輯／刪除／Detail 的實際操作流程。
@@ -93,6 +96,6 @@
 
 # P4｜Release
 
-## 13. Release
+## 14. Release
 - [ ] TODO 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後再宣告 release。
