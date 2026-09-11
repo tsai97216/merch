@@ -4,11 +4,11 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.250`。**
+- **目前正式版本：`1.109.251`。**
 - `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新 HEAD：`10c47aca16fc50de034082e5fd76b53c01262295`。
+- 最新 HEAD：`f366d3d316a62f3a78ef73d91cab5b58abfc0d5c`。
 - 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
-- Management 最上方搜尋區已完成第一層分層：搜尋／結果數量與作品／類型／流水號／新增不再共用同一橫排；第二層選擇器的 Desktop / Tablet 寬度與排列仍需繼續整理。
+- Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，仍需實機驗收。
 - P1 #14 角色排行平手規則與版面已完成程式修正，保留至最終驗收確認。
 - 目前沒有足夠的實機證據可將 Responsive、正式網站 runtime 或整體回歸標記為完成。
 - 最新 HEAD 目前沒有可供宣稱「CI 已通過」的 workflow run；發布前仍需重新確認。
@@ -51,7 +51,7 @@
 ### 11. 管理頁重新設計
 - [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
 - [ ] **上方搜尋 Toolbar 第一層結構已修正，保留 Desktop / Tablet / Mobile 最終驗收。**
-- [ ] 第二層作品／類型／流水號／新增控制列在 Desktop / Tablet 不得擠壓或讓新增按鈕掉到不合理的換行位置；依 Responsive contract 調整欄位配置。
+- [ ] **第二層作品／類型／流水號／新增的 Desktop / Tablet 欄位配置已修正，保留實機驗收確認不擠壓、不產生不合理換行。**
 - [ ] Tablet / iPad 確認搜尋、結果數量與選擇器的寬度、間距及換行合理。
 - [ ] Mobile 確認搜尋、結果數量與選擇器維持清楚的內容流，不產生文字溢出。
 - [ ] 確認底部「作品管理」區塊在 Desktop / Mobile 都位於正確內容流。
