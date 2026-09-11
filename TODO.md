@@ -6,12 +6,12 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.271`。**
+- **目前正式版本：`1.109.272`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`0bf3132864d2496d3dd3bb9c30a789dfd0091229`。
+- 最新程式修改 commit：`38a3443960c8567f03414c3106580d571853d0e9`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - Home 角色排行已改為依累計花費金額排序；多角色商品的金額按唯一角色平均分攤，並補上平手／競賽排名、排序與分攤契約驗證。
-- Ranking detail rows 已統一為緊湊的「排名／名稱／金額」欄位結構，並進一步縮短名稱與金額之間的距離。
+- Ranking detail rows 已統一為緊湊的「排名／名稱／金額」欄位結構，桌面與手機版都進一步縮短名稱與金額之間的距離。
 - 其餘尚未完成的主要工作已收斂為：共用 UI 最終清理、部分頁面資訊層級確認，以及無法由現有 CI 覆蓋的實機驗收。
 
 # P0｜共用 UI 與 Responsive 結構
