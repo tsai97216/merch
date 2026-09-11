@@ -1,142 +1,129 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。開發優先處理共用根基與跨頁結構；程式已完成但尚未取得 CI 證據的項目集中到最終驗收。已完成的一次性工作移出；已確立且會長期影響開發的規則放在 `RULES.md`。
+> 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期開發規則放在 `RULES.md`。
 >
-> **驗收原則：不以實機驗收作為 TODO 勾選的必要條件。適用的 CI／自動化驗證通過後即可勾選；正式網站實機觀察可作為後續追蹤，但不是阻塞條件。若某項目本身涉及 CI 無法覆蓋的外部服務或真實環境契約，才另外保留必要的實際驗證。**
+> **驗收原則：適用的 CI／自動化驗證通過後即可結案；只有 CI 無法覆蓋的外部服務或真實環境契約才需要額外實際驗證。**
 
 ## Current state
 
 - **目前正式版本：`1.109.264`。**
-- `package.json` 與 `public/data/version.json` 已確認同步。
-- 最新功能／版本修改 commit：`4802be274c75d4eb6f56411fed2b2ce732e7d27d`。
-- 最近一輪已完成多項 shared UI、Responsive、Statistics、Feedback、資料結構與 Management toolbar 結構修正。
-- Management 最上方搜尋區已完成第一層分層；第二層作品／類型／流水號／新增已改為 Desktop 四欄、Tablet 二欄、Mobile 一欄的 Responsive contract，待 CI 驗收。
-- P1 #14 角色排行平手規則與版面已完成程式修正，待 CI 驗收。
-- 最新修改目前沒有可供宣稱「CI 已通過」的 workflow run；發布前仍需重新確認。
+- `package.json` 與 `public/data/version.json` 已同步。
+- 最新修改 commit：`dd828246b0426c402c80c779d843726462c70483`。
+- Works Management Mobile 已確認正常：「新增／編輯作品」與「現有作品」已改為上下單欄，不再互相擠壓。
+- 最新修改尚無可宣稱「CI 已通過」的 workflow run，發布前需重新確認。
 
-# 第一階段｜尚未完成的開發與結構整理
+# P0｜共用 UI 與 Responsive
 
-## P0｜共用 UI 與跨頁根基
-
-### 1. Shared Field / Layout 最後收斂
+## 1. Shared Field / Layout 最後收斂
 - [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [x] 日期、文字、Select 等共用控制項高度、寬度與對齊統一，尤其處理日期 input 與一般文字 input 的 frame 差異。
-- [ ] 持續確認共用 Input 的 focus／outline、Modal / Surface、Toolbar / count 等基礎結構沒有重複實作。
-- [x] Collection 控制項目前仍有頁面專用的 Select／View Button semantic state，已收斂回 shared control foundation。
-- [x] 清理 Responsive layer 中已改為 Grid 後仍殘留的舊 Flex-only 宣告，已移除確認無效的 `.management-toolbar` 與 `.management-image-upload` responsive flex 宣告。
+- [x] 日期、文字、Select 等共用控制項高度、寬度與對齊統一。
+- [ ] 持續確認共用 Input focus／outline、Modal / Surface、Toolbar / count 沒有重複實作。
+- [x] Collection Select／View Button semantic state 已收斂至 shared foundation。
+- [x] Responsive layer 中確認無效的舊 Flex-only 宣告已清理。
 - [ ] 不以 page-specific CSS workaround 掩蓋共用元件問題。
 
-### 2. 全站 Responsive：Mobile / Tablet / iPad 結構整理
-- [ ] 依 shared foundation 完成最後 Responsive 結構整理，不新增分散 breakpoint 或 page-specific workaround。
-- [x] `works-management.css` 原本直接持有 viewport `@media (max-width:720px)`，已移回 `src/responsive-refinement.css` centralized responsive layer，並補齊作品管理清單 Mobile 單欄結構。
-- [x] Statistics 專用 viewport CSS 已搬入 `responsive-refinement.css`，`statistics.ts` 的冗餘 import 已移除，舊 `statistics-mobile.css` 已刪除，避免同一 Responsive contract 雙重維護。
-- [x] 設定頁 `settings-auth.css` 原本保留的 Desktop viewport `@media` 已移入 `responsive-refinement.css`，避免 viewport 規則散落。
-- [ ] 確認 360 / 390 / 430 / 768 / 820 / 1024px 的 Responsive contract 已由程式與 CI 驗證涵蓋。
-- [ ] 全面確認首頁、收藏、統計、新增、管理、運費、設定七頁的 Responsive contract。
-- [ ] 手機卡片型內容以可讀性優先，必要時由 4 欄降為 2 欄，包含收藏、統計等內容。
-- [ ] Mobile landscape 處理橫向滾動、按鈕切割、文字重疊與 Modal 超出 viewport。
-- [x] Mobile Navigation 已改為可水平滑動的內容流，不再以固定 7 欄 Grid 硬擠窄螢幕頁籤。
-- [ ] Header、Mobile Navigation 與主內容維持一致的 frame spacing。
-- [ ] 首頁「作品消費排行」的長條與右側金額保留獨立空間。
-- [ ] 完成 iPad / Tablet 下各頁控制列、表單與卡片的寬度／換行檢查。
-- [x] Collection 的 viewport `@media` 已從 `src/collection.css` 移回 `responsive-refinement.css`，避免 Responsive contract 雙重維護。
-- [x] Mobile `main` 在 701–820px 與 Header／Navigation 使用相同 full-width frame，避免沿用 Desktop `padding-right` 造成右側多餘空間。
-- [x] 清理 `src/styles.css` 內殘留的 Mobile viewport 規則，已將 Home `bar-row` 的 Responsive contract 完全收斂至 `responsive-refinement.css`，避免雙重維護與 `!important` 覆蓋。
-- [x] 修正 Mobile Navigation 在 <=820px 的左右 frame：導覽列已補上與品牌 Header／主內容一致的 12px 水平 frame spacing。
+## 2. 全站 Responsive 最後整理
+- [ ] 依 shared foundation 完成最後 Responsive 結構整理，不再新增不必要的分散 breakpoint。
+- [x] Works Management viewport CSS 已集中至 `responsive-refinement.css`，Mobile 單欄已完成並驗收。
+- [x] Statistics viewport CSS 已集中至 `responsive-refinement.css`，舊 `statistics-mobile.css` 已移除。
+- [x] Settings auth viewport CSS 已集中至 `responsive-refinement.css`。
+- [x] Mobile Navigation 已改為水平滑動內容流。
+- [x] Mobile `main` 701–820px full-width frame 已修正。
+- [x] Mobile Navigation <=820px 左右 frame spacing 已統一。
+- [x] `src/styles.css` 殘留 Mobile viewport 規則已清理。
+- [x] Home「作品消費排行」Mobile spacing 已修正。
+- [ ] 驗證 360 / 390 / 430 / 768 / 820 / 1024px Responsive contract。
+- [ ] 全面驗證 Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁。
+- [ ] 手機卡片必要時由 4 欄降為 2 欄並確認可讀性。
+- [ ] Mobile landscape：橫向滾動、按鈕切割、文字重疊、Modal overflow。
+- [ ] Header / Mobile Navigation / 主內容 frame spacing 最終驗收。
+- [ ] iPad / Tablet 各頁控制列、表單、卡片寬度與換行驗收。
 
-## P1｜各頁控制與頁面結構
+# P1｜頁面控制與結構
 
-### 9. 收藏控制列重新設計
-- [ ] 重新確認「狀態、類型、排序、顯示方式」四組 Collection controls 的資訊層級與操作方式。
-- [ ] 狀態完整支援「全部、待到貨、預購中、已收到」，並與既有 Collection filter state 保持一致。
-- [ ] 類型、排序與顯示方式維持一致的 shared control 視覺語言。
-- [ ] Desktop / Tablet / Mobile 保持清楚分組、可讀性與觸控尺寸。
-- [ ] Mobile 採三列資訊架構：第一列搜尋；第二列狀態／類型；第三列排序／顯示方式。
-- [ ] 排序與顯示方式同組並靠右排列，不與狀態／類型互相擠壓。
-- [ ] 移除 Collection intro 的多餘說明，避免控制列前資訊過載。
+## 9. Collection 控制列
+- [ ] 重新確認狀態／類型／排序／顯示方式的資訊層級。
+- [ ] 確認「全部、待到貨、預購中、已收到」filter 完整且與既有 state 一致。
+- [ ] Desktop / Tablet / Mobile shared control 視覺與觸控尺寸一致。
+- [ ] Mobile 採三列：搜尋 → 狀態／類型 → 排序／顯示方式。
+- [ ] 排序／顯示方式同組靠右，不與狀態／類型互擠。
+- [ ] 移除 Collection intro 多餘說明。
 
-### 10. 新增表單整理
-- [ ] 日期、文字、Select 等控制項統一高度、寬度與對齊。
-- [ ] 表單欄位結構沿用 shared Field foundation，不建立 Add 專用控制項尺寸。
+## 10. Add 表單
+- [ ] 日期、文字、Select 控制項高度／寬度／對齊最終統一。
+- [ ] 沿用 shared Field foundation，不建立 Add 專用控制項尺寸。
 
-### 11. 管理頁重新設計
-- [ ] 管理表單整體結構與視覺跟「新增」頁一致，沿用 shared foundation。
-- [ ] **上方搜尋 Toolbar 第一層結構已修正，待 CI 驗收。**
-- [ ] **第二層作品／類型／流水號／新增的 Desktop / Tablet 欄位配置已修正，待 CI 驗收。**
-- [ ] Tablet / iPad 確認搜尋、結果數量與選擇器的寬度、間距及換行合理。
-- [ ] Mobile 確認搜尋、結果數量與選擇器維持清楚的內容流，不產生文字溢出。
-- [ ] 確認底部「作品管理」區塊在 Desktop / Mobile 都位於正確內容流。
-- [ ] **本項目前不處理圖片管理區塊布局，避免混入不同問題。**
-- [ ] **手機版作品管理的「新增／編輯作品」與「現有作品」目前仍受 page CSS cascade 影響維持雙欄，需讓 centralized responsive rule 正確取得優先權並將現有作品排到下一列。**
+## 11. Management
+- [ ] 管理表單整體結構與視覺跟 Add 一致，沿用 shared foundation。
+- [ ] 上方搜尋 Toolbar 第一層結構，待 CI 驗收。
+- [ ] 作品／類型／流水號／新增的 Desktop / Tablet 欄位配置，待 CI 驗收。
+- [ ] Tablet / iPad 搜尋、結果數量、選擇器寬度／間距／換行驗收。
+- [ ] Mobile 搜尋、結果數量、選擇器內容流與文字溢出驗收。
+- [x] Mobile「作品管理」新增／編輯與現有作品已上下排列，且已確認正常。
+- [ ] 圖片管理區塊布局暫不處理，避免混入不同問題。
 
-### 12. 運費表單與紀錄重新設計
-- [ ] 重新確認運費表單與紀錄的資訊層級與操作流程。
-- [ ] 關聯 Item 大量資料時提供搜尋、Filter、分組或其他大量資料選擇方式，不依賴超長選單。
-- [ ] 運費紀錄加入分頁或等效的大量資料呈現機制。
+## 12. Shipping
+- [ ] 重新確認表單與紀錄資訊層級及操作流程。
+- [ ] Item 大量資料選擇提供搜尋／Filter／分組等機制。
+- [ ] Shipping records 加入分頁或等效的大量資料呈現機制。
 - [ ] 分頁、搜尋／篩選與詳細資訊保持資料一致。
 
-## P1｜統計、首頁與資料功能
+## 14. Home 角色排行
+- [ ] 相同數量顯示相同名次。
+- [ ] 後續名次依競賽排名規則遞延。
+- [ ] 驗證排序與顯示邏輯一致。
+- [ ] 驗證角色排行與作品消費排行 Panel 內部結構。
 
-### 14. 首頁角色排行平手規則與版面
-- [ ] 驗收數量相同的角色顯示相同名次／數字。
-- [ ] 驗收後續名次依競賽排名規則遞延，不直接使用陣列索引當名次。
-- [ ] 確認排序與顯示邏輯一致。
-- [ ] 確認角色排行與「作品消費排行」的 Panel 內部結構正常，標題與排行內容均位於面板上方。
+# P2｜最終驗收與發布
 
-# 第二階段｜最終驗收、回歸與發布
+## 16. Schema / Data / Statistics
+- [ ] 新增／管理修改後 schema 與 validation contract。
+- [ ] Work ID、Work Code、資料路徑與既有資料不衝突。
+- [ ] 每月消費趨勢年度切換不污染明細資料。
+- [ ] 圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
+- [ ] 角色排行平手與後續名次規則驗證。
 
-> 以下集中處理已完成程式修正但尚未取得 CI 證據的項目。CI 通過後即可勾選，不要求另外取得實機驗收證據；只有 CI 無法覆蓋的外部服務／真實環境契約才需要額外驗證。
+## 17. Collection Load / Fallback
+- [ ] 首次載入、Search、Filter、Sort、Detail、Add/Edit/Delete、圖片操作契約。
+- [ ] `collection.json` 與 Worker `/api/data` fallback。
+- [ ] Remote Data 失敗時 Static Store 仍獨立載入 `shipping.json`。
+- [ ] 適用 build／CI 通過後結案。
 
-## P2｜核心資料與流程驗收
+## 18. Shipping itemIds integrity
+- [ ] 被 Shipping 參照的 Item 不可直接刪除，錯誤回饋契約正常。
+- [ ] 移除 Shipping 關聯後 Item 刪除不破壞其他 Shipping records。
 
-### 16. Schema、資料與統計邏輯驗收
-- [ ] 執行新增／管理修改後的 schema 與 validation contract 驗證。
-- [ ] 驗證 Work ID、Work Code、資料路徑與既有資料不衝突。
-- [ ] 驗證每月消費趨勢年度切換只影響該圖表，明細沒有跨年度混入。
-- [ ] 驗證圖表聚合、月份／年份篩選與明細查詢使用同一套年度邏輯。
-- [ ] 驗證角色排行平手時同名次、後續名次正確遞延，且排序與顯示一致。
+## 19. Responsive Final
+- [ ] 360 / 390 / 430 / 768 / 820 / 1024px 自動化驗證。
+- [ ] 4→2 cards、控制列換行、文字溢出、按鈕切割、Modal overflow、landscape。
+- [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius。
 
-### 17. Collection 初始資料載入與 fallback 最終驗收
-- [ ] 驗證正式網站首次載入、搜尋、Filter、Sort、Detail、Add/Edit/Delete、圖片操作的資料與程式契約。
-- [ ] 確認 build-time `collection.json` 與 Worker `/api/data` fallback 行為符合預期。
-- [ ] 確認 Static Store fallback 即使 Remote Data 載入失敗，也會獨立載入 `shipping.json`，不得把既有運費紀錄降為空陣列。
-- [ ] 完成適用的 build／CI 驗證後即可結案，不以實機等待時間作為阻塞條件。
-
-### 18. Shipping `itemIds` 參照完整性驗收
-- [ ] 被 Shipping 參照的 Item 不可直接刪除，並確認錯誤回饋契約正常。
-- [ ] 移除 Shipping 關聯後，Item 刪除流程正常且不破壞其他 Shipping records。
-
-## P2｜全站 UI / 功能回歸
-
-### 19. Responsive 最終驗收
-- [ ] 依 360 / 390 / 430 / 768 / 820 / 1024px 的 Responsive contract 進行 CI／自動化驗證。
-- [ ] 驗收 4→2 卡片、控制列換行、文字溢出、按鈕切割、Modal overflow、landscape 等問題。
-- [ ] 驗收 Light / Dark mode 下 shared controls、focus、surface、border、radius 是否一致。
-- [ ] CI 通過後即可標記完成，不另外要求實機逐尺寸驗收。
-
-### 20. 完整功能回歸
-- [ ] Home / Collection / Statistics / Add / Shipping / Management / Settings 基本流程。
+## 20. Functional Regression
+- [ ] 七頁基本流程：Home / Collection / Statistics / Add / Shipping / Management / Settings。
 - [ ] Search / Filter / Sort / Detail / Add / Edit / Delete。
 - [ ] 圖片新增／替換／刪除／主圖／排序與同步狀態。
-- [ ] Work / Category / Serial selectors 與管理資料操作。
-- [ ] Shipping 關聯、刪除保護與資料一致性。
+- [ ] Work / Category / Serial selectors 與管理操作。
+- [ ] Error / Loading / Empty / Success / Failure feedback。
 
-### 21. 發布前最終檢查
-- [ ] TypeScript、build、schema／data integrity、Worker 相關檢查全部通過。
-- [ ] 確認 `package.json`、`public/data/version.json` 與 TODO current state 版本一致。
-- [ ] 確認最新 commit 有對應 GitHub Actions workflow run，且結果成功。
-- [ ] 正式網站實際行為可作為後續觀察，但除非 CI 無法涵蓋該項目的外部環境契約，不作為 TODO 勾選的必要條件。
+## 21. Release Final Checks
+- [ ] TypeScript check。
+- [ ] Production build。
+- [ ] Schema / data integrity。
+- [ ] Worker relevant checks。
+- [ ] 版本號與 `public/data/version.json` 同步。
+- [ ] GitHub Actions / deployment workflow 通過。
+- [ ] 正式部署後版本與關鍵頁面確認。
 
 ## 執行順序
 
-1. **P0 #1 Shared Field / Layout**
-2. **P0 #2 全站 Responsive**
-3. **P1 #9 Collection controls**
-4. **P1 #10 Add form**
-5. **P1 #11 Management toolbar / layout**
-6. **P1 #12 Shipping**
-7. **P1 #14 Home ranking**
-8. **P2 #16～#18 資料與流程驗收**
-9. **P2 #19 Responsive 最終驗收**
-10. **P2 #20 完整功能回歸**
-11. **P2 #21 發布前最終檢查**
+1. P0 #1 Shared Field / Layout
+2. P0 #2 Responsive
+3. P1 #9 Collection
+4. P1 #10 Add
+5. P1 #11 Management
+6. P1 #12 Shipping
+7. P1 #14 Home ranking
+8. P2 #16–18 Data / Flow
+9. P2 #19 Responsive final
+10. P2 #20 Functional regression
+11. P2 #21 Release
