@@ -5,7 +5,7 @@ import { sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
 const money = (n: number) => `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n))}`;
 const quantityOf = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
 const itemValue = (item: Item) => Number(item.purchase?.price || 0) * quantityOf(item);
-const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\\\"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\\"':'&quot;', "'":'&#39;' }[c] as string));
+const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>\\"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\\"':'&quot;', "'":'&#39;' }[c] as string));
 
 let storeRef: MerchStore | null = null;
 let characterModal: HTMLElement | null = null;
@@ -22,12 +22,24 @@ function getWorkRows(store: MerchStore) {
     .sort((a, b) => b.spend - a.spend || a.name.localeCompare(b.name, 'zh-Hant'));
 }
 
+function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWorkRows>): void {
+  list.className = 'work-ranking-list';
+  list.innerHTML = rows.length
+    ? rows.map((row, index) => `
+      <div class="work-ranking-row">
+        <span class="work-ranking-rank" aria-hidden="true">${index + 1}</span>
+        <strong class="work-ranking-name">${escapeHtml(row.name)}</strong>
+        <b class="work-ranking-amount">${escapeHtml(money(row.spend))}</b>
+      </div>`).join('')
+    : '<div class="empty-state">目前沒有資料</div>';
+}
+
 function ensureWorkModal() {
   if (workModal) return workModal;
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，顯示全部作品。</p></div><ol id="work-ranking-all" class="ranking"></ol></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，顯示全部作品。</p></div><div id="work-ranking-all" class="work-ranking-list" role="list"></div></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-work-ranking-close]').forEach((node) => node.addEventListener('click', closeWorkModal));
   workModal = modal;
@@ -37,11 +49,8 @@ function ensureWorkModal() {
 function openWorkModal() {
   if (!storeRef) return;
   const modal = ensureWorkModal();
-  const list = modal.querySelector<HTMLOListElement>('#work-ranking-all');
-  const rows = getWorkRows(storeRef);
-  if (list) list.innerHTML = rows.length
-    ? rows.map((row, index) => `<li><span>${index + 1}</span><strong>${escapeHtml(row.name)}</strong><b>${escapeHtml(money(row.spend))}</b></li>`).join('')
-    : '<li class="empty-state">目前沒有資料</li>';
+  const list = modal.querySelector<HTMLElement>('#work-ranking-all');
+  if (list) renderWorkRankingRows(list, getWorkRows(storeRef));
   modal.hidden = false;
   document.body.classList.add('detail-modal-open');
 }
