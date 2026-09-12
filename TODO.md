@@ -6,13 +6,14 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.278`。**
+- **目前正式版本：`1.109.279`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`c93611c1cfbaac69ccdbf8f4719734f5c2279bc9`。
+- 最新程式修改 commit：`45d155dfc4d45bba0b531ca2601c33637de19118`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - Home 角色資料的內部排序、平手／競賽排名、多角色金額分攤與排序契約已有驗證；UI 不再暴露排行語意。
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
+- 本輪已同步角色區塊改版後的跨頁搜尋 selector，避免舊 `#character-ranking` selector 殘留。
 - 目前剩餘工作集中在：共用 UI 最終清理、頁面資訊層級確認、自動化驗證補強，以及實際瀏覽器／裝置驗收。
 
 # P0｜共用 UI 與 Responsive 結構
@@ -25,7 +26,8 @@
 
 ## 2. Responsive 結構
 - [ ] 最終整理 `src/responsive-refinement.css`，確保 viewport 規則集中於 responsive layer。
-- [ ] 檢查已失效的舊 selector／responsive 規則，避免留下與目前 DOM 不一致的 dead CSS。
+- [x] 檢查目前已知的角色區塊舊 selector，並同步跨頁搜尋邏輯至目前 `.favorite-character-list` DOM 結構。
+- [ ] 繼續檢查其餘已失效的舊 selector／responsive 規則，避免留下與目前 DOM 不一致的 dead CSS。
 
 # P1｜頁面結構與互動
 
