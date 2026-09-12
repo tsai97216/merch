@@ -6,12 +6,13 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.283`。**
+- **目前正式版本：`1.109.284`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`fa7430477b252d57a846c8606ee172a3d0c68fa8`。
+- 最新驗證新增 commit：`2d3f206ced1db74546c123ba017691861e21022f`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - API response 的 Item schema 已再加強 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID 與 Shipping ID 的一致性檢查。
 - API mutation contract 已新增自動化案例，覆蓋 Item PUT／DELETE、Shipping PUT、runtime workName 不寫入、nested schema 保留與 mutation version 驗證。
+- Work identity contract 已新增自動化驗證，覆蓋現有 Work ID／Code／path 唯一性、path 派生規則、create/update 衝突檢查與已有 Item 時的 Code 保護。
 - Home 角色資料的內部排序、平手／競賽排名、多角色金額分攤與排序契約已有驗證；UI 不再暴露排行語意。
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
@@ -56,7 +57,7 @@
 - [x] 補齊新增／管理修改後 schema 與 validation contract 的自動化覆蓋。
   - [x] API response boundary 已補齊 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID、Shipping ID 驗證。
   - [x] API mutation contract 已補上 Item PUT／DELETE、Shipping PUT、runtime field stripping、canonical nested payload 與 mutation response version 驗證，並納入 `verify:api-mutation` release verification script。
-- [ ] 驗證 Work ID、Work Code、資料路徑與既有資料不衝突。
+- [x] 驗證 Work ID、Work Code、資料路徑與既有資料不衝突；`verify:work-identity` 已檢查 persisted Work 唯一性、path 派生規則與 Worker CRUD conflict guards。
 - [ ] 驗證每月消費趨勢年度切換不污染明細資料。
 - [ ] 驗證圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
 
@@ -85,7 +86,5 @@
 - [ ] Worker／Remote Data 相關流程在正式環境實際操作後，確認 UI 狀態與資料結果一致。
 
 # P4｜Release
-
-## 10. Release verification
 - [ ] TODO 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後再宣告 release。
