@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.288`。**
+- **目前正式版本：`1.109.289`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新 CI 驗證：Verify #1784、Deploy #2387 均成功。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
@@ -21,6 +21,7 @@
 - 每月消費趨勢的月明細已明確限制於所選年度，新增 `verify:statistics-year` 驗證跨年度明細隔離。
 - 統計頁的年度選擇、12 個月聚合、年度摘要與月明細查詢已建立一致年度 contract，新增 `verify:statistics-contract`。
 - 手機版外觀驗收已完成：手機尺寸與各頁主要視覺布局已由實際裝置確認；手機功能操作仍未列為已驗收。
+- **Desktop 電腦版外觀驗收已完成：側邊欄展開／收縮、Logo 與 toggle 不重疊，以及主要頁面 Desktop 外觀已確認。**
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -52,9 +53,6 @@
 - [x] 確認作品／類型／流水號／新增欄位已有 Desktop / Tablet / Mobile 的 responsive 結構規則。
 - [ ] 圖片管理區塊布局暫不處理，避免混入不同問題。
 
-## 6. Shipping
-- [x] 重新確認表單、關聯周邊選擇、紀錄清單、Detail 與編輯／刪除的資訊層級及操作流程；目前搜尋、已選篩選、pagination、同步狀態、錯誤回饋與 Detail 已有明確分層，Mobile 亦有獨立換排規則。
-
 # P2｜自動化驗證與資料完整性
 
 ## 7. Schema / Data
@@ -67,7 +65,7 @@
 
 # P3｜實機驗收
 
-> 手機外觀驗收已完成。以下只保留尚未完成的 Tablet / Desktop 外觀與實際功能／正式環境驗收。
+> 手機與 Desktop 外觀驗收已完成。以下只保留尚未完成的 Tablet 外觀與實際功能／正式環境驗收。
 
 ## 8. Responsive 實機驗收
 - [x] 手機 360 / 390 / 430px Responsive 外觀。
@@ -75,7 +73,8 @@
 - [x] 手機卡片必要時由 4 欄降為 2 欄，確認卡片寬度、文字可讀性與操作空間。
 - [x] Mobile landscape：橫向滾動、按鈕切割、文字重疊、Modal overflow 的外觀檢查。
 - [x] 手機 Header / Mobile Navigation / 主內容 frame spacing。
-- [ ] 768 / 820 / 1024px Tablet / Desktop Responsive contract。
+- [x] Desktop 電腦版主要外觀、側邊欄展開／收縮與品牌區域。
+- [ ] 768 / 820 / 1024px Tablet Responsive contract。
 - [ ] iPad / Tablet 各頁控制列、表單、卡片寬度與換行。
 - [x] Collection 手機：狀態／類型／排序／顯示方式的資訊層級與 Mobile 佈局。
 - [x] Add 手機：日期、文字、Select 控制項的實際高度、寬度、對齊與換行。
