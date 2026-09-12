@@ -19,7 +19,7 @@ function getSearchTarget(target: HTMLElement): HTMLElement | null {
   const homeStat = target.closest<HTMLElement>('.page[data-page="home"] .stat-card');
   if (homeStat) return homeStat;
 
-  const character = target.closest<HTMLElement>('#character-ranking li');
+  const character = target.closest<HTMLElement>('.favorite-character-list li');
   if (character) return character.querySelector('strong');
 
   const workBar = target.closest<HTMLElement>('#work-bars .bar-row');
