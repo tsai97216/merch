@@ -6,10 +6,11 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.281`。**
+- **目前正式版本：`1.109.282`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新程式修改 commit：`45d155dfc4d45bba0b531ca2601c33637de19118`。
+- 最新程式修改 commit：`f401ef86d94c3934bbeabef330a66468ac22f39a`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
+- API response 的 Item schema 已再加強 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID 與 Shipping ID 的一致性檢查。
 - Home 角色資料的內部排序、平手／競賽排名、多角色金額分攤與排序契約已有驗證；UI 不再暴露排行語意。
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
@@ -52,6 +53,8 @@
 
 ## 7. Schema / Data
 - [ ] 補齊新增／管理修改後 schema 與 validation contract 的完整覆蓋。
+  - [x] API response boundary 已補齊 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID、Shipping ID 驗證。
+  - [ ] 仍需補上對應的 Add／Management mutation contract 自動化案例並納入 release verification。
 - [ ] 驗證 Work ID、Work Code、資料路徑與既有資料不衝突。
 - [ ] 驗證每月消費趨勢年度切換不污染明細資料。
 - [ ] 驗證圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
