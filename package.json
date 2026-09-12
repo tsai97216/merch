@@ -1,7 +1,7 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.109.282",
+  "version": "1.109.283",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -24,6 +24,7 @@
     "verify:worker-image": "node scripts/verify-worker-image-semantics.mjs",
     "verify:worker-transaction": "node scripts/verify-worker-transaction.mjs",
     "verify:api-load": "node scripts/verify-api-load-contract.mjs",
+    "verify:api-mutation": "node scripts/verify-api-mutation-contract.mjs",
     "verify:home-ranking": "node scripts/verify-home-ranking.mjs"
   },
   "devDependencies": {
