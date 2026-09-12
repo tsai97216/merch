@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.290`。**
+- **目前正式版本：`1.109.291`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新 CI 驗證：Verify #1784、Deploy #2387 均成功。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
@@ -16,7 +16,7 @@
 - Home 角色資料的內部排序、平手／競賽排名、多角色金額分攤與排序契約已有驗證；UI 不再暴露排行語意。
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
-- 首頁「作品消費總排行」Desktop 明細已收緊作品名稱與金額的視覺距離，並限定在該 Home modal，不影響 Statistics。
+- 首頁「作品消費總排行」Desktop 明細已收緊作品名稱與金額的視覺距離，並限定在該 Home modal，不影響 Statistics；本次再將名稱／金額間距調整為前一版的 80%。
 - 角色區塊改版後的跨頁搜尋已使用目前 `.favorite-character-list` DOM 結構，未再依賴舊 `#character-ranking` selector。
 - Shared Field／control foundation、Collection controls、Add／Management 共用表單結構與 Shipping 的資料／操作層級已完成程式檢視；剩餘重點轉為實際瀏覽器驗收。
 - 每月消費趨勢的月明細已明確限制於所選年度，新增 `verify:statistics-year` 驗證跨年度明細隔離。
