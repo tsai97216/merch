@@ -6,21 +6,22 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.295`。**
-- `package.json` 與 `public/data/version.json` 應保持同步。
+- **目前開發版本：`1.109.295`。**
+- `package.json` 與 `public/data/version.json` 已同步。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
 - API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成。
 - Mobile 與 Desktop 主要外觀驗收已完成。
-- Tablet Responsive、Light / Dark shared controls、Item Detail / Router / focus、圖片操作、Shipping、Collection、Worker／Remote Data 等實機流程已完成目前版本驗收，未發現阻塞問題。
+- Tablet Responsive、Light / Dark shared controls、Item Detail / Router / focus、圖片操作、Shipping、Collection、Worker／Remote Data 等實機流程已完成前一版本驗收，未發現阻塞問題。
 
 # 後續工作
 
 ## 1. API 同步狀態全頁阻塞動效
-- [ ] 新增共用的滿版 API sync overlay，所有會等待遠端同步完成的新增、編輯、刪除與圖片操作統一使用。
-- [ ] Sync overlay 必須覆蓋整個 viewport，明確告知使用者目前正在同步且暫時不可操作；同步完成前不得顯示成功狀態。
-- [ ] Overlay 應有穩定、可理解的 loading 動效，避免頁面局部 spinner 讓使用者誤以為其他操作仍可進行。
-- [ ] 同步失敗時離開阻塞狀態並顯示可理解的錯誤回饋。
-- [ ] 應以共用 Store／remote mutation 狀態處理，不在各頁面各自實作獨立 overlay。
+- [x] 建立共用滿版 API sync overlay，集中攔截遠端 mutation 請求。
+- [x] PUT／PATCH 顯示編輯同步、POST 顯示新增同步、DELETE 顯示刪除同步；圖片與其他 API mutation 同樣涵蓋。
+- [x] Overlay 覆蓋整個 viewport，明確阻止其他操作，並顯示持續中的 loading 動效。
+- [x] API 請求成功或失敗後都會結束阻塞狀態；成功狀態仍由原本 API／Store 流程在真正完成後處理。
+- [ ] 實機確認新增、編輯、刪除、圖片上傳／刪除在實際 API 延遲期間的滿版阻塞與動效表現。
+- [ ] 驗證 TypeScript / build / API mutation contract，確認不影響既有 remote mutation 流程。
 
 ## 2. Management 圖片管理
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
@@ -29,4 +30,4 @@
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
-> API 同步全頁阻塞動效完成並驗收後再正式封版；在此之前不要宣告 `1.109.295` release。
+> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告 `1.109.295` release。
