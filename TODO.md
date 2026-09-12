@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.287`。**
+- **目前正式版本：`1.109.288`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新 CI 驗證：Verify #1784、Deploy #2387 均成功。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
@@ -34,6 +34,7 @@
 - [x] 整理 `src/responsive-refinement.css` 的 viewport 規則，保持 responsive layer 為主要斷點入口。
 - [x] 檢查目前已知的角色區塊舊 selector，並同步跨頁搜尋邏輯至目前 `.favorite-character-list` DOM 結構。
 - [x] 檢查角色舊 selector／responsive 規則，確認目前 CSS 已沒有舊 `#character-ranking` 的 responsive 規則。
+- [x] Desktop Sidebar 收縮時隱藏 toggle 的視覺內容，避免與品牌 Logo 重疊；保留原本 toggle 的可操作 hit area 與 keyboard focus。
 
 # P1｜頁面結構與互動
 
