@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.284`。**
+- **目前正式版本：`1.109.285`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新驗證新增 commit：`2d3f206ced1db74546c123ba017691861e21022f`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
@@ -18,6 +18,7 @@
 - 作品消費排行維持獨立的金額排行資訊。
 - 角色區塊改版後的跨頁搜尋已使用目前 `.favorite-character-list` DOM 結構，未再依賴舊 `#character-ranking` selector。
 - Shared Field／control foundation、Collection controls、Add／Management 共用表單結構與 Shipping 的資料／操作層級已完成程式檢視；剩餘重點轉為資料契約補強與實際瀏覽器驗收。
+- 每月消費趨勢的月明細已明確限制於所選年度，新增 `verify:statistics-year` 驗證跨年度明細隔離。
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -58,7 +59,7 @@
   - [x] API response boundary 已補齊 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID、Shipping ID 驗證。
   - [x] API mutation contract 已補上 Item PUT／DELETE、Shipping PUT、runtime field stripping、canonical nested payload 與 mutation response version 驗證，並納入 `verify:api-mutation` release verification script。
 - [x] 驗證 Work ID、Work Code、資料路徑與既有資料不衝突；`verify:work-identity` 已檢查 persisted Work 唯一性、path 派生規則與 Worker CRUD conflict guards。
-- [ ] 驗證每月消費趨勢年度切換不污染明細資料。
+- [x] 驗證每月消費趨勢年度切換不污染明細資料；`statistics-data.ts` 現在只建立所選年度的 monthly detail entries，`verify:statistics-year` 覆蓋跨年度隔離與 selected-year month lookup。
 - [ ] 驗證圖表聚合、年月篩選、明細查詢使用一致年度邏輯。
 
 # P3｜實機驗收
