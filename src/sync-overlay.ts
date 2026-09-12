@@ -1,7 +1,9 @@
 type SyncDetail = { label: string };
 
+type FetchLike = typeof window.fetch;
 let active = 0;
 let overlay: HTMLElement | null = null;
+let fetchPatched = false;
 
 function ensureOverlay(): HTMLElement {
   if (overlay?.isConnected) return overlay;
@@ -24,13 +26,41 @@ function setVisible(visible: boolean, label = '正在同步資料…'): void {
   document.body.classList.toggle('is-syncing', visible);
 }
 
-document.addEventListener('merch:sync-start', (event) => {
-  active += 1;
-  const detail = (event as CustomEvent<SyncDetail>).detail;
-  setVisible(true, detail?.label || '正在同步資料…');
-});
+function syncLabel(input: RequestInfo | URL, init?: RequestInit): string {
+  const method = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+  if (method === 'DELETE') return '正在刪除並同步資料…';
+  if (method === 'PUT' || method === 'PATCH') return '正在編輯並同步資料…';
+  if (method === 'POST') return '正在新增並同步資料…';
+  return '正在同步資料…';
+}
 
-document.addEventListener('merch:sync-end', () => {
+function start(label: string): void {
+  active += 1;
+  setVisible(true, label);
+}
+
+function end(): void {
   active = Math.max(0, active - 1);
   if (active === 0) setVisible(false);
-});
+}
+
+function patchFetch(): void {
+  if (fetchPatched || typeof window === 'undefined' || typeof window.fetch !== 'function') return;
+  fetchPatched = true;
+  const original = window.fetch.bind(window) as FetchLike;
+  window.fetch = (async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const method = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+    const mutation = method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS';
+    if (!mutation) return original(input, init);
+    start(syncLabel(input, init));
+    try {
+      return await original(input, init);
+    } finally {
+      end();
+    }
+  }) as FetchLike;
+}
+
+patchFetch();
+document.addEventListener('merch:sync-start', (event) => start((event as CustomEvent<SyncDetail>).detail?.label || '正在同步資料…'));
+document.addEventListener('merch:sync-end', end);
