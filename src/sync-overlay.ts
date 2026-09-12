@@ -64,5 +64,7 @@ function patchFetch(): void {
 }
 
 patchFetch();
-document.addEventListener('merch:sync-start', (event) => start((event as CustomEvent<SyncDetail>).detail?.label || '正在同步資料…'));
-document.addEventListener('merch:sync-end', end);
+if (typeof document !== 'undefined') {
+  document.addEventListener('merch:sync-start', (event) => start((event as CustomEvent<SyncDetail>).detail?.label || '正在同步資料…'));
+  document.addEventListener('merch:sync-end', end);
+}
