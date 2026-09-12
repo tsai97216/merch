@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.280`。**
+- **目前正式版本：`1.109.281`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新程式修改 commit：`45d155dfc4d45bba0b531ca2601c33637de19118`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
@@ -14,7 +14,7 @@
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
 - 角色區塊改版後的跨頁搜尋已使用目前 `.favorite-character-list` DOM 結構，未再依賴舊 `#character-ranking` selector。
-- 本輪確認 Shared Field／control foundation、Collection controls 與 Add／Management 共用表單結構已具備共用基礎；剩餘重點轉為實際瀏覽器驗收與資料契約補強。
+- Shared Field／control foundation、Collection controls、Add／Management 共用表單結構與 Shipping 的資料／操作層級已完成程式檢視；剩餘重點轉為資料契約補強與實際瀏覽器驗收。
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -46,7 +46,7 @@
 - [ ] 圖片管理區塊布局暫不處理，避免混入不同問題。
 
 ## 6. Shipping
-- [ ] 重新確認表單與紀錄資訊層級及操作流程。
+- [x] 重新確認表單、關聯周邊選擇、紀錄清單、Detail 與編輯／刪除的資訊層級及操作流程；目前搜尋、已選篩選、pagination、同步狀態、錯誤回饋與 Detail 已有明確分層，Mobile 亦有獨立換排規則。
 
 # P2｜自動化驗證與資料完整性
 
