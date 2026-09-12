@@ -43,6 +43,8 @@
 .ranking li{display:grid;grid-template-columns:2rem max-content max-content;align-items:center;justify-content:start;column-gap:4px;padding:4px 0}
 .ranking li strong{min-width:0;overflow-wrap:anywhere;color:var(--color-text);font-weight:var(--font-weight-semibold)}
 .ranking li b{white-space:nowrap;color:var(--color-text);font-weight:var(--font-weight-bold)}
+.work-ranking-dialog #work-ranking-all{display:inline-grid;width:max-content;max-width:100%;padding-right:0}
+.work-ranking-dialog #work-ranking-all li{width:max-content;max-width:100%;grid-template-columns:2rem max-content max-content;column-gap:6px}
 
 /* Shared field */
 .field{display:grid;gap:var(--field-gap);min-width:0}
