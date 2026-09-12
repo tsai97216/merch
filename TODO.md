@@ -6,9 +6,9 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.286`。**
+- **目前正式版本：`1.109.287`。**
 - `package.json` 與 `public/data/version.json` 已同步。
-- 最新驗證新增 commit：`2d3f206ced1db74546c123ba017691861e21022f`。
+- 最新 CI 驗證：Verify #1784、Deploy #2387 均成功。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - API response 的 Item schema 已再加強 nested purchase / arrival / afterSales / image metadata、Item ID、Work ID 與 Shipping ID 的一致性檢查。
 - API mutation contract 已新增自動化案例，覆蓋 Item PUT／DELETE、Shipping PUT、runtime workName 不寫入、nested schema 保留與 mutation version 驗證。
@@ -17,9 +17,10 @@
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
 - 角色區塊改版後的跨頁搜尋已使用目前 `.favorite-character-list` DOM 結構，未再依賴舊 `#character-ranking` selector。
-- Shared Field／control foundation、Collection controls、Add／Management 共用表單結構與 Shipping 的資料／操作層級已完成程式檢視；剩餘重點轉為資料契約補強與實際瀏覽器驗收。
+- Shared Field／control foundation、Collection controls、Add／Management 共用表單結構與 Shipping 的資料／操作層級已完成程式檢視；剩餘重點轉為實際瀏覽器驗收。
 - 每月消費趨勢的月明細已明確限制於所選年度，新增 `verify:statistics-year` 驗證跨年度明細隔離。
 - 統計頁的年度選擇、12 個月聚合、年度摘要與月明細查詢已建立一致年度 contract，新增 `verify:statistics-contract`。
+- 手機版外觀驗收已完成：手機尺寸與各頁主要視覺布局已由實際裝置確認；手機功能操作仍未列為已驗收。
 
 # P0｜共用 UI 與 Responsive 結構
 
@@ -65,20 +66,21 @@
 
 # P3｜實機驗收
 
-> 以下項目現有 CI／靜態檢查無法可靠覆蓋，必須在實際瀏覽器／實際裝置尺寸驗收。驗收完成後再移除對應 TODO。
+> 手機外觀驗收已完成。以下只保留尚未完成的 Tablet / Desktop 外觀與實際功能／正式環境驗收。
 
 ## 8. Responsive 實機驗收
-- [ ] 360 / 390 / 430 / 768 / 820 / 1024px Responsive contract。
-- [ ] Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁。
-- [ ] 手機卡片必要時由 4 欄降為 2 欄，確認卡片寬度、文字可讀性與操作空間。
-- [ ] Mobile landscape：橫向滾動、按鈕切割、文字重疊、Modal overflow。
-- [ ] Header / Mobile Navigation / 主內容 frame spacing。
+- [x] 手機 360 / 390 / 430px Responsive 外觀。
+- [x] 手機版 Home / Collection / Statistics / Add / Management / Shipping / Settings 七頁外觀。
+- [x] 手機卡片必要時由 4 欄降為 2 欄，確認卡片寬度、文字可讀性與操作空間。
+- [x] Mobile landscape：橫向滾動、按鈕切割、文字重疊、Modal overflow 的外觀檢查。
+- [x] 手機 Header / Mobile Navigation / 主內容 frame spacing。
+- [ ] 768 / 820 / 1024px Tablet / Desktop Responsive contract。
 - [ ] iPad / Tablet 各頁控制列、表單、卡片寬度與換行。
-- [ ] Collection：狀態／類型／排序／顯示方式的資訊層級、Mobile 佈局，以及排序／顯示方式靠右且不互擠。
-- [ ] Add：日期、文字、Select 控制項的實際高度、寬度、對齊與換行。
-- [ ] Management：Desktop / Tablet / Mobile 搜尋、結果數量、選擇器寬度、間距、換行與內容溢出；新增／編輯與現有作品維持正確排列。
-- [ ] Shipping：表單、紀錄與 Detail 的資訊層級及操作流程。
-- [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius 的實際顯示。
+- [x] Collection 手機：狀態／類型／排序／顯示方式的資訊層級與 Mobile 佈局。
+- [x] Add 手機：日期、文字、Select 控制項的實際高度、寬度、對齊與換行。
+- [x] Management 手機：搜尋、結果數量、選擇器寬度、間距、換行與內容溢出；新增／編輯與現有作品排列。
+- [x] Shipping 手機：表單、紀錄與 Detail 的資訊層級及操作流程外觀。
+- [ ] Light / Dark mode 下 shared controls、focus、surface、border、radius 的完整跨裝置驗收。
 
 ## 9. 實機功能驗收
 - [ ] Item Detail Modal、Router 與 focus 狀態在實際瀏覽器操作下保持一致。
