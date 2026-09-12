@@ -1,3 +1,5 @@
+import './sync-overlay.css';
+
 type SyncDetail = { label: string };
 
 type FetchLike = typeof window.fetch;
