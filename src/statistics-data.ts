@@ -66,13 +66,13 @@ export function aggregateStatistics(items: Item[], shipping: ShippingRecord[] = 
   items.forEach((item) => {
     const detail = toDetail(item);
     const month = monthKey(item.purchase?.date);
-    if (month) (monthlyDetailItems[month] ||= []).push(detail);
+    if (month && Number(month.slice(0, 4)) === year) (monthlyDetailItems[month] ||= []).push(detail);
     const category = categoryName(item.category);
     (categoryDetailItems[category] ||= []).push(detail);
   });
   shipping.forEach((record) => {
     const month = monthKey(record.date);
-    if (month && Number(record.amount || 0)) (monthlyDetailItems[month] ||= []).push({ title: '運費', quantity: 1, spend: Number(record.amount || 0), unitPrice: Number(record.amount || 0), currency: record.currency || 'TWD', platform: record.carrier || '運費', date: record.date || '未填寫' });
+    if (month && Number(month.slice(0, 4)) === year && Number(record.amount || 0)) (monthlyDetailItems[month] ||= []).push({ title: '運費', quantity: 1, spend: Number(record.amount || 0), unitPrice: Number(record.amount || 0), currency: record.currency || 'TWD', platform: record.carrier || '運費', date: record.date || '未填寫' });
   });
   const monthlyEntries: [string, WorkAggregate][] = Array.from({ length: 12 }, (_, i) => { const key = `${year}-${String(i + 1).padStart(2, '0')}`; return [key, monthly.get(key) || { quantity: 0, spend: 0 }]; });
   let cumulative = 0;
