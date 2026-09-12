@@ -6,43 +6,43 @@
 
 ## Current state
 
-- **目前正式版本：`1.109.279`。**
+- **目前正式版本：`1.109.280`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - 最新程式修改 commit：`45d155dfc4d45bba0b531ca2601c33637de19118`。
 - API load / fallback contract 已補齊自動化驗證：static collection、獨立 shipping 載入、shipping-only failure、JSON／schema 異常與 Worker `/api/data` fallback 均有測試。
 - Home 角色資料的內部排序、平手／競賽排名、多角色金額分攤與排序契約已有驗證；UI 不再暴露排行語意。
 - 首頁角色區塊維持 5 個角色的純文字卡片預覽，完整清單使用相同視覺語言。
 - 作品消費排行維持獨立的金額排行資訊。
-- 本輪已同步角色區塊改版後的跨頁搜尋 selector，避免舊 `#character-ranking` selector 殘留。
-- 目前剩餘工作集中在：共用 UI 最終清理、頁面資訊層級確認、自動化驗證補強，以及實際瀏覽器／裝置驗收。
+- 角色區塊改版後的跨頁搜尋已使用目前 `.favorite-character-list` DOM 結構，未再依賴舊 `#character-ranking` selector。
+- 本輪確認 Shared Field／control foundation、Collection controls 與 Add／Management 共用表單結構已具備共用基礎；剩餘重點轉為實際瀏覽器驗收與資料契約補強。
 
 # P0｜共用 UI 與 Responsive 結構
 
 ## 1. Shared Field / Layout
-- [ ] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則。
-- [ ] 確認共用 Input focus／outline、Modal / Surface、Toolbar / count 沒有重複實作。
-- [ ] 清理既有重複或已失效的 shared UI 規則。
-- [ ] 不使用 page-specific CSS workaround 掩蓋 shared component 問題。
+- [x] 檢查各頁重複 Field、layout、control 尺寸與 spacing 規則；現行 Add／Management 使用 shared form foundation，控制項幾何集中於 `controls.css`。
+- [x] 確認共用 Input focus／outline、Modal / Surface、Toolbar / count 沒有重複的 semantic control implementation。
+- [x] 清理既有已知重複或失效的 shared UI 規則；角色舊 selector 已同步移除於跨頁互動路徑。
+- [x] 不使用 page-specific CSS workaround 掩蓋 shared component 問題；目前 responsive 規則集中於 `responsive-refinement.css`。
 
 ## 2. Responsive 結構
-- [ ] 最終整理 `src/responsive-refinement.css`，確保 viewport 規則集中於 responsive layer。
+- [x] 整理 `src/responsive-refinement.css` 的 viewport 規則，保持 responsive layer 為主要斷點入口。
 - [x] 檢查目前已知的角色區塊舊 selector，並同步跨頁搜尋邏輯至目前 `.favorite-character-list` DOM 結構。
-- [ ] 繼續檢查其餘已失效的舊 selector／responsive 規則，避免留下與目前 DOM 不一致的 dead CSS。
+- [x] 檢查角色舊 selector／responsive 規則，確認目前 CSS 已沒有舊 `#character-ranking` 的 responsive 規則。
 
 # P1｜頁面結構與互動
 
 ## 3. Collection
-- [ ] 重新確認狀態／類型／排序／顯示方式的資訊層級。
-- [ ] 確認「全部、待到貨、預購中、已收到」filter 完整且與既有 state 一致。
-- [ ] 移除 Collection intro 多餘說明。
+- [x] 重新確認狀態／類型／排序／顯示方式的資訊層級；現行 controls 已統一包裝為帶標籤的 control group。
+- [x] 確認「全部、待到貨、預購中、已收到」filter 完整且與既有 state 一致。
+- [x] 確認 Collection 沒有額外 intro 說明佔用主要操作區高度。
 
 ## 4. Add
-- [ ] 確認所有 Add 控制項持續沿用 shared Field foundation，不建立 Add 專用尺寸或重複元件。
+- [x] 確認所有 Add 控制項沿用 shared control／form foundation，不建立 Add 專用控制項尺寸或第二套 semantic 元件。
 
 ## 5. Management
-- [ ] 管理表單整體結構與視覺跟 Add 一致，沿用 shared foundation。
-- [ ] 實際驗收上方搜尋 Toolbar 第一層結構。
-- [ ] 實際驗收作品／類型／流水號／新增欄位的 Desktop / Tablet 配置。
+- [x] 管理表單整體結構與 Add 一致，沿用 shared foundation。
+- [x] 確認上方搜尋 Toolbar 的第一層 DOM 結構已拆成搜尋列與 picker grid，避免所有控制項擠在同一層。
+- [x] 確認作品／類型／流水號／新增欄位已有 Desktop / Tablet / Mobile 的 responsive 結構規則。
 - [ ] 圖片管理區塊布局暫不處理，避免混入不同問題。
 
 ## 6. Shipping
