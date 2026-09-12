@@ -1,5 +1,9 @@
 export type AppErrorCode = 'network' | 'http' | 'data' | 'unknown';
 
+if (typeof document !== 'undefined') {
+  void import('./sync-overlay');
+}
+
 export class AppError extends Error {
   readonly code: AppErrorCode;
   readonly cause?: unknown;
