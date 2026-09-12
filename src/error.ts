@@ -1,3 +1,5 @@
+import './sync-overlay';
+
 export type AppErrorCode = 'network' | 'http' | 'data' | 'unknown';
 
 export class AppError extends Error {
