@@ -17,15 +17,16 @@
   "purchase": {
     "currency": "TWD",
     "platform": "線下活動",
-    "date": "2026-02-01",
-    "price": 0
+    "date": "2026-02-01"
   },
   "arrival": {},
   "afterSales": {},
   "images": [
     {
-      "id": "ZZZk002-1789339112826",
-      "file": "1789339105417-IMG_3698.jpeg"
+      "id": "ZZZk002-1789339116435-4yvm2",
+      "file": "1789339105417-IMG_3698.jpeg",
+      "alt": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
+      "isCover": true
     }
   ]
 }
