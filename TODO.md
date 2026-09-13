@@ -28,7 +28,7 @@
 
 ## 2. 目前 UI 問題：Management / Add 共用控制項
 - [x] 移除 Management 頁面多餘的 `{類型}` 顯示：移除未被管理資料流使用的重複 `management-category` 欄位，保留上方 Work／Category／Serial selector 作為唯一類型來源。
-- [x] 修正 Add 與 Management 的 Select 共用控制項高度／文字垂直對齊，避免文字底部被裁切；修正放在 shared control foundation，涵蓋 Desktop、Tablet、Mobile。
+- [ ] 修正 Add 與 Management 的 Select 共用控制項高度／文字垂直對齊：目前 42px 共用高度在實際瀏覽器仍可能裁切字體下緣，需提高 Select 本體高度並確認 native select line box。
 - [ ] 實機確認 Management / Add 的 Select 在不同瀏覽器與響應式尺寸下文字不再裁切。
 
 ## 3. Management 圖片管理
