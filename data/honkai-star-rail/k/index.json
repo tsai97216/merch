@@ -36,28 +36,6 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
-    },
-    {
-      "id": "HSRk004",
-      "path": "data/honkai-star-rail/k/HSRk004/data.json",
-      "title": "三周年紀念亞克力吊飾 昔漣款",
-      "characters": [
-        "昔漣"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
-      "id": "HSRk005",
-      "path": "data/honkai-star-rail/k/HSRk005/data.json",
-      "title": "三周年紀念亞克力吊飾 大黑塔款",
-      "characters": [
-        "大黑塔"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
     }
   ]
 }
