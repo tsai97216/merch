@@ -4,17 +4,6 @@
   "category": "w",
   "items": [
     {
-      "id": "ZZZw004",
-      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
-      "title": "伊埃斯 手機架",
-      "characters": [
-        "伊埃斯"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZw001",
       "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
       "title": "儀玄 扇子",
@@ -59,6 +48,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "1789340652267-IMG_3690.jpeg"
+    },
+    {
+      "id": "ZZZw004",
+      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
+      "title": "喧響系列 手機支架 邦布款",
+      "characters": [
+        "伊埃斯"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
