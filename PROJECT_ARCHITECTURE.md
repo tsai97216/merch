@@ -90,9 +90,9 @@ merch/
 | `src/theme.ts` | Light / Dark theme 初始化與主題切換。 |
 | `src/theme.css` | Theme 基礎樣式入口／必要 theme rules。 |
 | `src/theme-refinement.css` | Theme foundation 上的 refinement；後續應避免再堆疊成第二套 theme。 |
-| `src/toast.css` | Legacy / shared feedback 視覺樣式；需與目前 animated feedback foundation 一起檢查是否仍有獨立責任。 |
 | `src/sync-overlay.ts` | API mutation 的全頁同步狀態與 blocking feedback 邏輯。 |
 | `src/sync-overlay.css` | Sync overlay 與 blocking feedback 的視覺樣式。 |
+| `src/utils/toast.ts` | Legacy `showToast()` 相容 API；僅轉送至 shared animated feedback foundation，不提供獨立 Toast 視覺層。 |
 
 ### Page-specific CSS
 
@@ -220,10 +220,9 @@ index.html + src/*
 3. `src/controls.css` ↔ page-specific Select / Input CSS
 4. `src/responsive-refinement.css` ↔ 各 page CSS 裡的 viewport rules
 5. `src/card-enhancements.css` ↔ Card foundation
-6. `src/toast.css` ↔ `src/sync-overlay.*` / animated feedback foundation
-7. `src/home-enhancements.ts` ↔ `main.ts` / Home rendering
-8. `src/management-images.css` ↔ Management image rendering
-9. `src/item-detail-modal.css` ↔ shared Modal / Panel foundation
+6. `src/home-enhancements.ts` ↔ `main.ts` / Home rendering
+7. `src/management-images.css` ↔ Management image rendering
+8. `src/item-detail-modal.css` ↔ shared Modal / Panel foundation
 
 這些只是「檢查優先順序」，不是預先判定它們一定是錯誤。每項都要查看實際 selector、import、rendering 與責任邊界後才能決定保留、合併或刪除。
 
