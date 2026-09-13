@@ -38,12 +38,12 @@
 
 ### Item ID
 
-- Item ID 是永久識別碼，刪除後不可重新編號、補號或重用。
+- Item ID 是穩定識別碼；既有 Item 一旦建立，其 ID 不得因排序、分類或資料搬移而改變；已刪除 Item 的 ID 可以重新分配給新的 Item。
 - 格式為「作品代碼 + 歷史類型 code + 三位流水號」。
 - UI 排序、資料搬移或分類修正都不可改變既有 Item ID。
 - ID 中的歷史類型 code 與目前 `category` 是不同概念。
-- Worker 對既有 Item 的 Work 對應必須解析永久 Item ID 中的完整 Work Code 後精確比對，不得以 `startsWith(work.code)` 等前綴方式判斷，以避免作品代碼碰撞。
-- 新增 Item 的 ID 唯一性必須以完整 remote repository 的 Item 集合檢查，不得只在目標 category 內檢查。
+- Worker 對既有 Item 的 Work 對應必須解析 Item ID 中的完整 Work Code 後精確比對，不得以 `startsWith(work.code)` 等前綴方式判斷，以避免作品代碼碰撞。
+- 新增 Item 的 ID 唯一性必須以完整 remote repository 的 Item 集合檢查；若選用的 ID 曾屬於已刪除 Item，可以重新使用，但仍不得與目前存在的任何 Item 重複。
 - 載入 remote Item Map 時若發現重複 Item ID，必須立即視為資料異常並拒絕繼續，不可讓後載入項目靜默覆蓋前一筆。
 
 ### Category
@@ -233,7 +233,7 @@
 2. **確認作品**：確認每筆 Item 所屬的永久 `work.id`，不能只依作品顯示名稱猜路徑。
 3. **確認類型**：依 `ITEM_TYPES.md` 判斷 category 與 category code。`亞克力` 等材質描述不得直接當成 category，必須依實際商品型態分類。
 4. **檢查既有資料**：在完整 `data/` Item 集合中檢查角色、標題、類型、既有 ID、同商品或可能重複資料，避免重複新增。
-5. **分配 Item ID**：新 ID 必須依目前 ID 規則產生，並以完整 remote repository 的 Item 集合確認唯一。不得因 category 變更而改既有 ID，也不得補號或重用已刪除 ID。
+5. **分配 Item ID**：新 ID 必須依目前 ID 規則產生，並以完整 remote repository 的 Item 集合確認唯一。不得因 category 變更而改既有 ID；已刪除 Item 的 ID 可以重新使用，但必須先確認目前 repository 中沒有同 ID。
 6. **建立 Item 資料**：每筆建立自己的 `data/<work>/<category>/<item-id>/data.json`。canonical Item JSON 不得加入 `workName`、`shipping`、`material`、`release`、`createdAt`、`updatedAt` 等非 schema 欄位。
 7. **處理圖片**：若使用者同時提供圖片，圖片只放到該 Item 的 `images/`，並確認 metadata 引用與實際檔名一致。沒有圖片就不要虛構圖片檔案或 metadata。
 8. **驗證每筆資料**：新增前後都要檢查 JSON schema、required fields、quantity、category、Item ID、路徑與圖片契約。
