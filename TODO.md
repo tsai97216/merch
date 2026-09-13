@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.339`。**
+- **目前開發版本：`1.109.340`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -41,12 +41,13 @@
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
 
 ## 4. Logo / 品牌資產
-- [x] Desktop 側邊欄使用共用 Logo：Light → `public/logo/icon-b.png`、Dark → `public/logo/icon-w.png`，並移除原本黑色方形背景。
+- [x] Desktop 側邊欄使用共用 Logo：Light → `public/logo/icon-b.png`、Dark → `public/logo/icon-w.png`，並移除原本黑色方形背景與 `CM` brand mark。
 - [x] Mobile 導覽列與 Desktop 共用同一套 Logo 資產與 Light / Dark 規則。
 - [x] 淺色模式使用 `icon-b.png`。
 - [x] 深色模式使用 `icon-w.png`。
-- [x] Favicon 使用 `icon-w.png`。
-- [x] PWA／網站安裝圖示使用 `icon-w.png`。
+- [x] Favicon 使用 `public/icons/favicon.png`，來源為 `icon-w.png`。
+- [x] PWA／網站安裝圖示使用 `public/icons/pwa-icon.png`，來源為 `icon-w.png`。
+- [x] 移除 `upload/icon-b.png`、`upload/icon-w.png`，品牌資產正式移入部署用 `public` 路徑。
 - [ ] 實機確認 Desktop／Tablet／Mobile Logo 尺寸、主題切換與裁切表現。
 - [ ] 實機確認 Favicon 與 PWA／網站安裝圖示。
 
