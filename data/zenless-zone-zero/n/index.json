@@ -4,6 +4,17 @@
   "category": "n",
   "items": [
     {
+      "id": "ZZZn001",
+      "path": "data/zenless-zone-zero/n/ZZZn001/data.json",
+      "title": "三星線下 明信片 葉瞬光",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
+    },
+    {
       "id": "ZZZn002",
       "path": "data/zenless-zone-zero/n/ZZZn002/data.json",
       "title": "2.8滿贈 明信片",
@@ -15,17 +26,6 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received"
-    },
-    {
-      "id": "ZZZn001",
-      "path": "data/zenless-zone-zero/n/ZZZn001/data.json",
-      "title": "三星線下 明信片 葉瞬光",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 2,
       "status": "received"
     }
   ]

@@ -2,16 +2,30 @@
   "id": "ZZZn002",
   "workId": "zenless-zone-zero",
   "title": "2.8滿贈 明信片",
-  "series": ["2.8滿贈"],
-  "characters": ["希希芙", "南宮羽", "千夏", "愛芮"],
+  "series": [
+    "2.8滿贈"
+  ],
+  "characters": [
+    "希希芙",
+    "南宮羽",
+    "千夏",
+    "愛芮"
+  ],
   "category": "n",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "FB抽獎", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "FB抽獎",
+    "date": "2026-07-27"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
