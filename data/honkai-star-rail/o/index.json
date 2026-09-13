@@ -13,6 +13,15 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRo003",
+      "path": "data/honkai-star-rail/o/HSRo003/data.json",
+      "title": "Run to 歡愉 主題證件套",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
