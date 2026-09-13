@@ -24,17 +24,6 @@
       "status": "received"
     },
     {
-      "id": "ZZZd002",
-      "path": "data/zenless-zone-zero/d/ZZZd002/data.json",
-      "title": "虛狩加冕之時 葉瞬光 立牌",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZd001",
       "path": "data/zenless-zone-zero/d/ZZZd001/data.json",
       "title": "絕區零 時裝系列 流沙雙插立牌 葉瞬光",
@@ -49,6 +38,17 @@
       "id": "ZZZd003",
       "path": "data/zenless-zone-zero/d/ZZZd003/data.json",
       "title": "葉瞬光 立繪 立牌",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZd002",
+      "path": "data/zenless-zone-zero/d/ZZZd002/data.json",
+      "title": "虛狩加冕之時 葉瞬光 立牌",
       "characters": [
         "葉瞬光"
       ],
