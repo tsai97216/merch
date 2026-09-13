@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.338`。**
+- **目前開發版本：`1.109.339`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -62,7 +62,7 @@
 - [x] `toast.css`／`sync-overlay.*`：確認 `showToast()` 已經只轉送至 shared animated feedback foundation，但 `src/management.ts` 仍直接 import `./toast.css`，因此 legacy `toast.css` 仍會被載入；視覺層已替換，CSS／import 尚未完全清除。
 
 ### 5.2 下一輪清理順序
-- [ ] 清除 `src/management.ts` 等仍存在的 `toast.css` import，確認所有 `.toast` legacy selector 均無 runtime 依賴後移除 `src/toast.css`。
+- [x] 清除 `src/management.ts` 等仍存在的 `toast.css` import，確認所有 `.toast` legacy selector 均無 runtime 依賴後移除 `src/toast.css`。
 - [ ] 清理 `card-enhancements.css` 中與 shared Badge foundation 重複的 `.badge` 幾何／視覺定義，只保留真正屬於 Card layout 的規則。
 - [ ] 逐項清理 `styles.css` 中已確認由 shared foundation 接管的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 舊定義，再檢查其餘 page layout / card / detail 規則的唯一責任。
 - [ ] 逐項檢查 `theme.css`／`theme-refinement.css`，只移除確定重複的 theme implementation，保留必要的 theme-only refinement。
