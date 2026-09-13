@@ -1,7 +1,7 @@
 const API_BASE = ((import.meta as ImportMeta & { env?: { VITE_MERCH_API_URL?: string } }).env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_ASSET_PREFIX = `${API_BASE}/assets/`;
 const API_ASSET_FILE_PREFIX = `${API_BASE}/assets/by-file/`;
-const LEGACY_ASSET_PREFIX = 'https://raw.githubusercontent.com/tsai97216/merch-old/main/';
+const RAW_ASSET_PREFIX = 'https://raw.githubusercontent.com/tsai97216/merch/main/';
 
 function assetPathFromSource(source: string): string {
   try {
@@ -28,8 +28,8 @@ function assetFileUrl(file: string): string {
   return `${API_ASSET_FILE_PREFIX}${encodeURIComponent(file)}`;
 }
 
-function legacyAssetUrl(path: string): string {
-  return `${LEGACY_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
+function rawAssetUrl(path: string): string {
+  return `${RAW_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
 function recoverImage(image: HTMLImageElement): void {
@@ -39,12 +39,12 @@ function recoverImage(image: HTMLImageElement): void {
   const stage = image.dataset.assetFallbackStage || '0';
   if (stage === '0') {
     image.dataset.assetFallbackStage = '1';
-    image.src = assetUrl(path);
+    image.src = assetFileUrl(path.split('/').pop() || path);
     return;
   }
   if (stage === '1') {
     image.dataset.assetFallbackStage = '2';
-    image.src = legacyAssetUrl(path);
+    image.src = rawAssetUrl(path);
   }
 }
 
