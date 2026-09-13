@@ -1,6 +1,5 @@
 const API_BASE = ((import.meta as ImportMeta & { env?: { VITE_MERCH_API_URL?: string } }).env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_ASSET_PREFIX = `${API_BASE}/assets/`;
-const API_ASSET_FILE_PREFIX = `${API_BASE}/assets/by-file/`;
 const RAW_ASSET_PREFIX = 'https://raw.githubusercontent.com/tsai97216/merch/main/';
 
 function assetPathFromSource(source: string): string {
@@ -24,10 +23,6 @@ function assetUrl(path: string): string {
   return `${API_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
 
-function assetFileUrl(file: string): string {
-  return `${API_ASSET_FILE_PREFIX}${encodeURIComponent(file)}`;
-}
-
 function rawAssetUrl(path: string): string {
   return `${RAW_ASSET_PREFIX}${path.split('/').map(encodeURIComponent).join('/')}`;
 }
@@ -39,11 +34,6 @@ function recoverImage(image: HTMLImageElement): void {
   const stage = image.dataset.assetFallbackStage || '0';
   if (stage === '0') {
     image.dataset.assetFallbackStage = '1';
-    image.src = assetFileUrl(path.split('/').pop() || path);
-    return;
-  }
-  if (stage === '1') {
-    image.dataset.assetFallbackStage = '2';
     image.src = rawAssetUrl(path);
   }
 }
@@ -53,7 +43,7 @@ window.addEventListener('error', (event) => {
   if (!(target instanceof HTMLImageElement)) return;
   const path = assetPathFromSource(target.currentSrc || target.src);
   if (!path) return;
-  if ((target.dataset.assetFallbackStage || '0') === '2') return;
+  if ((target.dataset.assetFallbackStage || '0') === '1') return;
   event.stopImmediatePropagation();
   recoverImage(target);
 }, true);
@@ -62,5 +52,5 @@ export function resolveAssetUrl(source?: string): string {
   if (!source) return '';
   if (source.includes('/api/assets/')) return source;
   const path = assetPathFromSource(source);
-  return path ? assetUrl(path) : assetFileUrl(source.split('/').pop() || source);
+  return path ? assetUrl(path) : rawAssetUrl(source.split('/').pop() || source);
 }
