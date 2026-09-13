@@ -37,22 +37,22 @@
       "status": "received"
     },
     {
-      "id": "ZZZw004",
-      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
-      "title": "伊埃斯 手機架",
+      "id": "ZZZw001",
+      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
+      "title": "儀玄 扇子",
       "characters": [
-        "伊埃斯"
+        "儀玄"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
     },
     {
-      "id": "ZZZw001",
-      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
-      "title": "儀玄 扇子",
+      "id": "ZZZw004",
+      "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
+      "title": "伊埃斯 手機架",
       "characters": [
-        "儀玄"
+        "伊埃斯"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
