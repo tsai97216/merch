@@ -1,0 +1,24 @@
+{
+  "id": "HSRo003",
+  "workId": "honkai-star-rail",
+  "title": "爻光紅包袋",
+  "series": [],
+  "characters": [
+    "爻光"
+  ],
+  "category": "o",
+  "manufacturer": "米哈遊",
+  "quantity": 3,
+  "status": "received",
+  "description": "",
+  "notes": "西門活動",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-02-07"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
