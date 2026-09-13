@@ -1,10 +1,8 @@
 {
   "id": "ZZZw004",
   "workId": "zenless-zone-zero",
-  "title": "喧響系列 手機支架 邦布款",
-  "series": [
-    "喧響系列"
-  ],
+  "title": "伊埃斯 手機架",
+  "series": [],
   "characters": [
     "伊埃斯"
   ],
@@ -26,8 +24,10 @@
   },
   "images": [
     {
-      "id": "ZZZw004-1789341013579",
-      "file": "1789341010224-IMG_3701.jpeg"
+      "id": "ZZZw004-1789341016380-oikk9",
+      "file": "1789341010224-IMG_3701.jpeg",
+      "alt": "伊埃斯 手機架",
+      "isCover": true
     }
   ]
 }

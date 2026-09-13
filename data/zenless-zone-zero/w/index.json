@@ -52,13 +52,14 @@
     {
       "id": "ZZZw004",
       "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
-      "title": "喧響系列 手機支架 邦布款",
+      "title": "伊埃斯 手機架",
       "characters": [
         "伊埃斯"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "1789341010224-IMG_3701.jpeg"
     }
   ]
 }
