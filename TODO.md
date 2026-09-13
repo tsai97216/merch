@@ -79,4 +79,9 @@
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
+## 7. Worker 圖片上傳 503
+- [ ] 連續圖片上傳時偶發 API 503：確認 Worker 實際回應來源，區分 Cloudflare Worker 平台 503、GitHub API 502/503/504 與前端錯誤顯示。
+- [ ] 強化 Worker 對 GitHub 暫時性 502/503/504／429 的有限重試與錯誤保留，避免 transient upstream failure 直接中斷圖片 atomic commit。
+- [ ] 實機連續上傳多張圖片，確認成功寫入、版本遞增與 atomic commit 沒有遺失或重複。
+
 > API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告正式 release。
