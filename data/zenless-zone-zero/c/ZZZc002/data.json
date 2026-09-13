@@ -3,15 +3,24 @@
   "workId": "zenless-zone-zero",
   "title": "蕾米埃爾 閃卡",
   "series": [],
-  "characters": ["蕾米埃爾"],
+  "characters": [
+    "蕾米埃爾"
+  ],
   "category": "c",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "notes": "絕區零三周年快閃",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-08-09"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }

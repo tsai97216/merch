@@ -4,17 +4,6 @@
   "category": "c",
   "items": [
     {
-      "id": "ZZZc002",
-      "path": "data/zenless-zone-zero/c/ZZZc002/data.json",
-      "title": "蕾米埃爾 閃卡",
-      "characters": [
-        "蕾米埃爾"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZc003",
       "path": "data/zenless-zone-zero/c/ZZZc003/data.json",
       "title": "絕區零 星見雅 黏土人 訂金卡",
@@ -34,6 +23,17 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 2,
+      "status": "received"
+    },
+    {
+      "id": "ZZZc002",
+      "path": "data/zenless-zone-zero/c/ZZZc002/data.json",
+      "title": "蕾米埃爾 閃卡",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
       "status": "received"
     }
   ]
