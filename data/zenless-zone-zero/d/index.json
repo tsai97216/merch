@@ -4,15 +4,6 @@
   "category": "d",
   "items": [
     {
-      "id": "ZZZd004",
-      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
-      "title": "影畫系列 壓克力插片展示框",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZd003",
       "path": "data/zenless-zone-zero/d/ZZZd003/data.json",
       "title": "葉瞬光 立繪 立牌",
@@ -57,6 +48,15 @@
       "quantity": 1,
       "status": "received",
       "cover": "1789341154913-IMG_3703.png"
+    },
+    {
+      "id": "ZZZd004",
+      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
+      "title": "影畫系列 壓克力插片展示框",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
