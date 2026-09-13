@@ -20,3 +20,6 @@
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:0.01ms!important;animation-duration:0.01ms!important;animation-iteration-count:1!important}}
 @media (prefers-contrast:more){.button,.nav a,.view-button,.field input,.field select,.field textarea,.search{border-width:2px}.stat-card,.panel,.item-card,.item-detail-grid>section,.item-detail-text{border-width:2px}}
+
+/* Brand assets: the logo is the only brand mark. */
+.brand-logo{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;overflow:hidden}.brand-logo img{width:100%;height:100%;display:block;object-fit:contain}.brand-logo-dark{display:none!important}html[data-theme="dark"] .brand-logo-light{display:none!important}html[data-theme="dark"] .brand-logo-dark{display:block!important}.sidebar.is-collapsed .brand-logo{width:42px;flex:0 0 42px}
