@@ -1,12 +1,12 @@
 # TODO
 
 > 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期開發規則放在 `RULES.md`。
-> 
+>
 > **驗收原則：適用的 CI／自動化驗證通過後即可結案；只有 CI 無法覆蓋的外部服務或真實環境契約才需要額外實機驗收。**
 
 ## Current state
 
-- **目前開發版本：`1.109.342`。**
+- **目前開發版本：`1.109.343`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -36,6 +36,7 @@
 - [x] Item Detail 的「商品描述／備註」內容改為一般正文尺寸與文字顏色，不再使用淺色小字。
 - [ ] 實機確認 Management / Add 的 Select 在不同瀏覽器與響應式尺寸下文字不再裁切。
 - [ ] 實機確認 Item Detail 的售後欄位與描述／備註文字層級符合設計。
+- [ ] 修正手機版 Item Detail 彈出視窗被 Mobile Navigation 疊在上方，導致關閉按鈕無法點擊的問題；依 Statistics Detail 彈出視窗的 viewport / z-index 寫法處理。
 
 ## 3. Management 圖片管理
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
