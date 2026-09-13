@@ -1,7 +1,7 @@
 {
   "id": "ZZZn001",
   "workId": "zenless-zone-zero",
-  "title": "三星線下 明信片 葉瞬光",
+  "title": "三星線下活動 明信片",
   "series": [
     "三星線下"
   ],
@@ -13,7 +13,7 @@
   "quantity": 2,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "三星線下活動",
   "purchase": {
     "price": 0,
     "currency": "TWD",
