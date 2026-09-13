@@ -4,17 +4,6 @@
   "category": "k",
   "items": [
     {
-      "id": "ZZZk001",
-      "path": "data/zenless-zone-zero/k/ZZZk001/data.json",
-      "title": "角色炫彩亞克力掛件 奇趣修行系列 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZk002",
       "path": "data/zenless-zone-zero/k/ZZZk002/data.json",
       "title": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
@@ -25,6 +14,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "1789339105417-IMG_3698.jpeg"
+    },
+    {
+      "id": "ZZZk001",
+      "path": "data/zenless-zone-zero/k/ZZZk001/data.json",
+      "title": "角色炫彩亞克力掛件 奇趣修行系列 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
