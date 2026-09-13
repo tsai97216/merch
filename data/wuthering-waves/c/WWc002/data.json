@@ -3,25 +3,24 @@
   "workId": "wuthering-waves",
   "title": "愛彌斯 證件照",
   "series": [],
-  "characters": ["愛彌斯"],
+  "characters": [
+    "愛彌斯"
+  ],
   "category": "c",
   "manufacturer": "庫洛",
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "2026電玩展",
   "purchase": {
     "price": 0,
     "currency": "TWD",
     "platform": "線下活動",
-    "date": ""
+    "date": "2026-02-01"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
