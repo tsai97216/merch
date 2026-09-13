@@ -2,8 +2,12 @@
   "id": "WWc001",
   "workId": "wuthering-waves",
   "title": "鳴潮 共鳴者系列 Super Card 悠遊卡 愛彌斯款",
-  "series": ["共鳴者系列"],
-  "characters": ["愛彌斯"],
+  "series": [
+    "共鳴者系列"
+  ],
+  "characters": [
+    "愛彌斯"
+  ],
   "category": "c",
   "manufacturer": "",
   "quantity": 1,
@@ -14,14 +18,11 @@
     "price": 150,
     "currency": "TWD",
     "platform": "MOMO 購物",
-    "date": ""
+    "date": "2026-08-27"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
