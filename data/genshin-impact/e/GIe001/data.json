@@ -13,7 +13,8 @@
   "purchase": {
     "price": 2429,
     "currency": "TWD",
-    "platform": "MOMO 購物"
+    "platform": "MOMO 購物",
+    "date": "2026-01-22"
   },
   "arrival": {},
   "afterSales": {
