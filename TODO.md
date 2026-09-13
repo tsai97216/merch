@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.344`。**
+- **目前開發版本：`1.109.345`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
