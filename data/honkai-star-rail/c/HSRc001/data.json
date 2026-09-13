@@ -18,12 +18,9 @@
     "platform": "米哈遊淘寶",
     "date": "2026-02-27"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
