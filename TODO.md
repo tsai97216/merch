@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.337`。**
+- **目前開發版本：`1.109.338`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -51,20 +51,27 @@
 - [ ] 實機確認 Favicon 與 PWA／網站安裝圖示。
 
 ## 5. 架構清理：疊加式實作盤點
-- [ ] 依 `PROJECT_ARCHITECTURE.md` 逐檔檢查舊實作、新 foundation 與 enhancement 是否重複負責同一 UI／功能。
-- [ ] 優先檢查 `styles.css`、`theme*.css`、`controls.css`、`responsive-refinement.css`、`card-enhancements.css`、`toast.css`、`sync-overlay.*` 與各 page-specific CSS 的責任重疊。
-- [x] 首輪檢查 `styles.css`：確認 `main.ts` 先載入 `styles.css`，再由 `design-tokens.css` 間接載入 `controls.css`／`shared-components.css`，造成部分舊 selector 與新 shared foundation 同時存在；其中 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 等已有明確的 shared foundation 重複實作，待下一步徹底移除舊定義。
-- [ ] 逐項確認 `styles.css` 中其餘 page layout / card / detail 規則是否仍有唯一責任，再決定保留、搬移或刪除。
-- [ ] 檢查 `theme.css`／`theme-refinement.css` 的 theme selector 是否存在舊新雙層責任。
-- [ ] 檢查 `controls.css` 與 Add／Management／其他 page-specific CSS 是否存在控制項重複實作。
-- [ ] 檢查 `responsive-refinement.css` 與各 page CSS 的 viewport 規則是否重複。
-- [ ] 檢查 `card-enhancements.css` 與 Card foundation 是否存在可移除的第二套實作。
-- [ ] 檢查 `toast.css` 與 `sync-overlay.*`／animated feedback foundation 是否仍保留舊 feedback 層。
+
+### 5.1 已完成首輪盤點
+- [x] 依 `PROJECT_ARCHITECTURE.md` 建立逐檔盤點範圍，先處理 foundation 與 enhancement 的責任邊界。
+- [x] `styles.css`：確認 `main.ts` 先載入 `styles.css`，再由 `design-tokens.css` 間接載入 `controls.css`／`shared-components.css`；`.panel`、`.badge`、`.view-switch`、`.button`、`select` 等存在明確 shared foundation 重複實作，後續需徹底移除舊定義。
+- [x] `controls.css`：確認為 Button、Input、Select、Textarea、Checkbox／Radio 等共用控制項的 canonical foundation，後續 page-specific 重複控制項應以此為準。
+- [x] `responsive-refinement.css`：確認主要責任為 Desktop／Tablet／Mobile viewport contract；多數規則屬真正 responsive 行為，不應整檔刪除。
+- [x] `theme-refinement.css`：確認包含 Settings、Add、Management、Statistics、Detail、Dark mode 等 theme refinement；不能因 selector 重名就整批刪除，需逐 selector 判斷是否為 theme-only 責任。
+- [x] `card-enhancements.css`：確認卡片 meta row、item top、list mode 等仍有 card-specific layout 責任；但 `.item-card ... .badge` 對 Badge 的高度／padding／line-height 等定義與 shared Badge foundation 重疊，列入後續清理。
+- [x] `toast.css`／`sync-overlay.*`：確認 `showToast()` 已經只轉送至 shared animated feedback foundation，但 `src/management.ts` 仍直接 import `./toast.css`，因此 legacy `toast.css` 仍會被載入；視覺層已替換，CSS／import 尚未完全清除。
+
+### 5.2 下一輪清理順序
+- [ ] 清除 `src/management.ts` 等仍存在的 `toast.css` import，確認所有 `.toast` legacy selector 均無 runtime 依賴後移除 `src/toast.css`。
+- [ ] 清理 `card-enhancements.css` 中與 shared Badge foundation 重複的 `.badge` 幾何／視覺定義，只保留真正屬於 Card layout 的規則。
+- [ ] 逐項清理 `styles.css` 中已確認由 shared foundation 接管的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 舊定義，再檢查其餘 page layout / card / detail 規則的唯一責任。
+- [ ] 逐項檢查 `theme.css`／`theme-refinement.css`，只移除確定重複的 theme implementation，保留必要的 theme-only refinement。
+- [ ] 檢查 `responsive-refinement.css` 與各 page CSS 的 viewport 規則，將 responsive contract 留在 centralized responsive layer。
 - [ ] 檢查 `home-enhancements.ts` 與 `main.ts` 的 Home rendering／互動責任是否重疊。
 - [ ] 檢查 `management-images.css` 與 Management image rendering 是否存在重複責任。
 - [ ] 檢查 `item-detail-modal.css` 與 shared Modal／Panel foundation 是否存在可移除的第二套實作。
-- [ ] 發現確定的舊實作、重複 selector、旁路 rendering 或 patch 時，先記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
-- [ ] 清理後重新確認 import、selector、rendering、responsive 與 theme 的單一責任邊界。
+- [ ] 每發現確定的舊實作、重複 selector、旁路 rendering 或 patch，先在 TODO 記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
+- [ ] 清理完成後重新確認 import、selector、rendering、responsive、theme 的單一責任邊界。
 
 ## 6. Release
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
