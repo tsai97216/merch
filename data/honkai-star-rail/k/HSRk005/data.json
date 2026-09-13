@@ -1,0 +1,28 @@
+{
+  "id": "HSRk005",
+  "workId": "honkai-star-rail",
+  "title": "三周年紀念亞克力吊飾 大黑塔款",
+  "series": ["Run to 歡愉"],
+  "characters": ["大黑塔"],
+  "category": "k",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "崩鐵路跑活動",
+  "purchase": {
+    "price": null,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-09"
+  },
+  "arrival": {
+    "expectedDate": null,
+    "receivedDate": null
+  },
+  "afterSales": {
+    "status": "",
+    "note": ""
+  },
+  "images": []
+}
