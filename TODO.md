@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.397`。**
+- **目前開發版本：`1.109.398`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -88,6 +88,8 @@
 - [ ] 實機確認大量收藏資料加入後 Collection、搜尋、篩選與切換顯示模式的操作流暢度。
 - [x] 找到主要根因：`MerchStore.setUi()` 每次搜尋／篩選／排序等 UI state 更新都對整份 Store state 執行 `structuredClone()` + recursive `deepFreeze()`，資料量增加後會把每次 UI 操作成本放大。
 - [x] 修正 UI-only state 更新只建立新的 frozen root / ui，不再複製整份 works / items / shipping 資料；保持 immutable Store contract，同時避免無關資料的深層複製。
-- [ ] 後續若實機仍有明顯延遲，再針對 Collection rendering / dynamic filter option 重算做第二階段 profiling，不先疊加快取或旁路 rendering。
+- [x] 進一步確認第二個效能問題：進入 Collection 時，24 張 Item 卡片會同時參與版面計算與圖片載入；大量 ZZZ 圖片使 Collection 首次顯示的 layout / paint 成本明顯上升。
+- [ ] 以 Collection rendering 層處理首次進入成本，讓視窗外卡片不參與不必要的 layout / paint，並降低非必要圖片解碼對主執行緒的阻塞。
+- [ ] 實機重新確認「只點進收藏」是否仍有明顯卡頓；若仍有，再進行下一輪 profiling，不先疊加旁路快取。
 
 > API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告正式 release。
