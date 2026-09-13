@@ -26,10 +26,14 @@
 - [ ] 實機確認新增、編輯、刪除、圖片上傳／刪除在實際 API 延遲期間的滿版阻塞、動效，以及完成後中央大型回饋表現。
 - [ ] 驗證 TypeScript / build / API mutation contract，確認不影響既有 remote mutation 流程。
 
-## 2. Management 圖片管理
+## 2. 目前 UI 問題：Management / Add 共用控制項
+- [ ] 移除 Management 頁面多餘的 `{類型}` 顯示，修正產生該文字的 rendering／markup 根因，不以 CSS 隱藏。
+- [ ] 修正 Add 與 Management 的 Select 共用控制項高度／文字垂直對齊，避免文字底部被裁切；Desktop、Tablet、Mobile 均需維持一致可讀性。
+
+## 3. Management 圖片管理
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
 
-## 3. Release
+## 4. Release
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
