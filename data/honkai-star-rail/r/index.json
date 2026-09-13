@@ -33,15 +33,6 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
-    },
-    {
-      "id": "HSRr005",
-      "path": "data/honkai-star-rail/r/HSRr005/data.json",
-      "title": "Run to 歡愉雷射票",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
     }
   ]
 }
