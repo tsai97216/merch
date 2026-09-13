@@ -1,7 +1,7 @@
 {
   "id": "HSRn002",
   "workId": "honkai-star-rail",
-  "title": "run to 歡愉 集章卡明信片",
+  "title": "Run to 歡愉 集章卡明信片",
   "series": [
     "Run to 歡愉"
   ],
@@ -11,9 +11,8 @@
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "崩鐵路跑活動",
   "purchase": {
-    "price": 0,
     "currency": "TWD",
     "platform": "線下活動",
     "date": "2026-05-09"
