@@ -25,6 +25,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRk003",
+      "path": "data/honkai-star-rail/k/HSRk003/data.json",
+      "title": "歡愉信號—嗶波！炫彩亞克力鑰匙圈 銀狼 LV999款",
+      "characters": [
+        "銀狼"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
