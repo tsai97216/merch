@@ -92,24 +92,6 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
-    },
-    {
-      "id": "HSRc013",
-      "path": "data/honkai-star-rail/c/HSRc013/data.json",
-      "title": "Run to 歡愉 銀狼透卡",
-      "characters": ["銀狼"],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
-      "id": "HSRc014",
-      "path": "data/honkai-star-rail/c/HSRc014/data.json",
-      "title": "Run to 歡愉完賽小卡",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
     }
   ]
 }
