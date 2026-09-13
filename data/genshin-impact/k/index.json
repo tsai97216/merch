@@ -3,6 +3,16 @@
   "workId": "genshin-impact",
   "category": "k",
   "items": [
-    {"id": "GIk001", "path": "data/genshin-impact/k/GIk001/data.json", "title": "原神主題系列 壓克力掛擺件 回望湮滅的月光 哥倫比婭款", "characters": ["哥倫比婭"], "manufacturer": "米哈遊", "quantity": 1, "status": "received"}
+    {
+      "id": "GIk001",
+      "path": "data/genshin-impact/k/GIk001/data.json",
+      "title": "原神主題系列 壓克力掛擺件 回望湮滅的月光 哥倫比婭款",
+      "characters": [
+        "哥倫比婭"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
   ]
 }

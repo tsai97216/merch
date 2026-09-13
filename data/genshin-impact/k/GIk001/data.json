@@ -2,16 +2,28 @@
   "id": "GIk001",
   "workId": "genshin-impact",
   "title": "原神主題系列 壓克力掛擺件 回望湮滅的月光 哥倫比婭款",
-  "series": ["原神主題系列", "回望湮滅的月光"],
-  "characters": ["哥倫比婭"],
+  "series": [
+    "原神主題系列",
+    "回望湮滅的月光"
+  ],
+  "characters": [
+    "哥倫比婭"
+  ],
   "category": "k",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-06-02"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
