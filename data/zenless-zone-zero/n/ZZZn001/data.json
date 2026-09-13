@@ -2,16 +2,27 @@
   "id": "ZZZn001",
   "workId": "zenless-zone-zero",
   "title": "三星線下 明信片 葉瞬光",
-  "series": ["三星線下"],
-  "characters": ["葉瞬光"],
+  "series": [
+    "三星線下"
+  ],
+  "characters": [
+    "葉瞬光"
+  ],
   "category": "n",
   "manufacturer": "米哈遊",
   "quantity": 2,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"price": 0, "currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-02-01"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
