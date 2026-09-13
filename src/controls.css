@@ -132,6 +132,15 @@ select {
   padding: 0 var(--space-3);
 }
 
+/* Native select text can be clipped by browser-specific line-box handling when
+   a fixed height and normal line-height are combined. Keep the shared select
+   geometry fixed while giving the option text an explicit readable line box. */
+select {
+  line-height: 1.2;
+  padding-block: 1px;
+  vertical-align: middle;
+}
+
 textarea {
   padding: var(--space-3);
   min-height: 96px;
