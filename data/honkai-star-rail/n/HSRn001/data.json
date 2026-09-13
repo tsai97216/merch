@@ -1,8 +1,10 @@
 {
   "id": "HSRn001",
   "workId": "honkai-star-rail",
-  "title": "歡愉信號 逼波集章卡明信片",
-  "series": ["歡愉信號"],
+  "title": "歡愉信號—嗶波！集章卡明信片",
+  "series": [
+    "歡愉信號—嗶波！"
+  ],
   "characters": [],
   "category": "n",
   "manufacturer": "米哈遊",
@@ -14,14 +16,11 @@
     "price": 0,
     "currency": "TWD",
     "platform": "線下活動",
-    "date": ""
+    "date": "2026-08-02"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }

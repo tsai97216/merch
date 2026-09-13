@@ -4,21 +4,21 @@
   "category": "n",
   "items": [
     {
-      "id": "HSRn001",
-      "path": "data/honkai-star-rail/n/HSRn001/data.json",
-      "title": "歡愉信號 逼波集章卡明信片",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 2,
-      "status": "received"
-    },
-    {
       "id": "HSRn002",
       "path": "data/honkai-star-rail/n/HSRn002/data.json",
       "title": "run to 歡愉 集章卡明信片",
       "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRn001",
+      "path": "data/honkai-star-rail/n/HSRn001/data.json",
+      "title": "歡愉信號—嗶波！集章卡明信片",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
       "status": "received"
     }
   ]
