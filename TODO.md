@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.350`。**
+- **目前開發版本：`1.109.353`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -39,6 +39,7 @@
 - [ ] 修正手機版 Item Detail 彈出視窗被 Mobile Navigation 疊在上方，導致關閉按鈕無法點擊的問題；依 Statistics Detail 彈出視窗的 viewport / z-index 寫法處理。
 
 ## 3. Management 圖片管理
+- [x] 修正大型圖片透過 Worker `/assets/...` 取得時因 GitHub Contents API 對大檔內容限制造成的破圖：前端錯誤回退改走 `assets/by-file` 的 Git Blob 讀取，若檔名不唯一則再回退至目前 repository 的 raw asset。
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
 
 ## 4. Logo / 品牌資產
