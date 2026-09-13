@@ -1,10 +1,13 @@
 let host: HTMLElement | null = null;
 let timer: number | null = null;
 
-function ensureHost(): HTMLElement {
-  if (host?.isConnected) return host;
+function ensureHost(kind: 'info' | 'success' | 'error'): HTMLElement {
+  if (host?.isConnected) {
+    host.className = `toast-host toast-host-${kind}`;
+    return host;
+  }
   host = document.createElement('div');
-  host.className = 'toast-host';
+  host.className = `toast-host toast-host-${kind}`;
   host.setAttribute('aria-live', 'polite');
   host.setAttribute('aria-atomic', 'true');
   document.body.appendChild(host);
@@ -12,7 +15,7 @@ function ensureHost(): HTMLElement {
 }
 
 export function showToast(message: string, kind: 'info' | 'success' | 'error' = 'info', duration = 2600): void {
-  const root = ensureHost();
+  const root = ensureHost(kind);
   if (timer !== null) window.clearTimeout(timer);
   root.innerHTML = '';
   const toast = document.createElement('div');
