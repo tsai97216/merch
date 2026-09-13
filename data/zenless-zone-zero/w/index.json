@@ -4,17 +4,6 @@
   "category": "w",
   "items": [
     {
-      "id": "ZZZw002",
-      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
-      "title": "月曆 壓克力杯墊 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZw003",
       "path": "data/zenless-zone-zero/w/ZZZw003/data.json",
       "title": "月曆 壓克力杯墊 儀玄",
@@ -53,6 +42,17 @@
       "title": "2.1夏日快閃 壓克力杯墊",
       "characters": [
         "柚葉"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZw002",
+      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
+      "title": "月曆 壓克力杯墊 星見雅",
+      "characters": [
+        "星見雅"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
