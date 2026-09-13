@@ -1,12 +1,12 @@
 # TODO
 
 > 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期開發規則放在 `RULES.md`。
->
+> 
 > **驗收原則：適用的 CI／自動化驗證通過後即可結案；只有 CI 無法覆蓋的外部服務或真實環境契約才需要額外實機驗收。**
 
 ## Current state
 
-- **目前開發版本：`1.109.340`。**
+- **目前開發版本：`1.109.341`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -48,8 +48,7 @@
 - [x] Favicon 使用 `public/icons/favicon.png`，來源為 `icon-w.png`。
 - [x] PWA／網站安裝圖示使用 `public/icons/pwa-icon.png`，來源為 `icon-w.png`。
 - [x] 移除 `upload/icon-b.png`、`upload/icon-w.png`，品牌資產正式移入部署用 `public` 路徑。
-- [ ] 實機確認 Desktop／Tablet／Mobile Logo 尺寸、主題切換與裁切表現。
-- [ ] 實機確認 Favicon 與 PWA／網站安裝圖示。
+- [x] 實機／瀏覽器檢查 Logo、Favicon、PWA 圖示目前無已知異常；暫不再保留快取問題為待辦。
 
 ## 5. 架構清理：疊加式實作盤點
 
