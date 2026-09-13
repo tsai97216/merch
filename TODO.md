@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.304`。**
+- **目前開發版本：`1.109.305`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
 - API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成前一版本驗收。
@@ -28,7 +28,7 @@
 
 ## 2. 目前 UI 問題：Management / Add 共用控制項
 - [x] 移除 Management 頁面多餘的 `{類型}` 顯示：移除未被管理資料流使用的重複 `management-category` 欄位，保留上方 Work／Category／Serial selector 作為唯一類型來源。
-- [ ] 修正 Add 與 Management 的 Select 共用控制項高度／文字垂直對齊：目前 42px 共用高度在實際瀏覽器仍可能裁切字體下緣，需提高 Select 本體高度並確認 native select line box。
+- [x] 提高 Add 與 Management 的 Select 共用控制項高度至 46px，並移除固定 42px + 1.2 line-height 的 native select 組合，改用較寬鬆的共用 line box，避免文字下緣被裁切。
 - [ ] 實機確認 Management / Add 的 Select 在不同瀏覽器與響應式尺寸下文字不再裁切。
 
 ## 3. Management 圖片管理
@@ -38,4 +38,4 @@
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
-> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告 `1.109.304` release。
+> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告 `1.109.305` release。
