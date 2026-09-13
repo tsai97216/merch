@@ -13,6 +13,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZk002",
+      "path": "data/zenless-zone-zero/k/ZZZk002/data.json",
+      "title": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
+      "characters": [
+        "儀玄"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
