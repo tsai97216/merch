@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.297`。**
+- **目前開發版本：`1.109.298`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
 - API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成前一版本驗收。
@@ -22,7 +22,8 @@
 - [x] API 請求成功或失敗後都會結束阻塞狀態；成功狀態仍由原本 API／Store 流程在真正完成後處理。
 - [x] 修正 sync overlay 與 API 驗證腳本的環境邊界：error module 在非瀏覽器驗證環境不載入瀏覽器 overlay。
 - [x] 成功完成回饋改為中央大型 feedback，與同步中的滿版動效維持同一級別的視覺回饋，不再使用左下角小型 Toast。
-- [ ] 實機確認新增、編輯、刪除、圖片上傳／刪除在實際 API 延遲期間的滿版阻塞、動效，以及完成後中央大型成功回饋表現。
+- [ ] 統一同步中、成功、失敗、一般資訊等回饋動效的尺寸、位置、進出場動畫與視覺層級，避免同一套 API 流程出現不同形式的 feedback。
+- [ ] 實機確認新增、編輯、刪除、圖片上傳／刪除在實際 API 延遲期間的滿版阻塞、動效，以及完成後中央大型回饋表現。
 - [ ] 驗證 TypeScript / build / API mutation contract，確認不影響既有 remote mutation 流程。
 
 ## 2. Management 圖片管理
@@ -32,4 +33,4 @@
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
-> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告 `1.109.297` release。
+> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告 `1.109.298` release。
