@@ -4,17 +4,6 @@
   "category": "c",
   "items": [
     {
-      "id": "WWc003",
-      "path": "data/wuthering-waves/c/WWc003/data.json",
-      "title": "莫寧 證件照",
-      "characters": [
-        "莫寧"
-      ],
-      "manufacturer": "庫洛",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "WWc001",
       "path": "data/wuthering-waves/c/WWc001/data.json",
       "title": "鳴潮 共鳴者系列 Super Card 悠遊卡 愛彌斯款",
@@ -31,6 +20,17 @@
       "title": "愛彌斯 證件照",
       "characters": [
         "愛彌斯"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "WWc003",
+      "path": "data/wuthering-waves/c/WWc003/data.json",
+      "title": "莫寧 證件照",
+      "characters": [
+        "莫寧"
       ],
       "manufacturer": "庫洛",
       "quantity": 1,

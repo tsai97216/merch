@@ -3,25 +3,24 @@
   "workId": "wuthering-waves",
   "title": "莫寧 證件照",
   "series": [],
-  "characters": ["莫寧"],
+  "characters": [
+    "莫寧"
+  ],
   "category": "c",
   "manufacturer": "庫洛",
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "2026電玩展",
   "purchase": {
     "price": 0,
     "currency": "TWD",
     "platform": "線下活動",
-    "date": ""
+    "date": "2026-02-01"
   },
-  "arrival": {
-    "receivedDate": null
-  },
+  "arrival": {},
   "afterSales": {
-    "status": "無",
-    "note": ""
+    "status": "無"
   },
   "images": []
 }
