@@ -74,11 +74,7 @@
 - [ ] 每發現確定的舊實作、重複 selector、旁路 rendering 或 patch，先在 TODO 記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
 - [ ] 清理完成後重新確認 import、selector、rendering、responsive、theme 的單一責任邊界。
 
-## 6. Run to 歡愉資料整理
-- [ ] 補齊 Run to 歡愉各類型 Item，並確認既有明信片資料與 index 排序一致。
-- [ ] 新增後依永久 Item ID 規則使用未曾使用過的流水號，不重用先前已刪除的 ID。
-
-## 7. Release
+## 6. Release
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
