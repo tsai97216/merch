@@ -3,17 +3,113 @@
   "workId": "honkai-star-rail",
   "category": "c",
   "items": [
-    {"id":"HSRc002","path":"data/honkai-star-rail/c/HSRc002/data.json","title":"昔漣 美好假日 手辦 訂金卡","characters":["昔漣"],"manufacturer":"米哈遊","quantity":1,"status":"preorder"},
-    {"id":"HSRc003","path":"data/honkai-star-rail/c/HSRc003/data.json","title":"昔漣 滿贈拍立得","characters":["昔漣"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc001","path":"data/honkai-star-rail/c/HSRc001/data.json","title":"流螢 春日手信 手辦 訂金卡","characters":["流螢"],"manufacturer":"米哈遊","quantity":1,"status":"pending"},
-    {"id":"HSRc004","path":"data/honkai-star-rail/c/HSRc004/data.json","title":"歡愉信號—嗶波！刃透卡","characters":["刃"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc005","path":"data/honkai-star-rail/c/HSRc005/data.json","title":"歡愉信號—嗶波！銀狼 LV999透卡","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc006","path":"data/honkai-star-rail/c/HSRc006/data.json","title":"歡愉信號—嗶波！角色卡 銀狼A","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc007","path":"data/honkai-star-rail/c/HSRc007/data.json","title":"歡愉信號—嗶波！角色卡 銀狼B","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc008","path":"data/honkai-star-rail/c/HSRc008/data.json","title":"歡愉信號—嗶波！角色卡 銀狼C","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc009","path":"data/honkai-star-rail/c/HSRc009/data.json","title":"歡愉信號—嗶波！角色卡 姬子","characters":["姬子"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc010","path":"data/honkai-star-rail/c/HSRc010/data.json","title":"歡愉信號—嗶波！角色卡 火花","characters":["火花"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc011","path":"data/honkai-star-rail/c/HSRc011/data.json","title":"Run to 歡愉 銀狼透卡","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRc012","path":"data/honkai-star-rail/c/HSRc012/data.json","title":"Run to 歡愉完賽小卡","characters":[],"manufacturer":"米哈遊","quantity":1,"status":"received"}
+    {
+      "id": "HSRc002",
+      "path": "data/honkai-star-rail/c/HSRc002/data.json",
+      "title": "昔漣 美好假日 手辦 訂金卡",
+      "characters": ["昔漣"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "preorder"
+    },
+    {
+      "id": "HSRc003",
+      "path": "data/honkai-star-rail/c/HSRc003/data.json",
+      "title": "昔漣 滿贈拍立得",
+      "characters": ["昔漣"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc001",
+      "path": "data/honkai-star-rail/c/HSRc001/data.json",
+      "title": "流螢 春日手信 手辦 訂金卡",
+      "characters": ["流螢"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "pending"
+    },
+    {
+      "id": "HSRc004",
+      "path": "data/honkai-star-rail/c/HSRc004/data.json",
+      "title": "歡愉信號—嗶波！刃透卡",
+      "characters": ["刃"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc005",
+      "path": "data/honkai-star-rail/c/HSRc005/data.json",
+      "title": "歡愉信號—嗶波！銀狼 LV999透卡",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc006",
+      "path": "data/honkai-star-rail/c/HSRc006/data.json",
+      "title": "歡愉信號—嗶波！角色卡 銀狼A",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc007",
+      "path": "data/honkai-star-rail/c/HSRc007/data.json",
+      "title": "歡愉信號—嗶波！角色卡 銀狼B",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc008",
+      "path": "data/honkai-star-rail/c/HSRc008/data.json",
+      "title": "歡愉信號—嗶波！角色卡 銀狼C",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc009",
+      "path": "data/honkai-star-rail/c/HSRc009/data.json",
+      "title": "歡愉信號—嗶波！角色卡 姬子",
+      "characters": ["姬子"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc010",
+      "path": "data/honkai-star-rail/c/HSRc010/data.json",
+      "title": "歡愉信號—嗶波！角色卡 火花",
+      "characters": ["火花"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc011",
+      "path": "data/honkai-star-rail/c/HSRc011/data.json",
+      "title": "Run to 歡愉 銀狼透卡",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRc012",
+      "path": "data/honkai-star-rail/c/HSRc012/data.json",
+      "title": "Run to 歡愉完賽小卡",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
   ]
 }
