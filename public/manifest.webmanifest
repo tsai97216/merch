@@ -1,0 +1,16 @@
+{
+  "name": "Chi MERCH",
+  "short_name": "Chi MERCH",
+  "start_url": "/#/home",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0fa3a3",
+  "icons": [
+    {
+      "src": "/logo/icon-w.png",
+      "sizes": "700x700",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
