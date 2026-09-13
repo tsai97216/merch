@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.336`。**
+- **目前開發版本：`1.109.337`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -40,7 +40,17 @@
 ## 3. Management 圖片管理
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
 
-## 4. 架構清理：疊加式實作盤點
+## 4. Logo / 品牌資產
+- [x] Desktop 側邊欄使用共用 Logo：Light → `public/logo/icon-b.png`、Dark → `public/logo/icon-w.png`，並移除原本黑色方形背景。
+- [x] Mobile 導覽列與 Desktop 共用同一套 Logo 資產與 Light / Dark 規則。
+- [x] 淺色模式使用 `icon-b.png`。
+- [x] 深色模式使用 `icon-w.png`。
+- [x] Favicon 使用 `icon-w.png`。
+- [x] PWA／網站安裝圖示使用 `icon-w.png`。
+- [ ] 實機確認 Desktop／Tablet／Mobile Logo 尺寸、主題切換與裁切表現。
+- [ ] 實機確認 Favicon 與 PWA／網站安裝圖示。
+
+## 5. 架構清理：疊加式實作盤點
 - [ ] 依 `PROJECT_ARCHITECTURE.md` 逐檔檢查舊實作、新 foundation 與 enhancement 是否重複負責同一 UI／功能。
 - [ ] 優先檢查 `styles.css`、`theme*.css`、`controls.css`、`responsive-refinement.css`、`card-enhancements.css`、`toast.css`、`sync-overlay.*` 與各 page-specific CSS 的責任重疊。
 - [x] 首輪檢查 `styles.css`：確認 `main.ts` 先載入 `styles.css`，再由 `design-tokens.css` 間接載入 `controls.css`／`shared-components.css`，造成部分舊 selector 與新 shared foundation 同時存在；其中 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 等已有明確的 shared foundation 重複實作，待下一步徹底移除舊定義。
@@ -56,7 +66,7 @@
 - [ ] 發現確定的舊實作、重複 selector、旁路 rendering 或 patch 時，先記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
 - [ ] 清理後重新確認 import、selector、rendering、responsive 與 theme 的單一責任邊界。
 
-## 5. Release
+## 6. Release
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
