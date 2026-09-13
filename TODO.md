@@ -6,8 +6,9 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.334`。**
+- **目前開發版本：`1.109.335`。**
 - `package.json` 與 `public/data/version.json` 已同步。
+- `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
 - API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成前一版本驗收。
 - Mobile 與 Desktop 主要外觀驗收已完成。
@@ -39,7 +40,13 @@
 ## 3. Management 圖片管理
 - [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
 
-## 4. Release
+## 4. 架構清理：疊加式實作盤點
+- [ ] 依 `PROJECT_ARCHITECTURE.md` 逐檔檢查舊實作、新 foundation 與 enhancement 是否重複負責同一 UI／功能。
+- [ ] 優先檢查 `styles.css`、`theme*.css`、`controls.css`、`responsive-refinement.css`、`card-enhancements.css`、`toast.css`、`sync-overlay.*` 與各 page-specific CSS 的責任重疊。
+- [ ] 發現確定的舊實作、重複 selector、旁路 rendering 或 patch 時，先記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
+- [ ] 清理後重新確認 import、selector、rendering、responsive 與 theme 的單一責任邊界。
+
+## 5. Release
 - [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
 - [ ] GitHub Actions 成功後正式宣告 release。
 
