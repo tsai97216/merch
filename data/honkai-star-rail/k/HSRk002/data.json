@@ -17,11 +17,10 @@
   "purchase": {
     "price": 220,
     "currency": "TWD",
-    "platform": "日本商店"
+    "platform": "日本商店",
+    "date": "2024-07-01"
   },
-  "arrival": {
-    "expectedDate": "2024-07-01"
-  },
+  "arrival": {},
   "afterSales": {
     "status": "無"
   },
