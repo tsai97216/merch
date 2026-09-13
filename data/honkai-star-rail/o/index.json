@@ -3,7 +3,23 @@
   "workId": "honkai-star-rail",
   "category": "o",
   "items": [
-    {"id":"HSRo001","path":"data/honkai-star-rail/o/HSRo001/data.json","title":"銀狼 路跑獎牌","characters":["銀狼"],"manufacturer":"米哈遊","quantity":1,"status":"received"},
-    {"id":"HSRo002","path":"data/honkai-star-rail/o/HSRo002/data.json","title":"Run to 歡愉 主題證件套","characters":[],"manufacturer":"米哈遊","quantity":1,"status":"received"}
+    {
+      "id": "HSRo001",
+      "path": "data/honkai-star-rail/o/HSRo001/data.json",
+      "title": "銀狼 路跑獎牌",
+      "characters": ["銀狼"],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRo002",
+      "path": "data/honkai-star-rail/o/HSRo002/data.json",
+      "title": "Run to 歡愉 主題證件套",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
   ]
 }
