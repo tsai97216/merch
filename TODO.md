@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.314`。**
+- **目前開發版本：`1.109.334`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
 - API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成前一版本驗收。
