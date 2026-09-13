@@ -1,9 +1,9 @@
 {
   "id": "HSRb002",
   "workId": "honkai-star-rail",
-  "title": "小不点猫猫系列马口铁徽章 黃泉款",
+  "title": "小不點貓貓系列馬口鐵徽章 黃泉款",
   "series": [
-    "小不点猫猫系列"
+    "小不點貓貓系列"
   ],
   "characters": [
     "黃泉"
@@ -13,12 +13,12 @@
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "崩鐵路跑活動",
   "purchase": {
     "price": 0,
     "currency": "TWD",
-    "platform": "",
-    "date": ""
+    "platform": "線下活動",
+    "date": "2026-05-09"
   },
   "arrival": {},
   "afterSales": {},
