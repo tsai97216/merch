@@ -1,5 +1,5 @@
 name = "chi-merch-api"
-main = "src/index.ts"
+main = "src/r2-entry.ts"
 compatibility_date = "2026-09-07"
 
 routes = [
