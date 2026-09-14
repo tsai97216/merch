@@ -1,7 +1,7 @@
 {
   "id": "HSRn002",
   "workId": "honkai-star-rail",
-  "title": "Run to 歡愉 集章卡明信片",
+  "title": "run to 歡愉 集章卡明信片",
   "series": [
     "Run to 歡愉"
   ],
@@ -23,8 +23,10 @@
   },
   "images": [
     {
-      "id": "HSRn002-1789427138652",
-      "file": "HSRn002.jpeg"
+      "id": "HSRn002-1789427141983-5lmep",
+      "file": "HSRn002.jpeg",
+      "alt": "run to 歡愉 集章卡明信片",
+      "isCover": true
     }
   ]
 }

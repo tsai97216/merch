@@ -16,11 +16,12 @@
     {
       "id": "HSRn002",
       "path": "data/honkai-star-rail/n/HSRn002/data.json",
-      "title": "Run to 歡愉 集章卡明信片",
+      "title": "run to 歡愉 集章卡明信片",
       "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "HSRn002.jpeg"
     }
   ]
 }
