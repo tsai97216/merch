@@ -40,22 +40,22 @@
       "cover": "ZZZc003.jpeg"
     },
     {
-      "id": "ZZZc004",
-      "path": "data/zenless-zone-zero/c/ZZZc004/data.json",
-      "title": "三週年線下 蕾米埃爾 光柵卡",
+      "id": "ZZZc005",
+      "path": "data/zenless-zone-zero/c/ZZZc005/data.json",
+      "title": "月曆透卡 葉瞬光",
       "characters": [
-        "蕾米埃爾"
+        "葉瞬光"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
     },
     {
-      "id": "ZZZc005",
-      "path": "data/zenless-zone-zero/c/ZZZc005/data.json",
-      "title": "月曆透卡 葉瞬光",
+      "id": "ZZZc004",
+      "path": "data/zenless-zone-zero/c/ZZZc004/data.json",
+      "title": "三週年線下 蕾米埃爾 光柵卡",
       "characters": [
-        "葉瞬光"
+        "蕾米埃爾"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
