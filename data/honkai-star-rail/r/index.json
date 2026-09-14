@@ -4,15 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "HSRr001",
-      "path": "data/honkai-star-rail/r/HSRr001/data.json",
-      "title": "歡愉信號—嗶波！主題雷射票",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRr002",
       "path": "data/honkai-star-rail/r/HSRr002/data.json",
       "title": "遠板凜 雷射票",
@@ -38,6 +29,15 @@
       "id": "HSRr004",
       "path": "data/honkai-star-rail/r/HSRr004/data.json",
       "title": "Run to 歡愉雷射票",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRr001",
+      "path": "data/honkai-star-rail/r/HSRr001/data.json",
+      "title": "歡愉信號—嗶波！主題雷射票",
       "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
