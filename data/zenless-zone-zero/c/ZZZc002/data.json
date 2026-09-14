@@ -24,8 +24,10 @@
   },
   "images": [
     {
-      "id": "ZZZc002-1789389448742",
-      "file": "ZZZc002.jpeg"
+      "id": "ZZZc002-1789389451667-d25do",
+      "file": "ZZZc002.jpeg",
+      "alt": "蕾米埃爾 閃卡",
+      "isCover": true
     }
   ]
 }
