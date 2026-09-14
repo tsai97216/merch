@@ -12,7 +12,8 @@
       ],
       "manufacturer": "Myethos",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "HSRf001.jpeg"
     }
   ]
 }
