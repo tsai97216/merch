@@ -26,8 +26,10 @@
   },
   "images": [
     {
-      "id": "ZZZd005-1789380543008",
-      "file": "ZZZd005.png"
+      "id": "ZZZd005-1789380546073-biwqu",
+      "file": "ZZZd005.png",
+      "alt": "影畫系列 定幀亞克力插片 星見雅",
+      "isCover": true
     }
   ]
 }
