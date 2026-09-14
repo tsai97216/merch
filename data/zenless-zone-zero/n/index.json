@@ -4,6 +4,15 @@
   "category": "n",
   "items": [
     {
+      "id": "ZZZn002",
+      "path": "data/zenless-zone-zero/n/ZZZn002/data.json",
+      "title": "2.8滿贈 明信片",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
       "id": "ZZZn001",
       "path": "data/zenless-zone-zero/n/ZZZn001/data.json",
       "title": "三星線下活動 明信片",
@@ -14,15 +23,6 @@
       "quantity": 2,
       "status": "received",
       "cover": "ZZZn001.jpeg"
-    },
-    {
-      "id": "ZZZn002",
-      "path": "data/zenless-zone-zero/n/ZZZn002/data.json",
-      "title": "2.8滿贈 明信片",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
     }
   ]
 }
