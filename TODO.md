@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.400`。**
+- **目前開發版本：`1.109.401`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -18,13 +18,13 @@
 
 ## 0. 圖片儲存架構：Cloudflare R2【最優先】
 - [ ] 建立 Merch 圖片儲存架構：GitHub 繼續保存程式／JSON／收藏資料，Cloudflare R2 保存圖片物件。
-- [x] 建立 R2 binding `MERCH_ASSETS` 與獨立 `r2-assets.ts` storage helper，先建立可替換的儲存後端邊界；目前尚未切換正式讀寫。
-- [ ] 保持既有圖片邏輯路徑與 `resolveAssetUrl()` 抽象層，前端與 Item 資料不直接綁定 R2 URL，確保未來可再次搬遷儲存後端。
-- [ ] Worker 增加 R2 圖片讀取／上傳／刪除能力，前端仍只透過既有 `/api/assets/...` 介面存取。
-- [ ] 盤點並處理所有直接依賴 GitHub Raw／GitHub Contents 圖片來源的舊實作，避免新舊圖片來源並存造成責任分散。
+- [x] 建立 R2 binding `MERCH_ASSETS` 與獨立 `r2-assets.ts` storage helper，建立可替換的儲存後端邊界。
+- [x] 建立 Worker R2 gateway：既有 `/api/assets/...` 介面保持不變，圖片 GET 採 R2 優先、GitHub fallback；圖片 PUT／DELETE 在既有 GitHub mutation 成功後同步鏡像至 R2。
+- [x] 保持既有圖片邏輯路徑與 `resolveAssetUrl()` 抽象層，前端與 Item 資料不直接綁定 R2 URL，確保未來可再次搬遷儲存後端。
+- [ ] 盤點並處理所有直接依賴 GitHub Raw／GitHub Contents 圖片來源的舊實作，避免新舊圖片來源並存造成責任分散；在正式切換前保留 GitHub fallback。
 - [ ] 批次將現有 GitHub 圖片完整複製至 R2，保留原始路徑／檔名並逐張驗證數量、路徑與可讀取性。
-- [ ] 完成驗證後再切換正式圖片讀取來源至 R2；切換前保留 GitHub 圖片作為可回退來源，不先刪除舊檔。
-- [ ] 將 Management 的圖片新增／刪除流程切換至 R2，確認 Store、API mutation 與同步狀態仍維持既有 contract。
+- [ ] 完成驗證後再確認正式圖片讀取來源完全以 R2 為主；切換前保留 GitHub 圖片作為可回退來源，不先刪除舊檔。
+- [x] Management 圖片新增／刪除已沿用既有 `/api/assets/...` mutation，Worker gateway 會在 GitHub mutation 成功後同步 R2；正式 R2-only 前仍以 GitHub metadata／內容作 authoritative fallback。
 - [ ] 建立 R2 圖片批次匯出／備份方案，確保未來可完整下載並搬遷至其他儲存服務而不改變 Item 資料結構。
 - [ ] 加入圖片請求／操作的基本費用與濫用防護，避免異常請求造成不必要的 R2 用量。
 - [ ] 實機驗收 Collection、Item Detail、Management 圖片載入／上傳／刪除與 fallback；確認 R2 切換後無破圖或資料遺失。
