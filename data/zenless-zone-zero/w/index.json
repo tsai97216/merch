@@ -38,9 +38,9 @@
       "status": "received"
     },
     {
-      "id": "ZZZw003",
-      "path": "data/zenless-zone-zero/w/ZZZw003/data.json",
-      "title": "月曆 壓克力杯墊 儀玄",
+      "id": "ZZZw001",
+      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
+      "title": "儀玄 扇子",
       "characters": [
         "儀玄"
       ],
@@ -49,9 +49,9 @@
       "status": "received"
     },
     {
-      "id": "ZZZw001",
-      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
-      "title": "儀玄 扇子",
+      "id": "ZZZw003",
+      "path": "data/zenless-zone-zero/w/ZZZw003/data.json",
+      "title": "月曆 壓克力杯墊 儀玄",
       "characters": [
         "儀玄"
       ],
