@@ -21,8 +21,10 @@
   "afterSales": {},
   "images": [
     {
-      "id": "HSRo003-1789427919793",
-      "file": "HSRo003.jpeg"
+      "id": "HSRo003-1789427923370-xyy6o",
+      "file": "HSRo003.jpeg",
+      "alt": "爻光紅包袋",
+      "isCover": true
     }
   ]
 }

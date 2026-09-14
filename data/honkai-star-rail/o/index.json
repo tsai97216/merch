@@ -32,7 +32,8 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 3,
-      "status": "received"
+      "status": "received",
+      "cover": "HSRo003.jpeg"
     }
   ]
 }
