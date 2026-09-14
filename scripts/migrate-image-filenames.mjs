@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 const ROOT = process.cwd();
 const DATA_ROOT = path.join(ROOT, 'data');
 const BUCKET = process.env.R2_BUCKET || 'chi-merch-assets';
-const VERSION = '1.109.409';
+const VERSION = '1.109.410';
 
 const imageExtensions = new Set(['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif']);
 const mimeTypes = {
@@ -83,6 +83,16 @@ for (const entry of migrations) {
   if (existingTarget && !oldPaths.has(path.resolve(entry.nextPath))) throw new Error(`Target already exists outside migration set: ${entry.nextPath}`);
 }
 
+const todoPath = path.join(ROOT, 'TODO.md');
+let todo = await fs.readFile(todoPath, 'utf8');
+const confirmedIssue = '- [ ] 修正圖片檔名遷移驗證漏更新分類 index.json 的 cover，避免 Item metadata 與分類索引的 cover 產生不一致。';
+if (!todo.includes(confirmedIssue)) {
+  const marker = '- [ ] 建立既有圖片檔名遷移方案，將目前 metadata 與實體圖片同步改為新的編號檔名規則後，再重新驗證 GitHub 與 R2 對應關係。';
+  if (!todo.includes(marker)) throw new Error('TODO image filename migration marker was not found.');
+  todo = todo.replace(marker, `${confirmedIssue}\n${marker}`);
+  await fs.writeFile(todoPath, todo, 'utf8');
+}
+
 const tempEntries = [];
 for (let index = 0; index < migrations.length; index += 1) {
   const entry = migrations[index];
@@ -102,6 +112,19 @@ for (const entry of migrations) {
 }
 for (const [dataFile, item] of changedData) await fs.writeFile(dataFile, `${JSON.stringify(item, null, 2)}\n`, 'utf8');
 
+const indexFiles = new Map();
+for (const entry of migrations) {
+  const indexPath = path.join(path.dirname(entry.dataFile), '..', 'index.json');
+  if (!indexFiles.has(indexPath)) indexFiles.set(indexPath, JSON.parse(await fs.readFile(indexPath, 'utf8')));
+  const index = indexFiles.get(indexPath);
+  const indexedItem = (index.items || []).find(candidate => candidate.id === entry.item.id);
+  if (!indexedItem) throw new Error(`Missing index entry for ${entry.item.id}: ${indexPath}`);
+  const cover = entry.item.images.find(image => image.isCover === true)?.file;
+  if (cover) indexedItem.cover = cover;
+  else delete indexedItem.cover;
+}
+for (const [indexPath, index] of indexFiles) await fs.writeFile(indexPath, `${JSON.stringify(index, null, 2)}\n`, 'utf8');
+
 const managementPath = path.join(ROOT, 'src/management.ts');
 let management = await fs.readFile(managementPath, 'utf8');
 const previous = "function imageFileName(item: Item, extension: string, index: number): string { const serial = serialOf(item); return `${serial}${index === 0 ? '' : `-${index + 1}`}.${extension}`; }";
@@ -118,10 +141,10 @@ await fs.writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, 'ut
 const versionPath = path.join(ROOT, 'public/data/version.json');
 await fs.writeFile(versionPath, `${JSON.stringify({ version: VERSION }, null, 2)}\n`, 'utf8');
 
-const todoPath = path.join(ROOT, 'TODO.md');
-let todo = await fs.readFile(todoPath, 'utf8');
+todo = await fs.readFile(todoPath, 'utf8');
 todo = todo.replace(/目前開發版本：`[^`]+`/, `目前開發版本：\`${VERSION}\``);
 todo = todo.replace('- [ ] 建立既有圖片檔名遷移方案，將目前 metadata 與實體圖片同步改為新的編號檔名規則後，再重新驗證 GitHub 與 R2 對應關係。', '- [x] 建立既有圖片檔名遷移方案，將目前 metadata 與實體圖片同步改為完整 Item ID 檔名規則，並同步驗證 GitHub 與 R2 對應關係。');
+todo = todo.replace(confirmedIssue, '- [x] 修正圖片檔名遷移驗證漏更新分類 index.json 的 cover，並納入遷移流程同步更新。');
 await fs.writeFile(todoPath, todo, 'utf8');
 
 for (const entry of migrations) {
