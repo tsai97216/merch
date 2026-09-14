@@ -24,5 +24,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "WWc001-1789425350733",
+      "file": "WWc001.webp"
+    }
+  ]
 }
