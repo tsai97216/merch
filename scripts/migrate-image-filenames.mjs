@@ -172,6 +172,5 @@ run('git', ['config', 'user.email', '41898282+github-actions[bot]@users.noreply.
 run('git', ['add', 'data', 'src/management.ts', 'package.json', 'public/data/version.json', 'TODO.md']);
 run('git', ['commit', '-m', `chore: migrate image filenames to item ids (${VERSION})`]);
 run('git', ['push', 'origin', 'HEAD:main']);
-run('gh', ['workflow', 'run', 'deploy.yml', '--repo', process.env.GITHUB_REPOSITORY, '--ref', 'main'], { env: { ...process.env, GH_TOKEN: process.env.GITHUB_TOKEN } });
 
 console.log(`Image filename migration complete: ${migrations.length} image(s) checked.`);
