@@ -26,8 +26,10 @@
   },
   "images": [
     {
-      "id": "ZZZn001-1789389940834",
-      "file": "ZZZn001.jpeg"
+      "id": "ZZZn001-1789389944199-7rdm2",
+      "file": "ZZZn001.jpeg",
+      "alt": "三星線下活動 明信片",
+      "isCover": true
     }
   ]
 }
