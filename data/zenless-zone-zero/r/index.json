@@ -4,17 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "ZZZr001",
-      "path": "data/zenless-zone-zero/r/ZZZr001/data.json",
-      "title": "影畫系列雷射票 葉瞬光",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZr002",
       "path": "data/zenless-zone-zero/r/ZZZr002/data.json",
       "title": "影畫系列雷射票 星見雅",
@@ -64,6 +53,17 @@
       "title": "影畫系列雷射票 般岳",
       "characters": [
         "般岳"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZr001",
+      "path": "data/zenless-zone-zero/r/ZZZr001/data.json",
+      "title": "影畫系列雷射票 葉瞬光",
+      "characters": [
+        "葉瞬光"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
