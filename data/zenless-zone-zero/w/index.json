@@ -37,17 +37,6 @@
       "status": "received"
     },
     {
-      "id": "ZZZw002",
-      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
-      "title": "月曆 壓克力杯墊 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZw004",
       "path": "data/zenless-zone-zero/w/ZZZw004/data.json",
       "title": "伊埃斯 手機架",
@@ -58,6 +47,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZw004.jpeg"
+    },
+    {
+      "id": "ZZZw002",
+      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
+      "title": "月曆 壓克力杯墊 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
