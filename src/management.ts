@@ -42,7 +42,7 @@ function normalizeCover(images: ImageMeta[]): ImageMeta[] {
   const coverIndex = images.findIndex(image => image.isCover === true);
   return images.map((image, index) => ({ ...image, ...(index === (coverIndex >= 0 ? coverIndex : 0) ? { isCover: true } : { isCover: undefined }) }));
 }
-function imageFileName(item: Item, extension: string, index: number): string { return `${item.id}${index === 0 ? '' : `-${index + 1}`}.${extension}`; }
+function imageFileName(item: Item, extension: string, index: number): string { const serial = serialOf(item); return `${serial}${index === 0 ? '' : `-${index + 1}`}.${extension}`; }
 function imagePath(item: Item, file: File, index: number): string { const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; return `data/${item.workId}/${item.category}/${item.id}/images/${imageFileName(item, ext, index)}`; }
 async function fileToBase64(file: File): Promise<string> { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); }); }
 function imageMeta(item: Item, path: string, alt?: string, id?: string, isCover = false): ImageMeta { const file = path.split('/').pop() || path; return { id: id ?? `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}), ...(isCover ? { isCover: true } : {}) }; }
