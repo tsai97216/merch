@@ -1,1 +1,1 @@
-Migrate existing repository image filenames to the full Item ID naming rule. Retry with deployment trigger token. Final migration run. 2026-09-14
+Migrate existing repository image filenames to the full Item ID naming rule. Fix index cover synchronization and retry migration. 2026-09-14 13:00
