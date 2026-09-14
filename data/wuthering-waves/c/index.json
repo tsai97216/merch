@@ -34,7 +34,8 @@
       ],
       "manufacturer": "",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "WWc001.webp"
     }
   ]
 }
