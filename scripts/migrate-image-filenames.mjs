@@ -21,6 +21,10 @@ function run(command, args, options = {}) {
   execFileSync(command, args, { stdio: 'inherit', ...options });
 }
 
+function runWrangler(args) {
+  run('npx', ['wrangler@4', ...args], { cwd: path.join(ROOT, 'worker') });
+}
+
 async function walk(directory) {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   const files = [];
@@ -37,15 +41,15 @@ function canonicalName(itemId, extension, index) {
 }
 
 function r2Put(key, file, extension) {
-  run('npx', ['wrangler@4', 'r2', 'object', 'put', key, '--file', file, '--remote', '--content-type', mimeTypes[extension], '--cache-control', 'public, max-age=31536000, immutable']);
+  runWrangler(['r2', 'object', 'put', `${BUCKET}/${key}`, `--file=../${path.relative(ROOT, file).replaceAll('\\', '/')}`, `--content-type=${mimeTypes[extension]}`, '--cache-control=public, max-age=31536000, immutable', '--remote']);
 }
 
 function r2GetVerify(key, tempFile) {
-  run('npx', ['wrangler@4', 'r2', 'object', 'get', key, '--remote', '--file', tempFile]);
+  runWrangler(['r2', 'object', 'get', `${BUCKET}/${key}`, `--file=${tempFile}`, '--remote']);
 }
 
 function r2Delete(key) {
-  run('npx', ['wrangler@4', 'r2', 'object', 'delete', key, '--remote']);
+  runWrangler(['r2', 'object', 'delete', `${BUCKET}/${key}`, '--remote']);
 }
 
 const dataFiles = (await walk(DATA_ROOT)).filter(file => path.basename(file) === 'data.json');
@@ -71,12 +75,12 @@ for (const dataFile of dataFiles) {
   }
 }
 
-const renameTargets = new Set(migrations.map(entry => path.resolve(entry.nextPath)));
+const oldPaths = new Set(migrations.map(entry => path.resolve(entry.oldPath)));
 for (const entry of migrations) {
   if (entry.oldFile === entry.nextFile) continue;
   if (!(await fs.stat(entry.oldPath).catch(() => null))) throw new Error(`Missing image file: ${entry.oldPath}`);
   const existingTarget = await fs.stat(entry.nextPath).catch(() => null);
-  if (existingTarget && !renameTargets.has(path.resolve(entry.nextPath))) throw new Error(`Target already exists outside migration set: ${entry.nextPath}`);
+  if (existingTarget && !oldPaths.has(path.resolve(entry.nextPath))) throw new Error(`Target already exists outside migration set: ${entry.nextPath}`);
 }
 
 const tempEntries = [];
