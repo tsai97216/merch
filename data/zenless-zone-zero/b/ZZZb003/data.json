@@ -24,8 +24,10 @@
   "afterSales": {},
   "images": [
     {
-      "id": "ZZZb003-1789381628777",
-      "file": "ZZZb003.jpeg"
+      "id": "ZZZb003-1789381631931-9k9f8",
+      "file": "ZZZb003.jpeg",
+      "alt": "立繪系列 馬口鐵徽章 星見雅",
+      "isCover": true
     }
   ]
 }
