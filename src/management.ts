@@ -1,5 +1,5 @@
 import './management-images.css';
-import { putAsset, deleteAsset } from './api';
+import { getAsset, putAsset, deleteAsset } from './api';
 import { resolveAssetUrl } from './image-source';
 import { getStore, type MerchStore } from './store';
 import type { ImageMeta, Item } from './types';
@@ -45,6 +45,8 @@ function normalizeCover(images: ImageMeta[]): ImageMeta[] {
 function imageFileName(item: Item, extension: string, index: number): string { const base = item.id; return `${base}${index === 0 ? '' : `-${index + 1}`}.${extension}`; }
 function imagePath(item: Item, file: File, index: number): string { const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; return `data/${item.workId}/${item.category}/${item.id}/images/${imageFileName(item, ext, index)}`; }
 async function fileToBase64(file: File): Promise<string> { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); }); }
+async function blobToBase64(blob: Blob): Promise<string> { const bytes = new Uint8Array(await blob.arrayBuffer()); let binary = ''; for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000)); return btoa(binary); }
+async function optimizeImage(file: File): Promise<File> { if (file.type !== 'image/jpeg') return file; const url = URL.createObjectURL(file); try { const image = await new Promise<HTMLImageElement>((resolve, reject) => { const element = new Image(); element.onload = () => resolve(element); element.onerror = () => reject(new Error('圖片讀取失敗。')); element.src = url; }); const maxDimension = 2400; const needsResize = Math.max(image.naturalWidth, image.naturalHeight) > maxDimension; if (!needsResize && file.size <= 1024 * 1024) return file; const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight)); const width = Math.max(1, Math.round(image.naturalWidth * scale)); const height = Math.max(1, Math.round(image.naturalHeight * scale)); const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height; const context = canvas.getContext('2d'); if (!context) throw new Error('圖片壓縮功能無法初始化。'); context.drawImage(image, 0, 0, width, height); const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error('圖片壓縮失敗。')), 'image/jpeg', 0.85)); return new File([blob], file.name.replace(/\.(?:jpe?g)$/i, '.jpg'), { type: 'image/jpeg', lastModified: file.lastModified }); } finally { URL.revokeObjectURL(url); } }
 function imageMeta(item: Item, path: string, alt?: string, id?: string, isCover = false): ImageMeta { const file = path.split('/').pop() || path; return { id: id ?? `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}), ...(isCover ? { isCover: true } : {}) }; }
 async function saveImages(item: Item, images: ImageMeta[]): Promise<void> { if (!storeRef) throw new Error('資料庫尚未載入。'); await storeRef.updateItem({ ...item, images: normalizeCover(images) }); }
 function validImageFile(file: File): boolean { const extension = file.name.split('.').pop()?.toLowerCase() ?? ''; const extensions = allowedImageTypes.get(file.type); return Boolean(extensions?.has(extension) && file.size <= 8 * 1024 * 1024); }
@@ -54,9 +56,10 @@ async function uploadImage(file: File): Promise<void> {
   if (saving || imageSaving) return showToast('目前正在同步資料，請稍後再操作圖片。', 'info');
   if (!validImageFile(file)) return showToast('只允許 JPG/JPEG、PNG、WebP、GIF、AVIF，且不超過 8 MB。', 'error');
   imageSaving = true; render(); showToast('圖片上傳同步中，請稍候。', 'info');
-  const path = imagePath(item, file, imageList(item).length);
   try {
-    await putAsset(path, await fileToBase64(file));
+    const optimizedFile = await optimizeImage(file);
+    const path = imagePath(item, optimizedFile, imageList(item).length);
+    await putAsset(path, await fileToBase64(optimizedFile));
     const nextImages = [...imageList(item), imageMeta(item, path, item.title)];
     try { await saveImages(item, nextImages); } catch (error) { try { await deleteAsset(path); } catch {} throw error; }
     showToast(nextImages.length === 1 ? '圖片已上傳並設為主圖。' : '圖片已上傳。', 'success');
@@ -69,12 +72,14 @@ async function replaceImage(file: File, imageId: string): Promise<void> {
   if (saving || imageSaving) return showToast('目前正在同步資料，請稍後再操作圖片。', 'info');
   if (!validImageFile(file)) return showToast('只允許 JPG/JPEG、PNG、WebP、GIF、AVIF，且不超過 8 MB。', 'error');
   imageSaving = true; render(); showToast('圖片替換同步中，請稍候。', 'info');
-  const path = imagePath(item, file, index);
+  const currentPath = `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`;
   try {
-    await putAsset(path, await fileToBase64(file));
+    const previousContent = await blobToBase64(await getAsset(currentPath));
+    const optimizedFile = await optimizeImage(file);
+    const path = imagePath(item, optimizedFile, index);
+    await putAsset(path, await fileToBase64(optimizedFile));
     const nextImages = images.map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id, image.isCover === true) : image);
-    try { await saveImages(item, nextImages); } catch (error) { try { if (path !== `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`) await deleteAsset(path); } catch {} throw error; }
-    const currentPath = `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`;
+    try { await saveImages(item, nextImages); } catch (error) { try { await putAsset(currentPath, previousContent); } catch { throw new Error('圖片 metadata 更新失敗，且舊圖片回復失敗，請立即重新載入資料確認。'); } if (path !== currentPath) { try { await deleteAsset(path); } catch {} } throw error; }
     if (path !== currentPath) {
       try { await deleteAsset(currentPath); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
     }

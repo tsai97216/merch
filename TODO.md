@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.411`。**
+- **目前開發版本：`1.109.412`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -34,6 +34,8 @@
 - [ ] 實機驗收 Collection、Item Detail、Management 圖片載入／上傳／刪除與 fallback；確認 R2 切換後無破圖或資料遺失。
 
 - [x] 完成圖片全量重置：清空既有圖片 metadata、分類 cover、GitHub 圖片檔案與 R2 圖片物件，重新從零建立圖片資料。
+- [x] 修正圖片替換交易：metadata 更新失敗時會以原圖片內容回復，避免同一路徑覆蓋後無法 rollback。
+- [x] Management 圖片新增／替換加入瀏覽器端 JPEG 最佳化：長邊最多 2400px、品質 85%，大型照片先壓縮後再上傳；PNG／WebP／GIF／AVIF 維持原格式。
 
 ## 1. API 同步狀態全頁阻塞動效
 - [x] 建立共用滿版 API sync overlay，集中攔截遠端 mutation 請求。
