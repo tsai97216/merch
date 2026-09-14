@@ -1,0 +1,28 @@
+{
+  "id": "ZZZr002",
+  "workId": "zenless-zone-zero",
+  "title": "影畫系列雷射票 星見雅",
+  "series": [
+    "影畫系列"
+  ],
+  "characters": [
+    "星見雅"
+  ],
+  "category": "r",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "絕區零三週年線下活動",
+  "purchase": {
+    "price": 104,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-08-09"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
