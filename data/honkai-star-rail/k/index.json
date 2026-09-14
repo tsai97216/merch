@@ -7,17 +7,21 @@
       "id": "HSRk001",
       "path": "data/honkai-star-rail/k/HSRk001/data.json",
       "title": "仲夏螢火之約系列 亞克力合影卡",
-      "characters": ["流螢"],
+      "characters": [
+        "流螢"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "pending",
-      "cover": "1788754576985-IMG_3447.jpeg"
+      "cover": "HSRk001.jpeg"
     },
     {
       "id": "HSRk002",
       "path": "data/honkai-star-rail/k/HSRk002/data.json",
       "title": "角色立繪系列 壓克力掛件 符玄款",
-      "characters": ["符玄"],
+      "characters": [
+        "符玄"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
@@ -26,7 +30,9 @@
       "id": "HSRk003",
       "path": "data/honkai-star-rail/k/HSRk003/data.json",
       "title": "歡愉信號—嗶波！炫彩亞克力鑰匙圈 銀狼 LV999款",
-      "characters": ["銀狼"],
+      "characters": [
+        "銀狼"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
@@ -35,7 +41,9 @@
       "id": "HSRk004",
       "path": "data/honkai-star-rail/k/HSRk004/data.json",
       "title": "三周年紀念亞克力吊飾 昔漣款",
-      "characters": ["昔漣"],
+      "characters": [
+        "昔漣"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
@@ -44,7 +52,9 @@
       "id": "HSRk005",
       "path": "data/honkai-star-rail/k/HSRk005/data.json",
       "title": "三周年紀念亞克力吊飾 大黑塔款",
-      "characters": ["大黑塔"],
+      "characters": [
+        "大黑塔"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"

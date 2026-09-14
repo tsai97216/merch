@@ -13,7 +13,7 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "preorder",
-      "cover": "image-1788517269456-b9dv5w.jpg"
+      "cover": "ZZZb001.jpg"
     },
     {
       "id": "ZZZb002",
@@ -25,7 +25,7 @@
       "manufacturer": "米哈遊",
       "quantity": 2,
       "status": "received",
-      "cover": "1789338208011-IMG_3579.jpeg"
+      "cover": "ZZZb002.jpeg"
     },
     {
       "id": "ZZZb003",
@@ -37,7 +37,7 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received",
-      "cover": "1789338255143-IMG_3580.jpeg"
+      "cover": "ZZZb003.jpeg"
     }
   ]
 }
