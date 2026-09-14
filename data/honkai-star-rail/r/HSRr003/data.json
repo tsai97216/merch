@@ -23,8 +23,10 @@
   "afterSales": {},
   "images": [
     {
-      "id": "HSRr003-1789426255338",
-      "file": "HSRr003.jpeg"
+      "id": "HSRr003-1789426258586-rzg2c",
+      "file": "HSRr003.jpeg",
+      "alt": "吉爾伽美什 雷射票",
+      "isCover": true
     }
   ]
 }
