@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.403`。**
+- **目前開發版本：`1.109.404`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -26,6 +26,8 @@
 - [ ] 批次將現有 GitHub 圖片完整複製至 R2，保留原始路徑／檔名並逐張驗證數量、路徑與可讀取性。
 - [ ] 完成驗證後再確認正式圖片讀取來源完全以 R2 為主；切換前保留 GitHub 圖片作為可回退來源，不先刪除舊檔。
 - [x] Management 圖片新增／刪除已沿用既有 `/api/assets/...` mutation，Worker gateway 會在 GitHub mutation 成功後同步 R2；正式 R2-only 前仍以 GitHub metadata／內容作 authoritative fallback。
+- [ ] 統一圖片檔名規則：新上傳／替換圖片以 Item ID 為基準，第一張使用 `<Item ID>.<ext>`，同一 Item 的其他圖片使用 `<Item ID>-2.<ext>`、`<Item ID>-3.<ext>` 等序號後綴。
+- [ ] 建立既有圖片檔名遷移方案，將目前 metadata 與實體圖片同步改為新的 Item ID 檔名規則後，再重新驗證 GitHub 與 R2 對應關係。
 - [ ] 建立 R2 圖片批次匯出／備份方案，確保未來可完整下載並搬遷至其他儲存服務而不改變 Item 資料結構。
 - [ ] 加入圖片請求／操作的基本費用與濫用防護，避免異常請求造成不必要的 R2 用量。
 - [ ] 實機驗收 Collection、Item Detail、Management 圖片載入／上傳／刪除與 fallback；確認 R2 切換後無破圖或資料遺失。
