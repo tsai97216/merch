@@ -22,6 +22,7 @@
 - [x] 建立 Worker R2 gateway：既有 `/api/assets/...` 介面保持不變，圖片 GET 採 R2 優先、GitHub fallback；圖片 PUT／DELETE 在既有 GitHub mutation 成功後同步鏡像至 R2。
 - [x] 保持既有圖片邏輯路徑與 `resolveAssetUrl()` 抽象層，前端與 Item 資料不直接綁定 R2 URL，確保未來可再次搬遷儲存後端。
 - [x] 建立可重複執行的 GitHub Actions + Wrangler 圖片批次匯入工具，使用既有資料路徑將 repository 圖片上傳至 R2。
+- [ ] 統一新圖片檔名規則：以 Item ID 作為圖片檔名基底，第一張使用 `<ItemID>.<ext>`，同一 Item 的後續圖片使用 `<ItemID>-NN.<ext>`，避免目前 timestamp／原始檔名造成檔名不一致；既有圖片需另行 migration。
 - [ ] 盤點並處理所有直接依賴 GitHub Raw／GitHub Contents 圖片來源的舊實作，避免新舊圖片來源並存造成責任分散；在正式切換前保留 GitHub fallback。
 - [ ] 批次將現有 GitHub 圖片完整複製至 R2，保留原始路徑／檔名並逐張驗證數量、路徑與可讀取性。
 - [ ] 完成驗證後再確認正式圖片讀取來源完全以 R2 為主；切換前保留 GitHub 圖片作為可回退來源，不先刪除舊檔。
