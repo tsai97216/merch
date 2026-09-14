@@ -1,12 +1,10 @@
 {
   "id": "GIp001",
   "workId": "genshin-impact",
-  "title": "原海系列  膨膨獸毛絨玩偶",
-  "series": [
-    "原海系列"
-  ],
+  "title": "澎澎獸 娃娃",
+  "series": [],
   "characters": [
-    "膨膨獸"
+    "澎澎獸"
   ],
   "category": "p",
   "manufacturer": "米哈遊",
@@ -24,8 +22,10 @@
   "afterSales": {},
   "images": [
     {
-      "id": "GIp001-1789380345276",
-      "file": "GIp001.jpeg"
+      "id": "GIp001-1789380347894-0dn4c",
+      "file": "GIp001.jpeg",
+      "alt": "澎澎獸 娃娃",
+      "isCover": true
     }
   ]
 }
