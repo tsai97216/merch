@@ -12,6 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
+const WORKER_VERSION = '1.109.422';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -23,6 +24,7 @@ function corsResponse(response: Response, origin: string): Response {
   const headers = new Headers(response.headers);
   headers.set('Access-Control-Allow-Origin', origin);
   headers.set('Vary', 'Origin');
+  headers.set('X-Merch-Worker-Version', WORKER_VERSION);
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
@@ -47,6 +49,7 @@ async function getFromR2(env: Env, origin: string, path: string): Promise<Respon
     'Access-Control-Allow-Origin': origin,
     Vary: 'Origin',
     'X-Merch-Asset-Source': 'r2',
+    'X-Merch-Worker-Version': WORKER_VERSION,
   });
   if (asset.etag) headers.set('ETag', asset.etag);
   return new Response(asset.body, { status: 200, headers });
@@ -123,7 +126,7 @@ async function mirrorDelete(env: Env, response: Response, path: string): Promise
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = originFor(request, env);
-    if (!origin) return new Response(JSON.stringify({ ok: false, error: { code: 'ORIGIN_NOT_ALLOWED', message: '來源網域不被允許。' } }), { status: 403, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    if (!origin) return new Response(JSON.stringify({ ok: false, error: { code: 'ORIGIN_NOT_ALLOWED', message: '來源網域不被允許。' } }), { status: 403, headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Merch-Worker-Version': WORKER_VERSION } });
 
     const path = r2AssetPath(request);
     if (path && request.method === 'GET') {
