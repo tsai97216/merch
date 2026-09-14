@@ -37,6 +37,16 @@
       "status": "received"
     },
     {
+      "id": "ZZZd004",
+      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
+      "title": "影畫系列 壓克力插片展示框",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "ZZZd004.jpeg"
+    },
+    {
       "id": "ZZZd005",
       "path": "data/zenless-zone-zero/d/ZZZd005/data.json",
       "title": "影畫系列 定幀亞克力插片 星見雅",
@@ -46,16 +56,6 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
-    },
-    {
-      "id": "ZZZd004",
-      "path": "data/zenless-zone-zero/d/ZZZd004/data.json",
-      "title": "影畫系列 壓克力插片展示框",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "ZZZd004.jpeg"
     }
   ]
 }
