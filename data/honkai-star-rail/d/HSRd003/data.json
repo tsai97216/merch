@@ -13,7 +13,7 @@
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "崩鐵遊樂園線下活動",
+  "notes": "",
   "purchase": {
     "currency": "TWD",
     "platform": "線下活動",
@@ -25,8 +25,10 @@
   },
   "images": [
     {
-      "id": "HSRd003-1789427504284",
-      "file": "HSRd003.jpeg"
+      "id": "HSRd003-1789427507432-dv6s3",
+      "file": "HSRd003.jpeg",
+      "alt": "如我所書系列 壓克力立牌 昔漣",
+      "isCover": true
     }
   ]
 }
