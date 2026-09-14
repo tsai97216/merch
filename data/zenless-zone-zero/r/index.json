@@ -4,17 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "ZZZr003",
-      "path": "data/zenless-zone-zero/r/ZZZr003/data.json",
-      "title": "影畫系列雷射票 愛芮",
-      "characters": [
-        "愛芮"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZr004",
       "path": "data/zenless-zone-zero/r/ZZZr004/data.json",
       "title": "影畫系列雷射票 伊芙琳",
@@ -70,6 +59,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZr002.jpeg"
+    },
+    {
+      "id": "ZZZr003",
+      "path": "data/zenless-zone-zero/r/ZZZr003/data.json",
+      "title": "影畫系列雷射票 愛芮",
+      "characters": [
+        "愛芮"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
