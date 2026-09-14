@@ -38,22 +38,22 @@
       "status": "received"
     },
     {
-      "id": "ZZZw002",
-      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
-      "title": "月曆 壓克力杯墊 星見雅",
+      "id": "ZZZw001",
+      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
+      "title": "儀玄 扇子",
       "characters": [
-        "星見雅"
+        "儀玄"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
     },
     {
-      "id": "ZZZw001",
-      "path": "data/zenless-zone-zero/w/ZZZw001/data.json",
-      "title": "儀玄 扇子",
+      "id": "ZZZw002",
+      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
+      "title": "月曆 壓克力杯墊 星見雅",
       "characters": [
-        "儀玄"
+        "星見雅"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
