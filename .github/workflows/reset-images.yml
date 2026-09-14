@@ -1,0 +1,119 @@
+name: Reset Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/image-reset-trigger'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: image-reset
+  cancel-in-progress: false
+
+jobs:
+  reset:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Reset repository image metadata and files
+        env:
+          IMAGE_RESET_CONFIRM: RESET_ALL_IMAGES
+        run: node scripts/reset-images.mjs
+
+      - name: Delete all image objects from R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_BUCKET: chi-merch-assets
+        run: |
+          node <<'NODE'
+          const token = process.env.CLOUDFLARE_API_TOKEN;
+          const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+          const bucket = process.env.R2_BUCKET;
+          if (!token || !account || !bucket) throw new Error('Missing Cloudflare R2 credentials.');
+          const base = `https://api.cloudflare.com/client/v4/accounts/${account}/r2/buckets/${bucket}/objects`;
+          const imageRe = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/.+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
+          let cursor = '';
+          let deleted = 0;
+          while (true) {
+            const url = new URL(base);
+            url.searchParams.set('prefix', 'data/');
+            url.searchParams.set('per_page', '1000');
+            if (cursor) url.searchParams.set('cursor', cursor);
+            const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+            if (!response.ok) throw new Error(`R2 list failed: ${response.status} ${await response.text()}`);
+            const payload = await response.json();
+            if (!payload.success) throw new Error(`R2 list failed: ${JSON.stringify(payload.errors)}`);
+            for (const object of payload.result ?? []) {
+              if (!imageRe.test(object.key)) continue;
+              const deleteUrl = `${base}/${object.key.split('/').map((part, i) => i === 0 ? part : encodeURIComponent(part)).join('/')}`;
+              const deletion = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (!deletion.ok) throw new Error(`R2 delete failed for ${object.key}: ${deletion.status} ${await deletion.text()}`);
+              deleted += 1;
+            }
+            const info = payload.result_info ?? {};
+            if (!info.is_truncated) break;
+            cursor = info.cursor;
+            if (!cursor) throw new Error('R2 pagination reported truncated without cursor.');
+          }
+          console.log(`R2 image objects deleted: ${deleted}`);
+          NODE
+
+      - name: Verify reset state
+        run: |
+          npm run verify
+          npm run verify:new
+          npm run verify:schema
+          npm run verify:legacy-fields
+          npm run verify:category
+          npm run verify:images
+          npm run verify:management-schema
+          npm run verify:worker
+          npm run verify:worker-scope
+          npm run verify:worker-read
+          npm run verify:worker-image
+          npm run verify:worker-transaction
+          npm run verify:api-load
+          npm run verify:version
+          npm run build
+
+      - name: Mark reset complete and remove trigger
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'TODO.md';
+          let text = fs.readFileSync(path, 'utf8');
+          text = text.replace(/- \*\*目前開發版本：`1\.109\.410`。\*\*/, '- **目前開發版本：`1.109.411`。**');
+          text = text.replace(/- \[ \] 統一圖片檔名規則：新上傳／替換圖片以「編號」為基準，第一張使用 `<編號>\.<ext>`，同一 Item 的其他圖片使用 `<編號>-2\.<ext>`、`<編號>-3\.<ext>` 等序號後綴。/, '- [x] 統一圖片檔名規則：新上傳／替換圖片以完整 Item ID 為基準，第一張使用 `<Item ID>.<ext>`，同一 Item 的其他圖片使用 `<Item ID>-2.<ext>`、`<Item ID>-3.<ext>` 等序號後綴。');
+          const marker = '- [x] 完成圖片全量重置：清空既有圖片 metadata、分類 cover、GitHub 圖片檔案與 R2 圖片物件，重新從零建立圖片資料。';
+          if (!text.includes(marker)) text = text.replace('\n## 1. API 同步狀態全頁阻塞動效', `\n${marker}\n\n## 1. API 同步狀態全頁阻塞動效`);
+          fs.writeFileSync(path, text);
+          NODE
+          rm -f .github/image-reset-trigger
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data package.json public/data/version.json TODO.md .github/image-reset-trigger
+          git commit -m 'chore: reset image storage from scratch (1.109.411)'
+          git push origin HEAD:main
