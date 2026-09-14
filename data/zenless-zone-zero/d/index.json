@@ -26,17 +26,6 @@
       "cover": "ZZZd005.png"
     },
     {
-      "id": "ZZZd002",
-      "path": "data/zenless-zone-zero/d/ZZZd002/data.json",
-      "title": "虛狩加冕之時 葉瞬光 立牌",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZd003",
       "path": "data/zenless-zone-zero/d/ZZZd003/data.json",
       "title": "葉瞬光 立繪 立牌",
@@ -58,6 +47,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZd001.jpeg"
+    },
+    {
+      "id": "ZZZd002",
+      "path": "data/zenless-zone-zero/d/ZZZd002/data.json",
+      "title": "虛狩加冕之時 葉瞬光 立牌",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
