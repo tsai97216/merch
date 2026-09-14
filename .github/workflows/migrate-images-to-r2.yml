@@ -33,9 +33,12 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          if npx wrangler@4 r2 bucket list --format json | jq -e '.[] | select(.name == "chi-merch-assets")' >/dev/null; then
+          bucket_list="$(npx wrangler@4 r2 bucket list 2>&1)"
+          printf '%s\n' "$bucket_list"
+          if printf '%s\n' "$bucket_list" | grep -Eq '(^|[[:space:]])chi-merch-assets([[:space:]]|$)'; then
             echo 'R2 bucket chi-merch-assets already exists.'
           else
+            echo 'R2 bucket chi-merch-assets not found. Creating it.'
             npx wrangler@4 r2 bucket create chi-merch-assets
           fi
 
