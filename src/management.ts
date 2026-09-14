@@ -42,7 +42,8 @@ function normalizeCover(images: ImageMeta[]): ImageMeta[] {
   const coverIndex = images.findIndex(image => image.isCover === true);
   return images.map((image, index) => ({ ...image, ...(index === (coverIndex >= 0 ? coverIndex : 0) ? { isCover: true } : { isCover: undefined }) }));
 }
-function imagePath(item: Item, file: File): string { const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; const prefix = `${item.id}`; const used = imageList(item).map(image => image.file.toLowerCase()); if (!used.some(name => name === `${prefix}.${ext}`)) return `data/${item.workId}/${item.category}/${item.id}/images/${prefix}.${ext}`; let serial = 2; while (used.includes(`${prefix}-${String(serial).padStart(2, '0')}.${ext}`)) serial += 1; return `data/${item.workId}/${item.category}/${item.id}/images/${prefix}-${String(serial).padStart(2, '0')}.${ext}`; }
+function imageFileName(item: Item, extension: string, index: number): string { return `${item.id}${index === 0 ? '' : `-${index + 1}`}.${extension}`; }
+function imagePath(item: Item, file: File, index: number): string { const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; return `data/${item.workId}/${item.category}/${item.id}/images/${imageFileName(item, ext, index)}`; }
 async function fileToBase64(file: File): Promise<string> { return await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(new Error('圖片讀取失敗。')); reader.onload = () => { const text = String(reader.result ?? ''); const comma = text.indexOf(','); if (comma < 0) reject(new Error('圖片資料格式無效。')); else resolve(text.slice(comma + 1)); }; reader.readAsDataURL(file); }); }
 function imageMeta(item: Item, path: string, alt?: string, id?: string, isCover = false): ImageMeta { const file = path.split('/').pop() || path; return { id: id ?? `${item.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, file, ...(alt ? { alt } : {}), ...(isCover ? { isCover: true } : {}) }; }
 async function saveImages(item: Item, images: ImageMeta[]): Promise<void> { if (!storeRef) throw new Error('資料庫尚未載入。'); await storeRef.updateItem({ ...item, images: normalizeCover(images) }); }
@@ -53,7 +54,7 @@ async function uploadImage(file: File): Promise<void> {
   if (saving || imageSaving) return showToast('目前正在同步資料，請稍後再操作圖片。', 'info');
   if (!validImageFile(file)) return showToast('只允許 JPG/JPEG、PNG、WebP、GIF、AVIF，且不超過 8 MB。', 'error');
   imageSaving = true; render(); showToast('圖片上傳同步中，請稍候。', 'info');
-  const path = imagePath(item, file);
+  const path = imagePath(item, file, imageList(item).length);
   try {
     await putAsset(path, await fileToBase64(file));
     const nextImages = [...imageList(item), imageMeta(item, path, item.title)];
@@ -63,17 +64,20 @@ async function uploadImage(file: File): Promise<void> {
   finally { imageSaving = false; render(); }
 }
 async function replaceImage(file: File, imageId: string): Promise<void> {
-  const item = selectedItem(); const current = item ? imageList(item).find(image => image.id === imageId) : undefined;
+  const item = selectedItem(); const images = item ? imageList(item) : []; const index = images.findIndex(image => image.id === imageId); const current = index >= 0 ? images[index] : undefined;
   if (!item || !current) return;
   if (saving || imageSaving) return showToast('目前正在同步資料，請稍後再操作圖片。', 'info');
   if (!validImageFile(file)) return showToast('只允許 JPG/JPEG、PNG、WebP、GIF、AVIF，且不超過 8 MB。', 'error');
   imageSaving = true; render(); showToast('圖片替換同步中，請稍候。', 'info');
-  const path = imagePath(item, file);
+  const path = imagePath(item, file, index);
   try {
     await putAsset(path, await fileToBase64(file));
-    const nextImages = imageList(item).map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id, image.isCover === true) : image);
-    try { await saveImages(item, nextImages); } catch (error) { try { await deleteAsset(path); } catch {} throw error; }
-    try { await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${current.file}`); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
+    const nextImages = images.map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id, image.isCover === true) : image);
+    try { await saveImages(item, nextImages); } catch (error) { try { if (path !== `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`) await deleteAsset(path); } catch {} throw error; }
+    const currentPath = `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`;
+    if (path !== currentPath) {
+      try { await deleteAsset(currentPath); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
+    }
     showToast('圖片已成功替換。', 'success');
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片替換失敗。', 'error'); }
   finally { imageSaving = false; render(); }
@@ -137,8 +141,7 @@ function render(): void {
   const availableCategoryCodes = unique(items.filter(item => workOf(item) === pickerWork).map(item => item.category)); if (!availableCategoryCodes.includes(pickerCategory)) pickerCategory = availableCategoryCodes[0] ?? '';
   const categorySelect = qs<HTMLSelectElement>('#management-picker-category'); setOptions(categorySelect, availableCategoryCodes.map(code => ({ value: code, label: categoryName(code) })), pickerCategory); pickerCategory = categorySelect?.value ?? pickerCategory;
   const serialItems = items.filter(item => workOf(item) === pickerWork && item.category === pickerCategory); if (!pickerSerial || !serialItems.some(item => serialOf(item) === pickerSerial)) pickerSerial = serialOf(serialItems[0]) || ''; const serialSelect = qs<HTMLSelectElement>('#management-picker-serial'); setOptions(serialSelect, serialItems.map(item => ({ value: serialOf(item), label: `${serialOf(item).padStart(3, '0')} · ${item.title}` })), pickerSerial); pickerSerial = serialSelect?.value ?? pickerSerial;
-  const target = serialItems.find(item => serialOf(item) === pickerSerial) ?? items.find(item => item.id === selectedId) ?? items[0]; if (target && target.id !== selectedId) fill(target);
-  const title = qs<HTMLElement>('#management-form-title'); if (title) title.textContent = '編輯收藏'; const submit = qs<HTMLButtonElement>('#management-submit'); if (submit) { submit.textContent = '儲存修改'; submit.disabled = saving || imageSaving; } const cancel = qs<HTMLButtonElement>('#management-cancel'); if (cancel) { cancel.hidden = true; cancel.disabled = true; } const del = qs<HTMLButtonElement>('#management-delete'); if (del) del.disabled = saving || imageSaving || !selectedItem(); const form = qs<HTMLFormElement>('#management-form'); if (form) { form.classList.remove('is-creating'); form.classList.add('is-editing'); form.setAttribute('aria-busy', String(saving || imageSaving)); } form?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>('input,textarea,select,button').forEach(el => { if (el.id !== 'management-cancel' && el.id !== 'management-new') el.disabled = saving || imageSaving; }); renderImageArea(selectedItem()); const count = qs<HTMLElement>('#management-search-count'); if (count) count.textContent = searchQuery ? `搜尋「${searchQuery}」` : `共 ${items.length} 筆收藏`; const datalist = qs<HTMLDataListElement>('#management-search-options'); if (datalist) { datalist.replaceChildren(...items.filter(item => `${item.id} ${item.title} ${item.workName ?? ''}`.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())).slice(0, 30).map(item => { const option = document.createElement('option'); option.value = `${item.id} · ${item.title}`; return option; })); }
+  const target = serialItems.find(item => serialOf(item) === pickerSerial) ?? items.find(item => item.id === selectedId) ?? items[0]; if (target && target.id !== selectedId) fill(target); const title = qs<HTMLElement>('#management-form-title'); if (title) title.textContent = '編輯收藏'; const submit = qs<HTMLButtonElement>('#management-submit'); if (submit) { submit.textContent = '儲存修改'; submit.disabled = saving || imageSaving; } const cancel = qs<HTMLButtonElement>('#management-cancel'); if (cancel) { cancel.hidden = true; cancel.disabled = true; } const del = qs<HTMLButtonElement>('#management-delete'); if (del) del.disabled = saving || imageSaving || !selectedItem(); const form = qs<HTMLFormElement>('#management-form'); if (form) { form.classList.remove('is-creating'); form.classList.add('is-editing'); form.setAttribute('aria-busy', String(saving || imageSaving)); } form?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>('input,textarea,select,button').forEach(el => { if (el.id !== 'management-cancel' && el.id !== 'management-new') el.disabled = saving || imageSaving; }); renderImageArea(selectedItem()); const count = qs<HTMLElement>('#management-search-count'); if (count) count.textContent = searchQuery ? `搜尋「${searchQuery}」` : `共 ${items.length} 筆收藏`; const datalist = qs<HTMLDataListElement>('#management-search-options'); if (datalist) { datalist.replaceChildren(...items.filter(item => `${item.id} ${item.title} ${item.workName ?? ''}`.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())).slice(0, 30).map(item => { const option = document.createElement('option'); option.value = `${item.id} · ${item.title}`; return option; })); }
 }
 async function handleSubmit(event: SubmitEvent): Promise<void> { event.preventDefault(); if (!storeRef || saving || imageSaving) return; const form = qs<HTMLFormElement>('#management-form'); const feedback = ensureFormErrors(form); clearFormErrors(feedback); const base = selectedItem(); if (!base) { const errors = ['找不到要操作的收藏。']; setFormErrors(feedback, errors); showToast(errors[0], 'error'); return; } const item = readFormItem(base); const errors = validateItem(item); if (errors.length) { setFormErrors(feedback, errors); showToast('請先修正表單中的錯誤。', 'error'); return; } saving = true; render(); try { await storeRef.updateItem(item); selectedId = item.id; clearFormErrors(feedback); showToast('收藏已成功更新。', 'success'); } catch (error) { const message = error instanceof Error ? error.message : '儲存失敗。'; setFormErrors(feedback, [message]); showToast(message, 'error'); } finally { saving = false; render(); } }
 async function handleDelete(): Promise<void> { const item = selectedItem(); if (!storeRef || !item || saving || imageSaving) return; if (!window.confirm(`確定要刪除「${item.title}」？\n此操作會刪除收藏資料，且 Item ID 不會重新編號。`)) return; saving = true; render(); showToast('收藏刪除同步中，請稍候。', 'info'); try { await storeRef.deleteItem(item.id); selectedId = ''; pickerSerial = ''; showToast('收藏已成功刪除。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '刪除失敗。', 'error'); } finally { saving = false; render(); } }
