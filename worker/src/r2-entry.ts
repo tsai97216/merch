@@ -10,6 +10,8 @@ interface Env {
   MERCH_ASSETS: R2Bucket;
 }
 
+type AssetRequest = { path?: unknown; content?: unknown };
+
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -44,22 +46,68 @@ async function getFromR2(env: Env, origin: string, path: string): Promise<Respon
     'Cache-Control': asset.httpMetadata?.cacheControl || 'public, max-age=31536000, immutable',
     'Access-Control-Allow-Origin': origin,
     Vary: 'Origin',
+    'X-Merch-Asset-Source': 'r2',
   });
   if (asset.etag) headers.set('ETag', asset.etag);
   return new Response(asset.body, { status: 200, headers });
 }
 
-async function mirrorPut(request: Request, env: Env, response: Response, path: string): Promise<Response> {
-  if (!response.ok) return response;
+async function readAssetRequest(request: Request, path: string): Promise<{ content: string; bytes: Uint8Array }> {
+  const body = await request.clone().json() as AssetRequest;
+  if (body.path !== path || typeof body.content !== 'string' || !body.content) throw new Error('圖片資料格式無效。');
+  const binary = atob(body.content.replace(/\s/g, ''));
+  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+  return { content: body.content, bytes };
+}
+
+async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
+  const fallbackRequest = new Request(request.url, { method: 'GET', headers: request.headers });
+  const response = await app.fetch(fallbackRequest, env);
+  if (!response.ok) return null;
+  return new Uint8Array(await response.arrayBuffer());
+}
+
+async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
+  let asset: { content: string; bytes: Uint8Array };
   try {
-    const body = await request.json() as { path?: unknown; content?: unknown };
-    if (body.path !== path || typeof body.content !== 'string' || !body.content) return response;
-    const binary = atob(body.content.replace(/\s/g, ''));
-    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
-    await putR2Asset(env.MERCH_ASSETS, path, bytes, assetContentType(path));
+    asset = await readAssetRequest(request, path);
   } catch (error) {
-    console.error('R2 image mirror PUT failed; GitHub remains authoritative.', error);
+    return new Response(JSON.stringify({ ok: false, error: { code: 'ASSET_INVALID', message: error instanceof Error ? error.message : '圖片資料格式無效。' } }), { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
   }
+
+  const previous = await readCurrentAssetFromGitHub(request, env);
+
+  try {
+    await putR2Asset(env.MERCH_ASSETS, path, asset.bytes, assetContentType(path));
+    const stored = await env.MERCH_ASSETS.head(path);
+    if (!stored || stored.size !== asset.bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
+  } catch (error) {
+    console.error('R2 image mirror PUT failed before GitHub mutation.', error);
+    return new Response(JSON.stringify({ ok: false, error: { code: 'R2_MIRROR_FAILED', message: '圖片已壓縮，但 R2 儲存失敗，尚未寫入 GitHub。' } }), { status: 502, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+  }
+
+  let response: Response;
+  try {
+    response = await app.fetch(request, env);
+  } catch (error) {
+    try {
+      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
+      else await deleteR2Asset(env.MERCH_ASSETS, path);
+    } catch (rollbackError) {
+      console.error('R2 image mirror rollback failed after GitHub request error.', rollbackError);
+    }
+    throw error;
+  }
+
+  if (!response.ok) {
+    try {
+      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
+      else await deleteR2Asset(env.MERCH_ASSETS, path);
+    } catch (rollbackError) {
+      console.error('R2 image mirror rollback failed after GitHub mutation failure.', rollbackError);
+    }
+  }
+
   return response;
 }
 
@@ -85,9 +133,8 @@ export default {
     }
 
     if (path && request.method === 'PUT') {
-      const mirroredRequest = request.clone();
-      const response = await app.fetch(request, env);
-      return corsResponse(await mirrorPut(mirroredRequest, env, response, path), origin);
+      const response = await mirrorPut(request, env, path);
+      return corsResponse(response, origin);
     }
 
     if (path && request.method === 'DELETE') {
