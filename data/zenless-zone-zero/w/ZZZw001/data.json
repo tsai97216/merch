@@ -22,12 +22,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "ZZZw001-1789339356662-48wmj",
-      "file": "ZZZw001.jpeg",
-      "alt": "儀玄 扇子",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

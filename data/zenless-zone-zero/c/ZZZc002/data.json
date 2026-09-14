@@ -22,12 +22,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "ZZZc002-1789338808897-hkepp",
-      "file": "ZZZc002.jpeg",
-      "alt": "蕾米埃爾 閃卡",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

@@ -24,12 +24,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "ZZZb002-1789338214898-hmal2",
-      "file": "ZZZb002.jpeg",
-      "alt": "星見雅 影畫系列 吧唧",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

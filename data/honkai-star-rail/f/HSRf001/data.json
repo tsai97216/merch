@@ -27,12 +27,5 @@
     "status": "處理中",
     "note": "待換貨"
   },
-  "images": [
-    {
-      "id": "image-1788513731019-sfc19z",
-      "file": "HSRf001.jpg",
-      "alt": "流螢 春日手信 1/8比例手辦",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

@@ -22,12 +22,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "WWc003-1789301893414-h2fdz",
-      "file": "WWc003.jpeg",
-      "alt": "莫寧 證件照",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

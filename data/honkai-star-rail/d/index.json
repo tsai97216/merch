@@ -12,8 +12,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "pending",
-      "cover": "HSRd001.jpg"
+      "status": "pending"
     },
     {
       "id": "HSRd002",
@@ -24,8 +23,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "pending",
-      "cover": "HSRd002.jpg"
+      "status": "pending"
     },
     {
       "id": "HSRd003",

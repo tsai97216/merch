@@ -24,12 +24,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "ZZZd005-1789341162315-vjwdu",
-      "file": "ZZZd005.png",
-      "alt": "影畫系列 定幀亞克力插片 星見雅",
-      "isCover": true
-    }
-  ]
+  "images": []
 }

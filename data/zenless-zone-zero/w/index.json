@@ -12,8 +12,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZw001.jpeg"
+      "status": "received"
     },
     {
       "id": "ZZZw005",
@@ -46,8 +45,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZw002.jpeg"
+      "status": "received"
     },
     {
       "id": "ZZZw004",
@@ -58,8 +56,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZw004.jpeg"
+      "status": "received"
     }
   ]
 }

@@ -34,8 +34,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZd001.jpeg"
+      "status": "received"
     },
     {
       "id": "ZZZd005",
@@ -46,8 +45,7 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZd005.png"
+      "status": "received"
     },
     {
       "id": "ZZZd004",
@@ -56,8 +54,7 @@
       "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received",
-      "cover": "ZZZd004.jpeg"
+      "status": "received"
     }
   ]
 }
