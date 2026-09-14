@@ -37,17 +37,6 @@
       "status": "pending"
     },
     {
-      "id": "HSRc010",
-      "path": "data/honkai-star-rail/c/HSRc010/data.json",
-      "title": "歡愉信號—嗶波！角色卡 火花",
-      "characters": [
-        "火花"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRc011",
       "path": "data/honkai-star-rail/c/HSRc011/data.json",
       "title": "Run to 歡愉 銀狼透卡",
@@ -138,6 +127,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRc009.jpeg"
+    },
+    {
+      "id": "HSRc010",
+      "path": "data/honkai-star-rail/c/HSRc010/data.json",
+      "title": "歡愉信號—嗶波！角色卡 火花",
+      "characters": [
+        "火花"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
