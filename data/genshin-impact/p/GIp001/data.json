@@ -22,5 +22,10 @@
   },
   "arrival": {},
   "afterSales": {},
-  "images": []
+  "images": [
+    {
+      "id": "GIp001-1789380345276",
+      "file": "GIp001.jpeg"
+    }
+  ]
 }
