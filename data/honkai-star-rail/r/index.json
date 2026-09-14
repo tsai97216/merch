@@ -4,17 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "HSRr002",
-      "path": "data/honkai-star-rail/r/HSRr002/data.json",
-      "title": "遠板凜 雷射票",
-      "characters": [
-        "遠板凜"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 2,
-      "status": "received"
-    },
-    {
       "id": "HSRr003",
       "path": "data/honkai-star-rail/r/HSRr003/data.json",
       "title": "吉爾伽美什 雷射票",
@@ -43,6 +32,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRr001.jpeg"
+    },
+    {
+      "id": "HSRr002",
+      "path": "data/honkai-star-rail/r/HSRr002/data.json",
+      "title": "遠板凜 雷射票",
+      "characters": [
+        "遠板凜"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
     }
   ]
 }
