@@ -52,12 +52,11 @@ async function getFromR2(env: Env, origin: string, path: string): Promise<Respon
   return new Response(asset.body, { status: 200, headers });
 }
 
-async function readAssetRequest(request: Request, path: string): Promise<{ content: string; bytes: Uint8Array }> {
+async function readAssetRequest(request: Request, path: string): Promise<Uint8Array> {
   const body = await request.clone().json() as AssetRequest;
   if (body.path !== path || typeof body.content !== 'string' || !body.content) throw new Error('圖片資料格式無效。');
   const binary = atob(body.content.replace(/\s/g, ''));
-  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
-  return { content: body.content, bytes };
+  return Uint8Array.from(binary, char => char.charCodeAt(0));
 }
 
 async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
@@ -68,9 +67,9 @@ async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<U
 }
 
 async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
-  let asset: { content: string; bytes: Uint8Array };
+  let bytes: Uint8Array;
   try {
-    asset = await readAssetRequest(request, path);
+    bytes = await readAssetRequest(request, path);
   } catch (error) {
     return new Response(JSON.stringify({ ok: false, error: { code: 'ASSET_INVALID', message: error instanceof Error ? error.message : '圖片資料格式無效。' } }), { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
   }
@@ -78,9 +77,9 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
   const previous = await readCurrentAssetFromGitHub(request, env);
 
   try {
-    await putR2Asset(env.MERCH_ASSETS, path, asset.bytes, assetContentType(path));
+    await putR2Asset(env.MERCH_ASSETS, path, bytes, assetContentType(path));
     const stored = await env.MERCH_ASSETS.head(path);
-    if (!stored || stored.size !== asset.bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
+    if (!stored || stored.size !== bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
   } catch (error) {
     console.error('R2 image mirror PUT failed before GitHub mutation.', error);
     return new Response(JSON.stringify({ ok: false, error: { code: 'R2_MIRROR_FAILED', message: '圖片已壓縮，但 R2 儲存失敗，尚未寫入 GitHub。' } }), { status: 502, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
