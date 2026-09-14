@@ -4,17 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "HSRr003",
-      "path": "data/honkai-star-rail/r/HSRr003/data.json",
-      "title": "吉爾伽美什 雷射票",
-      "characters": [
-        "吉爾伽美什"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRr004",
       "path": "data/honkai-star-rail/r/HSRr004/data.json",
       "title": "Run to 歡愉雷射票",
@@ -44,6 +33,17 @@
       "quantity": 2,
       "status": "received",
       "cover": "HSRr002.jpeg"
+    },
+    {
+      "id": "HSRr003",
+      "path": "data/honkai-star-rail/r/HSRr003/data.json",
+      "title": "吉爾伽美什 雷射票",
+      "characters": [
+        "吉爾伽美什"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
