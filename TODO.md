@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.414`。**
+- **目前開發版本：`1.109.417`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -32,6 +32,7 @@
 - [ ] 建立 R2 圖片批次匯出／備份方案，確保未來可完整下載並搬遷至其他儲存服務而不改變 Item 資料結構。
 - [ ] 加入圖片請求／操作的基本費用與濫用防護，避免異常請求造成不必要的 R2 用量。
 - [ ] 實機驗收 Collection、Item Detail、Management 圖片載入／上傳／刪除與 fallback；確認 R2 切換後無破圖或資料遺失。
+- [ ] 修正 R2 圖片 PUT 交易：先完成 R2 寫入與大小驗證，再執行 GitHub mutation；GitHub mutation 失敗時回復／刪除 R2，避免 GitHub 成功但 R2 靜默失敗。
 
 - [x] 完成圖片全量重置：清空既有圖片 metadata、分類 cover、GitHub 圖片檔案與 R2 圖片物件，重新從零建立圖片資料。
 - [x] 修正圖片替換交易：metadata 更新失敗時會以原圖片內容回復，避免同一路徑覆蓋後無法 rollback。
