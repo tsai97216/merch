@@ -37,17 +37,6 @@
       "status": "pending"
     },
     {
-      "id": "HSRc007",
-      "path": "data/honkai-star-rail/c/HSRc007/data.json",
-      "title": "歡愉信號—嗶波！角色卡 銀狼B",
-      "characters": [
-        "銀狼"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRc008",
       "path": "data/honkai-star-rail/c/HSRc008/data.json",
       "title": "歡愉信號—嗶波！角色卡 銀狼C",
@@ -135,6 +124,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRc006.jpeg"
+    },
+    {
+      "id": "HSRc007",
+      "path": "data/honkai-star-rail/c/HSRc007/data.json",
+      "title": "歡愉信號—嗶波！角色卡 銀狼B",
+      "characters": [
+        "銀狼"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
