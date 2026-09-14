@@ -1,0 +1,48 @@
+name: One-time image filename migration
+on:
+  push:
+    paths:
+      - .github/image-filename-trigger
+permissions:
+  contents: write
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update image naming and version
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/management.ts')
+          s = p.read_text()
+          old = "function imagePath(item: Item, file: File): string { const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/\\.[^.]+$/, '').slice(0, 80) || 'image'; const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; return `data/${item.workId}/${item.category}/${item.id}/images/${Date.now()}-${safeName}.${ext}`; }"
+          new = "function imagePath(item: Item, file: File): string { const ext = file.name.split('.').pop()?.toLowerCase() ?? ''; const prefix = `${item.id}`; const used = imageList(item).map(image => image.file.toLowerCase()); if (!used.some(name => name === `${prefix}.${ext}`)) return `data/${item.workId}/${item.category}/${item.id}/images/${prefix}.${ext}`; let serial = 2; while (used.includes(`${prefix}-${String(serial).padStart(2, '0')}.${ext}`)) serial += 1; return `data/${item.workId}/${item.category}/${item.id}/images/${prefix}-${String(serial).padStart(2, '0')}.${ext}`; }"
+          if old not in s:
+              raise SystemExit('imagePath target not found')
+          p.write_text(s.replace(old, new, 1))
+
+          for path in ['package.json', 'public/data/version.json']:
+              p = Path(path)
+              s = p.read_text().replace('1.109.403', '1.109.404')
+              p.write_text(s)
+
+          p = Path('TODO.md')
+          s = p.read_text().replace('目前開發版本：`1.109.403`', '目前開發版本：`1.109.404`', 1)
+          marker = '- [x] 建立可重複執行的 GitHub Actions + Wrangler 圖片批次匯入工具，使用既有資料路徑將 repository 圖片上傳至 R2。\n'
+          if '統一新圖片檔名規則' not in s:
+              if marker not in s:
+                  raise SystemExit('TODO insertion marker not found')
+              s = s.replace(marker, marker + '- [ ] 統一新圖片檔名規則：以 Item ID 作為圖片檔名基底，第一張使用 `<ItemID>.<ext>`，同一 Item 的後續圖片使用 `<ItemID>-NN.<ext>`，避免目前 timestamp／原始檔名造成檔名不一致；既有圖片需另行 migration。\n', 1)
+          p.write_text(s)
+          PY
+      - name: Remove one-time workflow
+        run: rm -f .github/workflows/image-filename-migration.yml .github/image-filename-trigger
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/management.ts package.json public/data/version.json TODO.md .github/workflows/image-filename-migration.yml .github/image-filename-trigger
+          git commit -m "fix: normalize image filenames to item IDs"
+          git push
