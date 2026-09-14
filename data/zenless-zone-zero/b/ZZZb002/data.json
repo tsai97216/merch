@@ -26,8 +26,10 @@
   },
   "images": [
     {
-      "id": "ZZZb002-1789381593891",
-      "file": "ZZZb002.jpeg"
+      "id": "ZZZb002-1789381596569-5d3cx",
+      "file": "ZZZb002.jpeg",
+      "alt": "星見雅 影畫系列 吧唧",
+      "isCover": true
     }
   ]
 }
