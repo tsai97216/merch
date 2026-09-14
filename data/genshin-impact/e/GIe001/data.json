@@ -20,5 +20,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "GIe001-1789379820980",
+      "file": "GIe001.jpeg"
+    }
+  ]
 }
