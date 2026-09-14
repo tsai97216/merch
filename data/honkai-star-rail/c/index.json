@@ -37,17 +37,6 @@
       "status": "pending"
     },
     {
-      "id": "HSRc009",
-      "path": "data/honkai-star-rail/c/HSRc009/data.json",
-      "title": "歡愉信號—嗶波！角色卡 姬子",
-      "characters": [
-        "姬子"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRc010",
       "path": "data/honkai-star-rail/c/HSRc010/data.json",
       "title": "歡愉信號—嗶波！角色卡 火花",
@@ -137,6 +126,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRc008.jpeg"
+    },
+    {
+      "id": "HSRc009",
+      "path": "data/honkai-star-rail/c/HSRc009/data.json",
+      "title": "歡愉信號—嗶波！角色卡 姬子",
+      "characters": [
+        "姬子"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
