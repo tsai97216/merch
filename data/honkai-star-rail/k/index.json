@@ -37,17 +37,6 @@
       "status": "received"
     },
     {
-      "id": "HSRk005",
-      "path": "data/honkai-star-rail/k/HSRk005/data.json",
-      "title": "三周年紀念亞克力吊飾 大黑塔款",
-      "characters": [
-        "大黑塔"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRk001",
       "path": "data/honkai-star-rail/k/HSRk001/data.json",
       "title": "仲夏螢火之約系列 亞克力合影卡",
@@ -57,6 +46,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "pending"
+    },
+    {
+      "id": "HSRk005",
+      "path": "data/honkai-star-rail/k/HSRk005/data.json",
+      "title": "三周年紀念亞克力吊飾 黃泉款",
+      "characters": [
+        "黃泉"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
