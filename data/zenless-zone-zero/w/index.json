@@ -16,18 +16,6 @@
       "cover": "ZZZw004.jpeg"
     },
     {
-      "id": "ZZZw002",
-      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
-      "title": "月曆 壓克力杯墊 星見雅",
-      "characters": [
-        "星見雅"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "ZZZw002.jpeg"
-    },
-    {
       "id": "ZZZw003",
       "path": "data/zenless-zone-zero/w/ZZZw003/data.json",
       "title": "月曆 壓克力杯墊 儀玄",
@@ -62,6 +50,18 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZw005.jpeg"
+    },
+    {
+      "id": "ZZZw002",
+      "path": "data/zenless-zone-zero/w/ZZZw002/data.json",
+      "title": "月曆 壓克力杯墊 星見雅",
+      "characters": [
+        "星見雅"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "ZZZw002.jpeg"
     }
   ]
 }
