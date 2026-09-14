@@ -57,7 +57,8 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "ZZZd002.jpeg"
     }
   ]
 }
