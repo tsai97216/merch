@@ -24,8 +24,10 @@
   },
   "images": [
     {
-      "id": "ZZZw001-1789391369276",
-      "file": "ZZZw001.jpeg"
+      "id": "ZZZw001-1789391371998-xtzu1",
+      "file": "ZZZw001.jpeg",
+      "alt": "儀玄 扇子",
+      "isCover": true
     }
   ]
 }
