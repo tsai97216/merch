@@ -3,6 +3,10 @@ import { deleteR2Asset, getR2Asset, putR2Asset } from './r2-assets';
 
 interface Env {
   ALLOWED_ORIGIN: string;
+  GITHUB_REPO: string;
+  GITHUB_BRANCH: string;
+  GITHUB_TOKEN: string;
+  ADMIN_SECRET: string;
   MERCH_ASSETS: R2Bucket;
 }
 
@@ -32,7 +36,7 @@ function r2AssetPath(request: Request): string | null {
   return ASSET_RE.test(path) && !path.includes('..') ? path : null;
 }
 
-async function getFromR2(request: Request, env: Env, origin: string, path: string): Promise<Response | null> {
+async function getFromR2(env: Env, origin: string, path: string): Promise<Response | null> {
   const asset = await getR2Asset(env.MERCH_ASSETS, path);
   if (!asset?.body) return null;
   const headers = new Headers({
@@ -48,7 +52,7 @@ async function getFromR2(request: Request, env: Env, origin: string, path: strin
 async function mirrorPut(request: Request, env: Env, response: Response, path: string): Promise<Response> {
   if (!response.ok) return response;
   try {
-    const body = await request.clone().json() as { path?: unknown; content?: unknown };
+    const body = await request.json() as { path?: unknown; content?: unknown };
     if (body.path !== path || typeof body.content !== 'string' || !body.content) return response;
     const binary = atob(body.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
@@ -76,13 +80,14 @@ export default {
 
     const path = r2AssetPath(request);
     if (path && request.method === 'GET') {
-      const r2Response = await getFromR2(request, env, origin, path);
+      const r2Response = await getFromR2(env, origin, path);
       if (r2Response) return r2Response;
     }
 
     if (path && request.method === 'PUT') {
+      const mirroredRequest = request.clone();
       const response = await app.fetch(request, env);
-      return corsResponse(await mirrorPut(request, env, response, path), origin);
+      return corsResponse(await mirrorPut(mirroredRequest, env, response, path), origin);
     }
 
     if (path && request.method === 'DELETE') {
