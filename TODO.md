@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.401`。**
+- **目前開發版本：`1.109.402`。**
 - `package.json` 與 `public/data/version.json` 已同步。
 - `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
 - Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
@@ -80,6 +80,7 @@
 - [x] 清除 `src/management.ts` 等仍存在的 `toast.css` import，確認所有 `.toast` legacy selector 均無 runtime 依賴後移除 `src/toast.css`。
 - [x] 清理 `card-enhancements.css` 中與 shared Badge foundation 重複的 `.badge` 幾何／視覺定義，只保留真正屬於 Card layout 的規則。
 - [ ] 逐項清理 `styles.css` 中已確認由 shared foundation 接管的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 舊定義，再檢查其餘 page layout / card / detail 規則的唯一責任。
+  - [x] 已移除 `styles.css` 中與 shared foundation 重複的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 元件幾何／狀態定義，保留頁面布局與卡片／Detail 專屬規則。
 - [ ] 逐項檢查 `theme.css`／`theme-refinement.css`，只移除確定重複的 theme implementation，保留必要的 theme-only refinement。
 - [ ] 檢查 `responsive-refinement.css` 與各 page CSS 的 viewport 規則，將 responsive contract 留在 centralized responsive layer。
 - [ ] 檢查 `home-enhancements.ts` 與 `main.ts` 的 Home rendering／互動責任是否重疊。
@@ -93,16 +94,10 @@
 - [ ] GitHub Actions 成功後正式宣告 release。
 
 ## 7. Worker 圖片上傳 503
-- [ ] 連續圖片上傳時偶發 API 503：確認 Worker 實際回應來源，區分 Cloudflare Worker 平台 503、GitHub API 502/503/504 與前端錯誤顯示。
-- [x] 強化 Worker 對 GitHub 暫時性 502/503/504／429 的有限重試與錯誤保留，避免 transient upstream failure 直接中斷圖片 atomic commit。
-- [ ] 實機連續上傳多張圖片，確認成功寫入、版本遞增與 atomic commit 沒有遺失或重複。
+- [ ] 連續實機上傳／刪除驗證仍待完成。
 
-## 8. Collection 大量資料效能
-- [ ] 實機確認大量收藏資料加入後 Collection、搜尋、篩選與切換顯示模式的操作流暢度。
-- [x] 找到主要根因：`MerchStore.setUi()` 每次搜尋／篩選／排序等 UI state 更新都對整份 Store state 執行 `structuredClone()` + recursive `deepFreeze()`，資料量增加後會把每次 UI 操作成本放大。
-- [x] 修正 UI-only state 更新只建立新的 frozen root / ui，不再複製整份 works / items / shipping 資料；保持 immutable Store contract，同時避免無關資料的深層複製。
-- [x] 進一步確認第二個效能問題：進入 Collection 時，24 張 Item 卡片會同時參與版面計算與圖片載入；大量 ZZZ 圖片使 Collection 首次顯示的 layout / paint 成本明顯上升。
-- [ ] 以 Collection rendering 層處理首次進入成本，讓視窗外卡片不參與不必要的 layout / paint，並降低非必要圖片解碼對主執行緒的阻塞。
-- [ ] 實機重新確認「只點進收藏」是否仍有明顯卡頓；若仍有，再進行下一輪 profiling，不先疊加旁路快取。
-
-> API 同步全頁阻塞動效完成並實機驗收後再正式封版；在此之前不要宣告正式 release。
+## 8. Collection 效能
+- [x] 修正 Collection 進入頁面時 Store UI update 不必要 deep clone / deep freeze 的根因。
+- [x] 卡片圖片加入 browser rendering containment，降低進入 Collection 時的初始 layout 成本。
+- [ ] 進一步檢查 Collection rendering architecture，避免每次 UI state 變化都完整重建所有卡片 DOM；若確認為瓶頸，優先採增量／分頁／virtualized rendering，而不是再疊加 CSS 或 cache patch。
+- [ ] 實機重新測試 Collection 首次進入、搜尋、Filter、Sort、Card/List 切換與分頁。
