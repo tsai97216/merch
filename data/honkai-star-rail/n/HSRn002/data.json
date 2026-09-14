@@ -21,5 +21,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "HSRn002-1789427138652",
+      "file": "HSRn002.jpeg"
+    }
+  ]
 }
