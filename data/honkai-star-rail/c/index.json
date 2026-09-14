@@ -37,17 +37,6 @@
       "status": "pending"
     },
     {
-      "id": "HSRc005",
-      "path": "data/honkai-star-rail/c/HSRc005/data.json",
-      "title": "歡愉信號—嗶波！銀狼 LV999透卡",
-      "characters": [
-        "銀狼"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRc006",
       "path": "data/honkai-star-rail/c/HSRc006/data.json",
       "title": "歡愉信號—嗶波！角色卡 銀狼A",
@@ -133,6 +122,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRc004.jpeg"
+    },
+    {
+      "id": "HSRc005",
+      "path": "data/honkai-star-rail/c/HSRc005/data.json",
+      "title": "歡愉信號—嗶波！銀狼 LV999透卡",
+      "characters": [
+        "銀狼"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
