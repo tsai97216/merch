@@ -2,9 +2,7 @@
   "id": "HSRn001",
   "workId": "honkai-star-rail",
   "title": "歡愉信號—嗶波！集章卡明信片",
-  "series": [
-    "歡愉信號—嗶波！"
-  ],
+  "series": ["歡愉信號—嗶波！"],
   "characters": [],
   "category": "n",
   "manufacturer": "米哈遊",
@@ -12,15 +10,8 @@
   "status": "received",
   "description": "",
   "notes": "崩鐵遊樂園線下活動",
-  "purchase": {
-    "price": 0,
-    "currency": "TWD",
-    "platform": "線下活動",
-    "date": "2026-08-02"
-  },
+  "purchase": {"currency": "TWD", "platform": "線下活動", "date": "2026-08-02"},
   "arrival": {},
-  "afterSales": {
-    "status": "無"
-  },
+  "afterSales": {"status": "無"},
   "images": []
 }
