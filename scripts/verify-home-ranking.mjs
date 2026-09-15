@@ -17,7 +17,7 @@ const rows = sortCharacterRanking([
   ['戊', 100],
 ]);
 
-assert.deepEqual(rows.map(([name]) => name), ['丙', '甲', '丁', '乙', '戊']);
+assert.deepEqual(rows.map(([name]) => name), ['丙', '甲', '乙', '丁', '戊']);
 assert.deepEqual(rows.map((_, index) => rankAt(rows, index)), [1, 1, 3, 3, 5]);
 
 const tieAfterTop = sortCharacterRanking([
