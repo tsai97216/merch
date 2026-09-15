@@ -45,7 +45,7 @@ if (!/editingId/.test(ui) || !/immutable|不可|不能|disabled/.test(ui)) {
 }
 
 const workMutationsPreserveShipping =
-  (ui.match(/replaceData\(data\.works,data\.version,data\.shipping\)/g) || []).length >= 3;
+  (ui.match(/replaceData\(\s*data\.works\s*,\s*data\.version\s*,\s*data\.shipping\s*\)/g) || []).length >= 3;
 if (!workMutationsPreserveShipping) {
   errors.push('src/works-management.ts: work refresh/create/update/delete paths must preserve returned shipping data');
 }
