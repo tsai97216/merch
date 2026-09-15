@@ -26,17 +26,6 @@
       "status": "received"
     },
     {
-      "id": "ZZZk004",
-      "path": "data/zenless-zone-zero/k/ZZZk004/data.json",
-      "title": "愛芮 線下紙卡吊飾",
-      "characters": [
-        "愛芮"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 2,
-      "status": "received"
-    },
-    {
       "id": "ZZZk002",
       "path": "data/zenless-zone-zero/k/ZZZk002/data.json",
       "title": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
@@ -71,6 +60,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZk003.jpeg"
+    },
+    {
+      "id": "ZZZk004",
+      "path": "data/zenless-zone-zero/k/ZZZk004/data.json",
+      "title": "愛芮 線下紙卡吊飾",
+      "characters": [
+        "愛芮"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
     }
   ]
 }
