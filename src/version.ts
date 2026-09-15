@@ -1,4 +1,5 @@
 import './theme';
+import './app-loading';
 
 export type AppVersion = `${number}.${number}.${number}`;
 
