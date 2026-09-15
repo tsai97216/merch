@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.628`。**
+- **目前開發版本：`1.109.629`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -46,7 +46,6 @@
 - `add.ts` 已改為以頁面 DOM 作為明確 mount 邊界，使用 `AbortController` 管理 submit／click delegation，頁面替換時會先解除舊 listener，不再依賴 `dataset.bound`。
 - `works-management.ts` 已改為明確 panel mount／unmount lifecycle，以 `AbortController` 管理 submit／click delegation，不再依賴 `dataset.bound`。
 - `management.ts` 已改為以 `#management-root` 作為穩定 mount 邊界，所有表單、選擇器、搜尋與圖片操作改用 delegation；`window` 的跨頁選取事件也由同一個 `AbortController` 管理，不再依賴 `dataset.bound`。
-- `main.ts` 的 Item Card delegation 仍使用 `dataset.itemCardDelegationReady` 作為一次性旗標；這與舊式 `dataset.bound` 同屬防重複綁定語意，已列為本輪重新掃描時的殘留項目。
 - 本輪已完成 `src/` lifecycle pattern 的重新掃描：保留必要的穩定全域 delegation，移除可由 module/root lifecycle 管理的 dataset 防重複旗標；並新增 CI contract 驗證，防止 `dataset.bound` 類型旗標回歸。
 
 ## 7. Sync Overlay 架構
@@ -64,8 +63,9 @@
 ### Validation audit note
 - `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 確實存在重複的 Item／Shipping／Image 等 schema checks。
 - 目前三者並非完全同語意：Store 還負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
-- 本輪已先抽出 `src/validation.ts` 的共通 primitive/schema checks，API 已改用該 shared boundary；Store 則保留 canonical storage 的 context validation 與 normalization。
-- 下一步應讓 Store 使用 shared primitive，並補上針對 shared validation 與 Store normalization 不可互相放寬的 contract verification，再評估 Worker 是否能安全共用相同 primitive。
+- 本輪已抽出 `src/validation.ts` 的共通 primitive/schema checks，API 與 Store 已使用 shared boundary，同時保留 Store 的 canonical context validation 與 normalization。
+- 本輪新增 `verify:validation`：驗證 shared validator exports、API／Store 的實際使用，以及 Store 的 quantity、Item ID、Category、Work identity、forbidden canonical fields 等既有 contract，並對 shared Item／Image／Shipping validator 執行 runtime accepted/rejected cases。
+- Worker 暫不直接共用前端 `src/validation.ts`，仍保留 server-side boundary；下一步需評估是否能在不改變兩端語意與 runtime 邊界的前提下共用 schema contract。
 
 ## 9. innerHTML / Rendering 安全清理
 - [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
