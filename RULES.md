@@ -289,3 +289,17 @@
 - 新增長期規則前先確認不是一次性 TODO。
 - 已經確認且未來會反覆影響開發流程的規則，才加入本文件。
 - 規則修改本身也屬正式 repository change，必須遵守版本同步與驗證規則。
+
+## 12. 已確立的架構基線
+
+以下不是待辦，而是目前專案完成架構整理後必須持續維持的基線：
+
+- **資料權威性**：canonical Item 資料以 `data/` 為來源；API／Worker／Store 不恢復舊式整份作品 JSON 寫入模式。
+- **Remote mutation**：遠端 mutation 必須序列化；成功後以 API authoritative response 經 Store remote-apply 更新，不由 UI 自行重建遠端狀態。
+- **Validation boundary**：外部 API、static data、mutation response、migration 與 Worker 輸入均須經對應 schema／validation boundary。
+- **Lifecycle**：共用互動優先使用明確 mount／unmount 或 delegation，不以 `dataset.bound`、重複 listener 或 MutationObserver 作為 workaround。
+- **Sync UX**：mutation、圖片操作等遠端寫入在完成前必須明確顯示同步狀態；不得以全域 `fetch` monkey patch 判斷 mutation。
+- **Responsive UI**：Desktop、Tablet、Mobile 與 Light、Dark 均屬共用 UI contract；responsive viewport 規則集中於 `src/responsive-refinement.css`。
+- **Accessibility**：Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與鍵盤互動屬正式 UI contract。
+- **Verification**：架構或資料修改不可只靠目視；適用的 verification、build、CI 與部署結果必須實際確認。
+- **Release discipline**：任何正式 repository change 都必須增加 Patch version，並維持版本來源與部署資料一致。
