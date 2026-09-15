@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.609`。**
+- **目前開發版本：`1.109.610`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -76,6 +76,12 @@
 - [ ] 盤點 Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與關閉行為。
 - [ ] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
 - [ ] 驗證 responsive 與 keyboard interaction 不因架構清理退化。
+
+### Accessibility audit note
+- `image-viewer.ts` 已具備 `role="dialog"`、`aria-modal="true"`、Escape 關閉、Tab focus trap 與關閉後 focus return，可作為共用 Modal lifecycle 的參考基準。
+- `statistics.ts` 的 Detail／Work Detail popup 已有 `role="dialog"`、`aria-modal="true"` 與 Escape 關閉，但目前沒有完整 focus trap／focus return。
+- Item Detail 已有 dialog 語意與 `aria-hidden` 狀態，但目前仍需進一步確認開啟時 focus 移入、關閉後 focus return，以及鍵盤 focus trap 是否完整。
+- 因此本節目前維持未完成，不用局部補丁把各 Modal 做成三套不同 lifecycle；下一步應抽出共通 dialog accessibility primitive，再統一套用。
 
 ## 12. Final Architecture Acceptance
 - [ ] 所有高風險資料／同步／生命週期問題完成。
