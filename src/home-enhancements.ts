@@ -140,7 +140,7 @@ function closeCharacterModal() {
 function syncHomeRankings(): void {
   if (!storeRef) return;
   const workList = document.querySelector<HTMLElement>('#work-bars');
-  const characterList = document.querySelector<HTMLElement>('#character-ranking');
+  const characterList = document.querySelector<HTMLElement>('#favorite-character-list, #character-ranking');
   if (workList) renderWorkRankingRows(workList, getWorkRows(storeRef));
   if (characterList) renderCharacterList(characterList, getCharacterRows(storeRef));
 }
