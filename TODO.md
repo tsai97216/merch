@@ -74,14 +74,15 @@
 
 ## 11. Accessibility / UI Contract 最終檢查
 - [x] 盤點 Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與關閉行為。
-- [ ] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
-- [ ] 驗證 responsive 與 keyboard interaction 不因架構清理退化。
+- [x] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
+- [x] 驗證 responsive 與 keyboard interaction 不因架構清理退化。
 
 ### Accessibility audit note
 - `image-viewer.ts` 已具備 `role="dialog"`、`aria-modal="true"`、Escape 關閉、Tab focus trap 與關閉後 focus return，可作為共用 Modal lifecycle 的參考基準。
 - Item Detail 原有 `detail-focus.ts` 已提供專用 Detail 的 Tab focus trap、開啟 focus 與 hash 關閉後 focus restoration。
 - 本輪將同一份 `detail-focus.ts` 抽出 `setupDialogFocus()` primitive，並透過 MutationObserver 自動套用至 Statistics Detail／Work Detail popup，包含初始 focus、Tab trap 與移除後 focus return。
-- Statistics popup 原本各自註冊 Escape listener 的行為保留，並未把不同 modal 的關閉語意混在 focus primitive 裡。
+- Button／input／select foundation 已統一提供 `:focus-visible`、disabled、`aria-disabled`、`aria-invalid` 等狀態；主要表單控制項均有對應 label 或 aria-label，form loading 使用 `aria-busy`。
+- Item card、Statistics 可互動資料列具備鍵盤啟動語意；圖片動態渲染使用 `alt`，裝飾性 icon／logo 使用 `aria-hidden`；主要導覽使用具名 `nav`，Mobile 狀態仍保留可操作的原生連結與按鈕。
 
 ## 12. Final Architecture Acceptance
 - [ ] 所有高風險資料／同步／生命週期問題完成。
