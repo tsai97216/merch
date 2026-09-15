@@ -35,13 +35,22 @@ function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
   return sortCharacterRanking([...spendingByCharacter.entries()]);
 }
 
+function getCharacterItemCounts(store: MerchStore): Map<string, number> {
+  const counts = new Map<string, number>();
+  store.snapshot.items.forEach((item) => {
+    const characters = [...new Set((item.characters || []).map((character) => String(character).trim()).filter(Boolean))];
+    characters.forEach((character) => counts.set(character, (counts.get(character) || 0) + quantityOf(item)));
+  });
+  return counts;
+}
+
 function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWorkRows>, limit = 5): void {
   const visibleRows = rows.slice(0, limit);
   const max = visibleRows[0]?.spend || 1;
   list.className = 'home-ranking-list work-ranking-list';
   list.innerHTML = visibleRows.length
     ? visibleRows.map((row, index) => `
-      <li class="home-ranking-row">
+      <li class="home-ranking-row" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
         <span class="home-ranking-rank" aria-hidden="true">${index + 1}</span>
         <strong class="home-ranking-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong>
         <b class="home-ranking-amount">${escapeHtml(money(row.spend))}</b>
@@ -52,9 +61,22 @@ function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWor
 
 function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], limit = 5): void {
   const visibleRows = rows.slice(0, limit);
+  const max = visibleRows[0]?.[1] || 1;
+  const counts = storeRef ? getCharacterItemCounts(storeRef) : new Map<string, number>();
   list.className = 'favorite-character-list';
   list.innerHTML = visibleRows.length
-    ? visibleRows.map(([character, spend], index) => `<li class="favorite-character-item"><span class="favorite-character-rank" aria-hidden="true">${index + 1}</span><strong class="favorite-character-name" title="${escapeHtml(character)}" data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><span class="favorite-character-amount">${escapeHtml(money(spend))}</span></li>`).join('')
+    ? visibleRows.map(([character, spend], index) => `
+      <li class="favorite-character-item${index === 0 ? ' is-top' : ''}" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
+        <div class="favorite-character-topline">
+          <span class="favorite-character-rank" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+          <span class="favorite-character-meta">${counts.get(character) || 0} 件收藏</span>
+        </div>
+        <strong class="favorite-character-name" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
+        <div class="favorite-character-bottomline">
+          <span class="favorite-character-bar" aria-hidden="true"><span style="--character-progress:${Math.max(5, spend / max * 100)}%"></span></span>
+          <b class="favorite-character-amount">${escapeHtml(money(spend))}</b>
+        </div>
+      </li>`).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
 
@@ -63,7 +85,7 @@ function ensureWorkModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，顯示全部作品。</p></div><div id="work-ranking-all" class="work-ranking-list" role="list"></div></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，點擊作品可直接搜尋。</p></div><div id="work-ranking-all" class="work-ranking-list" role="list"></div></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-work-ranking-close]').forEach((node) => node.addEventListener('click', closeWorkModal));
   workModal = modal;
@@ -90,7 +112,7 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTERS</span><h2 id="character-title">角色</h2><p>收藏裡出現的角色。</p></div><ul id="character-list-all" class="favorite-character-list"></ul></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING</span><h2 id="character-title">角色消費排行</h2><p>依角色分攤後的消費金額排序，點擊角色可直接搜尋。</p></div><ul id="character-list-all" class="favorite-character-list"></ul></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-character-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
@@ -139,7 +161,7 @@ function install() {
     const heading = rankingPanel.querySelector<HTMLElement>('h2');
     const list = rankingPanel.querySelector<HTMLElement>('#character-ranking');
     if (label) label.textContent = 'CHARACTERS';
-    if (heading) heading.textContent = '角色';
+    if (heading) heading.textContent = '角色消費排行';
     if (list) {
       list.id = 'favorite-character-list';
       list.className = 'favorite-character-list';
