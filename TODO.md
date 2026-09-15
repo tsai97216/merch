@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.611`。**
+- **目前開發版本：`1.109.612`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -27,7 +27,7 @@
 - [x] 盤點現有 verification workflow。
 - [x] 補上缺失的 API／Worker／statistics contract verification。
 - [x] 確認 worker read/write/image/transaction 等重要 contract 有 CI entry。
-- [ ] 避免「script 存在但 CI 沒有執行」的情況。
+- [x] 建立 `verify:ci-contract`，自動檢查 `package.json` 中所有 `verify*` script 都有對應 CI entry，避免「script 存在但 CI 沒有執行」。
 - [ ] 驗證 CI 在目前 HEAD 實際通過後再關閉本節。
 
 ## 5. Dependency / Build Reproducibility
