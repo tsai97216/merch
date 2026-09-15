@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.612';
+const WORKER_VERSION = '1.109.613';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -20,130 +20,84 @@ function assetContentType(path: string): string {
   return ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'webp' ? 'image/webp' : ext === 'avif' ? 'image/avif' : 'image/jpeg';
 }
 
-function corsResponse(response: Response, origin: string): Response {
-  const headers = new Headers(response.headers);
-  headers.set('Access-Control-Allow-Origin', origin);
-  headers.set('Vary', 'Origin');
-  headers.set('X-Merch-Worker-Version', WORKER_VERSION);
-  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-}
-
-function originFor(request: Request, env: Env): string | null {
-  const origin = request.headers.get('Origin');
-  return !origin || origin === env.ALLOWED_ORIGIN ? env.ALLOWED_ORIGIN : null;
-}
-
-function r2AssetPath(request: Request): string | null {
-  const url = new URL(request.url);
-  if (!url.pathname.startsWith('/api/assets/')) return null;
-  const path = decodeURIComponent(url.pathname.slice('/api/assets/'.length));
-  return ASSET_RE.test(path) && !path.includes('..') ? path : null;
-}
-
-async function getFromR2(env: Env, origin: string, path: string): Promise<Response | null> {
-  const asset = await getR2Asset(env.MERCH_ASSETS, path);
-  if (!asset?.body) return null;
-  const headers = new Headers({
-    'Content-Type': asset.httpMetadata?.contentType || assetContentType(path),
-    'Cache-Control': asset.httpMetadata?.cacheControl || 'public, max-age=31536000, immutable',
-    'Access-Control-Allow-Origin': origin,
-    Vary: 'Origin',
-    'X-Merch-Asset-Source': 'r2',
-    'X-Merch-Worker-Version': WORKER_VERSION,
+function json(data: unknown, status = 200, origin = '*'): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': origin, 'Cache-Control': 'no-store' },
   });
-  if (asset.etag) headers.set('ETag', asset.etag);
-  return new Response(asset.body, { status: 200, headers });
 }
 
-async function readAssetRequest(request: Request, path: string): Promise<Uint8Array> {
-  const body = await request.clone().json() as AssetRequest;
-  if (body.path !== path || typeof body.content !== 'string' || !body.content) throw new Error('圖片資料格式無效。');
-  const binary = atob(body.content.replace(/\s/g, ''));
-  return Uint8Array.from(binary, char => char.charCodeAt(0));
+function cors(origin: string): Headers {
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  return headers;
 }
 
-async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
-  const fallbackRequest = new Request(request.url, { method: 'GET', headers: request.headers });
-  const response = await app.fetch(fallbackRequest, env);
-  if (!response.ok) return null;
-  return new Uint8Array(await response.arrayBuffer());
+function isAllowedOrigin(request: Request, env: Env): string | null {
+  const origin = request.headers.get('Origin');
+  if (!origin) return '*';
+  return origin === env.ALLOWED_ORIGIN ? origin : null;
 }
 
-async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
-  let bytes: Uint8Array;
+function isAuthorized(request: Request, env: Env): boolean {
+  const authorization = request.headers.get('Authorization');
+  return Boolean(authorization && authorization === `Bearer ${env.ADMIN_SECRET}`);
+}
+
+function assetPathFromRequest(url: URL): string | null {
+  const prefix = '/api/assets/';
+  if (!url.pathname.startsWith(prefix)) return null;
+  const raw = url.pathname.slice(prefix.length);
   try {
-    bytes = await readAssetRequest(request, path);
-  } catch (error) {
-    return new Response(JSON.stringify({ ok: false, error: { code: 'ASSET_INVALID', message: error instanceof Error ? error.message : '圖片資料格式無效。' } }), { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    const path = raw.split('/').map(segment => decodeURIComponent(segment)).join('/');
+    return ASSET_RE.test(path) ? path : null;
+  } catch {
+    return null;
   }
-
-  const previous = await readCurrentAssetFromGitHub(request, env);
-
-  try {
-    await putR2Asset(env.MERCH_ASSETS, path, bytes, assetContentType(path));
-    const stored = await env.MERCH_ASSETS.head(path);
-    if (!stored || stored.size !== bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
-  } catch (error) {
-    console.error('R2 image mirror PUT failed before GitHub mutation.', error);
-    return new Response(JSON.stringify({ ok: false, error: { code: 'R2_MIRROR_FAILED', message: '圖片已壓縮，但 R2 儲存失敗，尚未寫入 GitHub。' } }), { status: 502, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
-  }
-
-  let response: Response;
-  try {
-    response = await app.fetch(request, env);
-  } catch (error) {
-    try {
-      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
-      else await deleteR2Asset(env.MERCH_ASSETS, path);
-    } catch (rollbackError) {
-      console.error('R2 image mirror rollback failed after GitHub request error.', rollbackError);
-    }
-    throw error;
-  }
-
-  if (!response.ok) {
-    try {
-      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
-      else await deleteR2Asset(env.MERCH_ASSETS, path);
-    } catch (rollbackError) {
-      console.error('R2 image mirror rollback failed after GitHub mutation failure.', rollbackError);
-    }
-  }
-
-  return response;
 }
 
-async function mirrorDelete(env: Env, response: Response, path: string): Promise<Response> {
-  if (!response.ok) return response;
-  try {
-    await deleteR2Asset(env.MERCH_ASSETS, path);
-  } catch (error) {
-    console.error('R2 image mirror DELETE failed; metadata remains authoritative.', error);
-  }
-  return response;
+function assetRequestPayload(request: Request): Promise<AssetRequest> {
+  return request.json().catch(() => ({})) as Promise<AssetRequest>;
 }
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const origin = originFor(request, env);
-    if (!origin) return new Response(JSON.stringify({ ok: false, error: { code: 'ORIGIN_NOT_ALLOWED', message: '來源網域不被允許。' } }), { status: 403, headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Merch-Worker-Version': WORKER_VERSION } });
+const worker = {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const origin = isAllowedOrigin(request, env);
+    if (origin === null) return json({ ok: false, error: { code: 'CORS_FORBIDDEN', message: 'Origin 不被允許。' } }, 403, env.ALLOWED_ORIGIN);
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
 
-    const path = r2AssetPath(request);
-    if (path && request.method === 'GET') {
-      const r2Response = await getFromR2(env, origin, path);
-      if (r2Response) return r2Response;
+    const url = new URL(request.url);
+    const assetPath = assetPathFromRequest(url);
+    if (assetPath) {
+      if (request.method === 'GET') {
+        const result = await getR2Asset(env.MERCH_ASSETS, assetPath);
+        if (!result) return new Response('Not Found', { status: 404, headers: cors(origin) });
+        const headers = cors(origin);
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        headers.set('Content-Type', result.contentType || assetContentType(assetPath));
+        return new Response(result.body, { status: 200, headers });
+      }
+      if (!isAuthorized(request, env)) return json({ ok: false, error: { code: 'UNAUTHORIZED', message: '未授權。' } }, 401, origin);
+      if (request.method === 'PUT') {
+        const payload = await assetRequestPayload(request);
+        if (typeof payload.path !== 'string' || payload.path !== assetPath || typeof payload.content !== 'string') return json({ ok: false, error: { code: 'INVALID_ASSET', message: '圖片資料格式無效。' } }, 400, origin);
+        const result = await putR2Asset(env.MERCH_ASSETS, assetPath, payload.content);
+        return json({ ok: true, data: { path: assetPath, replaced: result.replaced, version: WORKER_VERSION } }, 200, origin);
+      }
+      if (request.method === 'DELETE') {
+        const result = await deleteR2Asset(env.MERCH_ASSETS, assetPath);
+        if (!result.deleted) return json({ ok: false, error: { code: 'NOT_FOUND', message: '圖片不存在。' } }, 404, origin);
+        return json({ ok: true, data: { path: assetPath, deleted: true, version: WORKER_VERSION } }, 200, origin);
+      }
     }
 
-    if (path && request.method === 'PUT') {
-      const response = await mirrorPut(request, env, path);
-      return corsResponse(response, origin);
-    }
-
-    if (path && request.method === 'DELETE') {
-      const response = await app.fetch(request, env);
-      return corsResponse(await mirrorDelete(env, response, path), origin);
-    }
-
-    return corsResponse(await app.fetch(request, env), origin);
+    const response = await app.fetch(request, env, ctx);
+    const headers = new Headers(response.headers);
+    headers.set('Access-Control-Allow-Origin', origin);
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
   },
 };
+
+export default worker;
