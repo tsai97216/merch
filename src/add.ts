@@ -8,6 +8,8 @@ import type { Item } from './types';
 const qs = <T extends Element>(selector: string, root: ParentNode = document) => root.querySelector<T>(selector);
 const value = (id: string) => (qs<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${id}`)?.value ?? '').trim();
 let submitting = false;
+let mountedPage: HTMLElement | null = null;
+let mountController: AbortController | null = null;
 
 function setBusy(busy: boolean): void {
   submitting = busy;
@@ -87,21 +89,30 @@ async function submit(event: SubmitEvent): Promise<void> {
 
 function closeResult(): void { const result = qs<HTMLElement>('#add-result'); if (result) result.hidden = true; }
 
-function bind(): void {
-  const form = qs<HTMLFormElement>('#add-form');
-  if (!form || form.dataset.bound === 'true') return;
-  form.dataset.bound = 'true'; form.noValidate = true; ensureFormErrors(form);
-  form.addEventListener('submit', event => { void submit(event); });
-  qs<HTMLButtonElement>('#add-result-close')?.addEventListener('click', closeResult);
-  qs<HTMLElement>('#add-result-backdrop')?.addEventListener('click', closeResult);
-  qs<HTMLButtonElement>('#add-result-management')?.addEventListener('click', () => { closeResult(); location.hash = '#/management'; });
-  qs<HTMLButtonElement>('#add-result-cancel')?.addEventListener('click', closeResult);
+function mount(page: HTMLElement): void {
+  if (mountedPage === page) return;
+  mountController?.abort();
+  const controller = new AbortController();
+  mountedPage = page;
+  mountController = controller;
+  const form = qs<HTMLFormElement>('#add-form', page);
+  if (form) { form.noValidate = true; ensureFormErrors(form); }
+  page.addEventListener('submit', event => {
+    if ((event.target as Element | null)?.closest('#add-form')) void submit(event as SubmitEvent);
+  }, { signal: controller.signal });
+  page.addEventListener('click', event => {
+    const target = (event.target as Element | null)?.closest<HTMLElement>('#add-result-close, #add-result-backdrop, #add-result-management, #add-result-cancel');
+    if (!target) return;
+    if (target.id === 'add-result-management') { closeResult(); location.hash = '#/management'; return; }
+    closeResult();
+  }, { signal: controller.signal });
 }
 
 function render(): void {
   const page = qs<HTMLElement>('[data-page="add"]'); if (!page) return;
+  mount(page);
   page.hidden = location.hash !== '#/add' && location.hash !== '#add'; if (page.hidden) return;
-  bind(); const status = qs<HTMLSelectElement>('#add-status'); if (status) status.value = 'received'; populateWorkOptions();
+  const status = qs<HTMLSelectElement>('#add-status'); if (status) status.value = 'received'; populateWorkOptions();
 }
 
 render(); window.addEventListener('hashchange', render);
