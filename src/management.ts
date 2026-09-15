@@ -16,6 +16,8 @@ let pickerSerial = '';
 let searchQuery = '';
 let saving = false;
 let imageSaving = false;
+let mountedRoot: HTMLElement | null = null;
+let mountController: AbortController | null = null;
 
 const allowedImageTypes = new Map([['image/jpeg', new Set(['jpg', 'jpeg'])], ['image/png', new Set(['png'])], ['image/webp', new Set(['webp'])], ['image/gif', new Set(['gif'])], ['image/avif', new Set(['avif'])]]);
 const allItems = (): Item[] => storeRef?.snapshot.items ?? [];
@@ -132,11 +134,11 @@ function renderImageArea(item: Item | undefined): void {
     const strong = document.createElement('strong'); strong.textContent = image.isCover ? '主圖' : `圖片 ${index + 1}`;
     const small = document.createElement('small'); small.textContent = image.file; info.append(strong, small);
     const actions = document.createElement('div'); actions.className = 'management-image-actions';
-    const cover = document.createElement('button'); cover.className = 'button secondary'; cover.type = 'button'; cover.textContent = image.isCover ? '目前主圖' : '設為主圖'; cover.disabled = imageSaving || Boolean(image.isCover); cover.addEventListener('click', () => void setCover(image.id));
-    const up = document.createElement('button'); up.className = 'button secondary'; up.type = 'button'; up.textContent = '↑'; up.title = '上移'; up.setAttribute('aria-label', `將圖片 ${index + 1} 上移`); up.disabled = imageSaving || index === 0; up.addEventListener('click', () => void moveImage(image.id, -1));
-    const down = document.createElement('button'); down.className = 'button secondary'; down.type = 'button'; down.textContent = '↓'; down.title = '下移'; down.setAttribute('aria-label', `將圖片 ${index + 1} 下移`); down.disabled = imageSaving || index === images.length - 1; down.addEventListener('click', () => void moveImage(image.id, 1));
-    const replaceLabel = document.createElement('label'); replaceLabel.className = 'button secondary management-image-replace'; replaceLabel.appendChild(document.createTextNode('替換')); const replace = document.createElement('input'); replace.type = 'file'; replace.accept = '.jpg,.jpeg,.png,.webp,.gif,.avif,image/jpeg,image/png,image/webp,image/gif,image/avif'; replace.hidden = true; replace.disabled = imageSaving; replace.addEventListener('change', () => { const file = replace.files?.[0]; if (file) void replaceImage(file, image.id); replace.value = ''; }); replaceLabel.appendChild(replace);
-    const remove = document.createElement('button'); remove.className = 'button danger'; remove.type = 'button'; remove.textContent = '刪除'; remove.disabled = imageSaving; remove.addEventListener('click', () => void deleteImage(image.id));
+    const cover = document.createElement('button'); cover.className = 'button secondary'; cover.type = 'button'; cover.textContent = image.isCover ? '目前主圖' : '設為主圖'; cover.disabled = imageSaving || Boolean(image.isCover);
+    const up = document.createElement('button'); up.className = 'button secondary'; up.type = 'button'; up.textContent = '↑'; up.title = '上移'; up.setAttribute('aria-label', `將圖片 ${index + 1} 上移`); up.disabled = imageSaving || index === 0;
+    const down = document.createElement('button'); down.className = 'button secondary'; down.type = 'button'; down.textContent = '↓'; down.title = '下移'; down.setAttribute('aria-label', `將圖片 ${index + 1} 下移`); down.disabled = imageSaving || index === images.length - 1;
+    const replaceLabel = document.createElement('label'); replaceLabel.className = 'button secondary management-image-replace'; replaceLabel.appendChild(document.createTextNode('替換')); const replace = document.createElement('input'); replace.type = 'file'; replace.accept = '.jpg,.jpeg,.png,.webp,.gif,.avif,image/jpeg,image/png,image/webp,image/gif,image/avif'; replace.hidden = true; replace.disabled = imageSaving; replaceLabel.appendChild(replace);
+    const remove = document.createElement('button'); remove.className = 'button danger'; remove.type = 'button'; remove.textContent = '刪除'; remove.disabled = imageSaving;
     actions.append(cover, up, down, replaceLabel, remove); row.append(preview, info, actions); root.appendChild(row);
   });
 }
@@ -150,7 +152,67 @@ function render(): void {
 }
 async function handleSubmit(event: SubmitEvent): Promise<void> { event.preventDefault(); if (!storeRef || saving || imageSaving) return; const form = qs<HTMLFormElement>('#management-form'); const feedback = ensureFormErrors(form); clearFormErrors(feedback); const base = selectedItem(); if (!base) { const errors = ['找不到要操作的收藏。']; setFormErrors(feedback, errors); showToast(errors[0], 'error'); return; } const item = readFormItem(base); const errors = validateItem(item); if (errors.length) { setFormErrors(feedback, errors); showToast('請先修正表單中的錯誤。', 'error'); return; } saving = true; render(); try { await storeRef.updateItem(item); selectedId = item.id; clearFormErrors(feedback); showToast('收藏已成功更新。', 'success'); } catch (error) { const message = error instanceof Error ? error.message : '儲存失敗。'; setFormErrors(feedback, [message]); showToast(message, 'error'); } finally { saving = false; render(); } }
 async function handleDelete(): Promise<void> { const item = selectedItem(); if (!storeRef || !item || saving || imageSaving) return; if (!window.confirm(`確定要刪除「${item.title}」？\n此操作會刪除收藏資料，且 Item ID 不會重新編號。`)) return; saving = true; render(); showToast('收藏刪除同步中，請稍候。', 'info'); try { await storeRef.deleteItem(item.id); selectedId = ''; pickerSerial = ''; showToast('收藏已成功刪除。', 'success'); } catch (error) { showToast(error instanceof Error ? error.message : '刪除失敗。', 'error'); } finally { saving = false; render(); } }
-function bind(): void { const form = qs<HTMLFormElement>('#management-form'); if (form && form.dataset.bound !== 'true') { form.dataset.bound = 'true'; form.noValidate = true; ensureFormErrors(form); form.addEventListener('submit', event => void handleSubmit(event)); } qs<HTMLButtonElement>('#management-delete')?.addEventListener('click', () => void handleDelete()); qs<HTMLButtonElement>('#management-new')?.addEventListener('click', () => { window.location.hash = '#/add'; }); qs<HTMLSelectElement>('#management-picker-work')?.addEventListener('change', event => { pickerWork = (event.target as HTMLSelectElement).value; pickerCategory = ''; pickerSerial = ''; selectedId = ''; render(); }); qs<HTMLSelectElement>('#management-picker-category')?.addEventListener('change', event => { pickerCategory = (event.target as HTMLSelectElement).value; pickerSerial = ''; selectedId = ''; render(); }); qs<HTMLSelectElement>('#management-picker-serial')?.addEventListener('change', event => { pickerSerial = (event.target as HTMLSelectElement).value; const item = allItems().find(entry => serialOf(entry) === pickerSerial && workOf(entry) === pickerWork && entry.category === pickerCategory); if (item) fill(item); render(); }); qs<HTMLInputElement>('#management-search')?.addEventListener('input', event => { searchQuery = (event.target as HTMLInputElement).value.trim(); const first = allItems().find(item => `${item.id} · ${item.title}` === searchQuery); if (first) fill(first); render(); }); qs<HTMLInputElement>('#management-image-upload')?.addEventListener('change', event => { const file = (event.target as HTMLInputElement).files?.[0]; if (file) void uploadImage(file); (event.target as HTMLInputElement).value = ''; }); }
-window.addEventListener('merch-management-select', event => { if (!storeRef) return; const id = (event as CustomEvent<string>).detail; if (typeof id !== 'string') return; const item = allItems().find(entry => entry.id === id); if (!item) return; searchQuery = `${item.id} · ${item.title}`; fill(item); sessionStorage.removeItem('merch-management-selected-id'); render(); });
-async function init(): Promise<void> { storeRef = await getStore(); const pendingId = sessionStorage.getItem('merch-management-selected-id') || ''; if (pendingId) sessionStorage.removeItem('merch-management-selected-id'); const pendingItem = pendingId ? allItems().find(item => item.id === pendingId) : undefined; if (pendingItem) { searchQuery = `${pendingItem.id} · ${pendingItem.title}`; fill(pendingItem); } storeRef.subscribe(() => { if (!saving && !imageSaving) render(); }); bind(); const first = pendingItem ?? allItems()[0]; if (first) fill(first); render(); }
+function mount(root: HTMLElement): void {
+  if (mountedRoot === root) return;
+  mountController?.abort();
+  const controller = new AbortController();
+  mountedRoot = root;
+  mountController = controller;
+  const { signal } = controller;
+  root.addEventListener('submit', event => { if (event.target instanceof HTMLFormElement && event.target.id === 'management-form') void handleSubmit(event as SubmitEvent); }, { signal });
+  root.addEventListener('click', event => {
+    if (!(event.target instanceof Element)) return;
+    const target = event.target;
+    if (target.closest('#management-delete')) return void handleDelete();
+    if (target.closest('#management-new')) return void (window.location.hash = '#/add');
+    const row = target.closest<HTMLElement>('.management-image-row');
+    if (!row) return;
+    const imageId = row.dataset.imageId;
+    if (!imageId) return;
+    if (target.closest('.management-image-actions button:nth-child(1)')) return void setCover(imageId);
+    if (target.closest('.management-image-actions button:nth-child(2)')) return void moveImage(imageId, -1);
+    if (target.closest('.management-image-actions button:nth-child(3)')) return void moveImage(imageId, 1);
+    if (target.closest('.management-image-actions button:last-child')) return void deleteImage(imageId);
+  }, { signal });
+  root.addEventListener('change', event => {
+    if (!(event.target instanceof HTMLElement)) return;
+    const target = event.target;
+    if (target instanceof HTMLSelectElement && target.id === 'management-picker-work') { pickerWork = target.value; pickerCategory = ''; pickerSerial = ''; selectedId = ''; return render(); }
+    if (target instanceof HTMLSelectElement && target.id === 'management-picker-category') { pickerCategory = target.value; pickerSerial = ''; selectedId = ''; return render(); }
+    if (target instanceof HTMLSelectElement && target.id === 'management-picker-serial') { pickerSerial = target.value; const item = allItems().find(entry => serialOf(entry) === pickerSerial && workOf(entry) === pickerWork && entry.category === pickerCategory); if (item) fill(item); return render(); }
+    if (target instanceof HTMLInputElement && target.id === 'management-image-upload') { const file = target.files?.[0]; if (file) void uploadImage(file); target.value = ''; return; }
+    if (target instanceof HTMLInputElement && target.type === 'file' && target.closest('.management-image-replace')) { const row = target.closest<HTMLElement>('.management-image-row'); const imageId = row?.dataset.imageId; const file = target.files?.[0]; if (imageId && file) void replaceImage(file, imageId); target.value = ''; }
+  }, { signal });
+  root.addEventListener('input', event => {
+    if (!(event.target instanceof HTMLInputElement) || event.target.id !== 'management-search') return;
+    searchQuery = event.target.value.trim();
+    const first = allItems().find(item => `${item.id} · ${item.title}` === searchQuery);
+    if (first) fill(first);
+    render();
+  }, { signal });
+  window.addEventListener('merch-management-select', event => {
+    if (!storeRef) return;
+    const id = (event as CustomEvent<string>).detail;
+    if (typeof id !== 'string') return;
+    const item = allItems().find(entry => entry.id === id);
+    if (!item) return;
+    searchQuery = `${item.id} · ${item.title}`;
+    fill(item);
+    sessionStorage.removeItem('merch-management-selected-id');
+    render();
+  }, { signal });
+}
+async function init(): Promise<void> {
+  storeRef = await getStore();
+  const pendingId = sessionStorage.getItem('merch-management-selected-id') || '';
+  if (pendingId) sessionStorage.removeItem('merch-management-selected-id');
+  const pendingItem = pendingId ? allItems().find(item => item.id === pendingId) : undefined;
+  if (pendingItem) { searchQuery = `${pendingItem.id} · ${pendingItem.title}`; fill(pendingItem); }
+  storeRef.subscribe(() => { if (!saving && !imageSaving) render(); });
+  const root = qs<HTMLElement>('#management-root');
+  if (root) mount(root);
+  const first = pendingItem ?? allItems()[0];
+  if (first) fill(first);
+  render();
+}
 void init();
