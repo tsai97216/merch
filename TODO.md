@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.619`。**
+- **目前開發版本：`1.109.620`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -43,9 +43,11 @@
 
 ### Lifecycle audit note
 - `collection-controls.ts` 已改為以 `.collection-tools` 作為穩定 lifecycle 邊界，改用事件 delegation 處理排序、搜尋清除與輸入狀態，不再使用 `dataset.bound`／`dataset.groupsBound` 作為 listener 防重複旗標；控制項包裝也改以 DOM 結構判斷是否已建立。
-- 目前 `add.ts`、`management.ts`、`works-management.ts` 等仍以 `dataset.bound` 作為元件初始化防重複機制；同一專案仍存在 `dataset.bound`、`once`、module-level listener 與顯式 `removeEventListener` 等多種 lifecycle 語意。
-- 這不是單純格式問題：頁面 render／hash navigation 與元件 mount 邊界目前沒有統一 primitive，後續維護容易再引入重複 listener 或留下無法解除的生命週期。
-- 下一步應先定義共用 mount／unmount 或 delegation 邊界，再逐一替換仍有必要的 `dataset.bound`，不得只把旗標名稱統一而保留相同問題。
+- `add.ts` 已改為以頁面 DOM 作為明確 mount 邊界，使用 `AbortController` 管理 submit／click delegation，頁面替換時會先解除舊 listener，不再依賴 `dataset.bound`。
+- `works-management.ts` 已改為明確 panel mount／unmount lifecycle，以 `AbortController` 管理 submit／click delegation，不再依賴 `dataset.bound`。
+- `management.ts` 仍待處理，專案目前仍存在舊式 `dataset.bound` lifecycle；另需繼續檢查 `once`、module-level listener 與顯式 `removeEventListener` 是否能統一到明確 mount／unmount 或 delegation 邊界。
+- 這不是單純格式問題：頁面 render／hash navigation 與元件 mount 邊界目前仍有歷史實作差異，後續維護容易再引入重複 listener 或留下無法解除的生命週期。
+- 下一步應完成剩餘 `management.ts` 的 lifecycle 重構，再重新掃描整個 `src/` 確認沒有同語意的舊式防重複綁定殘留。
 
 ## 7. Sync Overlay 架構
 - [x] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
