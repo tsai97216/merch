@@ -1,11 +1,9 @@
 import './sync-overlay.css';
 
-type SyncDetail = { label: string };
 type FeedbackKind = 'info' | 'success' | 'error';
 
 let active = 0;
 let overlay: HTMLElement | null = null;
-let fetchPatched = false;
 let feedbackTimer: number | null = null;
 
 function ensureOverlay(): HTMLElement {
@@ -36,14 +34,6 @@ function setVisible(visible: boolean, label = '正在同步資料…'): void {
   document.body.classList.toggle('is-syncing', visible);
 }
 
-function syncLabel(input: RequestInfo | URL, init?: RequestInit): string {
-  const method = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-  if (method === 'DELETE') return '正在刪除並同步資料…';
-  if (method === 'PUT' || method === 'PATCH') return '正在編輯並同步資料…';
-  if (method === 'POST') return '正在新增並同步資料…';
-  return '正在同步資料…';
-}
-
 function start(label: string): void {
   if (feedbackTimer !== null) {
     window.clearTimeout(feedbackTimer);
@@ -56,6 +46,15 @@ function start(label: string): void {
 function end(): void {
   active = Math.max(0, active - 1);
   if (active === 0) setVisible(false);
+}
+
+export async function runWithSync<T>(label: string, operation: () => Promise<T>): Promise<T> {
+  start(label);
+  try {
+    return await operation();
+  } finally {
+    end();
+  }
 }
 
 export function showFeedback(message: string, kind: FeedbackKind = 'info', duration = 2200): void {
@@ -77,29 +76,4 @@ export function showFeedback(message: string, kind: FeedbackKind = 'info', durat
     element.setAttribute('aria-hidden', 'true');
     feedbackTimer = null;
   }, Math.max(900, duration));
-}
-
-function patchFetch(): void {
-  if (fetchPatched || typeof window === 'undefined' || typeof window.fetch !== 'function') return;
-  fetchPatched = true;
-  const original = window.fetch.bind(window) as FetchLike;
-  window.fetch = (async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
-    const method = (init?.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
-    const mutation = method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS';
-    if (!mutation) return original(input, init);
-    start(syncLabel(input, init));
-    try {
-      return await original(input, init);
-    } finally {
-      end();
-    }
-  }) as FetchLike;
-}
-
-type FetchLike = typeof window.fetch;
-
-patchFetch();
-if (typeof document !== 'undefined') {
-  document.addEventListener('merch:sync-start', (event) => start((event as CustomEvent<SyncDetail>).detail?.label || '正在同步資料…'));
-  document.addEventListener('merch:sync-end', end);
 }
