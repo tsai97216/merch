@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.608`。**
+- **目前開發版本：`1.109.609`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -66,10 +66,10 @@
 - [x] 不為了形式上的零 `innerHTML` 而重寫已安全且固定的靜態 markup；sync overlay、viewer、modal 等固定模板保留 `innerHTML`。
 
 ## 10. CSS / Foundation 疊加清理
-- [ ] 盤點 `styles.css`、`design-tokens.css`、`controls.css`、`shared-components.css`、`responsive-refinement.css`、`theme-refinement.css`、`card-enhancements.css`、feedback／overlay CSS 的責任邊界。
-- [ ] 清除已被 shared foundation 取代、但仍殘留的重複 selector 與 legacy override。
-- [ ] 不以新增 CSS override 解決既有 foundation 問題，優先移除舊實作並保留單一 canonical 定義。
-- [ ] 特別檢查 legacy `toast.css` 與相關 import 是否仍可完全移除。
+- [x] 盤點 `styles.css`、`design-tokens.css`、`controls.css`、`shared-components.css`、`responsive-refinement.css`、`theme-refinement.css`、`card-enhancements.css`、feedback／overlay CSS 的責任邊界。
+- [x] 清除已被 shared foundation 取代的 `item-card` 基礎背景、邊框、圓角重複 selector，保留 page-specific layout／hover 行為。
+- [x] 不以新增 CSS override 解決既有 foundation 問題，本輪將 `item-card` 的共用視覺基礎集中到 `shared-components.css`。
+- [x] 確認目前沒有 `src/toast.css` legacy 檔案或相關 import 需要移除；Toast 狀態樣式已由 shared foundation 提供。
 - [ ] 完成後重新驗證 Desktop、Tablet、Mobile、Light、Dark 的共用控制項。
 
 ## 11. Accessibility / UI Contract 最終檢查
