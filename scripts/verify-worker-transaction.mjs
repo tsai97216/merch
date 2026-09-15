@@ -9,6 +9,11 @@ const required = [
   "readJson(env, 'package.json', files, paths)",
   "remote.files.get('package.json')",
   "path: 'package.json'",
+  'async function upsertShipping',
+  'async function removeShipping',
+  'async function createWork',
+  'async function updateWork',
+  'async function deleteWork',
   'async function updateItem',
   'async function deleteItem',
   'async function putAsset',
@@ -22,7 +27,17 @@ if (missing.length) {
   process.exit(1);
 }
 
-const mutationNames = ['updateItem', 'deleteItem', 'putAsset', 'deleteAsset'];
+const mutationNames = [
+  'upsertShipping',
+  'removeShipping',
+  'createWork',
+  'updateWork',
+  'deleteWork',
+  'updateItem',
+  'deleteItem',
+  'putAsset',
+  'deleteAsset',
+];
 for (const name of mutationNames) {
   const start = source.indexOf(`async function ${name}`);
   const next = source.indexOf('\nasync function ', start + 1);
