@@ -1,0 +1,17 @@
+{
+  "id": "ZZZc006",
+  "workId": "zenless-zone-zero",
+  "title": "簡 閃卡",
+  "series": [],
+  "characters": ["簡"],
+  "category": "c",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "2026電玩展",
+  "purchase": {"platform": "線下活動", "date": "2026-01-29"},
+  "arrival": {},
+  "afterSales": {"status": "無"},
+  "images": []
+}
