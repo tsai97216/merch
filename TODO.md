@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.660`。**
+- **目前開發版本：`1.109.663`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -30,8 +30,9 @@
 - [ ] 驗收發現：作品／角色消費金額相同時目前仍以連續順位顯示，需採相同金額相同排名，後續順位跳號。
 
 ### 4. 圖片上傳 API 500
-- [ ] 驗收發現：首頁管理介面圖片上傳回傳 API 500，需確認正式 Worker 的 R2 image PUT chain 與 GitHub mutation 是否使用目前版本的 Worker 程式。
-- [ ] 目前已確認：`worker/src/r2-entry.ts` 的 `WORKER_VERSION` 仍為 `1.109.620`，而專案目前版本原為 `1.109.659`，需先釐清正式部署版本是否落後，再處理實際 500 根因。
+- [ ] 驗收：正式 Worker 已同步到目前專案版本，並確認正式網站圖片 PUT 的 R2 mirror → GitHub mutation chain。
+- [ ] 已確認前端單檔限制為 8 MB，而 base64 會膨脹約 33%；Worker 的 GitHub mutation 端目前仍有 10 MB base64 content limit，存在 8 MB 邊界檔案被 API 拒絕的規格不一致，需要完成正式驗收。
+- [ ] 需要實際測試小圖、接近 8 MB 圖片，以及替換既有圖片，確認失敗時 R2 rollback 與 GitHub metadata 狀態一致。
 
 ### 5. 發布前驗證
 - [ ] 相關 verification / Build 通過。
