@@ -42,7 +42,8 @@
 - [x] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
 
 ### Lifecycle audit note
-- 目前 `collection-controls.ts`、`add.ts`、`management.ts`、`works-management.ts` 等仍以 `dataset.bound` 作為元件初始化防重複機制；同一專案同時存在 `dataset.bound`、`dataset.groupsBound`、`once`、module-level listener 與顯式 `removeEventListener` 等多種 lifecycle 語意。
+- `collection-controls.ts` 已改為以 `.collection-tools` 作為穩定 lifecycle 邊界，改用事件 delegation 處理排序、搜尋清除與輸入狀態，不再使用 `dataset.bound`／`dataset.groupsBound` 作為 listener 防重複旗標；控制項包裝也改以 DOM 結構判斷是否已建立。
+- 目前 `add.ts`、`management.ts`、`works-management.ts` 等仍以 `dataset.bound` 作為元件初始化防重複機制；同一專案仍存在 `dataset.bound`、`once`、module-level listener 與顯式 `removeEventListener` 等多種 lifecycle 語意。
 - 這不是單純格式問題：頁面 render／hash navigation 與元件 mount 邊界目前沒有統一 primitive，後續維護容易再引入重複 listener 或留下無法解除的生命週期。
 - 下一步應先定義共用 mount／unmount 或 delegation 邊界，再逐一替換仍有必要的 `dataset.bound`，不得只把旗標名稱統一而保留相同問題。
 
