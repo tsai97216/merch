@@ -23,7 +23,8 @@
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
-      "status": "received"
+      "status": "received",
+      "cover": "HSRb001.jpeg"
     }
   ]
 }
