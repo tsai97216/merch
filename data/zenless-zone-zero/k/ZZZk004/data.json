@@ -1,0 +1,24 @@
+{
+  "id": "ZZZk004",
+  "workId": "zenless-zone-zero",
+  "title": "愛芮 線下紙卡吊飾",
+  "series": [],
+  "characters": ["愛芮"],
+  "category": "k",
+  "manufacturer": "米哈遊",
+  "quantity": 2,
+  "status": "received",
+  "description": "",
+  "notes": "2026電玩展",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-01-29"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
