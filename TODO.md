@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.604`。**
+- **目前開發版本：`1.109.605`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -45,10 +45,10 @@
 - [ ] 驗證 Vite、TypeScript 與 Worker 相關 build／verification 在乾淨環境可重現。
 
 ## 6. Event / Lifecycle 架構清理
-- [ ] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
+- [x] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
 - [ ] 統一共用互動元件的 listener lifecycle，優先使用 delegation 或明確 mount／unmount 邊界。
 - [ ] 檢查目前零散的 `dataset.bound` 類型防重複綁定做法，避免同一語意存在多種 lifecycle 實作。
-- [ ] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
+- [x] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
 
 ## 7. Sync Overlay 架構
 - [ ] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
