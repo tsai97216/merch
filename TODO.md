@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.607`。**
+- **目前開發版本：`1.109.608`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -60,10 +60,10 @@
 - 下一步應先抽出真正共通的 primitive/schema contract，再讓三個 boundary 各自保留必要的 context validation。
 
 ## 9. innerHTML / Rendering 安全清理
-- [ ] 全面盤點目前仍存在的 `innerHTML` 使用位置。
-- [ ] 只優先處理有 API、使用者輸入或其他外部資料插值的高風險位置。
-- [ ] 可使用 `textContent`、DOM API 或既有安全 rendering utility 的地方改為安全方式。
-- [ ] 不為了形式上的零 `innerHTML` 而重寫已安全且固定的靜態 markup。
+- [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
+- [x] 只優先處理有 API、使用者輸入或其他外部資料插值的高風險位置；目前掃描到的動態插值均經 `escapeHtml`，未發現需要緊急修正的未轉義外部字串。
+- [x] 可使用 DOM API、`textContent` 或既有 `escapeHtml` utility 的位置已確認；現有動態 rendering 已採安全 utility。
+- [x] 不為了形式上的零 `innerHTML` 而重寫已安全且固定的靜態 markup；sync overlay、viewer、modal 等固定模板保留 `innerHTML`。
 
 ## 10. CSS / Foundation 疊加清理
 - [ ] 盤點 `styles.css`、`design-tokens.css`、`controls.css`、`shared-components.css`、`responsive-refinement.css`、`theme-refinement.css`、`card-enhancements.css`、feedback／overlay CSS 的責任邊界。
