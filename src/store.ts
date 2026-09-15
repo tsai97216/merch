@@ -3,13 +3,13 @@ import { defaultUiState } from './types';
 import { parseItemId } from './item-id';
 import { dataError, httpError, toAppError } from './error';
 import { getRemoteData, putItem, deleteItem as deleteRemoteItem, putShipping, deleteShipping as deleteRemoteShipping } from './api';
+import { isRecord, isStringArray, isValidImage, isValidShipping } from './validation';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
 const CATEGORY_CODES = new Set(['b','c','d','e','f','g','h','k','l','m','n','o','p','q','r','s','v','w','y']);
-function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null && !Array.isArray(value); }
 function assertRecord(value: unknown, label: string): asserts value is Record<string, unknown> { if (!isRecord(value)) throw dataError(`${label} 必須是物件`); }
 function normalizeQuantity(value: unknown, label: string): number { if (value === undefined) return 1; if (typeof value !== 'number' || !Number.isInteger(value) || value < 1) throw dataError(`${label}.quantity 必須是大於等於 1 的整數`); return value; }
-function validateStringArray(value: unknown, label: string): string[] { if (!Array.isArray(value) || value.some((x) => typeof x !== 'string')) throw dataError(`${label} 必須是字串陣列`); return value.map((x) => x.trim()).filter(Boolean); }
+function validateStringArray(value: unknown, label: string): string[] { if (!isStringArray(value)) throw dataError(`${label} 必須是字串陣列`); return value.map((x) => x.trim()).filter(Boolean); }
 function validateItem(value: unknown, label: string, work: WorksIndexEntry): Item {
   assertRecord(value, label);
   for (const forbidden of ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt']) if (forbidden in value) throw dataError(`${label}.${forbidden} 已不屬於 canonical Item schema`);
@@ -24,7 +24,7 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
   const series = value.series === undefined ? [] : validateStringArray(value.series, `${label}.series`);
   const characters = value.characters === undefined ? [] : validateStringArray(value.characters, `${label}.characters`);
   const images = value.images === undefined ? [] : value.images;
-  if (!Array.isArray(images) || images.some(x => !isRecord(x) || typeof x.id !== 'string' || typeof x.file !== 'string' || !x.file.trim())) throw dataError(`${label}.images 格式無效`);
+  if (!Array.isArray(images) || images.some(x => !isValidImage(x))) throw dataError(`${label}.images 格式無效`);
   const purchase = value.purchase === undefined ? {} : value.purchase;
   const arrival = value.arrival === undefined ? {} : value.arrival;
   const afterSales = value.afterSales === undefined ? {} : value.afterSales;
@@ -51,16 +51,8 @@ function validateItem(value: unknown, label: string, work: WorksIndexEntry): Ite
   return { id: value.id, workId: work.id, workName: work.name, title: value.title, series, characters, category, manufacturer: typeof value.manufacturer === 'string' ? value.manufacturer : '', quantity: normalizeQuantity(value.quantity, label), status: value.status, description: typeof value.description === 'string' ? value.description : '', notes: typeof value.notes === 'string' ? value.notes : '', purchase: { ...(typeof purchase.price === 'number' ? { price: purchase.price } : {}), ...(typeof purchase.currency === 'string' ? { currency: purchase.currency } : {}), ...(typeof purchase.platform === 'string' ? { platform: purchase.platform } : {}), ...(typeof purchase.date === 'string' ? { date: purchase.date } : {}) }, arrival: { ...(typeof arrival.expectedDate === 'string' || arrival.expectedDate === null ? { expectedDate: arrival.expectedDate } : {}), ...(typeof arrival.receivedDate === 'string' || arrival.receivedDate === null ? { receivedDate: arrival.receivedDate } : {}) }, afterSales: { ...(typeof afterSales.status === 'string' ? { status: afterSales.status } : {}), ...(typeof afterSales.note === 'string' ? { note: afterSales.note } : {}) }, images: normalizedImages };
 }
 function validateShipping(value: unknown, label: string): ShippingRecord {
-  assertRecord(value, label);
-  if (typeof value.id !== 'string' || !value.id.trim()) throw dataError(`${label}.id 無效`);
-  if (typeof value.amount !== 'number' || !Number.isFinite(value.amount) || value.amount < 0) throw dataError(`${label}.amount 無效`);
-  if (typeof value.currency !== 'string' || !value.currency.trim()) throw dataError(`${label}.currency 無效`);
-  if (value.date !== undefined && typeof value.date !== 'string') throw dataError(`${label}.date 無效`);
-  if (value.carrier !== undefined && typeof value.carrier !== 'string') throw dataError(`${label}.carrier 無效`);
-  if (value.note !== undefined && typeof value.note !== 'string') throw dataError(`${label}.note 無效`);
-  const itemIds = value.itemIds === undefined ? [] : validateStringArray(value.itemIds, `${label}.itemIds`);
-  if (!itemIds.length) throw dataError(`${label}.itemIds 至少需要一個 Item ID`);
-  return { id: value.id.trim(), amount: value.amount, currency: value.currency.trim(), ...(typeof value.date === 'string' ? { date: value.date } : {}), ...(typeof value.carrier === 'string' ? { carrier: value.carrier.trim() } : {}), ...(typeof value.note === 'string' ? { note: value.note.trim() } : {}), itemIds };
+  if (!isValidShipping(value)) throw dataError(`${label} 格式無效`);
+  return { id: value.id.trim(), amount: value.amount, currency: value.currency.trim(), ...(typeof value.date === 'string' ? { date: value.date } : {}), ...(typeof value.carrier === 'string' ? { carrier: value.carrier.trim() } : {}), ...(typeof value.note === 'string' ? { note: value.note.trim() } : {}), itemIds: value.itemIds.map(itemId => itemId.trim()) };
 }
 function validateShippingList(value: unknown): ShippingRecord[] { if (!Array.isArray(value)) throw dataError('shipping 必須是陣列'); const ids = new Set<string>(); return value.map((record,index)=>{const normalized=validateShipping(record,`shipping[${index}]`);if(ids.has(normalized.id))throw dataError(`shipping 存在重複 ID：${normalized.id}`);ids.add(normalized.id);return normalized;}); }
 function validateWorksIndex(value: unknown): WorksIndex { assertRecord(value, 'works.json'); if (value.schemaVersion !== 1 && value.schemaVersion !== 2) throw dataError('works.json schemaVersion 不支援'); if (!Array.isArray(value.works)) throw dataError('works.json works 必須是陣列'); const works: WorksIndexEntry[] = value.works.map((entry, index) => { assertRecord(entry, `works[${index}]`); if (typeof entry.id !== 'string' || !entry.id) throw dataError(`works[${index}].id 無效`); if (typeof entry.name !== 'string' || !entry.name) throw dataError(`works[${index}].name 無效`); if (typeof entry.code !== 'string' || !/^[A-Z]{2,3}$/.test(entry.code)) throw dataError(`works[${index}].code 必須是 2～3 碼大寫作品代碼`); const location = typeof entry.path === 'string' ? entry.path : typeof entry.data === 'string' ? entry.data : ''; if (!location || location.includes('..')) throw dataError(`works[${index}] 資料路徑無效`); return { id: entry.id, name: entry.name, code: entry.code, path: location }; }); const codes = new Set<string>(); works.forEach(work => { if (codes.has(work.code)) throw dataError(`works.json 存在重複作品代碼：${work.code}`); codes.add(work.code); }); return { schemaVersion: value.schemaVersion as 1 | 2, works }; }
