@@ -28,7 +28,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          if npx wrangler@4 r2 bucket list --format json | jq -e '.[] | select(.name == "chi-merch-assets")' >/dev/null; then
+          if curl -fsSL \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/r2/buckets?name=chi-merch-assets" \
+            | jq -e '.success == true and (.result | length > 0)' >/dev/null; then
             echo 'R2 bucket chi-merch-assets already exists.'
           else
             echo 'Creating R2 bucket chi-merch-assets.'

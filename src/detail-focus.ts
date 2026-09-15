@@ -47,10 +47,9 @@ function observeStatisticsDialogs(): void {
     for (const record of records) {
       record.addedNodes.forEach((node) => {
         if (!(node instanceof Element)) return;
-        const dialogs = [
-          ...(node.matches('.statistics-detail-dialog') ? [node] : []),
-          ...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'),
-        ];
+        const dialogs: HTMLElement[] = [];
+        if (node instanceof HTMLElement && node.matches('.statistics-detail-dialog')) dialogs.push(node);
+        dialogs.push(...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'));
         dialogs.forEach((dialog) => {
           if (statisticsDialogCleanups.has(dialog)) return;
           statisticsDialogCleanups.set(dialog, setupDialogFocus(dialog));
@@ -58,10 +57,9 @@ function observeStatisticsDialogs(): void {
       });
       record.removedNodes.forEach((node) => {
         if (!(node instanceof Element)) return;
-        const dialogs = [
-          ...(node.matches('.statistics-detail-dialog') ? [node] : []),
-          ...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'),
-        ];
+        const dialogs: HTMLElement[] = [];
+        if (node instanceof HTMLElement && node.matches('.statistics-detail-dialog')) dialogs.push(node);
+        dialogs.push(...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'));
         dialogs.forEach((dialog) => {
           statisticsDialogCleanups.get(dialog)?.();
           statisticsDialogCleanups.delete(dialog);
