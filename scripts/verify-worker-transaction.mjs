@@ -9,7 +9,7 @@ const required = [
   "readJson(env, 'package.json', files, paths)",
   "remote.files.get('package.json')",
   "path: 'package.json'",
-  "async function updateItem',
+  'async function updateItem',
   'async function deleteItem',
   'async function putAsset',
   'async function deleteAsset',
