@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.627`。**
+- **目前開發版本：`1.109.628`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -64,8 +64,8 @@
 ### Validation audit note
 - `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 確實存在重複的 Item／Shipping／Image 等 schema checks。
 - 目前三者並非完全同語意：Store 還負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
-- 因此本輪只完成盤點，**沒有直接把三套 validator 強行合併**，避免為了形式上的 single source 而破壞既有 boundary 或放寬驗證。
-- 下一步應先抽出真正共通的 primitive/schema contract，再讓三個 boundary 各自保留必要的 context validation。
+- 本輪已先抽出 `src/validation.ts` 的共通 primitive/schema checks，API 已改用該 shared boundary；Store 則保留 canonical storage 的 context validation 與 normalization。
+- 下一步應讓 Store 使用 shared primitive，並補上針對 shared validation 與 Store normalization 不可互相放寬的 contract verification，再評估 Worker 是否能安全共用相同 primitive。
 
 ## 9. innerHTML / Rendering 安全清理
 - [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
