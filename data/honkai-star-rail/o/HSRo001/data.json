@@ -22,12 +22,5 @@
   "afterSales": {
     "status": "無"
   },
-  "images": [
-    {
-      "id": "HSRo001-1789468782235-tuq1y",
-      "file": "HSRo001.jpeg",
-      "alt": "銀狼 路跑獎牌",
-      "isCover": true
-    }
-  ]
+  "images": []
 }
