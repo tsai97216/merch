@@ -20,8 +20,10 @@
   },
   "images": [
     {
-      "id": "ZZZo002-1789439095848",
-      "file": "ZZZo002.jpeg"
+      "id": "ZZZo002-1789439099331-yr0hq",
+      "file": "ZZZo002.jpeg",
+      "alt": "邦布春聯",
+      "isCover": true
     }
   ]
 }
