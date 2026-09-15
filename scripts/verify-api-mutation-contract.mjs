@@ -15,11 +15,13 @@ const originalFetch = globalThis.fetch;
 const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'merch-mutation-verify-'));
 try {
   const apiSource = await fs.readFile(path.join(root, 'src', 'api.ts'), 'utf8');
+  const validationSource = await fs.readFile(path.join(root, 'src', 'validation.ts'), 'utf8');
   const errorSource = await fs.readFile(path.join(root, 'src', 'error.ts'), 'utf8');
   const transpile = (source, fileName) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, moduleResolution: ts.ModuleResolutionKind.Bundler, verbatimModuleSyntax: true, sourceMap: false }, fileName }).outputText;
   await fs.writeFile(path.join(tempDir, 'error.mjs'), transpile(errorSource, 'error.ts'), 'utf8');
+  await fs.writeFile(path.join(tempDir, 'validation.mjs'), transpile(validationSource, 'validation.ts'), 'utf8');
   await fs.writeFile(path.join(tempDir, 'sync-overlay.mjs'), 'export async function runWithSync(_label, operation) { return operation(); }\n', 'utf8');
-  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'"), 'utf8');
+  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs'"), 'utf8');
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   const run = async (operation, responses) => {
@@ -46,7 +48,7 @@ try {
   });
   assert(result.calls[0].url === '/api/items/TESTc001', 'DELETE Item must target the exact permanent Item ID');
   assert(result.result.works.length === 1 && result.result.works[0].items.length === 0, 'DELETE mutation must apply the authoritative remote data');
-  assert(result.result.version === '1.109.285', 'DELETE Item must use the authoritative /data response after mutation');
+  assert(result.result.version === '1.109.285', 'DELETE mutation must use the authoritative /data response after mutation');
   assert(!result.calls.some(call => call.url === './data/collection.json'), 'DELETE Item must not re-read potentially stale static collection data');
 
   result = await run(api => api.putShipping({ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }), { '/api/shipping/ship-1': makeResponse(200, { ok: true, data: collection('1.109.283') }) });
