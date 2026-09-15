@@ -6,7 +6,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.605`。**
+- **目前開發版本：`1.109.606`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -51,10 +51,10 @@
 - [x] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
 
 ## 7. Sync Overlay 架構
-- [ ] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
-- [ ] 若確認可行，改由 API mutation layer 明確控制同步狀態，避免全域 monkey patch `fetch`。
-- [ ] 保留現有滿版阻塞、loading、success、error 的 UX contract，不因架構清理降低同步狀態可見性。
-- [ ] 驗證所有 API mutation、圖片操作與非 mutation request 不會被錯誤阻塞或誤判。
+- [x] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
+- [x] 改由 API mutation layer 明確控制同步狀態，移除全域 monkey patch `fetch`。
+- [x] 保留現有滿版阻塞、loading、success、error 的 UX contract，不因架構清理降低同步狀態可見性。
+- [x] 驗證所有 API mutation、圖片操作與非 mutation request 不會被錯誤阻塞或誤判。
 
 ## 8. Validation / Schema 單一來源
 - [ ] 盤點 `src/api.ts`、`src/store.ts` 及其他資料入口中的重複 schema validation／normalization。
