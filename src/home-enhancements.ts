@@ -55,10 +55,7 @@ function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWor
       <li class="ranking-line work-ranking-line" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
         <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
         <div class="ranking-content">
-          <div class="ranking-heading">
-            <strong class="ranking-title" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong>
-            <b class="ranking-value">${escapeHtml(money(row.spend))}</b>
-          </div>
+          <div class="ranking-heading"><strong class="ranking-title" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong><b class="ranking-value">${escapeHtml(money(row.spend))}</b></div>
           <div class="ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
         </div>
       </li>`;
@@ -78,10 +75,7 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
       return `
       <li class="ranking-line character-ranking-line" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
         <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
-        <div class="character-ranking-info">
-          <strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
-          <span class="character-ranking-count">${count} 件</span>
-        </div>
+        <div class="character-ranking-info"><strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)}</strong><span class="character-ranking-count">${count} 件</span></div>
         <div class="character-ranking-meter ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
         <b class="ranking-value">${escapeHtml(money(spend))}</b>
       </li>`;
@@ -121,7 +115,7 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING</span><h2 id="character-title">角色消費排行</h2><p>依角色分攤後的消費金額排序，點擊角色可直接搜尋。</p></div><ul id="character-list-all" class="character-ranking-list"></ul></section></div>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING</span><h2 id="character-title">角色消費排行</h2><p>依角色分攤後的消費金額排序，點擊角色可直接搜尋。</p></div><ul id="character-list-all" class="character-ranking-list"></ul></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-character-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
