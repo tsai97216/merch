@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.635`。**
+- **目前開發版本：`1.109.636`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -34,6 +34,11 @@
 - [ ] 建立可重現的 dependency lockfile。
 - [ ] 重新檢查 CI／deploy 的 install strategy。
 - [ ] 驗證 Vite、TypeScript 與 Worker 相關 build／verification 在乾淨環境可重現。
+
+### Dependency audit note
+- 目前 `package.json` 僅有 TypeScript 與 Vite devDependencies，版本採 semver range；repository 尚無 `package-lock.json`。
+- 本地離線環境無法可靠產生 lockfile，禁止手工偽造 lockfile。
+- 已確認 Verify、Pages Deploy 與現有維運 workflow 目前仍使用 `npm install`；待取得真實 registry resolution 後，應以正式 lockfile 統一改為 `npm ci`，再做乾淨環境驗證。
 
 ## 6. Event / Lifecycle 架構清理
 - [x] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
