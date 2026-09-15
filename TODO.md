@@ -1,47 +1,38 @@
-# TODO
-
-> 本檔只保留目前尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期規格放在 `RULES.md`。
->
-> 本輪重新掃描整個專案後重新建立，不沿用舊 TODO 的完成狀態。
+# Merch TODO / Architecture Roadmap
 
 ## Current state
 
-- **目前開發版本：`1.109.606`。**
+- **目前開發版本：`1.109.607`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
-## 1. 版本同步架構【最高優先】
-- [x] 修正 Worker mutation 只更新 `public/data/version.json`、未同步 `package.json` 的問題。
-- [x] 每次 API mutation 產生新版本號時，讓 `package.json` 與 `public/data/version.json` 使用同一個版本號。
-- [x] 版本更新必須與資料 mutation 保持在同一個 atomic Git commit，避免兩個版本短暫或永久不一致。
-- [x] 補強 Worker architecture contract，驗證所有會修改 remote data 的 mutation 都同時更新兩個版本檔。
-- [x] 修正目前 repository 的版本不一致：`package.json` 與 `public/data/version.json` 必須重新同步。
+## 1. Version Sync / Release Consistency
+- [x] 建立單一版本來源與同步規則。
+- [x] Worker mutation 與 `package.json`／`public/data/version.json` 原子同步。
+- [x] CI 驗證版本一致性。
 
-## 2. Remote mutation 回傳資料權威性【高優先】
-- [x] 修正 `src/api.ts` 的 mutation 後續流程，避免 `putItem()`／`deleteItem()` 成功後重新從可能過期的 static `./data/collection.json` 取得資料。
-- [x] API mutation 成功後，Store 必須直接以該次 API response 作為 authoritative remote data。
-- [x] 統一所有 Work／Item CRUD／圖片等 mutation 的 remote-apply 流程，避免各 UI 頁面自行建立第二份遠端資料狀態。
-- [x] 補充 API mutation contract，明確驗證 mutation response 與 Store remote-apply 的資料流。
-- [x] 驗證 mutation 後立即搜尋、排序、統計與 Detail 顯示的資料都是最新狀態。
+## 2. Remote Mutation / Store Authority
+- [x] mutation response 進入 Store 前完成 schema validation。
+- [x] remote mutation 成功後，以 API authoritative data 更新 Store。
+- [x] 避免 UI 自行重建 remote state。
 
-## 3. Remote data 載入效能與 Read Model
-- [x] 重新檢視 `store.ts` 目前「categories → 每個 category index → 每個 Item data」的多層 request 模式。
-- [x] 評估建立適合前端讀取的 generated read model，降低收藏品增加後的 request 數量。
-- [x] 保留目前 Item 級 canonical storage 與既有資料格式，不因效能優化恢復舊作品 JSON 整份覆寫模式。
-- [x] 確認 generated read model 的更新時機、失敗 fallback 與版本一致性。
-- [ ] 實測小、中、大資料量下的首次載入與重新載入效能，再決定是否正式導入。
+## 3. Remote Data Loading / Read Model
+- [x] 盤點 nested request 模式與 static collection fallback。
+- [x] 評估 generated collection read model 是否已有實作。
+- [x] 保留 Item canonical storage，不以 read model 取代 canonical data。
+- [x] 確認 generated read model 的產生時機、fallback 與版本一致性。
+- [ ] 補上正式的 loading performance measurement。
 
-## 4. CI / 自動化驗證覆蓋
-- [x] 盤點 `.github/workflows/` 目前實際執行的 verification scripts。
-- [x] 將目前已有但 CI 未完整覆蓋的關鍵 contract 納入 CI，包括 API mutation、Work identity、Statistics year／contract、Home ranking 等。
-- [x] 確保 Worker read／write scope、image semantics、transaction、schema、category 等既有驗證在 CI 中有明確執行入口。
-- [ ] 避免「script 已存在但實際 CI 不會跑」造成假性驗收完成。
-- [ ] 驗證 CI 通過後再將對應 TODO 結案。
+## 4. CI / Automation
+- [x] 盤點現有 verification workflow。
+- [x] 補上缺失的 API／Worker／statistics contract verification。
+- [x] 確認 worker read/write/image/transaction 等重要 contract 有 CI entry。
+- [ ] 避免「script 存在但 CI 沒有執行」的情況。
+- [ ] 驗證 CI 在目前 HEAD 實際通過後再關閉本節。
 
-## 5. Dependency / Build 可重現性
-- [ ] 檢查目前是否缺少 `package-lock.json`，以及現行 CI 使用 `npm install` 對依賴版本重現性的影響。
-- [ ] 若確認需要 lockfile，建立並納入 repository。
-- [ ] CI 改用與 lockfile 相容的 deterministic install 流程，例如 `npm ci`。
+## 5. Dependency / Build Reproducibility
+- [ ] 建立可重現的 dependency lockfile。
+- [ ] 重新檢查 CI／deploy 的 install strategy。
 - [ ] 驗證 Vite、TypeScript 與 Worker 相關 build／verification 在乾淨環境可重現。
 
 ## 6. Event / Lifecycle 架構清理
@@ -57,10 +48,16 @@
 - [x] 驗證所有 API mutation、圖片操作與非 mutation request 不會被錯誤阻塞或誤判。
 
 ## 8. Validation / Schema 單一來源
-- [ ] 盤點 `src/api.ts`、`src/store.ts` 及其他資料入口中的重複 schema validation／normalization。
+- [x] 盤點 `src/api.ts`、`src/store.ts`、Worker 與其他資料入口中的重複 schema validation／normalization。
 - [ ] 建立明確的 canonical validation／normalization 邊界，避免同一資料格式在不同模組各自定義。
 - [ ] 確保外部 API、static data、mutation response、migration 進入 Store 前都經過一致驗證。
 - [ ] 保留 `quantity`、Item ID、Category、Work identity 等既有 RULES contract，不因集中化而放寬驗證。
+
+### Validation audit note
+- `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 確實存在重複的 Item／Shipping／Image 等 schema checks。
+- 目前三者並非完全同語意：Store 還負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
+- 因此本輪只完成盤點，**沒有直接把三套 validator 強行合併**，避免為了形式上的 single source 而破壞既有 boundary 或放寬驗證。
+- 下一步應先抽出真正共通的 primitive/schema contract，再讓三個 boundary 各自保留必要的 context validation。
 
 ## 9. innerHTML / Rendering 安全清理
 - [ ] 全面盤點目前仍存在的 `innerHTML` 使用位置。
@@ -78,11 +75,10 @@
 ## 11. Accessibility / UI Contract 最終檢查
 - [ ] 盤點 Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與關閉行為。
 - [ ] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
-- [ ] 檢查圖片 alt、互動圖片、Mobile Navigation 與 responsive 狀態的可操作性。
-- [ ] 確認 Item Detail、Statistics Detail 等 modal 不再互相共用模糊 selector 或 focus 狀態。
+- [ ] 驗證 responsive 與 keyboard interaction 不因架構清理退化。
 
-## 12. 最終架構驗收
-- [ ] 以上項目完成後重新掃描整個 repository，確認沒有因清理而留下新舊架構並存。
-- [ ] 執行完整 build 與適用的 verification scripts。
-- [ ] 驗證 API mutation、資料載入、搜尋、排序、統計、CRUD、圖片與 Router 主要流程。
-- [ ] 確認版本號、資料格式、Item ID、圖片路徑與部署設定均符合 `RULES.md`。
+## 12. Final Architecture Acceptance
+- [ ] 所有高風險資料／同步／生命週期問題完成。
+- [ ] 所有對應 verification scripts 已存在並被 CI 執行。
+- [ ] 乾淨 build、verification、deploy path 完成最終驗收。
+- [ ] 確認沒有為解決小問題而留下 workaround／duplicate architecture。
