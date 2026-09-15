@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.638`。**
+- **目前開發版本：`1.109.639`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -21,7 +21,12 @@
 - [x] 評估 generated collection read model 是否已有實作。
 - [x] 保留 Item canonical storage，不以 read model 取代 canonical data。
 - [x] 確認 generated read model 的產生時機、fallback 與版本一致性。
-- [ ] 補上正式的 loading performance measurement。
+- [x] 補上正式的 loading performance measurement。
+
+### Loading performance audit note
+- `MerchStore.loadStore()` 現在以瀏覽器 Performance API 建立 `merch:store-load` measurement，涵蓋 API authoritative data 載入，以及 API fallback 後的 static data／generated Item read model 載入與 Store normalization 全流程。
+- measurement 在 Store load promise 建立時開始，無論成功或失敗都在 `finally` 完成，因此可直接在瀏覽器 Performance timeline 觀察實際初始資料載入耗時，不攔截 `fetch`、不增加第二套計時流程，也不改變資料流。
+- 這個 measurement 目前只負責觀測，不設定人為 threshold；後續若要建立性能門檻，應先以實際裝置／網路資料建立 baseline，再加入 CI 或 regression contract。
 
 ## 4. CI / Automation
 - [x] 盤點現有 verification workflow。
@@ -39,7 +44,8 @@
 - `package-lock.json` 已由 GitHub Actions 使用 Node 22／npm 10 真實 registry resolution 產生並提交，lockfileVersion 為 3，且 root version 與 `package.json` 均為 `1.109.638`。
 - Verify、Pages Deploy、Worker deploy build，以及現有維運／migration workflow 的 dependency install 已統一改為 `npm ci`。
 - 一次性的 lockfile bootstrap workflow 已在 lockfile 提交後移除，不保留額外 workaround。
-- 下一步只剩在現有 CI 上確認 `npm ci` 下的 TypeScript／Vite／Worker build 與 verification 均可在乾淨環境通過。
+- `1.109.638` 的 Verify 與 Pages／Worker Deploy 均已實際以 `npm ci` 完成，Verify 的全部 verification 與 TypeScript／Vite build 成功，Deploy 的 Pages build、Pages deploy、Worker secrets 驗證與 Worker deploy 也全部成功。
+- 下一步只剩把這次乾淨環境結果正式納入 dependency/build reproducibility 的最終驗收。
 
 ## 6. Event / Lifecycle 架構清理
 - [x] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
