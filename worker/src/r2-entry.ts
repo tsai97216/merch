@@ -11,10 +11,9 @@ interface Env {
 }
 
 type AssetRequest = { path?: unknown; content?: unknown };
-
 type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.663';
+const WORKER_VERSION = '1.109.666';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -33,6 +32,17 @@ function corsResponse(response: Response, origin: string): Response {
 function originFor(request: Request, env: Env): string | null {
   const origin = request.headers.get('Origin');
   return !origin || origin === env.ALLOWED_ORIGIN ? env.ALLOWED_ORIGIN : null;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : '未知錯誤。';
+}
+
+function errorResponse(code: string, message: string, status: number): Response {
+  return new Response(JSON.stringify({ ok: false, error: { code, message } }), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Merch-Worker-Version': WORKER_VERSION },
+  });
 }
 
 function r2AssetPath(request: Request): string | null {
@@ -76,10 +86,16 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
   try {
     bytes = await readAssetRequest(request, path);
   } catch (error) {
-    return new Response(JSON.stringify({ ok: false, error: { code: 'ASSET_INVALID', message: error instanceof Error ? error.message : '圖片資料格式無效。' } }), { status: 400, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    return errorResponse('ASSET_INVALID', errorMessage(error), 400);
   }
 
-  const previous = await readCurrentAssetFromGitHub(request, env);
+  let previous: Uint8Array | null = null;
+  try {
+    previous = await readCurrentAssetFromGitHub(request, env);
+  } catch (error) {
+    console.error('Failed to read previous GitHub asset before R2 mirror PUT.', error);
+    return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未寫入 R2 或 GitHub：${errorMessage(error)}`, 502);
+  }
 
   try {
     await putR2Asset(env.MERCH_ASSETS, path, bytes, assetContentType(path));
@@ -87,20 +103,22 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
     if (!stored || stored.size !== bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
   } catch (error) {
     console.error('R2 image mirror PUT failed before GitHub mutation.', error);
-    return new Response(JSON.stringify({ ok: false, error: { code: 'R2_MIRROR_FAILED', message: '圖片已壓縮，但 R2 儲存失敗，尚未寫入 GitHub。' } }), { status: 502, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+    return errorResponse('R2_MIRROR_FAILED', `圖片已處理，但 R2 儲存失敗，尚未寫入 GitHub：${errorMessage(error)}`, 502);
   }
 
   let response: Response;
   try {
     response = await app.fetch(request, env);
   } catch (error) {
+    console.error('GitHub image mutation threw an exception.', error);
     try {
       if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
       else await deleteR2Asset(env.MERCH_ASSETS, path);
     } catch (rollbackError) {
       console.error('R2 image mirror rollback failed after GitHub request error.', rollbackError);
+      return errorResponse('GITHUB_MUTATION_FAILED_ROLLBACK_FAILED', `GitHub 圖片寫入失敗，且 R2 rollback 也失敗：${errorMessage(error)}`, 502);
     }
-    throw error;
+    return errorResponse('GITHUB_MUTATION_FAILED', `GitHub 圖片寫入失敗，R2 已 rollback：${errorMessage(error)}`, 502);
   }
 
   if (!response.ok) {
@@ -109,6 +127,7 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
       else await deleteR2Asset(env.MERCH_ASSETS, path);
     } catch (rollbackError) {
       console.error('R2 image mirror rollback failed after GitHub mutation failure.', rollbackError);
+      return errorResponse('GITHUB_RESPONSE_FAILED_ROLLBACK_FAILED', `GitHub 圖片寫入回應失敗，且 R2 rollback 也失敗：${errorMessage(rollbackError)}`, 502);
     }
   }
 
@@ -128,7 +147,7 @@ async function mirrorDelete(env: Env, response: Response, path: string): Promise
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = originFor(request, env);
-    if (!origin) return new Response(JSON.stringify({ ok: false, error: { code: 'ORIGIN_NOT_ALLOWED', message: '來源網域不被允許。' } }), { status: 403, headers: { 'Content-Type': 'application/json; charset=utf-8', 'X-Merch-Worker-Version': WORKER_VERSION } });
+    if (!origin) return errorResponse('ORIGIN_NOT_ALLOWED', '來源網域不被允許。', 403);
 
     const path = r2AssetPath(request);
     if (path && request.method === 'GET') {
