@@ -6,23 +6,23 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.600`。**
+- **目前開發版本：`1.109.602`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
 ## 1. 版本同步架構【最高優先】
-- [ ] 修正 Worker mutation 只更新 `public/data/version.json`、未同步 `package.json` 的問題。
-- [ ] 每次 API mutation 產生新版本號時，讓 `package.json` 與 `public/data/version.json` 使用同一個版本號。
-- [ ] 版本更新必須與資料 mutation 保持在同一個 atomic Git commit，避免兩個版本短暫或永久不一致。
-- [ ] 補強 Worker architecture contract，驗證所有會修改 remote data 的 mutation 都同時更新兩個版本檔。
-- [ ] 修正目前 repository 的版本不一致：`package.json` 與 `public/data/version.json` 必須重新同步。
+- [x] 修正 Worker mutation 只更新 `public/data/version.json`、未同步 `package.json` 的問題。
+- [x] 每次 API mutation 產生新版本號時，讓 `package.json` 與 `public/data/version.json` 使用同一個版本號。
+- [x] 版本更新必須與資料 mutation 保持在同一個 atomic Git commit，避免兩個版本短暫或永久不一致。
+- [x] 補強 Worker architecture contract，驗證所有會修改 remote data 的 mutation 都同時更新兩個版本檔。
+- [x] 修正目前 repository 的版本不一致：`package.json` 與 `public/data/version.json` 必須重新同步。
 
 ## 2. Remote mutation 回傳資料權威性【高優先】
-- [ ] 修正 `src/api.ts` 的 mutation 後續流程，避免 `putItem()`／`deleteItem()` 成功後重新從可能過期的 static `./data/collection.json` 取得資料。
-- [ ] API mutation 成功後，Store 必須直接以該次 API response 作為 authoritative remote data。
-- [ ] 統一所有 Work／Item CRUD／圖片等 mutation 的 remote-apply 流程，避免各 UI 頁面自行建立第二份遠端資料狀態。
-- [ ] 補充 API mutation contract，明確驗證 mutation response 與 Store remote-apply 的資料流。
-- [ ] 驗證 mutation 後立即搜尋、排序、統計與 Detail 顯示的資料都是最新狀態。
+- [x] 修正 `src/api.ts` 的 mutation 後續流程，避免 `putItem()`／`deleteItem()` 成功後重新從可能過期的 static `./data/collection.json` 取得資料。
+- [x] API mutation 成功後，Store 必須直接以該次 API response 作為 authoritative remote data。
+- [x] 統一所有 Work／Item CRUD／圖片等 mutation 的 remote-apply 流程，避免各 UI 頁面自行建立第二份遠端資料狀態。
+- [x] 補充 API mutation contract，明確驗證 mutation response 與 Store remote-apply 的資料流。
+- [x] 驗證 mutation 後立即搜尋、排序、統計與 Detail 顯示的資料都是最新狀態。
 
 ## 3. Remote data 載入效能與 Read Model
 - [ ] 重新檢視 `store.ts` 目前「categories → 每個 category index → 每個 Item data」的多層 request 模式。
