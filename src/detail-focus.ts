@@ -1,4 +1,5 @@
 let lastFocusedElement: HTMLElement | null = null;
+const statisticsDialogCleanups = new WeakMap<HTMLElement, () => void>();
 
 function getDialog(): HTMLElement | null {
   const modal = document.querySelector<HTMLElement>('.item-detail-modal .item-detail-dialog[data-detail-item-id]');
@@ -39,6 +40,36 @@ export function setupDialogFocus(dialog: HTMLElement): () => void {
     document.removeEventListener('keydown', onKeydown, true);
     if (restoreTarget && document.contains(restoreTarget)) restoreTarget.focus();
   };
+}
+
+function observeStatisticsDialogs(): void {
+  const observer = new MutationObserver((records) => {
+    for (const record of records) {
+      record.addedNodes.forEach((node) => {
+        if (!(node instanceof Element)) return;
+        const dialogs = [
+          ...(node.matches('.statistics-detail-dialog') ? [node] : []),
+          ...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'),
+        ];
+        dialogs.forEach((dialog) => {
+          if (statisticsDialogCleanups.has(dialog)) return;
+          statisticsDialogCleanups.set(dialog, setupDialogFocus(dialog));
+        });
+      });
+      record.removedNodes.forEach((node) => {
+        if (!(node instanceof Element)) return;
+        const dialogs = [
+          ...(node.matches('.statistics-detail-dialog') ? [node] : []),
+          ...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'),
+        ];
+        dialogs.forEach((dialog) => {
+          statisticsDialogCleanups.get(dialog)?.();
+          statisticsDialogCleanups.delete(dialog);
+        });
+      });
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 function rememberTrigger(event: Event): void {
@@ -88,3 +119,5 @@ function syncFocus(): void {
 document.addEventListener('click', rememberTrigger, true);
 document.addEventListener('keydown', handleKeydown, true);
 window.addEventListener('hashchange', () => window.setTimeout(syncFocus, 0));
+window.addEventListener('DOMContentLoaded', observeStatisticsDialogs, { once: true });
+if (document.readyState !== 'loading') observeStatisticsDialogs();
