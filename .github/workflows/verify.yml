@@ -50,6 +50,8 @@ jobs:
         run: npm run verify:category
       - name: Verify image contract
         run: npm run verify:images
+      - name: Verify validation boundary contract
+        run: npm run verify:validation
       - name: Verify management schema contract
         run: npm run verify:management-schema
       - name: Verify works management CRUD contract
