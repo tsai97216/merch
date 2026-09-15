@@ -1,5 +1,6 @@
 import './theme';
 import './app-loading';
+import './page-auth-status';
 
 export type AppVersion = `${number}.${number}.${number}`;
 
