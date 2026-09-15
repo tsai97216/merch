@@ -63,8 +63,15 @@ try {
   }).outputText;
 
   await fs.writeFile(path.join(tempDir, 'error.mjs'), transpile(errorSource, 'error.ts'), 'utf8');
-  const apiOutput = transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'");
+  const apiOutput = transpile(apiSource, 'api.ts')
+    .replace("from './error'", "from './error.mjs'")
+    .replace("from './sync-overlay'", "from './sync-overlay.mjs'");
   await fs.writeFile(path.join(tempDir, 'api.mjs'), apiOutput, 'utf8');
+  await fs.writeFile(
+    path.join(tempDir, 'sync-overlay.mjs'),
+    'export async function runWithSync(_label, operation) { return operation(); }\n',
+    'utf8',
+  );
 
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = {
