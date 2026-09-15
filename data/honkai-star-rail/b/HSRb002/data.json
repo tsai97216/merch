@@ -2,16 +2,29 @@
   "id": "HSRb002",
   "workId": "honkai-star-rail",
   "title": "小不點貓貓系列馬口鐵徽章 黃泉款",
-  "series": ["小不點貓貓系列"],
-  "characters": ["黃泉"],
+  "series": [
+    "小不點貓貓系列"
+  ],
+  "characters": [
+    "黃泉"
+  ],
   "category": "b",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "崩鐵路跑活動",
-  "purchase": {"currency": "TWD", "platform": "線下活動", "date": "2026-05-09"},
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-09"
+  },
   "arrival": {},
   "afterSales": {},
-  "images": []
+  "images": [
+    {
+      "id": "HSRb002-1789439570415",
+      "file": "HSRb002.jpeg"
+    }
+  ]
 }
