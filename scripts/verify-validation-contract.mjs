@@ -39,7 +39,7 @@ requirePattern(storeSource, /if \(!isValidShipping\(value\)\)/, 'store.ts 未以
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'merch-validation-contract-'));
 try {
   const output = ts.transpileModule(validationSource, {
-    compilerOptions: { module: ts.ModuleKind.NodeNext, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
     fileName: 'validation.ts'
   }).outputText;
   const modulePath = path.join(tempDir, 'validation.mjs');
