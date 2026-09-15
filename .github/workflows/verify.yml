@@ -64,9 +64,19 @@ jobs:
         run: npm run verify:worker-transaction
       - name: Verify API load and fallback contract
         run: npm run verify:api-load
-      - name: Verify version consistency
-        run: npm run verify:version
+      - name: Verify API mutation contract
+        run: npm run verify:api-mutation
+      - name: Verify Work identity contract
+        run: npm run verify:work-identity
+      - name: Verify Home ranking contract
+        run: npm run verify:home-ranking
       - name: Verify statistics date boundaries
         run: npm run verify:statistics
+      - name: Verify statistics year isolation
+        run: npm run verify:statistics-year
+      - name: Verify statistics year contract
+        run: npm run verify:statistics-contract
+      - name: Verify version consistency
+        run: npm run verify:version
       - name: TypeScript and Vite build
         run: npm run build
