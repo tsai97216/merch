@@ -50,13 +50,16 @@ function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWor
   list.className = 'home-ranking-list work-ranking-list';
   list.innerHTML = visibleRows.length
     ? visibleRows.map((row, index) => {
-      const progress = Math.max(3, Math.round(row.spend / max * 100));
+      const progress = Math.max(2, Math.round(row.spend / max * 100));
       return `
-      <li class="home-ranking-row" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
-        <span class="home-ranking-rank" aria-hidden="true">${index + 1}</span>
-        <div class="home-ranking-main">
-          <div class="home-ranking-line"><strong class="home-ranking-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong><b class="home-ranking-amount">${escapeHtml(money(row.spend))}</b></div>
-          <div class="home-ranking-track" aria-label="消費進度 ${progress}%"><span style="width:${progress}%"></span></div>
+      <li class="ranking-line work-ranking-line" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
+        <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+        <div class="ranking-content">
+          <div class="ranking-heading">
+            <strong class="ranking-title" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong>
+            <b class="ranking-value">${escapeHtml(money(row.spend))}</b>
+          </div>
+          <div class="ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
         </div>
       </li>`;
     }).join('')
@@ -67,26 +70,20 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
   const visibleRows = rows.slice(0, limit);
   const max = visibleRows[0]?.[1] || 1;
   const counts = storeRef ? getCharacterItemCounts(storeRef) : new Map<string, number>();
-  list.className = 'favorite-character-list';
+  list.className = 'character-ranking-list';
   list.innerHTML = visibleRows.length
     ? visibleRows.map(([character, spend], index) => {
-      const progress = Math.max(4, Math.round(spend / max * 100));
+      const progress = Math.max(2, Math.round(spend / max * 100));
       const count = counts.get(character) || 0;
-      const top = index === 0;
       return `
-      <li class="favorite-character-item${top ? ' is-top' : ''}" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
-        <div class="favorite-character-rankline">
-          <span class="favorite-character-rank">${String(index + 1).padStart(2, '0')}</span>
-          ${top ? '<span class="favorite-character-badge">最高消費</span>' : '<span class="favorite-character-index">CHARACTER</span>'}
+      <li class="ranking-line character-ranking-line" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
+        <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+        <div class="character-ranking-info">
+          <strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
+          <span class="character-ranking-count">${count} 件</span>
         </div>
-        <div class="favorite-character-main">
-          <strong class="favorite-character-name" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
-          <span class="favorite-character-count">${count} 件收藏</span>
-        </div>
-        <div class="favorite-character-spending">
-          <div class="favorite-character-track" aria-label="消費進度 ${progress}%"><span style="width:${progress}%"></span></div>
-          <b class="favorite-character-amount">${escapeHtml(money(spend))}</b>
-        </div>
+        <div class="character-ranking-meter ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
+        <b class="ranking-value">${escapeHtml(money(spend))}</b>
       </li>`;
     }).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
@@ -124,7 +121,7 @@ function ensureCharacterModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING</span><h2 id="character-title">角色消費排行</h2><p>依角色分攤後的消費金額排序，點擊角色可直接搜尋。</p></div><ul id="character-list-all" class="favorite-character-list"></ul></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-character-close></div><section class="item-detail-dialog favorite-character-dialog" role="dialog" aria-modal="true" aria-labelledby="character-title"><button type="button" class="item-detail-close" aria-label="關閉" data-character-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">CHARACTER SPENDING</span><h2 id="character-title">角色消費排行</h2><p>依角色分攤後的消費金額排序，點擊角色可直接搜尋。</p></div><ul id="character-list-all" class="character-ranking-list"></ul></section></div>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-character-close]').forEach((node) => node.addEventListener('click', closeCharacterModal));
   characterModal = modal;
@@ -176,7 +173,7 @@ function install() {
     if (heading) heading.textContent = '角色消費排行';
     if (list) {
       list.id = 'favorite-character-list';
-      list.className = 'favorite-character-list';
+      list.className = 'character-ranking-list';
     }
     addMoreButton(rankingPanel, '查看全部角色 →', openCharacterModal);
   }
