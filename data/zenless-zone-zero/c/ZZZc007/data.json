@@ -1,0 +1,17 @@
+{
+  "id": "ZZZc007",
+  "workId": "zenless-zone-zero",
+  "title": "萊卡恩 閃卡",
+  "series": [],
+  "characters": ["萊卡恩"],
+  "category": "c",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "2026電玩展",
+  "purchase": {"platform": "線下活動", "date": "2026-02-01"},
+  "arrival": {},
+  "afterSales": {"status": "無"},
+  "images": []
+}
