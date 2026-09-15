@@ -25,16 +25,16 @@
 - [x] 驗證 mutation 後立即搜尋、排序、統計與 Detail 顯示的資料都是最新狀態。
 
 ## 3. Remote data 載入效能與 Read Model
-- [ ] 重新檢視 `store.ts` 目前「categories → 每個 category index → 每個 Item data」的多層 request 模式。
-- [ ] 評估建立適合前端讀取的 generated read model，降低收藏品增加後的 request 數量。
-- [ ] 保留目前 Item 級 canonical storage 與既有資料格式，不因效能優化恢復舊作品 JSON 整份覆寫模式。
-- [ ] 確認 generated read model 的更新時機、失敗 fallback 與版本一致性。
+- [x] 重新檢視 `store.ts` 目前「categories → 每個 category index → 每個 Item data」的多層 request 模式。
+- [x] 評估建立適合前端讀取的 generated read model，降低收藏品增加後的 request 數量。
+- [x] 保留目前 Item 級 canonical storage 與既有資料格式，不因效能優化恢復舊作品 JSON 整份覆寫模式。
+- [x] 確認 generated read model 的更新時機、失敗 fallback 與版本一致性。
 - [ ] 實測小、中、大資料量下的首次載入與重新載入效能，再決定是否正式導入。
 
 ## 4. CI / 自動化驗證覆蓋
-- [ ] 盤點 `.github/workflows/` 目前實際執行的 verification scripts。
-- [ ] 將目前已有但 CI 未完整覆蓋的關鍵 contract 納入 CI，包括 API mutation、Work identity、Statistics year／contract、Home ranking 等。
-- [ ] 確保 Worker read／write scope、image semantics、transaction、schema、category 等既有驗證在 CI 中有明確執行入口。
+- [x] 盤點 `.github/workflows/` 目前實際執行的 verification scripts。
+- [x] 將目前已有但 CI 未完整覆蓋的關鍵 contract 納入 CI，包括 API mutation、Work identity、Statistics year／contract、Home ranking 等。
+- [x] 確保 Worker read／write scope、image semantics、transaction、schema、category 等既有驗證在 CI 中有明確執行入口。
 - [ ] 避免「script 已存在但實際 CI 不會跑」造成假性驗收完成。
 - [ ] 驗證 CI 通過後再將對應 TODO 結案。
 
