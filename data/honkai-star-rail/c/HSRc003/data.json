@@ -21,8 +21,10 @@
   "afterSales": {},
   "images": [
     {
-      "id": "HSRc003-1789439458483",
-      "file": "HSRc003.jpeg"
+      "id": "HSRc003-1789439461519-gafkn",
+      "file": "HSRc003.jpeg",
+      "alt": "昔漣 滿贈拍立得",
+      "isCover": true
     }
   ]
 }
