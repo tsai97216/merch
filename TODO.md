@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.617`。**
+- **目前開發版本：`1.109.618`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -40,6 +40,11 @@
 - [ ] 統一共用互動元件的 listener lifecycle，優先使用 delegation 或明確 mount／unmount 邊界。
 - [ ] 檢查目前零散的 `dataset.bound` 類型防重複綁定做法，避免同一語意存在多種 lifecycle 實作。
 - [x] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
+
+### Lifecycle audit note
+- 目前 `collection-controls.ts`、`add.ts`、`management.ts`、`works-management.ts` 等仍以 `dataset.bound` 作為元件初始化防重複機制；同一專案同時存在 `dataset.bound`、`dataset.groupsBound`、`once`、module-level listener 與顯式 `removeEventListener` 等多種 lifecycle 語意。
+- 這不是單純格式問題：頁面 render／hash navigation 與元件 mount 邊界目前沒有統一 primitive，後續維護容易再引入重複 listener 或留下無法解除的生命週期。
+- 下一步應先定義共用 mount／unmount 或 delegation 邊界，再逐一替換仍有必要的 `dataset.bound`，不得只把旗標名稱統一而保留相同問題。
 
 ## 7. Sync Overlay 架構
 - [x] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
