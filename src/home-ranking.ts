@@ -8,3 +8,8 @@ export function rankAt(rows: CharacterRankingRow[], index: number): number {
 export function sortCharacterRanking(rows: CharacterRankingRow[]): CharacterRankingRow[] {
   return [...rows].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant'));
 }
+
+export function rankValueAt(values: number[], index: number): number {
+  if (index === 0) return 1;
+  return values[index] === values[index - 1] ? rankValueAt(values, index - 1) : index + 1;
+}
