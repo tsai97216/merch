@@ -10,8 +10,18 @@
   "status": "received",
   "description": "",
   "notes": "2026電玩展",
-  "purchase": {"platform": "線下活動", "date": "2026-01-29"},
+  "purchase": {
+    "platform": "線下活動",
+    "date": "2026-01-29"
+  },
   "arrival": {},
-  "afterSales": {"status": "無"},
-  "images": []
+  "afterSales": {
+    "status": "無"
+  },
+  "images": [
+    {
+      "id": "ZZZo002-1789439095848",
+      "file": "ZZZo002.jpeg"
+    }
+  ]
 }
