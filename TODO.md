@@ -31,14 +31,15 @@
 - [x] 驗證 CI 在目前 HEAD 實際通過後再關閉本節。
 
 ## 5. Dependency / Build Reproducibility
-- [ ] 建立可重現的 dependency lockfile。
-- [ ] 重新檢查 CI／deploy 的 install strategy。
+- [x] 建立可重現的 dependency lockfile。
+- [x] 重新檢查 CI／deploy 的 install strategy。
 - [ ] 驗證 Vite、TypeScript 與 Worker 相關 build／verification 在乾淨環境可重現。
 
 ### Dependency audit note
-- 目前 `package.json` 僅有 TypeScript 與 Vite devDependencies，版本採 semver range；repository 尚無 `package-lock.json`。
-- 本地離線環境無法可靠產生 lockfile，禁止手工偽造 lockfile。
-- 已確認 Verify、Pages Deploy 與現有維運 workflow 目前仍使用 `npm install`；待取得真實 registry resolution 後，應以正式 lockfile 統一改為 `npm ci`，再做乾淨環境驗證。
+- `package-lock.json` 已由 GitHub Actions 使用 Node 22／npm 10 真實 registry resolution 產生並提交，lockfileVersion 為 3，且 root version 與 `package.json` 均為 `1.109.638`。
+- Verify、Pages Deploy、Worker deploy build，以及現有維運／migration workflow 的 dependency install 已統一改為 `npm ci`。
+- 一次性的 lockfile bootstrap workflow 已在 lockfile 提交後移除，不保留額外 workaround。
+- 下一步只剩在現有 CI 上確認 `npm ci` 下的 TypeScript／Vite／Worker build 與 verification 均可在乾淨環境通過。
 
 ## 6. Event / Lifecycle 架構清理
 - [x] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
