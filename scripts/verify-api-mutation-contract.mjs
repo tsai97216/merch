@@ -18,7 +18,8 @@ try {
   const errorSource = await fs.readFile(path.join(root, 'src', 'error.ts'), 'utf8');
   const transpile = (source, fileName) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ES2022, moduleResolution: ts.ModuleResolutionKind.Bundler, verbatimModuleSyntax: true, sourceMap: false }, fileName }).outputText;
   await fs.writeFile(path.join(tempDir, 'error.mjs'), transpile(errorSource, 'error.ts'), 'utf8');
-  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'"), 'utf8');
+  await fs.writeFile(path.join(tempDir, 'sync-overlay.mjs'), 'export async function runWithSync(_label, operation) { return operation(); }\n', 'utf8');
+  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'"), 'utf8');
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   const run = async (operation, responses) => {
