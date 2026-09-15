@@ -13,7 +13,7 @@ interface Env {
 type AssetRequest = { path?: unknown; content?: unknown };
 type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.666';
+const WORKER_VERSION = '1.109.670';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -67,11 +67,21 @@ async function getFromR2(env: Env, origin: string, path: string): Promise<Respon
   return new Response(asset.body, { status: 200, headers });
 }
 
-async function readAssetRequest(request: Request, path: string): Promise<Uint8Array> {
-  const body = await request.clone().json() as AssetRequest;
+async function readAssetRequest(request: Request, path: string): Promise<{ bodyText: string; bytes: Uint8Array }> {
+  const bodyText = await request.text();
+  let body: AssetRequest;
+  try {
+    body = JSON.parse(bodyText) as AssetRequest;
+  } catch {
+    throw new Error('圖片資料格式無效。');
+  }
   if (body.path !== path || typeof body.content !== 'string' || !body.content) throw new Error('圖片資料格式無效。');
-  const binary = atob(body.content.replace(/\s/g, ''));
-  return Uint8Array.from(binary, char => char.charCodeAt(0));
+  try {
+    const binary = atob(body.content.replace(/\s/g, ''));
+    return { bodyText, bytes: Uint8Array.from(binary, char => char.charCodeAt(0)) };
+  } catch {
+    throw new Error('圖片 Base64 資料無效。');
+  }
 }
 
 async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
@@ -82,9 +92,9 @@ async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<U
 }
 
 async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
-  let bytes: Uint8Array;
+  let parsed: { bodyText: string; bytes: Uint8Array };
   try {
-    bytes = await readAssetRequest(request, path);
+    parsed = await readAssetRequest(request, path);
   } catch (error) {
     return errorResponse('ASSET_INVALID', errorMessage(error), 400);
   }
@@ -98,9 +108,9 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
   }
 
   try {
-    await putR2Asset(env.MERCH_ASSETS, path, bytes, assetContentType(path));
+    await putR2Asset(env.MERCH_ASSETS, path, parsed.bytes, assetContentType(path));
     const stored = await env.MERCH_ASSETS.head(path);
-    if (!stored || stored.size !== bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
+    if (!stored || stored.size !== parsed.bytes.byteLength) throw new Error(`R2 mirror verification failed for ${path}.`);
   } catch (error) {
     console.error('R2 image mirror PUT failed before GitHub mutation.', error);
     return errorResponse('R2_MIRROR_FAILED', `圖片已處理，但 R2 儲存失敗，尚未寫入 GitHub：${errorMessage(error)}`, 502);
@@ -108,7 +118,12 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
 
   let response: Response;
   try {
-    response = await app.fetch(request, env);
+    const mutationRequest = new Request(request.url, {
+      method: 'PUT',
+      headers: request.headers,
+      body: parsed.bodyText,
+    });
+    response = await app.fetch(mutationRequest, env);
   } catch (error) {
     console.error('GitHub image mutation threw an exception.', error);
     try {
