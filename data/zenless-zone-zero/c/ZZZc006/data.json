@@ -22,8 +22,10 @@
   },
   "images": [
     {
-      "id": "ZZZc006-1789438906899",
-      "file": "ZZZc006.jpeg"
+      "id": "ZZZc006-1789438910721-ozv50",
+      "file": "ZZZc006.jpeg",
+      "alt": "簡 閃卡",
+      "isCover": true
     }
   ]
 }
