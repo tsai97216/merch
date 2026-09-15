@@ -10,15 +10,8 @@
   "status": "received",
   "description": "",
   "notes": "2026電玩展",
-  "purchase": {
-    "price": 0,
-    "currency": "TWD",
-    "platform": "線下活動",
-    "date": "2026-01-29"
-  },
+  "purchase": {"platform": "線下活動", "date": "2026-01-29"},
   "arrival": {},
-  "afterSales": {
-    "status": "無"
-  },
+  "afterSales": {"status": "無"},
   "images": []
 }
