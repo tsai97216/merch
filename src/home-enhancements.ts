@@ -49,13 +49,17 @@ function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWor
   const max = visibleRows[0]?.spend || 1;
   list.className = 'home-ranking-list work-ranking-list';
   list.innerHTML = visibleRows.length
-    ? visibleRows.map((row, index) => `
+    ? visibleRows.map((row, index) => {
+      const progress = Math.max(3, Math.round(row.spend / max * 100));
+      return `
       <li class="home-ranking-row" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
         <span class="home-ranking-rank" aria-hidden="true">${index + 1}</span>
-        <strong class="home-ranking-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong>
-        <b class="home-ranking-amount">${escapeHtml(money(row.spend))}</b>
-        <span class="home-ranking-bar" aria-hidden="true"><span style="--ranking-progress:${Math.max(4, row.spend / max * 100)}%"></span></span>
-      </li>`).join('')
+        <div class="home-ranking-main">
+          <div class="home-ranking-line"><strong class="home-ranking-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong><b class="home-ranking-amount">${escapeHtml(money(row.spend))}</b></div>
+          <div class="home-ranking-track" aria-label="消費進度 ${progress}%"><span style="width:${progress}%"></span></div>
+        </div>
+      </li>`;
+    }).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
 
@@ -65,18 +69,26 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
   const counts = storeRef ? getCharacterItemCounts(storeRef) : new Map<string, number>();
   list.className = 'favorite-character-list';
   list.innerHTML = visibleRows.length
-    ? visibleRows.map(([character, spend], index) => `
-      <li class="favorite-character-item${index === 0 ? ' is-top' : ''}" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
-        <div class="favorite-character-topline">
-          <span class="favorite-character-rank" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
-          <span class="favorite-character-meta">${counts.get(character) || 0} 件收藏</span>
+    ? visibleRows.map(([character, spend], index) => {
+      const progress = Math.max(4, Math.round(spend / max * 100));
+      const count = counts.get(character) || 0;
+      const top = index === 0;
+      return `
+      <li class="favorite-character-item${top ? ' is-top' : ''}" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
+        <div class="favorite-character-rankline">
+          <span class="favorite-character-rank">${String(index + 1).padStart(2, '0')}</span>
+          ${top ? '<span class="favorite-character-badge">最高消費</span>' : '<span class="favorite-character-index">CHARACTER</span>'}
         </div>
-        <strong class="favorite-character-name" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
-        <div class="favorite-character-bottomline">
-          <span class="favorite-character-bar" aria-hidden="true"><span style="--character-progress:${Math.max(5, spend / max * 100)}%"></span></span>
+        <div class="favorite-character-main">
+          <strong class="favorite-character-name" title="${escapeHtml(character)}">${escapeHtml(character)}</strong>
+          <span class="favorite-character-count">${count} 件收藏</span>
+        </div>
+        <div class="favorite-character-spending">
+          <div class="favorite-character-track" aria-label="消費進度 ${progress}%"><span style="width:${progress}%"></span></div>
           <b class="favorite-character-amount">${escapeHtml(money(spend))}</b>
         </div>
-      </li>`).join('')
+      </li>`;
+    }).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
 
