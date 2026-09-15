@@ -30,28 +30,35 @@ try {
 
   let result = await run(api => api.putItem({ ...item, workName: 'Test Work' }), {
     '/api/items/TESTc001': makeResponse(200, { ok: true, data: { version: '1.109.283' } }),
-    './data/collection.json': makeResponse(200, collection()), './data/shipping.json': makeResponse(200, { schemaVersion: 1, records: [] }),
+    '/api/data': makeResponse(200, { ok: true, data: collection('1.109.284') }),
   });
   const putBody = JSON.parse(result.calls.find(call => call.url === '/api/items/TESTc001').init.body);
   assert(!('workName' in putBody.item), 'PUT Item must not persist runtime workName');
   assert(putBody.item.purchase && putBody.item.arrival && putBody.item.afterSales && Array.isArray(putBody.item.images), 'PUT Item must preserve canonical nested schema');
-  assert(result.result.version === '1.109.283', 'PUT Item must return validated remote data');
+  assert(result.result.version === '1.109.284', 'PUT Item must use the authoritative /data response after mutation');
+  assert(result.calls.filter(call => call.url === '/api/data').length === 1, 'PUT Item must fetch authoritative API data exactly once');
+  assert(!result.calls.some(call => call.url === './data/collection.json'), 'PUT Item must not fall back to potentially stale static collection data');
 
-  result = await run(api => api.deleteItem('TESTc001'), { '/api/items/TESTc001': makeResponse(200, { ok: true, data: { version: '1.109.283' } }), './data/collection.json': makeResponse(200, collection()), './data/shipping.json': makeResponse(200, { schemaVersion: 1, records: [] }) });
+  result = await run(api => api.deleteItem('TESTc001'), {
+    '/api/items/TESTc001': makeResponse(200, { ok: true, data: { version: '1.109.285' } }),
+    '/api/data': makeResponse(200, { ok: true, data: { version: '1.109.285', works: [{ id: 'test-work', name: 'Test Work', code: 'TEST', items: [] }], shipping: [] } }),
+  });
   assert(result.calls[0].url === '/api/items/TESTc001', 'DELETE Item must target the exact permanent Item ID');
-  assert(result.result.works.length === 1, 'DELETE mutation must re-read validated remote data');
+  assert(result.result.works.length === 1 && result.result.works[0].items.length === 0, 'DELETE mutation must apply the authoritative remote data');
+  assert(result.result.version === '1.109.285', 'DELETE Item must use the authoritative /data response after mutation');
+  assert(!result.calls.some(call => call.url === './data/collection.json'), 'DELETE Item must not re-read potentially stale static collection data');
 
-  result = await run(api => api.putShipping({ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }), { '/api/shipping/ship-1': makeResponse(200, { ok: true, data: { version: '1.109.283' } }), './data/collection.json': makeResponse(200, collection()), './data/shipping.json': makeResponse(200, { schemaVersion: 1, records: [{ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }] }) });
+  result = await run(api => api.putShipping({ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }), { '/api/shipping/ship-1': makeResponse(200, { ok: true, data: collection('1.109.283') }) });
   const shippingBody = JSON.parse(result.calls.find(call => call.url === '/api/shipping/ship-1').init.body);
   assert(shippingBody.shipping.id === 'ship-1' && shippingBody.shipping.itemIds[0] === 'TESTc001', 'PUT Shipping must preserve its canonical relation');
-  assert(result.result.shipping[0].id === 'ship-1', 'PUT Shipping must return validated remote data');
+  assert(result.result.version === '1.109.283', 'PUT Shipping must return validated remote data');
 
   for (const badPayload of [{ version: 'not-a-version' }, { version: '1.109' }, { version: 1 }]) {
     let failed = false;
     try { await run(api => api.putItem({ ...item }), { '/api/items/TESTc001': makeResponse(200, { ok: true, data: badPayload }) }); } catch { failed = true; }
     assert(failed, 'mutation response with invalid version must be rejected');
   }
-  console.log('API mutation verification passed: Item PUT/DELETE, Shipping PUT, runtime-field stripping, canonical nested payloads, and mutation response validation.');
+  console.log('API mutation verification passed: Item PUT/DELETE authoritative data, runtime-field stripping, canonical payloads, Shipping PUT, and mutation response validation.');
 } finally {
   if (originalFetch) globalThis.fetch = originalFetch; else delete globalThis.fetch;
   delete globalThis.window; delete globalThis.sessionStorage;
