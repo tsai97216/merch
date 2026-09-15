@@ -1,112 +1,88 @@
 # TODO
 
-> 只保留尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期開發規則放在 `RULES.md`。
+> 本檔只保留目前尚未完成、待驗證或值得持續追蹤的工作。已完成的一次性工作移出；長期規格放在 `RULES.md`。
 >
-> **驗收原則：適用的 CI／自動化驗證通過後即可結案；只有 CI 無法覆蓋的外部服務或真實環境契約才需要額外實機驗收。**
+> 本輪重新掃描整個專案後重新建立，不沿用舊 TODO 的完成狀態。
 
 ## Current state
 
-- **目前開發版本：`1.109.418`。**
-- `package.json` 與 `public/data/version.json` 已同步。
-- `PROJECT_ARCHITECTURE.md` 已建立，作為目前 repository 檔案責任與後續架構清理的 inventory。
-- Shared Field／control foundation、Collection、Add、Management、Shipping 的主要資料／操作層級已完成程式檢視。
-- API load / fallback contract、API mutation contract、Work identity contract、Statistics year / contract、Home ranking 等自動化驗證已完成前一版本驗收。
-- Mobile 與 Desktop 主要外觀驗收已完成。
-- Tablet Responsive、Light / Dark shared controls、Item Detail / Router / focus、圖片操作、Shipping、Collection、Worker／Remote Data 等實機流程已完成前一版本驗收，未發現阻塞問題。
+- **目前開發版本：`1.109.600`。**
+- 本輪以現有程式與資料流重新盤點，不進行整體重寫。
+- 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
-# 後續工作
+## 1. 版本同步架構【最高優先】
+- [ ] 修正 Worker mutation 只更新 `public/data/version.json`、未同步 `package.json` 的問題。
+- [ ] 每次 API mutation 產生新版本號時，讓 `package.json` 與 `public/data/version.json` 使用同一個版本號。
+- [ ] 版本更新必須與資料 mutation 保持在同一個 atomic Git commit，避免兩個版本短暫或永久不一致。
+- [ ] 補強 Worker architecture contract，驗證所有會修改 remote data 的 mutation 都同時更新兩個版本檔。
+- [ ] 修正目前 repository 的版本不一致：`package.json` 與 `public/data/version.json` 必須重新同步。
 
-## 0. 圖片儲存架構：Cloudflare R2【最優先】
-- [ ] 建立 Merch 圖片儲存架構：GitHub 繼續保存程式／JSON／收藏資料，Cloudflare R2 保存圖片物件。
-- [x] 建立 R2 binding `MERCH_ASSETS` 與獨立 `r2-assets.ts` storage helper，建立可替換的儲存後端邊界。
-- [x] 建立 Worker R2 gateway：既有 `/api/assets/...` 介面保持不變，圖片 GET 採 R2 優先、GitHub fallback；圖片 PUT／DELETE 在既有 GitHub mutation 成功後同步鏡像至 R2。
-- [x] 保持既有圖片邏輯路徑與 `resolveAssetUrl()` 抽象層，前端與 Item 資料不直接綁定 R2 URL，確保未來可再次搬遷儲存後端。
-- [x] 建立可重複執行的 GitHub Actions + Wrangler 圖片批次匯入工具，使用既有資料路徑將 repository 圖片上傳至 R2。
-- [ ] 盤點並處理所有直接依賴 GitHub Raw／GitHub Contents 圖片來源的舊實作，避免新舊圖片來源並存造成責任分散；在正式切換前保留 GitHub fallback。
-- [ ] 批次將現有 GitHub 圖片完整複製至 R2，保留原始路徑／檔名並逐張驗證數量、路徑與可讀取性。
-- [ ] 完成驗證後再確認正式圖片讀取來源完全以 R2 為主；切換前保留 GitHub 圖片作為可回退來源，不先刪除舊檔。
-- [x] Management 圖片新增／刪除已沿用既有 `/api/assets/...` mutation，Worker gateway 會在 GitHub mutation 成功後同步 R2；正式 R2-only 前仍以 GitHub metadata／內容作 authoritative fallback。
-- [x] 統一圖片檔名規則：新上傳／替換圖片以完整 Item ID 為基準，第一張使用 `<Item ID>.<ext>`，同一 Item 的其他圖片使用 `<Item ID>-2.<ext>`、`<Item ID>-3.<ext>` 等序號後綴。
-- [x] 修正圖片檔名遷移驗證漏更新分類 index.json 的 cover，並納入遷移流程同步更新。
-- [x] 建立既有圖片檔名遷移方案，將目前 metadata 與實體圖片同步改為完整 Item ID 檔名規則，並同步驗證 GitHub 與 R2 對應關係。
-- [ ] 建立 R2 圖片批次匯出／備份方案，確保未來可完整下載並搬遷至其他儲存服務而不改變 Item 資料結構。
-- [ ] 加入圖片請求／操作的基本費用與濫用防護，避免異常請求造成不必要的 R2 用量。
-- [ ] 實機驗收 Collection、Item Detail、Management 圖片載入／上傳／刪除與 fallback；確認 R2 切換後無破圖或資料遺失。
-- [ ] 修正 R2 圖片 PUT 交易：先完成 R2 寫入與大小驗證，再執行 GitHub mutation；GitHub mutation 失敗時回復／刪除 R2，避免 GitHub 成功但 R2 靜默失敗。
+## 2. Remote mutation 回傳資料權威性【高優先】
+- [ ] 修正 `src/api.ts` 的 mutation 後續流程，避免 `putItem()`／`deleteItem()` 成功後重新從可能過期的 static `./data/collection.json` 取得資料。
+- [ ] API mutation 成功後，Store 必須直接以該次 API response 作為 authoritative remote data。
+- [ ] 統一所有 Work／Item CRUD／圖片等 mutation 的 remote-apply 流程，避免各 UI 頁面自行建立第二份遠端資料狀態。
+- [ ] 補充 API mutation contract，明確驗證 mutation response 與 Store remote-apply 的資料流。
+- [ ] 驗證 mutation 後立即搜尋、排序、統計與 Detail 顯示的資料都是最新狀態。
 
-- [x] 完成圖片全量重置：清空既有圖片 metadata、分類 cover、GitHub 圖片檔案與 R2 圖片物件，重新從零建立圖片資料。
-- [x] 修正圖片替換交易：metadata 更新失敗時會以原圖片內容回復，避免同一路徑覆蓋後無法 rollback。
-- [x] Management 圖片新增／替換加入瀏覽器端 JPEG 最佳化：長邊最多 2400px、品質 85%，大型照片先壓縮後再上傳；PNG／WebP／GIF／AVIF 維持原格式。
+## 3. Remote data 載入效能與 Read Model
+- [ ] 重新檢視 `store.ts` 目前「categories → 每個 category index → 每個 Item data」的多層 request 模式。
+- [ ] 評估建立適合前端讀取的 generated read model，降低收藏品增加後的 request 數量。
+- [ ] 保留目前 Item 級 canonical storage 與既有資料格式，不因效能優化恢復舊作品 JSON 整份覆寫模式。
+- [ ] 確認 generated read model 的更新時機、失敗 fallback 與版本一致性。
+- [ ] 實測小、中、大資料量下的首次載入與重新載入效能，再決定是否正式導入。
 
-## 1. API 同步狀態全頁阻塞動效
-- [x] 建立共用滿版 API sync overlay，集中攔截遠端 mutation 請求。
-- [x] PUT／PATCH 顯示編輯同步、POST 顯示新增同步、DELETE 顯示刪除同步；圖片與其他 API mutation 同樣涵蓋。
-- [x] Overlay 覆蓋整個 viewport，明確阻止其他操作，並顯示持續中的 loading 動效。
-- [x] API 請求成功或失敗後都會結束阻塞狀態；成功狀態仍由原本 API／Store 流程在真正完成後處理。
-- [x] 修正 sync overlay 與 API 驗證腳本的環境邊界：error module 在非瀏覽器驗證環境不載入瀏覽器 overlay。
-- [x] 成功完成回饋改為中央大型 feedback，與同步中的滿版動效維持同一級別的視覺回饋，不再使用左下角小型 Toast。
-- [x] 統一同步中、成功、失敗、一般資訊等回饋動效的尺寸、位置、進出場動畫與視覺層級，避免同一套 API 流程出現不同形式的 feedback。
-- [x] 移除 Management 編輯流程中與滿版 sync overlay 重複的「收藏修改同步中，請稍候」資訊 Toast，避免同步動畫與文字重疊。
-- [x] 所有既有 `showToast()` 使用改由共用 animated feedback foundation 呈現，視覺上不再建立獨立 Toast 層。
-- [ ] 實機確認新增、編輯、刪除、圖片上傳／刪除在實際 API 延遲期間的滿版阻塞、動效，以及完成後中央大型回饋表現。
-- [ ] 驗證 TypeScript / build / API mutation contract，確認不影響既有 remote mutation 流程。
+## 4. CI / 自動化驗證覆蓋
+- [ ] 盤點 `.github/workflows/` 目前實際執行的 verification scripts。
+- [ ] 將目前已有但 CI 未完整覆蓋的關鍵 contract 納入 CI，包括 API mutation、Work identity、Statistics year／contract、Home ranking 等。
+- [ ] 確保 Worker read／write scope、image semantics、transaction、schema、category 等既有驗證在 CI 中有明確執行入口。
+- [ ] 避免「script 已存在但實際 CI 不會跑」造成假性驗收完成。
+- [ ] 驗證 CI 通過後再將對應 TODO 結案。
 
-## 2. 目前 UI 問題：Management / Add 共用控制項
-- [x] 移除 Management 頁面多餘的 `{類型}` 顯示：移除未被管理資料流使用的重複 `management-category` 欄位，保留上方 Work／Category／Serial selector 作為唯一類型來源。
-- [x] 提高 Add 與 Management 的 Select 共用控制項高度至 46px，並移除固定 42px + 1.2 line-height 的 native select 組合，改用較寬鬆的共用 line box，避免文字下緣被裁切。
-- [x] 實作 Item Detail 售後「狀態」欄位樣式與一般欄位標籤一致，避免誤用 section title 的視覺樣式。
-- [x] Item Detail 的「商品描述／備註」內容改為一般正文尺寸與文字顏色，不再使用淺色小字。
-- [ ] 實機確認 Management / Add 的 Select 在不同瀏覽器與響應式尺寸下文字不再裁切。
-- [ ] 實機確認 Item Detail 的售後欄位與描述／備註文字層級符合設計。
-- [ ] 修正手機版 Item Detail 彈出視窗被 Mobile Navigation 疊在上方，導致關閉按鈕無法點擊的問題；依 Statistics Detail 彈出視窗的 viewport / z-index 寫法處理。
+## 5. Dependency / Build 可重現性
+- [ ] 檢查目前是否缺少 `package-lock.json`，以及現行 CI 使用 `npm install` 對依賴版本重現性的影響。
+- [ ] 若確認需要 lockfile，建立並納入 repository。
+- [ ] CI 改用與 lockfile 相容的 deterministic install 流程，例如 `npm ci`。
+- [ ] 驗證 Vite、TypeScript 與 Worker 相關 build／verification 在乾淨環境可重現。
 
-## 3. Management 圖片管理
-- [x] 修正大型圖片透過 Worker `/assets/...` 取得時因 GitHub Contents API 對大檔內容限制造成的破圖：前端錯誤回退改直接使用目前 repository 的 raw asset，避免再呼叫會因完整 repository tree 過大而回傳 503 的 `assets/by-file`。
-- [ ] 圖片管理區塊布局暫不處理，避免混入其他問題；後續若重新調整，需依 `RULES.md` 的 shared foundation 原則處理。
+## 6. Event / Lifecycle 架構清理
+- [ ] 盤點 `image-viewer.ts`、Modal、Page render 等生命週期，確認重複初始化是否可能累積 event listener。
+- [ ] 統一共用互動元件的 listener lifecycle，優先使用 delegation 或明確 mount／unmount 邊界。
+- [ ] 檢查目前零散的 `dataset.bound` 類型防重複綁定做法，避免同一語意存在多種 lifecycle 實作。
+- [ ] 驗證反覆進入頁面、開關 Detail／Image Viewer 後沒有 listener 累積或重複觸發。
 
-## 4. Logo / 品牌資產
-- [x] Desktop 側邊欄使用共用 Logo：Light → `public/logo/icon-b.png`、Dark → `public/logo/icon-w.png`，並移除原本黑色方形背景與 `CM` brand mark。
-- [x] Mobile 導覽列與 Desktop 共用同一套 Logo 資產與 Light / Dark 規則。
-- [x] 淺色模式使用 `icon-b.png`。
-- [x] 深色模式使用 `icon-w.png`。
-- [x] Favicon 使用 `public/icons/favicon.png`，來源為 `icon-w.png`。
-- [x] PWA／網站安裝圖示使用 `public/icons/pwa-icon.png`，來源為 `icon-w.png`。
-- [x] 移除 `upload/icon-b.png`、`upload/icon-w.png`，品牌資產正式移入部署用 `public` 路徑。
-- [x] 實機／瀏覽器檢查 Logo、Favicon、PWA 圖示目前無已知異常；暫不再保留快取問題為待辦。
+## 7. Sync Overlay 架構
+- [ ] 重新評估 `sync-overlay` 目前透過 patch `window.fetch` 攔截 mutation 的方式。
+- [ ] 若確認可行，改由 API mutation layer 明確控制同步狀態，避免全域 monkey patch `fetch`。
+- [ ] 保留現有滿版阻塞、loading、success、error 的 UX contract，不因架構清理降低同步狀態可見性。
+- [ ] 驗證所有 API mutation、圖片操作與非 mutation request 不會被錯誤阻塞或誤判。
 
-## 5. 架構清理：疊加式實作盤點
+## 8. Validation / Schema 單一來源
+- [ ] 盤點 `src/api.ts`、`src/store.ts` 及其他資料入口中的重複 schema validation／normalization。
+- [ ] 建立明確的 canonical validation／normalization 邊界，避免同一資料格式在不同模組各自定義。
+- [ ] 確保外部 API、static data、mutation response、migration 進入 Store 前都經過一致驗證。
+- [ ] 保留 `quantity`、Item ID、Category、Work identity 等既有 RULES contract，不因集中化而放寬驗證。
 
-### 5.1 已完成首輪盤點
-- [x] 依 `PROJECT_ARCHITECTURE.md` 建立逐檔盤點範圍，先處理 foundation 與 enhancement 的責任邊界。
-- [x] `styles.css`：確認 `main.ts` 先載入 `styles.css`，再由 `design-tokens.css` 間接載入 `controls.css`／`shared-components.css`；`.panel`、`.badge`、`.view-switch`、`.button`、`select` 等存在明確 shared foundation 重複實作，後續需徹底移除舊定義。
-- [x] `controls.css`：確認為 Button、Input、Select、Textarea、Checkbox／Radio 等共用控制項的 canonical foundation，後續 page-specific 重複控制項應以此為準。
-- [x] `responsive-refinement.css`：確認主要責任為 Desktop／Tablet／Mobile viewport contract；多數規則屬真正 responsive 行為，不應整檔刪除。
-- [x] `theme-refinement.css`：確認包含 Settings、Add、Management、Statistics、Detail、Dark mode 等 theme refinement；不能因 selector 重名就整批刪除，需逐 selector 判斷是否為 theme-only 責任。
-- [x] `card-enhancements.css`：確認卡片 meta row、item top、list mode 等仍有 card-specific layout 責任；但 `.item-card ... .badge` 對 Badge 的高度／padding／line-height 等定義與 shared Badge foundation 重疊，列入後續清理。
-- [x] `toast.css`／`sync-overlay.*`：確認 `showToast()` 已經只轉送至 shared animated feedback foundation，但 `src/management.ts` 仍直接 import `./toast.css`，因此 legacy `toast.css` 仍會被載入；視覺層已替換，CSS／import 尚未完全清除。
+## 9. innerHTML / Rendering 安全清理
+- [ ] 全面盤點目前仍存在的 `innerHTML` 使用位置。
+- [ ] 只優先處理有 API、使用者輸入或其他外部資料插值的高風險位置。
+- [ ] 可使用 `textContent`、DOM API 或既有安全 rendering utility 的地方改為安全方式。
+- [ ] 不為了形式上的零 `innerHTML` 而重寫已安全且固定的靜態 markup。
 
-### 5.2 下一輪清理順序
-- [x] 清除 `src/management.ts` 等仍存在的 `toast.css` import，確認所有 `.toast` legacy selector 均無 runtime 依賴後移除 `src/toast.css`。
-- [x] 清理 `card-enhancements.css` 中與 shared Badge foundation 重複的 `.badge` 幾何／視覺定義，只保留真正屬於 Card layout 的規則。
-- [ ] 逐項清理 `styles.css` 中已確認由 shared foundation 接管的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 舊定義，再檢查其餘 page layout / card / detail 規則的唯一責任。
-  - [x] 已移除 `styles.css` 中與 shared foundation 重複的 `.panel`、`.badge`、`.view-switch`、`.button`、`select` 元件幾何／狀態定義，保留頁面布局與卡片／Detail 專屬規則。
-- [ ] 逐項檢查 `theme.css`／`theme-refinement.css`，只移除確定重複的 theme implementation，保留必要的 theme-only refinement。
-- [ ] 檢查 `responsive-refinement.css` 與各 page CSS 的 viewport 規則，將 responsive contract 留在 centralized responsive layer。
-- [ ] 檢查 `home-enhancements.ts` 與 `main.ts` 的 Home rendering／互動責任是否重疊。
-- [ ] 檢查 `management-images.css` 與 Management image rendering 是否存在重複責任。
-- [ ] 檢查 `item-detail-modal.css` 與 shared Modal／Panel foundation 是否存在可移除的第二套實作。
-- [ ] 每發現確定的舊實作、重複 selector、旁路 rendering 或 patch，先在 TODO 記錄具體問題，再徹底替換／移除，不以再加一層覆蓋處理。
-- [ ] 清理完成後重新確認 import、selector、rendering、responsive、theme 的單一責任邊界。
+## 10. CSS / Foundation 疊加清理
+- [ ] 盤點 `styles.css`、`design-tokens.css`、`controls.css`、`shared-components.css`、`responsive-refinement.css`、`theme-refinement.css`、`card-enhancements.css`、feedback／overlay CSS 的責任邊界。
+- [ ] 清除已被 shared foundation 取代、但仍殘留的重複 selector 與 legacy override。
+- [ ] 不以新增 CSS override 解決既有 foundation 問題，優先移除舊實作並保留單一 canonical 定義。
+- [ ] 特別檢查 legacy `toast.css` 與相關 import 是否仍可完全移除。
+- [ ] 完成後重新驗證 Desktop、Tablet、Mobile、Light、Dark 的共用控制項。
 
-## 6. Release
-- [ ] `TODO.md` 更新後重新確認 TypeScript / build / schema / data / Worker 相關驗證全部通過。
-- [ ] GitHub Actions 成功後正式宣告 release。
+## 11. Accessibility / UI Contract 最終檢查
+- [ ] 盤點 Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與關閉行為。
+- [ ] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
+- [ ] 檢查圖片 alt、互動圖片、Mobile Navigation 與 responsive 狀態的可操作性。
+- [ ] 確認 Item Detail、Statistics Detail 等 modal 不再互相共用模糊 selector 或 focus 狀態。
 
-## 7. Worker 圖片上傳 503
-- [ ] 連續實機上傳／刪除驗證仍待完成。
-
-## 8. Collection 效能
-- [x] 修正 Collection 進入頁面時 Store UI update 不必要 deep clone / deep freeze 的根因。
-- [x] 卡片圖片加入 browser rendering containment，降低進入 Collection 時的初始 layout 成本。
-- [ ] 進一步檢查 Collection rendering architecture，避免每次 UI state 變化都完整重建所有卡片 DOM；若確認為瓶頸，優先採增量／分頁／virtualized rendering，而不是再疊加 CSS 或 cache patch。
-- [ ] 實機重新測試 Collection 首次進入、搜尋、Filter、Sort、Card/List 切換與分頁。
+## 12. 最終架構驗收
+- [ ] 以上項目完成後重新掃描整個 repository，確認沒有因清理而留下新舊架構並存。
+- [ ] 執行完整 build 與適用的 verification scripts。
+- [ ] 驗證 API mutation、資料載入、搜尋、排序、統計、CRUD、圖片與 Router 主要流程。
+- [ ] 確認版本號、資料格式、Item ID、圖片路徑與部署設定均符合 `RULES.md`。
