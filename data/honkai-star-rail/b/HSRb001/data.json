@@ -2,16 +2,29 @@
   "id": "HSRb001",
   "workId": "honkai-star-rail",
   "title": "發車倒計時系列馬口鐵徽章 姬子款",
-  "series": ["發車倒計時系列"],
-  "characters": ["姬子"],
+  "series": [
+    "發車倒計時系列"
+  ],
+  "characters": [
+    "姬子"
+  ],
   "category": "b",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "崩鐵路跑活動",
-  "purchase": {"currency": "TWD", "platform": "線下活動", "date": "2026-05-09"},
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-09"
+  },
   "arrival": {},
   "afterSales": {},
-  "images": []
+  "images": [
+    {
+      "id": "HSRb001-1789439425218",
+      "file": "HSRb001.jpeg"
+    }
+  ]
 }
