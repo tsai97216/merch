@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.616`。**
+- **目前開發版本：`1.109.617`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -28,7 +28,7 @@
 - [x] 補上缺失的 API／Worker／statistics contract verification。
 - [x] 確認 worker read/write/image/transaction 等重要 contract 有 CI entry。
 - [x] 建立 `verify:ci-contract`，自動檢查 `package.json` 中所有 `verify*` script 都有對應 CI entry，避免「script 存在但 CI 沒有執行」。
-- [ ] 驗證 CI 在目前 HEAD 實際通過後再關閉本節。
+- [x] 驗證 CI 在目前 HEAD 實際通過後再關閉本節。
 
 ## 5. Dependency / Build Reproducibility
 - [ ] 建立可重現的 dependency lockfile。
@@ -72,7 +72,7 @@
 - [x] 確認目前沒有 `src/toast.css` legacy 檔案或相關 import 需要移除；Toast 狀態樣式已由 shared foundation 提供。
 - [ ] 完成後重新驗證 Desktop、Tablet、Mobile、Light、Dark 的共用控制項。
 
-## 11. Accessibility / UI Contract 最終檢查
+## 11 Accessibility / UI Contract 最終檢查
 - [x] 盤點 Modal／Detail 的 focus trap、focus return、Escape、`aria-hidden` 與關閉行為。
 - [x] 檢查 Button、Input、Select、Loading、Disabled、Error、Empty 狀態的鍵盤與語意。
 - [x] 驗證 responsive 與 keyboard interaction 不因架構清理退化。
@@ -83,7 +83,7 @@
 - 本輪將同一份 `detail-focus.ts` 抽出 `setupDialogFocus()` primitive，並透過 MutationObserver 自動套用至 Statistics Detail／Work Detail popup，包含初始 focus、Tab trap 與移除後 focus return。
 - Button／input／select foundation 已統一提供 `:focus-visible`、disabled、`aria-disabled`、`aria-invalid` 等狀態；主要表單控制項均有對應 label 或 aria-label，form loading 使用 `aria-busy`。
 - Item card、Statistics 可互動資料列具備鍵盤啟動語意；圖片動態渲染使用 `alt`，裝飾性 icon／logo 使用 `aria-hidden`；主要導覽使用具名 `nav`，Mobile 狀態仍保留可操作的原生連結與按鈕。
-- 本輪乾淨 build 驗證發現 `detail-focus.ts` 的 MutationObserver 節點型別為 `Element`，傳入 `HTMLElement` focus helper 前需要明確型別收窄；已修正，待下一輪 CI 實際驗證。
+- 本輪乾淨 build 驗證發現 `detail-focus.ts` 的 MutationObserver 節點型別為 `Element`，傳入 `HTMLElement` focus helper 前需要明確型別收窄；已修正，且 1.109.616 的 Verify CI 已實際通過。
 
 ## 12. Final Architecture Acceptance
 - [ ] 所有高風險資料／同步／生命週期問題完成。
