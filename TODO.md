@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.633`。**
+- **目前開發版本：`1.109.634`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -56,17 +56,17 @@
 
 ## 8. Validation / Schema 單一來源
 - [x] 盤點 `src/api.ts`、`src/store.ts`、Worker 與其他資料入口中的重複 schema validation／normalization。
-- [ ] 建立明確的 canonical validation／normalization 邊界，避免同一資料格式在不同模組各自定義。
+- [x] 建立明確的 canonical validation／normalization 邊界，避免同一資料格式在不同模組各自定義。
 - [ ] 確保外部 API、static data、mutation response、migration 進入 Store 前都經過一致驗證。
-- [ ] 保留 `quantity`、Item ID、Category、Work identity 等既有 RULES contract，不因集中化而放寬驗證。
+- [x] 保留 `quantity`、Item ID、Category、Work identity 等既有 RULES contract，不因集中化而放寬驗證。
 
 ### Validation audit note
 - `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 確實存在重複的 Item／Shipping／Image 等 schema checks。
-- 目前三者並非完全同語意：Store 還負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
-- 本輪已抽出 `src/validation.ts` 的共通 primitive/schema checks，API 與 Store 已使用 shared boundary，同時保留 Store 的 canonical context validation 與 normalization。
-- 本輪新增 `verify:validation`：驗證 shared validator exports、API／Store 的實際使用，以及 Store 的 quantity、Item ID、Category、Work identity、forbidden canonical fields 等既有 contract，並對 shared Item／Image／Shipping validator 執行 runtime accepted/rejected cases。
-- 已確認 Worker 目前仍有較窄的 Item／Image／Shipping server-side validation；這是確定的 validation boundary 缺口，先記錄後處理，不直接把前端 `src/validation.ts` 硬套進 Worker runtime。
-- 下一步建立 Worker 自己的 server-side validation module，以與 frontend shared schema contract 對齊結構檢查，同時保留 Worker 專屬 remote-context 檢查（Work、Item ID、Shipping item existence、path 等）。
+- 三者仍各自保留不同責任：Store 負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
+- `src/validation.ts` 已提供 frontend shared primitive/schema boundary，API 與 Store 已使用；Worker 則建立獨立的 `worker/src/validation.ts`，不直接把 frontend module 帶入 Worker runtime。
+- Worker 現已在 `worker/src/index.ts` 的 Item／Image／Shipping 結構驗證邊界使用 Worker validation module，同時保留 Worker 專屬的 Item ID、Category、Work、Shipping item existence、asset path 等 remote-context checks。
+- `verify:validation` 與 `verify:worker-validation` 已驗證 shared／Worker validator exports、實際 import/use、重複結構檢查未回歸，以及 runtime accepted/rejected cases，並由 CI 執行。
+- 仍待完成：確認 static data、mutation response、migration 等所有外部資料入口在進入 Store 前都經過一致驗證。
 
 ## 9. innerHTML / Rendering 安全清理
 - [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
