@@ -1,3 +1,4 @@
+import './home-enhancements.css';
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
 import { sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
@@ -19,19 +20,42 @@ function getWorkRows(store: MerchStore) {
   });
   return store.snapshot.works
     .map((work) => ({ name: work.name, spend: spendingByWork.get(work.name) || 0 }))
+    .filter((row) => row.spend > 0)
     .sort((a, b) => b.spend - a.spend || a.name.localeCompare(b.name, 'zh-Hant'));
 }
 
-function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWorkRows>): void {
-  list.className = 'work-ranking-list';
-  list.innerHTML = rows.length
-    ? rows.map((row, index) => `
-      <div class="work-ranking-row">
-        <span class="work-ranking-rank" aria-hidden="true">${index + 1}</span>
-        <strong class="work-ranking-name">${escapeHtml(row.name)}</strong>
-        <b class="work-ranking-amount">${escapeHtml(money(row.spend))}</b>
-      </div>`).join('')
-    : '<div class="empty-state">目前沒有資料</div>';
+function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
+  const spendingByCharacter = new Map<string, number>();
+  store.snapshot.items.forEach((item) => {
+    const characters = [...new Set((item.characters || []).map((character) => String(character).trim()).filter(Boolean))];
+    if (!characters.length) return;
+    const share = itemValue(item) / characters.length;
+    characters.forEach((character) => spendingByCharacter.set(character, (spendingByCharacter.get(character) || 0) + share));
+  });
+  return sortCharacterRanking([...spendingByCharacter.entries()]);
+}
+
+function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWorkRows>, limit = 5): void {
+  const visibleRows = rows.slice(0, limit);
+  const max = visibleRows[0]?.spend || 1;
+  list.className = 'home-ranking-list work-ranking-list';
+  list.innerHTML = visibleRows.length
+    ? visibleRows.map((row, index) => `
+      <li class="home-ranking-row">
+        <span class="home-ranking-rank" aria-hidden="true">${index + 1}</span>
+        <strong class="home-ranking-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong>
+        <b class="home-ranking-amount">${escapeHtml(money(row.spend))}</b>
+        <span class="home-ranking-bar" aria-hidden="true"><span style="--ranking-progress:${Math.max(4, row.spend / max * 100)}%"></span></span>
+      </li>`).join('')
+    : '<li class="home-ranking-empty">目前沒有資料</li>';
+}
+
+function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], limit = 5): void {
+  const visibleRows = rows.slice(0, limit);
+  list.className = 'favorite-character-list';
+  list.innerHTML = visibleRows.length
+    ? visibleRows.map(([character, spend], index) => `<li class="favorite-character-item"><span class="favorite-character-rank" aria-hidden="true">${index + 1}</span><strong class="favorite-character-name" title="${escapeHtml(character)}" data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong><span class="favorite-character-amount">${escapeHtml(money(spend))}</span></li>`).join('')
+    : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
 
 function ensureWorkModal() {
@@ -50,7 +74,7 @@ function openWorkModal() {
   if (!storeRef) return;
   const modal = ensureWorkModal();
   const list = modal.querySelector<HTMLElement>('#work-ranking-all');
-  if (list) renderWorkRankingRows(list, getWorkRows(storeRef));
+  if (list) renderWorkRankingRows(list, getWorkRows(storeRef), 999);
   modal.hidden = false;
   document.body.classList.add('detail-modal-open');
 }
@@ -73,36 +97,11 @@ function ensureCharacterModal() {
   return modal;
 }
 
-function getCharacterRows(store: MerchStore): CharacterRankingRow[] {
-  const spendingByCharacter = new Map<string, number>();
-  store.snapshot.items.forEach((item) => {
-    const characters = [...new Set((item.characters || []).map((character) => String(character).trim()).filter(Boolean))];
-    if (!characters.length) return;
-    const share = itemValue(item) / characters.length;
-    characters.forEach((character) => spendingByCharacter.set(character, (spendingByCharacter.get(character) || 0) + share));
-  });
-  return sortCharacterRanking([...spendingByCharacter.entries()]);
-}
-
-function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[]): void {
-  list.className = 'favorite-character-list';
-  list.innerHTML = rows.length
-    ? rows.map(([character]) => `<li class="favorite-character-item"><strong data-search-query="${escapeHtml(character)}">${escapeHtml(character)}</strong></li>`).join('')
-    : '<li class="empty-state">目前沒有資料</li>';
-}
-
-function syncHomeCharacterList(): void {
-  if (!storeRef) return;
-  const list = document.querySelector<HTMLElement>('#favorite-character-list');
-  if (!list) return;
-  renderCharacterList(list, getCharacterRows(storeRef).slice(0, 5));
-}
-
 function openCharacterModal() {
   if (!storeRef) return;
   const modal = ensureCharacterModal();
   const list = modal.querySelector<HTMLElement>('#character-list-all');
-  if (list) renderCharacterList(list, getCharacterRows(storeRef));
+  if (list) renderCharacterList(list, getCharacterRows(storeRef), 999);
   modal.hidden = false;
   document.body.classList.add('detail-modal-open');
 }
@@ -111,6 +110,24 @@ function closeCharacterModal() {
   if (!characterModal) return;
   characterModal.hidden = true;
   document.body.classList.remove('detail-modal-open');
+}
+
+function syncHomeRankings(): void {
+  if (!storeRef) return;
+  const workList = document.querySelector<HTMLElement>('#work-bars');
+  const characterList = document.querySelector<HTMLElement>('#character-ranking');
+  if (workList) renderWorkRankingRows(workList, getWorkRows(storeRef));
+  if (characterList) renderCharacterList(characterList, getCharacterRows(storeRef));
+}
+
+function addMoreButton(panel: HTMLElement, label: string, handler: () => void): void {
+  if (panel.querySelector('.home-ranking-more')) return;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'home-ranking-more';
+  button.textContent = label;
+  button.addEventListener('click', handler);
+  panel.appendChild(button);
 }
 
 function install() {
@@ -127,40 +144,20 @@ function install() {
       list.id = 'favorite-character-list';
       list.className = 'favorite-character-list';
     }
-    rankingPanel.setAttribute('role', 'button');
-    rankingPanel.setAttribute('tabindex', '0');
-    rankingPanel.setAttribute('aria-label', '查看全部角色');
-    rankingPanel.addEventListener('click', openCharacterModal);
-    rankingPanel.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openCharacterModal();
-      }
-    });
+    addMoreButton(rankingPanel, '查看全部角色 →', openCharacterModal);
   }
 
   const workPanel = document.querySelector<HTMLElement>('#work-bars')?.closest<HTMLElement>('.panel');
   if (workPanel && !workPanel.dataset.enhancementInstalled) {
     workPanel.dataset.enhancementInstalled = 'true';
-    workPanel.setAttribute('role', 'button');
-    workPanel.setAttribute('tabindex', '0');
-    workPanel.setAttribute('aria-label', '查看作品消費總排行');
-    workPanel.addEventListener('click', (event) => {
-      if ((event.target as HTMLElement | null)?.closest('[data-search-query]')) return;
-      openWorkModal();
-    });
-    workPanel.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openWorkModal();
-      }
-    });
+    workPanel.classList.add('home-work-panel');
+    addMoreButton(workPanel, '查看全部作品排行 →', openWorkModal);
   }
 }
 
 void getStore().then((store) => {
   storeRef = store;
   install();
-  syncHomeCharacterList();
-  store.subscribe(syncHomeCharacterList);
+  syncHomeRankings();
+  store.subscribe(syncHomeRankings);
 }).catch(() => undefined);
