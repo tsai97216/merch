@@ -12,6 +12,35 @@ function focusableElements(dialog: HTMLElement): HTMLElement[] {
   )].filter((element) => !element.hidden && element.offsetParent !== null);
 }
 
+export function setupDialogFocus(dialog: HTMLElement): () => void {
+  const restoreTarget = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  const onKeydown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Tab') return;
+    const elements = focusableElements(dialog);
+    if (!elements.length) {
+      event.preventDefault();
+      dialog.focus();
+      return;
+    }
+    const first = elements[0];
+    const last = elements[elements.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+  document.addEventListener('keydown', onKeydown, true);
+  const initial = dialog.querySelector<HTMLElement>('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+  (initial || dialog).focus();
+  return () => {
+    document.removeEventListener('keydown', onKeydown, true);
+    if (restoreTarget && document.contains(restoreTarget)) restoreTarget.focus();
+  };
+}
+
 function rememberTrigger(event: Event): void {
   const target = event.target;
   if (!(target instanceof Element)) return;
