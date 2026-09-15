@@ -3,7 +3,9 @@
   "workId": "zenless-zone-zero",
   "title": "葉瞬光 線下紙卡吊飾",
   "series": [],
-  "characters": ["葉瞬光"],
+  "characters": [
+    "葉瞬光"
+  ],
   "category": "k",
   "manufacturer": "米哈遊",
   "quantity": 1,
@@ -18,5 +20,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "ZZZk003-1789438952618",
+      "file": "ZZZk003.jpeg"
+    }
+  ]
 }

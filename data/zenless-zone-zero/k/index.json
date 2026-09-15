@@ -7,7 +7,9 @@
       "id": "ZZZk006",
       "path": "data/zenless-zone-zero/k/ZZZk006/data.json",
       "title": "照 線下紙卡吊飾",
-      "characters": ["照"],
+      "characters": [
+        "照"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
@@ -16,7 +18,9 @@
       "id": "ZZZk005",
       "path": "data/zenless-zone-zero/k/ZZZk005/data.json",
       "title": "千夏 線下紙卡吊飾",
-      "characters": ["千夏"],
+      "characters": [
+        "千夏"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 2,
       "status": "received"
@@ -25,25 +29,20 @@
       "id": "ZZZk004",
       "path": "data/zenless-zone-zero/k/ZZZk004/data.json",
       "title": "愛芮 線下紙卡吊飾",
-      "characters": ["愛芮"],
+      "characters": [
+        "愛芮"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 2,
-      "status": "received"
-    },
-    {
-      "id": "ZZZk003",
-      "path": "data/zenless-zone-zero/k/ZZZk003/data.json",
-      "title": "葉瞬光 線下紙卡吊飾",
-      "characters": ["葉瞬光"],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
       "status": "received"
     },
     {
       "id": "ZZZk002",
       "path": "data/zenless-zone-zero/k/ZZZk002/data.json",
       "title": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
-      "characters": ["儀玄"],
+      "characters": [
+        "儀玄"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received",
@@ -53,11 +52,24 @@
       "id": "ZZZk001",
       "path": "data/zenless-zone-zero/k/ZZZk001/data.json",
       "title": "角色炫彩亞克力掛件 奇趣修行系列 星見雅",
-      "characters": ["星見雅"],
+      "characters": [
+        "星見雅"
+      ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received",
       "cover": "ZZZk001.jpeg"
+    },
+    {
+      "id": "ZZZk003",
+      "path": "data/zenless-zone-zero/k/ZZZk003/data.json",
+      "title": "葉瞬光 線下紙卡吊飾",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
