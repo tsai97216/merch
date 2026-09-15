@@ -1,5 +1,6 @@
 import type { Item, StoreState, Work } from './types';
 import { dataError } from './error';
+import { runWithSync } from './sync-overlay';
 
 type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; message?: string } };
 type ApiData = Pick<StoreState, 'works' | 'version' | 'shipping'>;
@@ -34,17 +35,19 @@ function validateAssetDeleteResult(data: unknown): AssetDeleteResult { if (!data
 async function getStaticShipping(): Promise<StoreState['shipping'] | null> { try { const response = await fetch('./data/shipping.json', { cache: 'no-store' }); if (!response.ok) return null; const payload = await response.json(); if (!isRecord(payload) || payload.schemaVersion !== 1) return null; return validateShippingList(payload.records); } catch { return null; } }
 export async function getRemoteData(): Promise<ApiData> { try { const response = await fetch('./data/collection.json', { cache: 'no-store' }); if (response.ok) { const data = validateData(await response.json()); const shipping = await getStaticShipping(); return shipping ? { ...data, shipping } : data; } } catch {} return validateData(await request('/data')); }
 async function getAuthoritativeRemoteData(): Promise<ApiData> { return validateData(await request('/data')); }
-export async function putItem(item: Item): Promise<ApiData> { validateMutationResult(await request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item: toStorageItem(item) }) })); return getAuthoritativeRemoteData(); }
-export async function deleteItem(id: string): Promise<ApiData> { validateMutationResult(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); return getAuthoritativeRemoteData(); }
-export async function createWork(input: WorkPayload): Promise<ApiData> { return validateData(await request('/works', { method: 'POST', body: JSON.stringify({ work: input }) })); }
-export async function updateWork(id: string, input: Omit<WorkPayload, 'id'>): Promise<ApiData> { return validateData(await request(`/works/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ work: input }) })); }
-export async function deleteWork(id: string): Promise<ApiData> { return validateData(await request(`/works/${encodeURIComponent(id)}`, { method: 'DELETE' })); }
+function mutationLabel(method: string): string { if (method === 'DELETE') return '正在刪除並同步資料…'; if (method === 'PUT' || method === 'PATCH') return '正在編輯並同步資料…'; if (method === 'POST') return '正在新增並同步資料…'; return '正在同步資料…'; }
+async function mutate<T>(method: string, operation: () => Promise<T>): Promise<T> { return runWithSync(mutationLabel(method), operation); }
+export async function putItem(item: Item): Promise<ApiData> { return mutate('PUT', async () => { validateMutationResult(await request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item: toStorageItem(item) }) })); return getAuthoritativeRemoteData(); }); }
+export async function deleteItem(id: string): Promise<ApiData> { return mutate('DELETE', async () => { validateMutationResult(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); return getAuthoritativeRemoteData(); }); }
+export async function createWork(input: WorkPayload): Promise<ApiData> { return mutate('POST', () => request('/works', { method: 'POST', body: JSON.stringify({ work: input }) }).then(validateData)); }
+export async function updateWork(id: string, input: Omit<WorkPayload, 'id'>): Promise<ApiData> { return mutate('PUT', () => request(`/works/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ work: input }) }).then(validateData)); }
+export async function deleteWork(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/works/${encodeURIComponent(id)}`, { method: 'DELETE' }).then(validateData)); }
 export async function getAsset(path: string): Promise<Blob> { const headers = new Headers({ Accept: 'image/*' }); const token = authToken(); if (token) headers.set('Authorization', `Bearer ${token}`); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS); try { const response = await fetch(endpoint(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`), { headers, cache: 'no-store', signal: controller.signal }); if (!response.ok) throw dataError(`圖片讀取失敗（${response.status}）。`); return await response.blob(); } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') throw dataError('圖片請求逾時，請稍後再試。'); throw error; } finally { window.clearTimeout(timer); } }
-export async function putAsset(path: string, content: string): Promise<AssetResult> { return validateAssetResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', body: JSON.stringify({ path, content }) })); }
-export async function deleteAsset(path: string): Promise<AssetDeleteResult> { return validateAssetDeleteResult(await request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' })); }
+export async function putAsset(path: string, content: string): Promise<AssetResult> { return mutate('PUT', () => request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', body: JSON.stringify({ path, content }) }).then(validateAssetResult)); }
+export async function deleteAsset(path: string): Promise<AssetDeleteResult> { return mutate('DELETE', () => request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).then(validateAssetDeleteResult)); }
 export async function getShipping(): Promise<StoreState['shipping']> { const data = await request('/shipping'); if (!Array.isArray(data) || !data.every(validateShipping)) throw dataError('API 回傳運費資料格式無效。'); return data as StoreState['shipping']; }
-export async function putShipping(record: StoreState['shipping'][number]): Promise<ApiData> { return validateData(await request(`/shipping/${encodeURIComponent(record.id)}`, { method: 'PUT', body: JSON.stringify({ shipping: record }) })); }
-export async function deleteShipping(id: string): Promise<ApiData> { return validateData(await request(`/shipping/${encodeURIComponent(id)}`, { method: 'DELETE' })); }
+export async function putShipping(record: StoreState['shipping'][number]): Promise<ApiData> { return mutate('PUT', () => request(`/shipping/${encodeURIComponent(record.id)}`, { method: 'PUT', body: JSON.stringify({ shipping: record }) }).then(validateData)); }
+export async function deleteShipping(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/shipping/${encodeURIComponent(id)}`, { method: 'DELETE' }).then(validateData)); }
 export async function getAuthStatus(): Promise<AuthStatus> { return validateAuthStatus(await request('/auth/status')); }
 export function hasAdminSecret(): boolean { return Boolean(authToken()); }
 export function setAdminSecret(value: string): void { try { if (value.trim()) sessionStorage.setItem('merch-admin-secret', value.trim()); else sessionStorage.removeItem('merch-admin-secret'); } catch { throw dataError('無法儲存管理驗證資訊。'); } }
