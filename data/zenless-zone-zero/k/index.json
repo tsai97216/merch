@@ -4,17 +4,6 @@
   "category": "k",
   "items": [
     {
-      "id": "ZZZk006",
-      "path": "data/zenless-zone-zero/k/ZZZk006/data.json",
-      "title": "照 線下紙卡吊飾",
-      "characters": [
-        "照"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZk002",
       "path": "data/zenless-zone-zero/k/ZZZk002/data.json",
       "title": "角色炫彩亞克力掛件 奇趣修行系列 儀玄",
@@ -73,6 +62,17 @@
       "quantity": 2,
       "status": "received",
       "cover": "ZZZk005.jpeg"
+    },
+    {
+      "id": "ZZZk006",
+      "path": "data/zenless-zone-zero/k/ZZZk006/data.json",
+      "title": "照 線下紙卡吊飾",
+      "characters": [
+        "照"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }

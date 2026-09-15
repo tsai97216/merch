@@ -3,15 +3,27 @@
   "workId": "zenless-zone-zero",
   "title": "照 線下紙卡吊飾",
   "series": [],
-  "characters": ["照"],
+  "characters": [
+    "照"
+  ],
   "category": "k",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
   "notes": "2026電玩展",
-  "purchase": {"platform": "線下活動", "date": "2026-01-29"},
+  "purchase": {
+    "platform": "線下活動",
+    "date": "2026-01-29"
+  },
   "arrival": {},
-  "afterSales": {"status": "無"},
-  "images": []
+  "afterSales": {
+    "status": "無"
+  },
+  "images": [
+    {
+      "id": "ZZZk006-1789439039540",
+      "file": "ZZZk006.jpeg"
+    }
+  ]
 }
