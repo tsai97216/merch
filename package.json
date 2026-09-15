@@ -24,6 +24,7 @@
     "verify:worker-read": "node scripts/verify-worker-read-scope.mjs",
     "verify:worker-image": "node scripts/verify-worker-image-semantics.mjs",
     "verify:worker-transaction": "node scripts/verify-worker-transaction.mjs",
+    "verify:worker-validation": "node scripts/verify-worker-validation-contract.mjs",
     "verify:api-load": "node scripts/verify-api-load-contract.mjs",
     "verify:api-mutation": "node scripts/verify-api-mutation-contract.mjs",
     "verify:work-identity": "node scripts/verify-work-identity-contract.mjs",
