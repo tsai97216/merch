@@ -22,8 +22,10 @@
   },
   "images": [
     {
-      "id": "ZZZc007-1789438877877",
-      "file": "ZZZc007.jpeg"
+      "id": "ZZZc007-1789438881835-8xmdq",
+      "file": "ZZZc007.jpeg",
+      "alt": "萊卡恩 閃卡",
+      "isCover": true
     }
   ]
 }
