@@ -1,7 +1,7 @@
 import './home-enhancements.css';
 import { getStore, type MerchStore } from './store';
 import type { Item } from './types';
-import { sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
+import { rankAt, rankValueAt, sortCharacterRanking, type CharacterRankingRow } from './home-ranking';
 
 const money = (n: number) => `NT$ ${new Intl.NumberFormat('zh-TW').format(Number(n))}`;
 const quantityOf = (item: Item) => Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
@@ -47,13 +47,15 @@ function getCharacterItemCounts(store: MerchStore): Map<string, number> {
 function renderWorkRankingRows(list: HTMLElement, rows: ReturnType<typeof getWorkRows>, limit = 5): void {
   const visibleRows = rows.slice(0, limit);
   const max = visibleRows[0]?.spend || 1;
+  const ranks = visibleRows.map((row) => row.spend);
   list.className = 'home-ranking-list work-ranking-list';
   list.innerHTML = visibleRows.length
     ? visibleRows.map((row, index) => {
       const progress = Math.max(2, Math.round(row.spend / max * 100));
+      const rank = rankValueAt(ranks, index);
       return `
       <li class="ranking-line work-ranking-line" data-search-query="${escapeHtml(row.name)}" role="link" tabindex="0" aria-label="搜尋作品 ${escapeHtml(row.name)}">
-        <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+        <span class="ranking-position" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
         <div class="ranking-content">
           <div class="ranking-heading"><strong class="ranking-title" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</strong><b class="ranking-value">${escapeHtml(money(row.spend))}</b></div>
           <div class="ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
@@ -72,9 +74,10 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
     ? visibleRows.map(([character, spend], index) => {
       const progress = Math.max(2, Math.round(spend / max * 100));
       const count = counts.get(character) || 0;
+      const rank = rankAt(rows, index);
       return `
       <li class="ranking-line character-ranking-line" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
-        <span class="ranking-position" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+        <span class="ranking-position" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
         <div class="character-ranking-info"><strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)}</strong><span class="character-ranking-count">${count} 件</span></div>
         <div class="character-ranking-meter ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
         <b class="ranking-value">${escapeHtml(money(spend))}</b>
