@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.634`。**
+- **目前開發版本：`1.109.635`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -57,16 +57,16 @@
 ## 8. Validation / Schema 單一來源
 - [x] 盤點 `src/api.ts`、`src/store.ts`、Worker 與其他資料入口中的重複 schema validation／normalization。
 - [x] 建立明確的 canonical validation／normalization 邊界，避免同一資料格式在不同模組各自定義。
-- [ ] 確保外部 API、static data、mutation response、migration 進入 Store 前都經過一致驗證。
+- [x] 確認外部 API、static data、mutation response、migration 產出的資料進入 Store 前都經過一致的資料驗證邊界。
 - [x] 保留 `quantity`、Item ID、Category、Work identity 等既有 RULES contract，不因集中化而放寬驗證。
 
 ### Validation audit note
-- `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 確實存在重複的 Item／Shipping／Image 等 schema checks。
-- 三者仍各自保留不同責任：Store 負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
+- `src/api.ts`、`src/store.ts` 與 `worker/src/index.ts` 各自保留不同責任：API 負責 untrusted response boundary，Store 負責 canonical storage → enriched Store model 的 normalization，Worker 負責 server-side mutation boundary。
 - `src/validation.ts` 已提供 frontend shared primitive/schema boundary，API 與 Store 已使用；Worker 則建立獨立的 `worker/src/validation.ts`，不直接把 frontend module 帶入 Worker runtime。
 - Worker 現已在 `worker/src/index.ts` 的 Item／Image／Shipping 結構驗證邊界使用 Worker validation module，同時保留 Worker 專屬的 Item ID、Category、Work、Shipping item existence、asset path 等 remote-context checks。
+- Static `collection.json`、`shipping.json`、generated category/index/item data 在進入 Store 時均有 schema／結構驗證；API remote data 與 mutation response 亦先經 validation 再由 Store 的 remote-apply flow 接收。
+- Migration completion verifier 會檢查新資料布局、schemaVersion、Item/index identity、canonical 欄位、quantity、圖片 metadata／實體檔案一致性與 legacy JSON 清除；Store 載入 migrated data 時仍會再次執行資料邊界驗證。
 - `verify:validation` 與 `verify:worker-validation` 已驗證 shared／Worker validator exports、實際 import/use、重複結構檢查未回歸，以及 runtime accepted/rejected cases，並由 CI 執行。
-- 仍待完成：確認 static data、mutation response、migration 等所有外部資料入口在進入 Store 前都經過一致驗證。
 
 ## 9. innerHTML / Rendering 安全清理
 - [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
