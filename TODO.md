@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.630`。**
+- **目前開發版本：`1.109.631`。**
 - 本輪以現有程式與資料流重新盤點，不進行整體重寫。
 - 優先處理資料權威性、版本一致性、驗證覆蓋與架構邊界，再處理效能與清理型工作。
 
@@ -65,7 +65,8 @@
 - 目前三者並非完全同語意：Store 還負責 canonical storage → enriched Store model 的 normalization；API 負責 untrusted response boundary；Worker 負責 server-side mutation boundary。
 - 本輪已抽出 `src/validation.ts` 的共通 primitive/schema checks，API 與 Store 已使用 shared boundary，同時保留 Store 的 canonical context validation 與 normalization。
 - 本輪新增 `verify:validation`：驗證 shared validator exports、API／Store 的實際使用，以及 Store 的 quantity、Item ID、Category、Work identity、forbidden canonical fields 等既有 contract，並對 shared Item／Image／Shipping validator 執行 runtime accepted/rejected cases。
-- Worker 暫不直接共用前端 `src/validation.ts`，仍保留 server-side boundary；下一步需評估是否能在不改變兩端語意與 runtime 邊界的前提下共用 schema contract。
+- 已確認 Worker 目前仍有較窄的 Item／Image／Shipping server-side validation；這是確定的 validation boundary 缺口，先記錄後處理，不直接把前端 `src/validation.ts` 硬套進 Worker runtime。
+- 下一步建立 Worker 自己的 server-side validation module，以與 frontend shared schema contract 對齊結構檢查，同時保留 Worker 專屬 remote-context 檢查（Work、Item ID、Shipping item existence、path 等）。
 
 ## 9. innerHTML / Rendering 安全清理
 - [x] 全面盤點目前仍存在的 `innerHTML` 使用位置。
