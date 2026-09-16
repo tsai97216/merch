@@ -3,7 +3,9 @@
   "workId": "wuthering-waves",
   "title": "尤諾 合影卡",
   "series": [],
-  "characters": ["尤諾"],
+  "characters": [
+    "尤諾"
+  ],
   "category": "c",
   "manufacturer": "庫洛",
   "quantity": 1,
@@ -19,5 +21,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "WWc004-1789558238840",
+      "file": "WWc004.jpeg"
+    }
+  ]
 }
