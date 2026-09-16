@@ -61,10 +61,8 @@ async function uploadImage(file: File): Promise<void> {
   try {
     const optimizedFile = await optimizeImage(file);
     const path = imagePath(item, optimizedFile, imageList(item).length);
-    await putAsset(path, await fileToBase64(optimizedFile));
-    const nextImages = [...imageList(item), imageMeta(item, path, item.title)];
-    try { await saveImages(item, nextImages); } catch (error) { try { await deleteAsset(path); } catch {} throw error; }
-    showToast(nextImages.length === 1 ? '圖片已上傳並設為主圖。' : '圖片已上傳。', 'success');
+    const result = await putAsset(path, await fileToBase64(optimizedFile));
+    showToast(result.replaced ? '圖片已替換。' : '圖片已上傳並同步。', 'success');
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片上傳失敗。', 'error'); }
   finally { imageSaving = false; render(); }
 }
@@ -76,12 +74,9 @@ async function replaceImage(file: File, imageId: string): Promise<void> {
   imageSaving = true; render(); showToast('圖片替換同步中，請稍候。', 'info');
   const currentPath = `data/${item.workId}/${item.category}/${item.id}/images/${current.file}`;
   try {
-    const previousContent = await blobToBase64(await getAsset(currentPath));
     const optimizedFile = await optimizeImage(file);
     const path = imagePath(item, optimizedFile, index);
     await putAsset(path, await fileToBase64(optimizedFile));
-    const nextImages = images.map(image => image.id === imageId ? imageMeta(item, path, image.alt || item.title, image.id, image.isCover === true) : image);
-    try { await saveImages(item, nextImages); } catch (error) { try { await putAsset(currentPath, previousContent); } catch { throw new Error('圖片 metadata 更新失敗，且舊圖片回復失敗，請立即重新載入資料確認。'); } if (path !== currentPath) { try { await deleteAsset(path); } catch {} } throw error; }
     if (path !== currentPath) {
       try { await deleteAsset(currentPath); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
     }
@@ -93,11 +88,8 @@ async function deleteImage(imageId: string): Promise<void> {
   const item = selectedItem(); const image = item ? imageList(item).find(entry => entry.id === imageId) : undefined;
   if (!item || !image || saving || imageSaving || !window.confirm(`確定要刪除「${image.file}」？`)) return;
   imageSaving = true; render(); showToast('圖片刪除同步中，請稍候。', 'info');
-  const originalImages = imageList(item); const nextImages = normalizeCover(originalImages.filter(entry => entry.id !== imageId));
   try {
-    await saveImages(item, nextImages);
-    try { await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`); }
-    catch (deleteError) { try { await saveImages(item, originalImages); } catch { throw new Error('圖片檔案刪除失敗，且 metadata rollback 也失敗，請立即重新載入資料確認。'); } throw deleteError; }
+    await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`);
     showToast('圖片已刪除。', 'success');
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片刪除失敗。', 'error'); }
   finally { imageSaving = false; render(); }
