@@ -1,0 +1,27 @@
+{
+  "id": "WWt002",
+  "workId": "wuthering-waves",
+  "title": "愛彌斯貼紙",
+  "series": [
+    "鳴潮二周年"
+  ],
+  "characters": [
+    "愛彌斯"
+  ],
+  "category": "t",
+  "manufacturer": "庫洛",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "鳴潮二週年線下活動",
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-22"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
