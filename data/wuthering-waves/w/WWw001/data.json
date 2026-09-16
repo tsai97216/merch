@@ -23,5 +23,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "WWw001-1789561513165",
+      "file": "WWw001.jpeg"
+    }
+  ]
 }
