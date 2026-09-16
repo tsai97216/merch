@@ -1,10 +1,14 @@
 let lastFocusedElement: HTMLElement | null = null;
-const statisticsDialogCleanups = new WeakMap<HTMLElement, () => void>();
 
 function getDialog(): HTMLElement | null {
   const modal = document.querySelector<HTMLElement>('.item-detail-modal .item-detail-dialog[data-detail-item-id]');
   if (!modal || modal.closest<HTMLElement>('.item-detail-modal')?.hidden) return null;
   return modal;
+}
+
+function getStatisticsDialog(): HTMLElement | null {
+  const dialogs = [...document.querySelectorAll<HTMLElement>('.statistics-detail-dialog')];
+  return dialogs.at(-1) ?? null;
 }
 
 function focusableElements(dialog: HTMLElement): HTMLElement[] {
@@ -42,55 +46,22 @@ export function setupDialogFocus(dialog: HTMLElement): () => void {
   };
 }
 
-function observeStatisticsDialogs(): void {
-  const observer = new MutationObserver((records) => {
-    for (const record of records) {
-      record.addedNodes.forEach((node) => {
-        if (!(node instanceof Element)) return;
-        const dialogs: HTMLElement[] = [];
-        if (node instanceof HTMLElement && node.matches('.statistics-detail-dialog')) dialogs.push(node);
-        dialogs.push(...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'));
-        dialogs.forEach((dialog) => {
-          if (statisticsDialogCleanups.has(dialog)) return;
-          statisticsDialogCleanups.set(dialog, setupDialogFocus(dialog));
-        });
-      });
-      record.removedNodes.forEach((node) => {
-        if (!(node instanceof Element)) return;
-        const dialogs: HTMLElement[] = [];
-        if (node instanceof HTMLElement && node.matches('.statistics-detail-dialog')) dialogs.push(node);
-        dialogs.push(...node.querySelectorAll<HTMLElement>('.statistics-detail-dialog'));
-        dialogs.forEach((dialog) => {
-          statisticsDialogCleanups.get(dialog)?.();
-          statisticsDialogCleanups.delete(dialog);
-        });
-      });
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
 function rememberTrigger(event: Event): void {
   const target = event.target;
   if (!(target instanceof Element)) return;
-  const card = target.closest<HTMLElement>('.item-card');
-  if (card) lastFocusedElement = card;
+  const trigger = target.closest<HTMLElement>('.item-card, [data-chart-open], .statistics-detail-row-clickable, .statistics-work-detail-row');
+  if (trigger) lastFocusedElement = trigger;
 }
 
-function handleKeydown(event: KeyboardEvent): void {
-  const dialog = getDialog();
-  if (!dialog || event.key !== 'Tab') return;
-
+function trapFocus(dialog: HTMLElement, event: KeyboardEvent): void {
   const elements = focusableElements(dialog);
   if (!elements.length) {
     event.preventDefault();
     dialog.focus();
     return;
   }
-
   const first = elements[0];
   const last = elements[elements.length - 1];
-
   if (event.shiftKey && document.activeElement === first) {
     event.preventDefault();
     last.focus();
@@ -100,11 +71,29 @@ function handleKeydown(event: KeyboardEvent): void {
   }
 }
 
+function handleKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'Tab') return;
+  const dialog = getDialog();
+  if (dialog) {
+    trapFocus(dialog, event);
+    return;
+  }
+  const statisticsDialog = getStatisticsDialog();
+  if (statisticsDialog) trapFocus(statisticsDialog, event);
+}
+
 function syncFocus(): void {
   const dialog = getDialog();
   if (dialog) {
     const close = dialog.querySelector<HTMLElement>('.item-detail-close');
     (close || dialog).focus();
+    return;
+  }
+
+  const statisticsDialog = getStatisticsDialog();
+  if (statisticsDialog) {
+    const close = statisticsDialog.querySelector<HTMLElement>('.statistics-detail-close');
+    (close || statisticsDialog).focus();
     return;
   }
 
@@ -117,5 +106,3 @@ function syncFocus(): void {
 document.addEventListener('click', rememberTrigger, true);
 document.addEventListener('keydown', handleKeydown, true);
 window.addEventListener('hashchange', () => window.setTimeout(syncFocus, 0));
-window.addEventListener('DOMContentLoaded', observeStatisticsDialogs, { once: true });
-if (document.readyState !== 'loading') observeStatisticsDialogs();
