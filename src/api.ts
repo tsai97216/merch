@@ -7,7 +7,7 @@ type ApiResponse = { ok: boolean; data?: unknown; error?: { code?: string; messa
 type ApiData = Pick<StoreState, 'works' | 'version' | 'shipping'>;
 type ImportMetaWithEnv = ImportMeta & { env?: { VITE_MERCH_API_URL?: string } };
 type AuthStatus = { authenticated: boolean };
-type ApiFailure = { apiCode?: string; status: number };
+type ApiFailure = { apiCode?: string; status: number; workerVersion?: string };
 type AssetResult = { path: string; replaced: boolean; version: string };
 type MutationResult = { version: string };
 type AssetDeleteResult = { path: string; deleted: boolean; version: string };
@@ -20,7 +20,22 @@ const FORBIDDEN_STORAGE_FIELDS = ['workName', 'shipping', 'material', 'release',
 function endpoint(path: string): string { return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`; }
 function authToken(): string { try { return sessionStorage.getItem('merch-admin-secret') || ''; } catch { return ''; } }
 function toStorageItem(item: Item): Item { const copy = structuredClone(item) as Item & Record<string, unknown>; for (const field of FORBIDDEN_STORAGE_FIELDS) delete copy[field]; return copy; }
-async function request(path: string, init: RequestInit = {}): Promise<unknown> { const headers = new Headers(init.headers); headers.set('Accept', 'application/json'); if (init.body) headers.set('Content-Type', 'application/json'); const token = authToken(); if (token) headers.set('Authorization', `Bearer ${token}`); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS); let response: Response; try { response = await fetch(endpoint(path), { ...init, headers, cache: 'no-store', signal: controller.signal }); } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') throw dataError('API 請求逾時，請稍後再試。'); throw dataError('API 網路連線失敗，請稍後再試。'); } finally { window.clearTimeout(timer); } let payload: ApiResponse | null = null; try { payload = await response.json() as ApiResponse; } catch {} if (!response.ok || !payload?.ok) { const failure: ApiFailure = { apiCode: payload?.error?.code, status: response.status }; throw dataError(payload?.error?.message || `API 請求失敗（${response.status}）`, failure); } return payload.data; }
+async function request(path: string, init: RequestInit = {}): Promise<unknown> {
+  const headers = new Headers(init.headers); headers.set('Accept', 'application/json'); if (init.body) headers.set('Content-Type', 'application/json'); const token = authToken(); if (token) headers.set('Authorization', `Bearer ${token}`);
+  const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS); let response: Response;
+  try { response = await fetch(endpoint(path), { ...init, headers, cache: 'no-store', signal: controller.signal }); }
+  catch (error) { if (error instanceof DOMException && error.name === 'AbortError') throw dataError('API 請求逾時，請稍後再試。'); throw dataError('API 網路連線失敗，請稍後再試。'); }
+  finally { window.clearTimeout(timer); }
+  let payload: ApiResponse | null = null; try { payload = await response.json() as ApiResponse; } catch {}
+  if (!response.ok || !payload?.ok) {
+    const workerVersion = response.headers.get('X-Merch-Worker-Version') || undefined;
+    const failure: ApiFailure = { apiCode: payload?.error?.code, status: response.status, workerVersion };
+    const message = payload?.error?.message || `API 請求失敗（${response.status}）`;
+    const detail = [failure.apiCode, `HTTP ${failure.status}`, workerVersion ? `Worker ${workerVersion}` : ''].filter(Boolean).join(' · ');
+    throw dataError(`${message}${detail ? ` [${detail}]` : ''}`, failure);
+  }
+  return payload.data;
+}
 function validateImage(value: unknown): void { if (!isValidImage(value)) throw dataError('API 回傳圖片資料格式無效。'); }
 function validateItem(value: unknown): value is Item { if (!isValidItem(value)) return false; return true; }
 function validateWork(value: unknown): value is Work { if (!isRecord(value) || typeof value.id !== 'string' || !value.id.trim() || typeof value.name !== 'string' || typeof value.code !== 'string' || !value.code.trim() || !Array.isArray(value.items) || !value.items.every(validateItem)) return false; return value.items.every(item => item.workId === value.id); }
@@ -40,13 +55,13 @@ export async function putItem(item: Item): Promise<ApiData> { return mutate('PUT
 export async function deleteItem(id: string): Promise<ApiData> { return mutate('DELETE', async () => { validateMutationResult(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); return getAuthoritativeRemoteData(); }); }
 export async function createWork(input: WorkPayload): Promise<ApiData> { return mutate('POST', () => request('/works', { method: 'POST', body: JSON.stringify({ work: input }) }).then(validateData)); }
 export async function updateWork(id: string, input: Omit<WorkPayload, 'id'>): Promise<ApiData> { return mutate('PUT', () => request(`/works/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ work: input }) }).then(validateData)); }
-export async function deleteWork(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/works/${encodeURIComponent(id)}`, { method: 'DELETE' }).then(validateData)); }
+export async function deleteWork(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/works/${encodeURIComponent(id)}`).then(validateData)); }
 export async function getAsset(path: string): Promise<Blob> { const headers = new Headers({ Accept: 'image/*' }); const token = authToken(); if (token) headers.set('Authorization', `Bearer ${token}`); const controller = new AbortController(); const timer = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS); try { const response = await fetch(endpoint(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`), { headers, cache: 'no-store', signal: controller.signal }); if (!response.ok) throw dataError(`圖片讀取失敗（${response.status}）。`); return await response.blob(); } catch (error) { if (error instanceof DOMException && error.name === 'AbortError') throw dataError('圖片請求逾時，請稍後再試。'); throw error; } finally { window.clearTimeout(timer); } }
 export async function putAsset(path: string, content: string): Promise<AssetResult> { return mutate('PUT', () => request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'PUT', body: JSON.stringify({ path, content }) }).then(validateAssetResult)); }
 export async function deleteAsset(path: string): Promise<AssetDeleteResult> { return mutate('DELETE', () => request(`/assets/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }).then(validateAssetDeleteResult)); }
 export async function getShipping(): Promise<StoreState['shipping']> { const data = await request('/shipping'); if (!Array.isArray(data) || !data.every(validateShipping)) throw dataError('API 回傳運費資料格式無效。'); return data as StoreState['shipping']; }
 export async function putShipping(record: StoreState['shipping'][number]): Promise<ApiData> { return mutate('PUT', () => request(`/shipping/${encodeURIComponent(record.id)}`, { method: 'PUT', body: JSON.stringify({ shipping: record }) }).then(validateData)); }
-export async function deleteShipping(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/shipping/${encodeURIComponent(id)}`, { method: 'DELETE' }).then(validateData)); }
+export async function deleteShipping(id: string): Promise<ApiData> { return mutate('DELETE', () => request(`/shipping/${encodeURIComponent(id)}`).then(validateData)); }
 export async function getAuthStatus(): Promise<AuthStatus> { return validateAuthStatus(await request('/auth/status')); }
 export function hasAdminSecret(): boolean { return Boolean(authToken()); }
 export function setAdminSecret(value: string): void { try { if (value.trim()) sessionStorage.setItem('merch-admin-secret', value.trim()); else sessionStorage.removeItem('merch-admin-secret'); } catch { throw dataError('無法儲存管理驗證資訊。'); } }
