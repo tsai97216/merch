@@ -13,7 +13,7 @@ interface Env {
 type AssetRequest = { path?: unknown; content?: unknown };
 type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.740';
+const WORKER_VERSION = '1.109.782';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -90,13 +90,6 @@ async function readCurrentAssetFromR2(env: Env, path: string): Promise<Uint8Arra
   return new Uint8Array(await new Response(asset.body).arrayBuffer());
 }
 
-async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
-  const fallbackRequest = new Request(request.url, { method: 'GET', headers: request.headers });
-  const response = await app.fetch(fallbackRequest, env);
-  if (!response.ok) return null;
-  return new Uint8Array(await response.arrayBuffer());
-}
-
 async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
   let parsed: { bodyText: string; bytes: Uint8Array };
   try {
@@ -107,12 +100,12 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
 
   let previous: Uint8Array | null = null;
   try {
-    // R2 is the authoritative image store. When replacing an existing R2 object,
-    // capture it directly for rollback instead of making a fragile GitHub read first.
+    // R2 is the authoritative image store. Only an existing R2 object needs
+    // to be captured for rollback. A missing R2 object is a normal new-upload
+    // case and must not trigger a fragile GitHub asset read.
     previous = await readCurrentAssetFromR2(env, path);
-    if (!previous) previous = await readCurrentAssetFromGitHub(request, env);
   } catch (error) {
-    console.error('Failed to read previous image before R2 mirror PUT.', error);
+    console.error('Failed to read previous image from R2 before mirror PUT.', error);
     return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未寫入 R2 或 GitHub：${errorMessage(error)}`, 502);
   }
 
