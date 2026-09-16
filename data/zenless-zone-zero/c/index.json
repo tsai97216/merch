@@ -86,6 +86,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZc006.jpeg"
+    },
+    {
+      "id": "ZZZc008",
+      "path": "data/zenless-zone-zero/c/ZZZc008/data.json",
+      "title": "閃卡 儀玄",
+      "characters": [
+        "儀玄"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
