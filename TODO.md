@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.689`。**
+- **目前開發版本：`1.109.690`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -37,10 +37,12 @@
 - [x] Worker 已攔截 GitHub mutation 的未處理 exception，失敗時回傳結構化錯誤並執行 R2 rollback。
 - [x] R2 PUT 已先完整讀取並保存 JSON request body，再建立新的 Request 傳給 GitHub mutation。
 - [x] 確認 500 的實際根因之一：一次性 `repair-lockfile-once.yml` 會在每次使用者 push 後再次修改 `main`，與 Worker 的 atomic commit 發生 HEAD race，造成 `資料在寫入期間已被其他操作更新`。該 workflow 已移除。
+- [x] 正式網站已成功完成一般圖片新增，確認 R2 → GitHub mutation → 前端顯示的基本上傳流程可用。
 
 ### 5. 發布前驗證
-- [ ] 相關 verification / Build 通過。
-- [ ] 涉及正式部署時確認 GitHub Actions 與正式網站行為。
+- [x] 相關 verification / Build 通過。
+- [x] 最新圖片新增 commit 的 GitHub Actions `Verify` 與 `Deploy` 均成功完成。
+- [ ] 正式網站行為的完整驗收仍需補上邊界圖片、替換既有圖片等案例。
 - [ ] 實際驗收發現的問題，在修正前先記錄於本文件，再回到對應的根因處理。
 
 ## Maintenance rule
