@@ -23,6 +23,15 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRv003",
+      "path": "data/honkai-star-rail/v/HSRv003/data.json",
+      "title": "主題鴨舌帽",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
