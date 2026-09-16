@@ -1,7 +1,7 @@
 {
   "name": "chi-merch",
   "private": true,
-  "version": "1.109.797",
+  "version": "1.109.798",
   "type": "module",
   "scripts": {
     "dev": "vite",
