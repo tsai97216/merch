@@ -1,18 +1,21 @@
 {
   "id": "HSRo004",
   "workId": "honkai-star-rail",
-  "title": "背包",
-  "series": [],
+  "title": "普狸策後背包",
+  "series": [
+    "Run to 歡愉"
+  ],
   "characters": [],
   "category": "o",
   "manufacturer": "米哈遊",
   "quantity": 1,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "崩鐵路跑活動",
   "purchase": {
     "currency": "TWD",
-    "platform": "線下活動"
+    "platform": "線下活動",
+    "date": "2026-05-09"
   },
   "arrival": {},
   "afterSales": {},
