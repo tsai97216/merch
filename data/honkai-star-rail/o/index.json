@@ -61,6 +61,15 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRo007",
+      "path": "data/honkai-star-rail/o/HSRo007/data.json",
+      "title": "普狸策手機掛繩",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
