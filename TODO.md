@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.682`。**
+- **目前開發版本：`1.109.689`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -36,6 +36,7 @@
 - [ ] 前端單檔限制為 8 MB，而 base64 會膨脹約 33%；Worker GitHub mutation 端目前 10 MB base64 content limit，需完成邊界檔案驗證。
 - [x] Worker 已攔截 GitHub mutation 的未處理 exception，失敗時回傳結構化錯誤並執行 R2 rollback。
 - [x] R2 PUT 已先完整讀取並保存 JSON request body，再建立新的 Request 傳給 GitHub mutation。
+- [x] 確認 500 的實際根因之一：一次性 `repair-lockfile-once.yml` 會在每次使用者 push 後再次修改 `main`，與 Worker 的 atomic commit 發生 HEAD race，造成 `資料在寫入期間已被其他操作更新`。該 workflow 已移除。
 
 ### 5. 發布前驗證
 - [ ] 相關 verification / Build 通過。
