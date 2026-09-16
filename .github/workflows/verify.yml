@@ -28,12 +28,8 @@ jobs:
         run: npm install --no-package-lock
       - name: Verify CI contract
         run: npm run verify:ci-contract
-      - name: Verify data integrity
+      - name: Verify data layout and integrity
         run: npm run verify
-      - name: Verify new storage layout
-        run: npm run verify:new
-      - name: Verify migration completion
-        run: npm run verify:migration
       - name: Verify Item schema contract
         run: npm run verify:schema
       - name: Verify legacy runtime fields are absent
