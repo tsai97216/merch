@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "genshin-impact",
+  "category": "w",
+  "items": [
+    {
+      "id": "GIw001",
+      "path": "data/genshin-impact/w/GIw001/data.json",
+      "title": "風史萊姆 扇子",
+      "characters": [
+        "風史萊姆"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
