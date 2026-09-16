@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.801';
+const WORKER_VERSION = '1.109.802';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -89,6 +89,19 @@ async function readCurrentAssetFromR2(env: Env, path: string): Promise<Uint8Arra
   return new Uint8Array(await new Response(asset.body).arrayBuffer());
 }
 
+async function readPreviousAssetWithRetry(env: Env, path: string): Promise<Uint8Array | null> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await readCurrentAssetFromR2(env, path);
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 150 * (attempt + 1)));
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('R2 previous asset read failed.');
+}
+
 async function mirrorPut(request: Request, env: Env, path: string): Promise<Response> {
   let parsed: { bodyText: string; bytes: Uint8Array };
   try {
@@ -99,9 +112,9 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
 
   let previous: Uint8Array | null = null;
   try {
-    previous = await readCurrentAssetFromR2(env, path);
+    previous = await readPreviousAssetWithRetry(env, path);
   } catch (error) {
-    console.error('Failed to read previous image from R2 before mirror PUT.', error);
+    console.error('Failed to read previous image from R2 before mirror PUT after retries.', error);
     return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未寫入 R2 或 GitHub：${errorMessage(error)}`, 502);
   }
 
