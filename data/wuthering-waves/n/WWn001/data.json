@@ -1,20 +1,19 @@
 {
   "id": "WWn001",
   "workId": "wuthering-waves",
-  "title": "2.5版本線下 明信片",
-  "series": [
-    "2.5版本線下"
-  ],
+  "title": "2.6版本線下 明信片",
+  "series": [],
   "characters": [],
   "category": "n",
   "manufacturer": "庫洛",
   "quantity": 3,
   "status": "received",
   "description": "",
-  "notes": "鳴潮2.5線下活動",
+  "notes": "鳴潮2.6線下活動",
   "purchase": {
     "currency": "TWD",
-    "platform": "線下活動"
+    "platform": "線下活動",
+    "date": "2025-09-13"
   },
   "arrival": {},
   "afterSales": {
