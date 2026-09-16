@@ -11,9 +11,8 @@ interface Env {
 }
 
 type AssetRequest = { path?: unknown; content?: unknown };
-type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.799';
+const WORKER_VERSION = '1.109.800';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
