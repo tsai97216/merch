@@ -36,15 +36,6 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
-    },
-    {
-      "id": "ZZZo004",
-      "path": "data/zenless-zone-zero/o/ZZZo004/data.json",
-      "title": "閃魂 卡",
-      "characters": [],
-      "manufacturer": "閃魂",
-      "quantity": 1,
-      "status": "received"
     }
   ]
 }
