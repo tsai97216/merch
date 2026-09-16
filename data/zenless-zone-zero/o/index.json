@@ -25,6 +25,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZo001.jpeg"
+    },
+    {
+      "id": "ZZZo003",
+      "path": "data/zenless-zone-zero/o/ZZZo003/data.json",
+      "title": "阿全 手機支架貼",
+      "characters": [
+        "阿全"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
