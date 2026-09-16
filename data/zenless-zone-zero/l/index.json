@@ -24,6 +24,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZl003",
+      "path": "data/zenless-zone-zero/l/ZZZl003/data.json",
+      "title": "蕾米埃爾 資料夾",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
