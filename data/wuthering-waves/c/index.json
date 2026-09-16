@@ -58,6 +58,17 @@
       "manufacturer": "庫洛",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "WWc006",
+      "path": "data/wuthering-waves/c/WWc006/data.json",
+      "title": "琳奈 合影卡",
+      "characters": [
+        "琳奈"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
