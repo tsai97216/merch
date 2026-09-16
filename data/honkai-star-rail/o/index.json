@@ -52,6 +52,15 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRo006",
+      "path": "data/honkai-star-rail/o/HSRo006/data.json",
+      "title": "普狸策氣球",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
