@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.731`。**
+- **目前開發版本：`1.109.737`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -45,7 +45,6 @@
 - [x] 相關 verification / Build 通過。
 - [x] 最新圖片新增 commit 的 GitHub Actions `Verify` 與 `Deploy` 均成功完成。
 - [ ] 正式網站行為的完整驗收仍需補上邊界圖片、替換既有圖片等案例。
-- [ ] **最新 Deploy 驗收發現：`genshin-impact/k/index.json` 殘留不存在的 `GIk002/data.json`，導致 Verify 的資料完整性檢查失敗並阻斷正常發布。需移除錯誤 index 項目，並確認實際的 `GIo003` 位於 `genshin-impact/o/index.json`。**
 - [ ] 實際驗收發現的問題，在修正前先記錄於本文件，再回到對應的根因處理。
 
 ## Maintenance rule
