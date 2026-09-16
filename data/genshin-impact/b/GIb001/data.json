@@ -21,5 +21,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "GIb001-1789559454681",
+      "file": "GIb001.jpeg"
+    }
+  ]
 }
