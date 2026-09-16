@@ -9,6 +9,10 @@
 
 ## Active work
 
+### 0. Repository cleanup
+- [ ] 清理已完成的一次性 migration / reset workflow、無效 trigger 與重複 Worker deploy workflow；修改前已確認這些檔案不再屬於目前正式資料／部署流程。
+- [ ] 修正 `worker/src/r2-entry.ts` 與 TODO 所記錄的圖片 PUT 根因不一致：目前 source 仍會在寫入前讀取 R2 previous image，需恢復「R2 不存在即視為新上傳、既有物件才保留 rollback」的實作。
+
 ### 1. 網站初始載入動畫
 - [x] 在資料載入完成前顯示全頁載入過渡。
 - [x] 視覺、尺寸、動畫節奏與既有 API 同步 overlay 保持一致，並參考 `tsai97216/nav` 的載入動畫基線。
