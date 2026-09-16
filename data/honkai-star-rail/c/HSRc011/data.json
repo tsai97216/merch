@@ -10,7 +10,7 @@
   "status": "received",
   "description": "",
   "notes": "崩鐵路跑活動",
-  "purchase": {"currency": "TWD", "platform": "線下活動", "date": "2026-05-09"},
+  "purchase": {"price": 220, "currency": "TWD", "platform": "線下活動", "date": "2026-05-09"},
   "arrival": {},
   "afterSales": {"status": "無"},
   "images": [{"id": "HSRc011-1789425737096-l27f3", "file": "HSRc011.jpeg", "alt": "Run to 歡愉 銀狼透卡", "isCover": true}]
