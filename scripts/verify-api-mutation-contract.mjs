@@ -21,7 +21,7 @@ try {
   await fs.writeFile(path.join(tempDir, 'error.mjs'), transpile(errorSource, 'error.ts'), 'utf8');
   await fs.writeFile(path.join(tempDir, 'validation.mjs'), transpile(validationSource, 'validation.ts'), 'utf8');
   await fs.writeFile(path.join(tempDir, 'sync-overlay.mjs'), 'export async function runWithSync(_label, operation) { return operation(); }\n', 'utf8');
-  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs"), 'utf8');
+  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs'"), 'utf8');
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   const run = async (operation, responses) => {
