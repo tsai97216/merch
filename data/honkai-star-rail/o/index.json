@@ -43,6 +43,15 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRo005",
+      "path": "data/honkai-star-rail/o/HSRo005/data.json",
+      "title": "塵靈袋子",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
