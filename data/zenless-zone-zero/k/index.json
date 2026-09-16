@@ -76,15 +76,6 @@
       "cover": "ZZZk006.jpeg"
     },
     {
-      "id": "ZZZk008",
-      "path": "data/zenless-zone-zero/k/ZZZk008/data.json",
-      "title": "NFC 吊飾",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZk009",
       "path": "data/zenless-zone-zero/k/ZZZk009/data.json",
       "title": "邦布 髮箍",
@@ -102,6 +93,15 @@
       "characters": [
         "邦布"
       ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "ZZZk008",
+      "path": "data/zenless-zone-zero/k/ZZZk008/data.json",
+      "title": "NFC 吊飾",
+      "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
