@@ -15,17 +15,6 @@
       "status": "received"
     },
     {
-      "id": "WWc002",
-      "path": "data/wuthering-waves/c/WWc002/data.json",
-      "title": "愛彌斯 證件照",
-      "characters": [
-        "愛彌斯"
-      ],
-      "manufacturer": "庫洛",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "WWc001",
       "path": "data/wuthering-waves/c/WWc001/data.json",
       "title": "鳴潮 共鳴者系列 Super Card 悠遊卡 愛彌斯款",
@@ -36,6 +25,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "WWc001.webp"
+    },
+    {
+      "id": "WWc002",
+      "path": "data/wuthering-waves/c/WWc002/data.json",
+      "title": "愛彌斯 證件照",
+      "characters": [
+        "愛彌斯"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
