@@ -1,0 +1,24 @@
+{
+  "id": "ZZZl001",
+  "workId": "zenless-zone-zero",
+  "title": "橘福福 資料夾",
+  "series": [],
+  "characters": [
+    "橘福福"
+  ],
+  "category": "l",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "米哈遊松菸線下",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "date": "2025-07-27",
+    "platform": "線下活動"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
