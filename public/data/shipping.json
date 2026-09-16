@@ -10,6 +10,28 @@
       "itemIds": [
         "HSRf001"
       ]
+    },
+    {
+      "id": "ship-20260916-001",
+      "amount": 94,
+      "currency": "TWD",
+      "carrier": "全統路跑",
+      "note": "崩鐵路跑活動",
+      "itemIds": [
+        "HSRo001",
+        "HSRv002",
+        "HSRv003",
+        "HSRw001",
+        "HSRk004",
+        "HSRk005",
+        "HSRc011",
+        "HSRc012",
+        "HSRn002",
+        "HSRo002",
+        "HSRo004",
+        "HSRo007",
+        "HSRr004"
+      ]
     }
   ]
 }
