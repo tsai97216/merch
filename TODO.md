@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.670`。**
+- **目前開發版本：`1.109.674`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -35,6 +35,7 @@
 - [x] Worker 已改為攔截 GitHub mutation 的未處理 exception，失敗時回傳結構化錯誤並執行 R2 rollback，避免再次只得到無法定位原因的 HTTP 500。
 - [x] R2 PUT 已改為先完整讀取並保存 JSON request body，再建立新的 Request 傳給 GitHub mutation，避免原始 Request body 在 R2 mirror 流程中被消耗後造成下游讀取異常。
 - [ ] 重新部署後實測小圖、接近 8 MB 圖片，以及替換既有圖片，依回傳的 error code / message 定位剩餘根因。
+- [ ] 2026-09-16 驗收仍回報圖片 PUT 失敗；本輪已將 Worker 版本推進至 `1.109.674` 並產生新的 Worker deployment 觸發點，下一步確認正式 Worker 是否真的切換至新版本。
 
 ### 5. 發布前驗證
 - [ ] 相關 verification / Build 通過。
