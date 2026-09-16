@@ -81,7 +81,7 @@ html {
   --control-height: 42px;
   --control-height-compact: 36px;
 
-  /* Page layout scale. These are consumed during the staged layout migration. */
+  /* Page layout scale. */
   --content-max-width: 1250px;
   --content-padding-x: 48px;
   --content-padding-top: 32px;
