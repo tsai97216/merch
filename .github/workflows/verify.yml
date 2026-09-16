@@ -84,6 +84,8 @@ jobs:
         run: npm run verify:statistics-year
       - name: Verify statistics year contract
         run: npm run verify:statistics-contract
+      - name: Verify statistics year isolation contract
+        run: npm run verify:statistics-year-contract
       - name: Verify version consistency
         run: npm run verify:version
       - name: TypeScript and Vite build
