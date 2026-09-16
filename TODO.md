@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.693`。**
+- **目前開發版本：`1.109.701`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -37,7 +37,7 @@
 - [x] R2 PUT 已先完整讀取並保存 JSON request body，再建立新的 Request 傳給 GitHub mutation。
 - [x] 確認 500 的實際根因之一：一次性 `repair-lockfile-once.yml` 會在每次使用者 push 後再次修改 `main`，與 Worker 的 atomic commit 發生 HEAD race，造成 `資料在寫入期間已被其他操作更新`。該 workflow 已移除。
 - [x] 正式網站已成功完成一般圖片新增，確認 R2 → GitHub mutation → 前端顯示的基本上傳流程可用。
-- [ ] 一般 CRUD／運費 API 仍可能因多個前端 mutation 同時進行而與 Worker 的 atomic commit 發生 HEAD race；目前 `runWithSync()` 只有顯示同步遮罩，沒有真正的 mutation queue，需改為全域序列化。
+- [x] 一般 CRUD／運費 API 的前端 mutation 現已透過全域 queue 序列化，避免同一頁面同時發出多個 GitHub atomic commit 而互相踩 HEAD。
 
 ### 5. 發布前驗證
 - [x] 相關 verification / Build 通過。
