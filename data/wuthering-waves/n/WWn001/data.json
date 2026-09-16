@@ -5,17 +5,13 @@
   "series": [
     "2.5版本線下"
   ],
-  "characters": [
-    "漂泊者",
-    "尤諾",
-    "奧古斯"
-  ],
+  "characters": [],
   "category": "n",
   "manufacturer": "庫洛",
   "quantity": 3,
   "status": "received",
   "description": "",
-  "notes": "",
+  "notes": "鳴潮2.5線下活動",
   "purchase": {
     "currency": "TWD",
     "platform": "線下活動"
