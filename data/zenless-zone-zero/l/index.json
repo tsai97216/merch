@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "zenless-zone-zero",
+  "category": "l",
+  "items": [
+    {
+      "id": "ZZZl001",
+      "path": "data/zenless-zone-zero/l/ZZZl001/data.json",
+      "title": "橘福福 資料夾",
+      "characters": [
+        "橘福福"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
