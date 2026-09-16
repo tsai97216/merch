@@ -1,8 +1,11 @@
 {
   "id": "HSRc003",
   "workId": "honkai-star-rail",
-  "title": "昔漣 滿贈拍立得",
-  "series": [],
+  "title": "立繪系列拍立得&光錐系列卡片套組 昔漣款",
+  "series": [
+    "立繪系列",
+    "光錐系列"
+  ],
   "characters": [
     "昔漣"
   ],

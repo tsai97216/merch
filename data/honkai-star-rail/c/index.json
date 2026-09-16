@@ -122,18 +122,6 @@
       "cover": "HSRc011.jpeg"
     },
     {
-      "id": "HSRc003",
-      "path": "data/honkai-star-rail/c/HSRc003/data.json",
-      "title": "昔漣 滿贈拍立得",
-      "characters": [
-        "昔漣"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "HSRc003.jpeg"
-    },
-    {
       "id": "HSRc012",
       "path": "data/honkai-star-rail/c/HSRc012/data.json",
       "title": "Run to 歡愉完賽小卡",
@@ -141,6 +129,18 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRc003",
+      "path": "data/honkai-star-rail/c/HSRc003/data.json",
+      "title": "立繪系列拍立得&光錐系列卡片套組 昔漣款",
+      "characters": [
+        "昔漣"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "HSRc003.jpeg"
     }
   ]
 }
