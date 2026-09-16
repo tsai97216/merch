@@ -1,235 +1,180 @@
-# Project Architecture / File Inventory
+# Project Architecture / Current File Map
 
-> 目的：建立 Merch 目前 repository 的「檔案用途地圖」，作為後續清理「新舊實作疊加」問題的基準。
->
-> 本文件記錄目前檔案的責任邊界。後續若發現同一責任由多個檔案重複實作，先在 `TODO.md` 記錄，再依 `RULES.md` 徹底整理，而不是再增加一層 patch。
+> 本文件記錄 Merch 目前 repository 的責任邊界與資料／部署流向。長期規則以 `RULES.md` 為準；未完成事項以 `TODO.md` 為準。
 
-## 1. 整體結構
+## 1. Repository structure
 
 ```text
 merch/
-├── .github/                 GitHub Actions 與部署／驗證流程
-├── data/                    Canonical 周邊與作品資料來源
-├── public/                  Vite 靜態資源與 build 後部署資料
-├── scripts/                 build、資料同步、schema 與架構驗證工具
-├── src/                     前端 TypeScript、CSS 與共用 UI 邏輯
-├── worker/                  Cloudflare Worker API / GitHub 寫入層
-├── upload/                  本地／工作流程使用的上傳資料目錄
-│
-├── index.html               SPA HTML shell 與頁面靜態結構
-├── package.json             專案 metadata、版本與 npm scripts
-├── tsconfig.json            TypeScript 編譯設定
-├── vite.config.ts           Vite build / dev 設定
-├── CNAME                    正式網站網域設定
-│
-├── RULES.md                 長期開發規則與架構約束
-├── TODO.md                  未完成、待驗證與後續工作
-├── ITEM_SCHEMA.md           Item canonical schema 規格
-├── ITEM_TYPES.md            Category / 類型規格
-├── UI_ARCHITECTURE.md       共用 UI redesign 基準
-└── PROJECT_ARCHITECTURE.md  本文件：完整檔案責任地圖
+├── .github/workflows/
+│   ├── verify.yml              CI 驗證
+│   └── deploy.yml              GitHub Pages + Cloudflare Worker 部署
+├── data/                       canonical 周邊資料
+├── public/                     Vite 靜態資源與 build 讀取資料
+├── scripts/                    build / sync / schema / architecture verification
+├── src/                        前端 TypeScript / CSS
+├── worker/
+│   ├── src/                    Cloudflare Worker API + R2 image boundary
+│   └── wrangler.toml           Worker deployment 設定
+├── index.html                  SPA shell
+├── package.json                專案 metadata、scripts、版本
+├── tsconfig.json               TypeScript 設定
+├── vite.config.ts              Vite 設定
+├── CNAME                       正式網域
+├── RULES.md                    長期開發規則
+├── TODO.md                     未完成／待驗證工作
+├── ITEM_SCHEMA.md              Item schema 規格
+├── ITEM_TYPES.md               Category 規格
+├── UI_ARCHITECTURE.md          共用 UI 架構基線
+└── PROJECT_ARCHITECTURE.md     本文件
 ```
 
-## 2. Frontend `src/`
+Repository 不保留已完成的一次性 migration / reset workflow，也不保留本地 `upload/` 工作目錄或未使用的 package lock。
 
-### Core / Application
-
-| 檔案 | 責任 |
-|---|---|
-| `src/main.ts` | 前端應用入口、頁面初始化、主要跨頁資料與 rendering 協調。 |
-| `src/router.ts` | Hash Router、route parsing、navigation 與未知 route 處理。 |
-| `src/store.ts` | Remote data、UI state 與 mutation 後資料的主要 Store；維持單一 state source。 |
-| `src/api.ts` | Frontend API client、request、response validation 與 Work / Item mutation。 |
-| `src/types.ts` | 前端共用 TypeScript 型別與資料模型。 |
-| `src/error.ts` | 共用錯誤型別、錯誤正規化與錯誤處理邊界。 |
-| `src/dom-compat.d.ts` | DOM / runtime 相容性的 TypeScript 宣告補充。 |
-
-### Data / Identity / Navigation
-
-| 檔案 | 責任 |
-|---|---|
-| `src/item-id.ts` | Item ID 的解析、組合、驗證與永久識別規則。 |
-| `src/category-label.ts` | Category code 與使用者可見名稱的單一轉換邏輯。 |
-| `src/cross-navigation.ts` | Dashboard / Statistics / Collection 等頁面間的條件轉跳。 |
-| `src/image-source.ts` | Item 圖片 URL、API asset 路徑與 fallback source 邏輯。 |
-
-### Page logic
-
-| 檔案 | 責任 |
-|---|---|
-| `src/add.ts` | Add page 表單、validation、新增 Item 流程。 |
-| `src/collection-controls.ts` | Collection 搜尋、Filter、Sort、顯示模式等控制狀態與 UI。 |
-| `src/home-enhancements.ts` | Home 額外互動／視覺 enhancement。 |
-| `src/home-ranking.ts` | Home 排名資料與排名區塊邏輯。 |
-| `src/management.ts` | Management Work / Item CRUD、搜尋與管理流程。 |
-| `src/shipping.ts` | Shipping page 與運費相關資料／操作。 |
-| `src/statistics.ts` | Statistics page rendering、圖表與統計 UI。 |
-| `src/statistics-data.ts` | Statistics 的資料整理、計算與圖表資料模型。 |
-| `src/settings-auth.ts` | Settings 的驗證／授權相關前端邏輯。 |
-| `src/item-detail-shipping.ts` | Item Detail 中 Shipping / 到貨資訊的專責邏輯。 |
-| `src/shipping-detail-modal.ts` | Shipping detail modal 的開啟、內容與生命週期。 |
-| `src/detail-focus.ts` | Item Detail / Dialog focus trap 與 focus restoration。 |
-
-### Image / Detail UI
-
-| 檔案 | 責任 |
-|---|---|
-| `src/image-viewer.ts` | 圖片檢視器互動、開關、切換與生命週期。 |
-| `src/image-viewer.css` | Image viewer 的視覺樣式。 |
-| `src/item-detail-modal.css` | Item Detail modal 的視覺結構與欄位樣式。 |
-| `src/management-images.css` | Management 圖片管理區域的視覺樣式。 |
-
-### Shared UI / Design system
-
-| 檔案 | 責任 |
-|---|---|
-| `src/design-tokens.css` | Semantic color、typography、spacing、radius、surface 等設計 token。 |
-| `src/shared-components.css` | Button、Card、Panel、Modal、Badge 等 shared component foundation。 |
-| `src/controls.css` | Input / Select / Segmented control 等共用控制項。 |
-| `src/responsive-refinement.css` | Desktop / Tablet / Mobile 的集中 responsive contract。 |
-| `src/theme.ts` | Light / Dark theme 初始化與主題切換。 |
-| `src/theme.css` | Theme 基礎樣式入口／必要 theme rules。 |
-| `src/theme-refinement.css` | Theme foundation 上的 refinement；後續應避免再堆疊成第二套 theme。 |
-| `src/sync-overlay.ts` | API mutation 的全頁同步狀態與 blocking feedback 邏輯。 |
-| `src/sync-overlay.css` | Sync overlay 與 blocking feedback 的視覺樣式。 |
-| `src/utils/toast.ts` | Legacy `showToast()` 相容 API；僅轉送至 shared animated feedback foundation，不提供獨立 Toast 視覺層。 |
-
-### Page-specific CSS
-
-| 檔案 | 責任 |
-|---|---|
-| `src/add.css` | Add page 專屬布局／樣式。 |
-| `src/collection.css` | Collection page 專屬布局／樣式。 |
-| `src/shipping.css` | Shipping page 專屬布局／樣式。 |
-| `src/statistics.css` | Statistics page 專屬布局／圖表樣式。 |
-| `src/settings-auth.css` | Settings auth 區域專屬樣式。 |
-| `src/management-images.css` | Management 圖片區專屬樣式。 |
-| `src/card-enhancements.css` | Card 額外 enhancement；**列為後續疊加檢查候選**。 |
-| `src/styles.css` | 目前全站主要 legacy / base stylesheet；**列為後續與 shared foundation 重疊檢查重點**。 |
-
-## 3. Data
+## 2. Data architecture
 
 ```text
 data/
-├── works.json                         作品 canonical index
+├── works.json
 └── <work-id>/
     └── <category>/
-        ├── index.json                 該 category 的 Item index
+        ├── index.json
         └── <item-id>/
-            ├── data.json              單一 Item canonical data
-            └── images/                該 Item 的圖片
+            ├── data.json
+            └── images/
 ```
 
-`data/` 是正式資料的 canonical source。Item data 不應由 frontend CSS / rendering 邏輯直接修改。
+- `data/` 是 canonical repository data。
+- Work 使用 `works.json` index。
+- Item 使用 category index + 單一 Item `data.json`。
+- Item ID 是穩定識別碼，不能因排序或分類而改變。
+- 圖片 metadata 屬於 Item data；圖片 binary 正式由 Cloudflare R2 提供。
+- `public/data/` 是部署／build 使用的 read model，不是新的 canonical Item 寫入目標。
 
-## 4. `public/`
+## 3. Frontend architecture
 
-```text
-public/
-├── data/
-│   ├── version.json                   部署版本資訊，必須與 package.json 同步
-│   ├── collection.json                build 產生的 collection read model
-│   └── ...                            build / deployment data
-├── icons/                             favicon / PWA 等網站圖示
-├── logo/                              品牌 Logo 資產
-└── ...                                其他靜態資源
-```
+### Application core
 
-`public/data/` 是部署／build 產物，不是 ChatGPT 新增 canonical Item 的主要寫入位置。
+| File | Responsibility |
+|---|---|
+| `src/main.ts` | Application entry、頁面初始化與主要 rendering 協調 |
+| `src/router.ts` | Hash Router、route parsing、navigation、404 handling |
+| `src/store.ts` | Remote data + UI state 的 single source of truth、remote apply |
+| `src/api.ts` | API request、response validation、Item / Work / Shipping / asset mutation |
+| `src/error.ts` | 共用錯誤型別與錯誤正規化 |
+| `src/dom-compat.d.ts` | DOM / runtime TypeScript 相容宣告 |
 
-## 5. `scripts/`
+### Identity / navigation / data helpers
 
-主要責任分成四類：
+| File | Responsibility |
+|---|---|
+| `src/item-id.ts` | Item ID parse / compose / validation |
+| `src/category-label.ts` | Category code → visible label |
+| `src/cross-navigation.ts` | 跨頁搜尋／Filter 條件轉跳 |
+| `src/image-source.ts` | Item image URL、R2 asset path、fallback |
 
-```text
-scripts/
-├── build / sync
-│   ├── sync-public-data.mjs           將 canonical data 同步為部署資料
-│   └── generate-collection.mjs        產生 collection read model
-│
-├── migration
-│   ├── migrate.mjs                    舊資料 migration
-│   ├── verify-migration-completion.mjs migration 驗證
-│   └── verify-new-data.mjs            新資料驗證
-│
-├── data / schema verification
-│   ├── verify-data.mjs
-│   ├── verify-schema-contract.mjs
-│   ├── verify-category-contract.mjs
-│   ├── verify-legacy-fields.mjs
-│   ├── verify-image-contract.mjs
-│   ├── verify-statistics-date.mjs
-│   ├── verify-statistics-year-isolation.mjs
-│   ├── verify-statistics-year-contract.mjs
-│   └── verify-management-schema.mjs
-│
-└── Worker / API architecture verification
-    ├── verify-worker-architecture.mjs
-    ├── verify-worker-write-scope.mjs
-    ├── verify-worker-read-scope.mjs
-    ├── verify-worker-image-semantics.mjs
-    ├── verify-worker-transaction.mjs
-    ├── verify-api-load-contract.mjs
-    ├── verify-api-mutation-contract.mjs
-    ├── verify-work-identity-contract.mjs
-    ├── verify-works-management.mjs
-    └── verify-home-ranking.mjs
-```
+### Page modules
 
-## 6. `worker/`
+- `src/add.ts` / `src/add.css`：新增 Item。
+- `src/collection-controls.ts` / `src/collection.css`：Collection search / filter / sort / view controls。
+- `src/home-enhancements.ts` / `src/home-enhancements.css`：首頁額外互動與視覺 enhancement。
+- `src/home-ranking.ts`：首頁排行資料與 rendering 邏輯。
+- `src/management.ts`：Work / Item CRUD 與管理流程。
+- `src/shipping.ts` / `src/shipping.css`：運費頁與運費操作。
+- `src/statistics.ts` / `src/statistics-data.ts` / `src/statistics.css`：統計資料、計算、圖表與 UI。
+- `src/settings-auth.ts` / `src/settings-auth.css`：設定頁驗證。
+- `src/item-detail-shipping.ts`：Item Detail 的 shipping / arrival 邏輯。
+- `src/shipping-detail-modal.ts`：Shipping detail modal。
+- `src/detail-focus.ts`：Detail / Dialog focus lifecycle。
+
+### Image / detail UI
+
+- `src/image-viewer.ts` / `src/image-viewer.css`：圖片 viewer。
+- `src/item-detail-modal.css`：Item Detail modal。
+- `src/management-images.css`：Management 圖片區。
+
+### Shared UI foundation
+
+- `src/design-tokens.css`：semantic design tokens。
+- `src/shared-components.css`：Button、Card、Panel、Modal、Badge、Feedback 等共用 foundation。
+- `src/controls.css`：Input、Select、Segmented Control 等共用控制項。
+- `src/theme.ts` / `src/theme.css` / `src/theme-refinement.css`：Light / Dark theme。
+- `src/responsive-refinement.css`：Desktop / Tablet / Mobile responsive contract。
+- `src/app-loading.ts` / `src/app-loading.css`：初始載入過渡。
+- `src/sync-overlay.ts` / `src/sync-overlay.css`：API mutation blocking sync overlay。
+- `src/page-auth-status.ts` / `src/page-auth-status.css`：頁面驗證狀態提示。
+- `src/utils/toast.ts`：舊 `showToast()` API 的相容轉送，不建立第二套 Toast 視覺層。
+
+`src/styles.css`、`src/card-enhancements.css` 等較舊的 base / enhancement 檔案仍屬現行前端的一部分；若未來確認與 shared foundation 有責任重疊，依 `RULES.md` 先記錄 TODO，再做實際合併／移除，不因檔名直接判定為可刪除。
+
+## 4. Worker architecture
 
 ```text
 worker/
-├── src/index.ts                       Cloudflare Worker API、GitHub read/write、atomic mutation
-└── wrangler.toml                      Worker deployment / runtime 設定
+├── src/index.ts        GitHub API read/write、atomic mutation、authorization
+├── src/r2-entry.ts     R2 image request boundary + GitHub mutation mirror
+├── src/r2-assets.ts    R2 object helpers
+├── src/validation.ts   Worker input / schema validation
+└── wrangler.toml       Cloudflare Worker configuration
 ```
 
-Worker 是 frontend 與 GitHub repository 寫入之間的 boundary。Frontend 不保存 GitHub token。
-
-## 7. Build / deployment boundary
+Image PUT flow：
 
 ```text
-User
+Frontend
   │
   ▼
-index.html + src/*
+Cloudflare Worker /api/assets/*
   │
-  ├── Store / API ───────► worker/src/index.ts ─────► GitHub data/
-  │
-  └── Vite build
-          │
-          ├── scripts/sync-public-data.mjs
-          └── scripts/generate-collection.mjs
-                    │
-                    ▼
-              public/data/*
-                    │
-                    ▼
-              GitHub Pages
-                    │
-                    ▼
-             merch.chi.qzz.io
+  ├── validate request
+  ├── read previous object from R2 when present
+  ├── write + verify R2
+  ├── mirror metadata mutation to GitHub
+  └── rollback R2 if GitHub mutation fails
 ```
 
-## 8. 疊加實作檢查優先順序
+R2 是圖片 binary 的 authoritative store；不存在 previous R2 object 時視為新圖片，不依賴舊 GitHub image binary 進行前置讀取。
 
-後續要找「改了但其實只是疊上去」時，先檢查：
+## 5. Build / deployment
 
-1. `src/styles.css` ↔ `src/design-tokens.css` / `src/shared-components.css`
-2. `src/theme.css` / `src/theme-refinement.css` ↔ shared theme foundation
-3. `src/controls.css` ↔ page-specific Select / Input CSS
-4. `src/responsive-refinement.css` ↔ 各 page CSS 裡的 viewport rules
-5. `src/card-enhancements.css` ↔ Card foundation
-6. `src/home-enhancements.ts` ↔ `main.ts` / Home rendering
-7. `src/management-images.css` ↔ Management image rendering
-8. `src/item-detail-modal.css` ↔ shared Modal / Panel foundation
+```text
+GitHub push main
+  │
+  ├── Verify
+  │     ├── data / schema / category / image checks
+  │     ├── Worker / API contract checks
+  │     └── TypeScript + Vite build
+  │
+  └── Deploy
+        ├── Vite build → GitHub Pages
+        └── Wrangler deploy → Cloudflare Worker
+```
 
-這些只是「檢查優先順序」，不是預先判定它們一定是錯誤。每項都要查看實際 selector、import、rendering 與責任邊界後才能決定保留、合併或刪除。
+- `package.json` 的 `build` 會先同步 `public/data`，再產生 collection read model，最後執行 TypeScript / Vite build。
+- `verify.yml` 與 `deploy.yml` 都使用 `npm install --no-package-lock`，因此 repository 不需要提交 `package-lock.json`。
+- Worker credentials / secrets 由 `deploy.yml` 驗證與設定，不進 repository。
 
-## 9. 維護規則
+## 6. Scripts responsibilities
 
-- 新增檔案時，若具有長期責任，必須同步更新本文件。
-- 檔案責任改變時，先更新本文件的責任描述，再進行後續架構整理。
-- 同一責任若由兩個以上檔案共同實作，必須明確說明分工；若無合理分工，列入 `TODO.md` 後清理。
-- 不因「現在能正常顯示」就保留已被新 foundation 取代的舊實作。
-- 本文件是架構 inventory，不取代 `RULES.md`、`TODO.md` 或 `UI_ARCHITECTURE.md`。
+主要分為：
+
+- **Build / sync**：`sync-public-data.mjs`、`generate-collection.mjs`
+- **Data / schema verification**：data、schema、category、legacy fields、image、statistics、management 等 verifier
+- **API / Worker verification**：API load / mutation、Worker architecture / scope / image / transaction / validation 等 verifier
+- **CI contract**：確認 repository 的 CI 約束與 scripts wiring
+
+Migration verifier 只保留目前 CI 所需的 `verify-migration-completion.mjs` 等現行驗證；已無現行責任的舊 migration equivalence script 已移除。
+
+## 7. Responsibility rules
+
+1. Canonical data：`data/`
+2. Frontend state：`src/store.ts`
+3. Remote mutation boundary：`src/api.ts` → Worker
+4. GitHub write boundary：Worker
+5. Image binary：R2
+6. Deployment read model：`public/data/`
+7. Shared UI foundation：shared CSS / theme / responsive layers
+8. 未完成工作：`TODO.md`
+9. 長期規則：`RULES.md`
+
+同一責任若出現多層實作，不以額外 patch 解決；先確認實際 selector、import、資料流與 rendering 邊界，再合併或移除重複責任。
