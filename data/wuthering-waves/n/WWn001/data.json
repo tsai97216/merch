@@ -2,16 +2,27 @@
   "id": "WWn001",
   "workId": "wuthering-waves",
   "title": "2.5版本線下 明信片",
-  "series": ["2.5版本線下"],
-  "characters": ["漂泊者", "尤諾", "奧古斯塔"],
+  "series": [
+    "2.5版本線下"
+  ],
+  "characters": [
+    "漂泊者",
+    "尤諾",
+    "奧古斯"
+  ],
   "category": "n",
   "manufacturer": "庫洛",
   "quantity": 3,
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"currency": "TWD", "platform": "線下活動", "date": ""},
-  "arrival": {"receivedDate": null},
-  "afterSales": {"status": "無", "note": ""},
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
