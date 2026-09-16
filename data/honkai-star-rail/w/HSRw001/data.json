@@ -13,6 +13,7 @@
   "description": "",
   "notes": "崩鐵路跑活動",
   "purchase": {
+    "price": 80,
     "currency": "TWD",
     "platform": "線下活動",
     "date": "2026-05-09"
