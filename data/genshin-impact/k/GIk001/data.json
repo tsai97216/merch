@@ -24,5 +24,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "GIk001-1789517176680",
+      "file": "GIk001.jpeg"
+    }
+  ]
 }
