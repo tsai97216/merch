@@ -36,6 +36,28 @@
       "manufacturer": "庫洛",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "WWc004",
+      "path": "data/wuthering-waves/c/WWc004/data.json",
+      "title": "尤諾 合影卡",
+      "characters": [
+        "尤諾"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "WWc005",
+      "path": "data/wuthering-waves/c/WWc005/data.json",
+      "title": "奧古斯塔 合影卡",
+      "characters": [
+        "奧古斯塔"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
