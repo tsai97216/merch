@@ -15,17 +15,6 @@
       "status": "received"
     },
     {
-      "id": "GIo002",
-      "path": "data/genshin-impact/o/GIo002/data.json",
-      "title": "閃魂 葉瞬光 卡盒",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "閃魂",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "GIo003",
       "path": "data/genshin-impact/o/GIo003/data.json",
       "title": "風史萊姆 綁繩",
