@@ -1,0 +1,24 @@
+{
+  "id": "ZZZc008",
+  "workId": "zenless-zone-zero",
+  "title": "閃卡 儀玄",
+  "series": [],
+  "characters": [
+    "儀玄"
+  ],
+  "category": "c",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "米哈遊松菸線下",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "date": "2025-07-27",
+    "platform": "線下活動"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
