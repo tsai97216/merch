@@ -9,7 +9,7 @@ import ts from 'typescript';
 const root = process.cwd();
 const assert = (condition, message) => { if (!condition) throw new Error(`API mutation verification failed: ${message}`); };
 const item = { id: 'TESTc001', workId: 'test-work', title: 'Test Item', series: [], characters: [], category: 'other', manufacturer: 'Test', quantity: 1, status: 'received', description: '', notes: '', purchase: {}, arrival: {}, afterSales: {}, images: [] };
-const collection = (version = '1.109.283') => ({ version, works: [{ id: 'test-work', name: 'Test Work', code: 'TEST', items: [item] }], shipping: [] });
+const collection = (version = '1.109.283', items = [item]) => ({ version, works: [{ id: 'test-work', name: 'Test Work', code: 'TEST', items }], shipping: [] });
 const makeResponse = (status, payload) => ({ ok: status >= 200 && status < 300, status, async json() { return payload; } });
 const originalFetch = globalThis.fetch;
 const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'merch-mutation-verify-'));
@@ -21,7 +21,7 @@ try {
   await fs.writeFile(path.join(tempDir, 'error.mjs'), transpile(errorSource, 'error.ts'), 'utf8');
   await fs.writeFile(path.join(tempDir, 'validation.mjs'), transpile(validationSource, 'validation.ts'), 'utf8');
   await fs.writeFile(path.join(tempDir, 'sync-overlay.mjs'), 'export async function runWithSync(_label, operation) { return operation(); }\n', 'utf8');
-  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs'"), 'utf8');
+  await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs"), 'utf8');
   globalThis.window = { setTimeout, clearTimeout };
   globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
   const run = async (operation, responses) => {
@@ -44,24 +44,50 @@ try {
 
   result = await run(api => api.deleteItem('TESTc001'), {
     '/api/items/TESTc001': makeResponse(200, { ok: true, data: { version: '1.109.285' } }),
-    '/api/data': makeResponse(200, { ok: true, data: { version: '1.109.285', works: [{ id: 'test-work', name: 'Test Work', code: 'TEST', items: [] }], shipping: [] } }),
+    '/api/data': makeResponse(200, { ok: true, data: collection('1.109.285', []) }),
   });
   assert(result.calls[0].url === '/api/items/TESTc001', 'DELETE Item must target the exact permanent Item ID');
   assert(result.result.works.length === 1 && result.result.works[0].items.length === 0, 'DELETE mutation must apply the authoritative remote data');
   assert(result.result.version === '1.109.285', 'DELETE mutation must use the authoritative /data response after mutation');
-  assert(!result.calls.some(call => call.url === './data/collection.json'), 'DELETE Item must not re-read potentially stale static collection data');
+  assert(!result.calls.some(call => call.url === './data/collection.json'), 'DELETE mutation must not re-read potentially stale static collection data');
 
-  result = await run(api => api.putShipping({ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }), { '/api/shipping/ship-1': makeResponse(200, { ok: true, data: collection('1.109.283') }) });
+  const workMutationCases = [
+    ['createWork', api => api.createWork({ name: 'New Work', code: 'NEW' }), '/api/works', 'POST', { work: { name: 'New Work', code: 'NEW' } }],
+    ['updateWork', api => api.updateWork('test-work', { name: 'Renamed Work', code: 'TEST' }), '/api/works/test-work', 'PUT', { work: { name: 'Renamed Work', code: 'TEST' } }],
+    ['deleteWork', api => api.deleteWork('test-work'), '/api/works/test-work', 'DELETE', undefined],
+  ];
+  for (const [name, operation, url, method, body] of workMutationCases) {
+    result = await run(operation, {
+      [url]: makeResponse(200, { ok: true, data: { version: '1.109.286' } }),
+      '/api/data': makeResponse(200, { ok: true, data: collection('1.109.286', []) }),
+    });
+    const call = result.calls.find(entry => entry.url === url);
+    assert(call?.init?.method === method, `${name} must use ${method}`);
+    if (body) assert(JSON.parse(call.init.body).work.code === body.work.code, `${name} must preserve canonical Work payload`);
+    assert(result.result.version === '1.109.286', `${name} must fetch authoritative /data after mutation`);
+    assert(result.calls.filter(entry => entry.url === '/api/data').length === 1, `${name} must fetch authoritative API data exactly once`);
+  }
+
+  result = await run(api => api.putShipping({ id: 'ship-1', amount: 25, currency: 'TWD', itemIds: ['TESTc001'] }), {
+    '/api/shipping/ship-1': makeResponse(200, { ok: true, data: { version: '1.109.283' } }),
+    '/api/data': makeResponse(200, { ok: true, data: collection('1.109.283') }),
+  });
   const shippingBody = JSON.parse(result.calls.find(call => call.url === '/api/shipping/ship-1').init.body);
   assert(shippingBody.shipping.id === 'ship-1' && shippingBody.shipping.itemIds[0] === 'TESTc001', 'PUT Shipping must preserve its canonical relation');
-  assert(result.result.version === '1.109.283', 'PUT Shipping must return validated remote data');
+  assert(result.result.version === '1.109.283', 'PUT Shipping must fetch authoritative /data after mutation');
+
+  result = await run(api => api.deleteShipping('ship-1'), {
+    '/api/shipping/ship-1': makeResponse(200, { ok: true, data: { version: '1.109.284' } }),
+    '/api/data': makeResponse(200, { ok: true, data: collection('1.109.284') }),
+  });
+  assert(result.result.version === '1.109.284', 'DELETE Shipping must fetch authoritative /data after mutation');
 
   for (const badPayload of [{ version: 'not-a-version' }, { version: '1.109' }, { version: 1 }]) {
     let failed = false;
     try { await run(api => api.putItem({ ...item }), { '/api/items/TESTc001': makeResponse(200, { ok: true, data: badPayload }) }); } catch { failed = true; }
     assert(failed, 'mutation response with invalid version must be rejected');
   }
-  console.log('API mutation verification passed: Item PUT/DELETE authoritative data, runtime-field stripping, canonical payloads, Shipping PUT, and mutation response validation.');
+  console.log('API mutation verification passed: Item/Work/Shipping mutations validate {version}, then apply authoritative /data.');
 } finally {
   if (originalFetch) globalThis.fetch = originalFetch; else delete globalThis.fetch;
   delete globalThis.window; delete globalThis.sessionStorage;
