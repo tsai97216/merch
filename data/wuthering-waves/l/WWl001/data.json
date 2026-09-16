@@ -1,0 +1,23 @@
+{
+  "id": "WWl001",
+  "workId": "wuthering-waves",
+  "title": "2.6版本線下 資料夾",
+  "series": [],
+  "characters": [],
+  "category": "l",
+  "manufacturer": "庫洛",
+  "quantity": 4,
+  "status": "received",
+  "description": "",
+  "notes": "鳴潮2.6線下活動",
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2025-09-13"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
