@@ -4,15 +4,6 @@
   "category": "o",
   "items": [
     {
-      "id": "HSRo002",
-      "path": "data/honkai-star-rail/o/HSRo002/data.json",
-      "title": "Run to 歡愉 主題證件套",
-      "characters": [],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "HSRo003",
       "path": "data/honkai-star-rail/o/HSRo003/data.json",
       "title": "爻光紅包袋",
@@ -31,6 +22,15 @@
       "characters": [
         "銀狼"
       ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "HSRo002",
+      "path": "data/honkai-star-rail/o/HSRo002/data.json",
+      "title": "Run to 歡愉 主題證件套",
+      "characters": [],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"

@@ -2,7 +2,9 @@
   "id": "HSRo002",
   "workId": "honkai-star-rail",
   "title": "Run to 歡愉 主題證件套",
-  "series": ["Run to 歡愉"],
+  "series": [
+    "Run to 歡愉"
+  ],
   "characters": [],
   "category": "o",
   "manufacturer": "米哈遊",
@@ -10,8 +12,17 @@
   "status": "received",
   "description": "",
   "notes": "崩鐵路跑活動",
-  "purchase": {"currency": "TWD", "platform": "線下活動", "date": "2026-05-09"},
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-09"
+  },
   "arrival": {},
   "afterSales": {},
-  "images": []
+  "images": [
+    {
+      "id": "HSRo002-1789532336938",
+      "file": "HSRo002.jpeg"
+    }
+  ]
 }
