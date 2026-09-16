@@ -37,6 +37,7 @@
 - [x] R2 PUT 已先完整讀取並保存 JSON request body，再建立新的 Request 傳給 GitHub mutation。
 - [x] 確認 500 的實際根因之一：一次性 `repair-lockfile-once.yml` 會在每次使用者 push 後再次修改 `main`，與 Worker 的 atomic commit 發生 HEAD race，造成 `資料在寫入期間已被其他操作更新`。該 workflow 已移除。
 - [x] 正式網站已成功完成一般圖片新增，確認 R2 → GitHub mutation → 前端顯示的基本上傳流程可用。
+- [ ] 一般 CRUD／運費 API 仍可能因多個前端 mutation 同時進行而與 Worker 的 atomic commit 發生 HEAD race；目前 `runWithSync()` 只有顯示同步遮罩，沒有真正的 mutation queue，需改為全域序列化。
 
 ### 5. 發布前驗證
 - [x] 相關 verification / Build 通過。
