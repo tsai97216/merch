@@ -13,7 +13,7 @@ interface Env {
 type AssetRequest = { path?: unknown; content?: unknown };
 type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.674';
+const WORKER_VERSION = '1.109.738';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -84,6 +84,12 @@ async function readAssetRequest(request: Request, path: string): Promise<{ bodyT
   }
 }
 
+async function readCurrentAssetFromR2(env: Env, path: string): Promise<Uint8Array | null> {
+  const asset = await getR2Asset(env.MERCH_ASSETS, path);
+  if (!asset?.body) return null;
+  return new Uint8Array(await new Response(asset.body).arrayBuffer());
+}
+
 async function readCurrentAssetFromGitHub(request: Request, env: Env): Promise<Uint8Array | null> {
   const fallbackRequest = new Request(request.url, { method: 'GET', headers: request.headers });
   const response = await app.fetch(fallbackRequest, env);
@@ -101,9 +107,12 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
 
   let previous: Uint8Array | null = null;
   try {
-    previous = await readCurrentAssetFromGitHub(request, env);
+    // R2 is the authoritative image store. When replacing an existing R2 object,
+    // capture it directly for rollback instead of making a fragile GitHub read first.
+    previous = await readCurrentAssetFromR2(env, path);
+    if (!previous) previous = await readCurrentAssetFromGitHub(request, env);
   } catch (error) {
-    console.error('Failed to read previous GitHub asset before R2 mirror PUT.', error);
+    console.error('Failed to read previous image before R2 mirror PUT.', error);
     return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未寫入 R2 或 GitHub：${errorMessage(error)}`, 502);
   }
 
