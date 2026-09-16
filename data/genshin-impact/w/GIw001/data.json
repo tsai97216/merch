@@ -1,0 +1,24 @@
+{
+  "id": "GIw001",
+  "workId": "genshin-impact",
+  "title": "風史萊姆 扇子",
+  "series": [],
+  "characters": [
+    "風史萊姆"
+  ],
+  "category": "w",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "米哈遊松菸線下",
+  "purchase": {
+    "price": 0,
+    "currency": "TWD",
+    "date": "2025-07-27",
+    "platform": "線下活動"
+  },
+  "arrival": {},
+  "afterSales": {},
+  "images": []
+}
