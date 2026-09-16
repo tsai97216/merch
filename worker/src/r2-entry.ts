@@ -13,7 +13,7 @@ interface Env {
 type AssetRequest = { path?: unknown; content?: unknown };
 type AssetResult = { path: string; replaced: boolean; version: string };
 
-const WORKER_VERSION = '1.109.782';
+const WORKER_VERSION = '1.109.797';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -100,9 +100,6 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
 
   let previous: Uint8Array | null = null;
   try {
-    // R2 is the authoritative image store. Only an existing R2 object needs
-    // to be captured for rollback. A missing R2 object is a normal new-upload
-    // case and must not trigger a fragile GitHub asset read.
     previous = await readCurrentAssetFromR2(env, path);
   } catch (error) {
     console.error('Failed to read previous image from R2 before mirror PUT.', error);
