@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "l",
+  "items": [
+    {
+      "id": "WWl001",
+      "path": "data/wuthering-waves/l/WWl001/data.json",
+      "title": "2.6版本線下 資料夾",
+      "characters": [],
+      "manufacturer": "庫洛",
+      "quantity": 4,
+      "status": "received"
+    }
+  ]
+}
