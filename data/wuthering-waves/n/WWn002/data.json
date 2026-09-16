@@ -2,7 +2,9 @@
   "id": "WWn002",
   "workId": "wuthering-waves",
   "title": "鳴潮二周年 明信片",
-  "series": ["鳴潮二周年"],
+  "series": [
+    "鳴潮二周年"
+  ],
   "characters": [],
   "category": "n",
   "manufacturer": "庫洛",
@@ -10,8 +12,14 @@
   "status": "received",
   "description": "",
   "notes": "",
-  "purchase": {"currency": "TWD", "platform": "線下活動"},
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-05-22"
+  },
   "arrival": {},
-  "afterSales": {"status": "無"},
+  "afterSales": {
+    "status": "無"
+  },
   "images": []
 }
