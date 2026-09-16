@@ -4,17 +4,6 @@
   "category": "b",
   "items": [
     {
-      "id": "GIb003",
-      "path": "data/genshin-impact/b/GIb003/data.json",
-      "title": "馬口鐵徽章 芙寧娜",
-      "characters": [
-        "芙寧娜"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "GIb001",
       "path": "data/genshin-impact/b/GIb001/data.json",
       "title": "馬口鐵徽章 申鶴",
@@ -31,6 +20,17 @@
       "title": "馬口鐵徽章 夜蘭",
       "characters": [
         "夜蘭"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "GIb003",
+      "path": "data/genshin-impact/b/GIb003/data.json",
+      "title": "馬口鐵徽章 芙寧娜",
+      "characters": [
+        "芙寧娜"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
