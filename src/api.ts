@@ -17,6 +17,7 @@ const meta = import.meta as ImportMetaWithEnv;
 const API_BASE = (meta.env?.VITE_MERCH_API_URL || '/api').replace(/\/$/, '');
 const API_TIMEOUT_MS = 12_000;
 const FORBIDDEN_STORAGE_FIELDS = ['workName', 'shipping', 'material', 'release', 'createdAt', 'updatedAt'] as const;
+let mutationQueue: Promise<void> = Promise.resolve();
 function endpoint(path: string): string { return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`; }
 function authToken(): string { try { return sessionStorage.getItem('merch-admin-secret') || ''; } catch { return ''; } }
 function toStorageItem(item: Item): Item { const copy = structuredClone(item) as Item & Record<string, unknown>; for (const field of FORBIDDEN_STORAGE_FIELDS) delete copy[field]; return copy; }
@@ -50,7 +51,11 @@ async function getStaticShipping(): Promise<StoreState['shipping'] | null> { try
 export async function getRemoteData(): Promise<ApiData> { try { const response = await fetch('./data/collection.json', { cache: 'no-store' }); if (response.ok) { const data = validateData(await response.json()); const shipping = await getStaticShipping(); return shipping ? { ...data, shipping } : data; } } catch {} return validateData(await request('/data')); }
 async function getAuthoritativeRemoteData(): Promise<ApiData> { return validateData(await request('/data')); }
 function mutationLabel(method: string): string { if (method === 'DELETE') return '正在刪除並同步資料…'; if (method === 'PUT' || method === 'PATCH') return '正在編輯並同步資料…'; if (method === 'POST') return '正在新增並同步資料…'; return '正在同步資料…'; }
-async function mutate<T>(method: string, operation: () => Promise<T>): Promise<T> { return runWithSync(mutationLabel(method), operation); }
+async function mutate<T>(method: string, operation: () => Promise<T>): Promise<T> {
+  const queued = mutationQueue.then(operation, operation);
+  mutationQueue = queued.then(() => undefined, () => undefined);
+  return runWithSync(mutationLabel(method), () => queued);
+}
 export async function putItem(item: Item): Promise<ApiData> { return mutate('PUT', async () => { validateMutationResult(await request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item: toStorageItem(item) }) })); return getAuthoritativeRemoteData(); }); }
 export async function deleteItem(id: string): Promise<ApiData> { return mutate('DELETE', async () => { validateMutationResult(await request(`/items/${encodeURIComponent(id)}`, { method: 'DELETE' })); return getAuthoritativeRemoteData(); }); }
 export async function createWork(input: WorkPayload): Promise<ApiData> { return mutate('POST', () => request('/works', { method: 'POST', body: JSON.stringify({ work: input }) }).then(validateData)); }
