@@ -13,6 +13,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZl002",
+      "path": "data/zenless-zone-zero/l/ZZZl002/data.json",
+      "title": "葉瞬光 資料夾",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
