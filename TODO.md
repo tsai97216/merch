@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.805`。**
+- **目前開發版本：`1.109.806`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -17,6 +17,7 @@
 - [x] 移除 Worker 中未使用的 asset result 型別，並讓版本驗證同時檢查 frontend 與 Worker source version，避免三處版本再次漂移。
 - [x] 修正 Verify workflow 引用了已不存在的 `verify-statistics-contract.mjs`，造成統計年度驗證步驟直接失敗；移除失效的 script 與 workflow 呼叫，保留實際存在且涵蓋年度 contract 的 `verify-statistics-year-contract.mjs`。
 - [x] 清理 scripts 目錄中已無現行責任的舊 batch staging note 與重複 schema notes，正式 schema 規格統一以 `ITEM_SCHEMA.md` 等現行文件為準。
+- [ ] 發現 `src/detail-focus.ts` 仍以 `MutationObserver` 監看統計 modal，與現行 lifecycle 規則衝突；應改為統計 modal 建立時直接掛載／關閉時清理 focus lifecycle，移除 observer workaround。
 
 ### 2. 網站初始載入動畫
 - [x] 在資料載入完成前顯示全頁載入過渡。
