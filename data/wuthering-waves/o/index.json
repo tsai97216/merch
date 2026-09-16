@@ -2,5 +2,15 @@
   "schemaVersion": 1,
   "workId": "wuthering-waves",
   "category": "o",
-  "items": []
+  "items": [
+    {
+      "id": "WWo001",
+      "path": "data/wuthering-waves/o/WWo001/data.json",
+      "title": "二週年紙花束",
+      "characters": [],
+      "manufacturer": "庫洛",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
 }
