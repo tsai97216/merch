@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "wuthering-waves",
+  "category": "p",
+  "items": [
+    {
+      "id": "WWp001",
+      "path": "data/wuthering-waves/p/WWp001/data.json",
+      "title": "65mm方形毛絨團子 陸赫斯",
+      "characters": [
+        "陸赫斯"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
