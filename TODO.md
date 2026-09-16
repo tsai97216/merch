@@ -39,6 +39,7 @@
 - [x] 正式網站已成功完成一般圖片新增，確認 R2 → GitHub mutation → 前端顯示的基本上傳流程可用。
 - [x] 一般 CRUD／運費 API 的前端 mutation 現已透過全域 queue 序列化，避免同一頁面同時發出多個 GitHub atomic commit 而互相踩 HEAD。
 - [x] 修正一般 Work／Shipping mutation 成功後仍顯示錯誤的前端 response contract：Worker mutation endpoint 回傳 `{ version }`，前端部分方法卻直接以完整 `ApiData` 驗證，導致寫入成功後在 response validation 階段誤報失敗。
+- [ ] **最新驗收發現：Work CRUD／Shipping mutation 實際已寫入成功，但前端仍進入 error toast。需繼續定位 mutation promise 在「成功寫入 → authoritative `/data` → Store apply → UI render」鏈中的實際 rejection 點，禁止再以猜測性的 response contract workaround 處理。**
 
 ### 5. 發布前驗證
 - [x] 相關 verification / Build 通過。
