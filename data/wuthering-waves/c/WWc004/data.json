@@ -1,0 +1,23 @@
+{
+  "id": "WWc004",
+  "workId": "wuthering-waves",
+  "title": "尤諾 合影卡",
+  "series": [],
+  "characters": ["尤諾"],
+  "category": "c",
+  "manufacturer": "庫洛",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "鳴潮2.6線下活動",
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2025-09-13"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
