@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "genshin-impact",
+  "category": "c",
+  "items": [
+    {
+      "id": "GIc001",
+      "path": "data/genshin-impact/c/GIc001/data.json",
+      "title": "空月之歌線下 光柵卡",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 2,
+      "status": "received"
+    }
+  ]
+}
