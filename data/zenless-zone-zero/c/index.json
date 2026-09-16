@@ -106,6 +106,17 @@
       "manufacturer": "閃魂",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZc010",
+      "path": "data/zenless-zone-zero/c/ZZZc010/data.json",
+      "title": "普羅米婭錦衣夜行相卡",
+      "characters": [
+        "普羅米婭"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
