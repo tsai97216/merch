@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "honkai-star-rail",
+  "category": "w",
+  "items": [
+    {
+      "id": "HSRw001",
+      "path": "data/honkai-star-rail/w/HSRw001/data.json",
+      "title": "三週年紀念水壺",
+      "characters": [],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
