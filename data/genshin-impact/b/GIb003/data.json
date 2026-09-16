@@ -1,0 +1,25 @@
+{
+  "id": "GIb003",
+  "workId": "genshin-impact",
+  "title": "馬口鐵徽章 芙寧娜",
+  "series": [],
+  "characters": [
+    "芙寧娜"
+  ],
+  "category": "b",
+  "manufacturer": "米哈遊",
+  "quantity": 1,
+  "status": "received",
+  "description": "",
+  "notes": "",
+  "purchase": {
+    "currency": "TWD",
+    "platform": "線下活動",
+    "date": "2026-06-02"
+  },
+  "arrival": {},
+  "afterSales": {
+    "status": "無"
+  },
+  "images": []
+}
