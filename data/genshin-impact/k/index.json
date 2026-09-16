@@ -13,6 +13,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "GIk002",
+      "path": "data/genshin-impact/k/GIk002/data.json",
+      "title": "風史萊姆 綁繩",
+      "characters": [
+        "風史萊姆"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
