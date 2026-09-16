@@ -3,7 +3,9 @@
   "workId": "wuthering-waves",
   "title": "奧古斯塔 合影卡",
   "series": [],
-  "characters": ["奧古斯塔"],
+  "characters": [
+    "奧古斯塔"
+  ],
   "category": "c",
   "manufacturer": "庫洛",
   "quantity": 1,
@@ -19,5 +21,10 @@
   "afterSales": {
     "status": "無"
   },
-  "images": []
+  "images": [
+    {
+      "id": "WWc005-1789558258781",
+      "file": "WWc005.jpeg"
+    }
+  ]
 }
