@@ -105,6 +105,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZk010",
+      "path": "data/zenless-zone-zero/k/ZZZk010/data.json",
+      "title": "壓克力掛件 貓又",
+      "characters": [
+        "貓又"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
