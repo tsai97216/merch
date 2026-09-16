@@ -73,6 +73,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZw007",
+      "path": "data/zenless-zone-zero/w/ZZZw007/data.json",
+      "title": "蕾米埃爾 扇子",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
