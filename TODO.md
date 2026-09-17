@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.812`。**
+- **目前開發版本：`1.109.813`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -13,7 +13,7 @@
 ## Active work
 
 ### 1. 圖片上傳 API 邊界驗收
-- [ ] 正式 Worker 部署 `1.109.812`，確認正式環境已使用最新 Worker。
+- [ ] 正式 Worker 部署 `1.109.813`，確認正式環境已使用最新 Worker。
 - [ ] 驗收小圖、接近 8 MB 圖片、替換既有圖片三種情境。
 - [ ] 驗證前端單檔 8 MB 上限、Base64 約 33% 膨脹，以及 Worker GitHub mutation 10 MB Base64 content limit 的邊界行為。
 
