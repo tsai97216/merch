@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.815';
+const WORKER_VERSION = '1.109.816';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -194,7 +194,7 @@ async function mirrorDelete(request: Request, env: Env, path: string): Promise<R
       if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
     } catch (rollbackError) {
       console.error('R2 image mirror rollback failed after GitHub delete request error.', rollbackError);
-      return errorResponse('GITHUB_DELETE_FAILED_ROLLBACK_FAILED', `GitHub 圖片刪除失敗，且 R2 rollback 也失敗：${errorMessage(rollbackError)}`, 502);
+      return errorResponse('GITHUB_DELETE_FAILED_ROLLBACK_FAILED', `GitHub 圖片刪除失敗，且 R2 rollback 也失敗：${errorMessage(error)}`, 502);
     }
     return errorResponse('GITHUB_DELETE_FAILED', `GitHub 圖片刪除失敗，R2 已 rollback：${errorMessage(error)}`, 502);
   }
