@@ -24,6 +24,18 @@
 - [ ] **Legacy JavaScript / Font display**：評估 PageSpeed 提出的約 11 KiB legacy JavaScript 與 Desktop 約 40 ms font display 問題，確認實際產物後再做必要的最小修改。
 - [ ] **動畫與非 composited animation**：檢查 PageSpeed Diagnostics 的 2 個 Mobile／1 個 Desktop non-composited animations，確認是否為實際效能瓶頸後再調整。
 
+### 新增周邊 / 作品準備
+
+- [ ] **新增頁面的類型選單加入「貼紙」**：目前新增 Item 頁面的 Category／類型選單沒有 `貼紙` 選項；需確認 `ITEM_TYPES.md` 的 category registry、Add 頁面 selector、validation、ID／路徑與其他使用 category 的 UI 是否全部一致。
+- [ ] **建立完整的「新增作品」流程準備**：新增作品後，所有依 Work registry／作品資料產生或統計的功能都必須同步支援新作品，不只建立作品資料本身。需完整盤點並處理主頁、Collection、Statistics、統計圖表、排行榜、篩選／搜尋、作品選擇器、作品相關 read model／generated data、路由或其他依作品清單運作的地方，避免新增作品後只在單一頁面出現、其他頁面漏掉。
+  - [ ] 盤點目前所有以固定作品清單、work code、works registry 或 hard-code series/category 對應的程式與資料。
+  - [ ] 確認首頁各作品統計、近期周邊、排行榜等資料會自動納入新作品。
+  - [ ] 確認 Statistics 各圖表、明細、分類／作品統計會自動納入新作品並正確計算。
+  - [ ] 確認 Collection 的作品篩選、搜尋與數量統計會納入新作品。
+  - [ ] 確認 Management 的作品 selector、Item 新增／編輯流程可正確選擇新作品。
+  - [ ] 確認 build 產生的 `public/data/` read models、index 與其他衍生資料會正確包含新作品。
+  - [ ] 完整新增一個測試作品進行驗證，確認新增作品後各頁面與圖表均能正常顯示，且不需要額外手動補資料。
+
 ## Maintenance rule
 
 - TODO 只追蹤「現在還沒完成什麼」。
