@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.813';
+const WORKER_VERSION = '1.109.814';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -160,13 +160,49 @@ async function mirrorPut(request: Request, env: Env, path: string): Promise<Resp
   return response;
 }
 
-async function mirrorDelete(env: Env, response: Response, path: string): Promise<Response> {
-  if (!response.ok) return response;
+async function mirrorDelete(request: Request, env: Env, path: string): Promise<Response> {
+  let previous: Uint8Array | null = null;
   try {
-    await deleteR2Asset(env.MERCH_ASSETS, path);
+    previous = await readPreviousAssetWithRetry(env, path);
   } catch (error) {
-    console.error('R2 image mirror DELETE failed; metadata remains authoritative.', error);
+    console.error('Failed to read previous image from R2 before mirror DELETE after retries.', error);
+    return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未刪除 R2 或 GitHub：${errorMessage(error)}`, 502);
   }
+
+  if (previous) {
+    try {
+      await deleteR2Asset(env.MERCH_ASSETS, path);
+      const stored = await env.MERCH_ASSETS.head(path);
+      if (stored) throw new Error(`R2 delete verification failed for ${path}.`);
+    } catch (error) {
+      console.error('R2 image mirror DELETE failed before GitHub mutation.', error);
+      return errorResponse('R2_MIRROR_DELETE_FAILED', `R2 圖片刪除失敗，尚未刪除 GitHub：${errorMessage(error)}`, 502);
+    }
+  }
+
+  let response: Response;
+  try {
+    response = await app.fetch(request, env);
+  } catch (error) {
+    console.error('GitHub image deletion threw an exception.', error);
+    try {
+      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
+    } catch (rollbackError) {
+      console.error('R2 image mirror rollback failed after GitHub delete request error.', rollbackError);
+      return errorResponse('GITHUB_DELETE_FAILED_ROLLBACK_FAILED', `GitHub 圖片刪除失敗，且 R2 rollback 也失敗：${errorMessage(rollbackError)}`, 502);
+    }
+    return errorResponse('GITHUB_DELETE_FAILED', `GitHub 圖片刪除失敗，R2 已 rollback：${errorMessage(error)}`, 502);
+  }
+
+  if (!response.ok) {
+    try {
+      if (previous) await putR2Asset(env.MERCH_ASSETS, path, previous, assetContentType(path));
+    } catch (rollbackError) {
+      console.error('R2 image mirror rollback failed after GitHub delete failure.', rollbackError);
+      return errorResponse('GITHUB_DELETE_RESPONSE_FAILED_ROLLBACK_FAILED', `GitHub 圖片刪除失敗，且 R2 rollback 也失敗：${errorMessage(rollbackError)}`, 502);
+    }
+  }
+
   return response;
 }
 
@@ -187,8 +223,8 @@ export default {
     }
 
     if (path && request.method === 'DELETE') {
-      const response = await app.fetch(request, env);
-      return corsResponse(await mirrorDelete(env, response, path), origin);
+      const response = await mirrorDelete(request, env, path);
+      return corsResponse(response, origin);
     }
 
     return corsResponse(await app.fetch(request, env), origin);
