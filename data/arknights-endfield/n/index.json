@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "workId": "arknights-endfield",
+  "category": "n",
+  "items": [
+    {
+      "id": "AKEn001",
+      "path": "data/arknights-endfield/n/AKEn001/data.json",
+      "title": "明信片",
+      "characters": [],
+      "manufacturer": "鷹角",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
