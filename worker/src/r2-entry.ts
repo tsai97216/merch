@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.847';
+const WORKER_VERSION = '1.109.854';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -170,7 +170,7 @@ async function mirrorDelete(request: Request, env: Env, path: string): Promise<R
   try {
     previous = await readPreviousAssetWithRetry(env, path);
   } catch (error) {
-    console.error('Failed to read previous image from R2 before mirror DELETE after retries.', error);
+    console.error('Failed to read previous asset from R2 before mirror DELETE after retries.', error);
     return errorResponse('R2_PREVIOUS_READ_FAILED', `無法讀取既有圖片，尚未刪除 R2 或 GitHub：${errorMessage(error)}`, 502);
   }
 
