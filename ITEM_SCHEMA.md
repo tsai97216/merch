@@ -1,14 +1,20 @@
-# Item Schema
+# Merch Item Schema
 
-> 本文件記錄目前確定的「單一周邊」資料欄位規格，作為新資料儲存架構、Store、API / Worker、管理介面與詳細頁的共同基準。
->
-> 核心原則：本網站是個人周邊收藏管理資料庫，優先記錄收藏管理真正需要的資訊，不為完整而加入低價值欄位。
+> 本文件定義目前正式 Item 的資料契約。它描述「資料長什麼樣」；長期開發規則由 `RULES.md` 管理，類型定義由 `ITEM_TYPES.md` 管理。
 
-## 1. 正式 JSON 結構
+## 1. Canonical Item
 
-單一 Item 的正式資料位於：
+每個周邊都是獨立 Item，canonical data 固定位於：
 
-`data/<work>/<category>/<Item ID>/data.json`
+```text
+data/<work-id>/<category>/<item-id>/
+├── data.json
+└── images/
+```
+
+Item 不再以「整個作品一份 JSON」作為寫入單位。
+
+## 2. 正式欄位
 
 ```json
 {
@@ -48,101 +54,116 @@
 }
 ```
 
-## 2. 基本資料
+### 頂層欄位
 
-| 欄位 | 類型 | 說明 |
+| 欄位 | 型別 | 規則 |
 |---|---|---|
-| `id` | string | 唯一 Item ID，例如 `HSRd001` |
-| `workId` | string | 所屬作品 ID |
+| `id` | string | 穩定且唯一的 Item ID |
+| `workId` | string | 永久 Work ID |
 | `title` | string | 周邊名稱 |
-| `series` | string[] | 所屬系列，可為空陣列 |
-| `characters` | string[] | 相關角色，可為空陣列 |
-| `category` | string | 正式周邊類型 code，依 `ITEM_TYPES.md` |
+| `series` | string[] | 系列名稱，可為空陣列 |
+| `characters` | string[] | 角色名稱，可為空陣列 |
+| `category` | string | `ITEM_TYPES.md` 定義的 category code |
 | `manufacturer` | string | 製造商，可為空字串 |
-| `quantity` | integer | 擁有數量，必須 >= 1 |
-| `status` | string | 目前狀態，例如 `received`、`preorder`、`pending` |
-| `description` | string | 周邊描述，可為空字串 |
+| `quantity` | integer | `>= 1` |
+| `status` | string | 目前收藏／到貨狀態 |
+| `description` | string | 描述，可為空字串 |
 | `notes` | string | 個人備註，可為空字串 |
+| `purchase` | object | 購買資訊 |
+| `arrival` | object | 預計／實際到貨日期 |
+| `afterSales` | object | 售後狀態與備註 |
+| `images` | object[] | Item 圖片 metadata |
 
-### 明確不加入 `material`
+## 3. Purchase
 
-`material` 材質欄位不納入正式 Item schema。`亞克力` 是材質，不是商品類型；商品仍應依實際商品型態使用 `category` 分類。
+`purchase`：
 
-## 3. 購買
-
-| 欄位 | 類型 | 說明 |
+| 欄位 | 型別 | 規則 |
 |---|---|---|
-| `price` | number | 購買單價 |
-| `currency` | string | 金額幣別，例如 `TWD`、`CNY` |
-| `platform` | string | 購買平台，例如淘寶、蝦皮、實體店等 |
-| `date` | string | 購買日期，使用日期格式 |
+| `price` | number | 單件購買價格；統計時乘以 `quantity` |
+| `currency` | string | 例如 `TWD`、`CNY` |
+| `platform` | string | 購買平台，可為空字串 |
+| `date` | string | 日期格式；可依現有資料規則為空 |
 
-不納入：`orderId`、`url`。
+不加入 `orderId`、`url` 等非收藏管理必要欄位。
 
-## 4. 到貨
-
-正式欄位名稱為 `arrival`。
-
-| 欄位 | 類型 | 說明 |
-|---|---|---|
-| `expectedDate` | string \| null | 預計到貨日期，可為空 |
-| `receivedDate` | string \| null | 實際收到日期，可為空 |
-
-只處理「預計何時到」與「實際何時收到」，不建立獨立物流系統。
-
-## 5. 物流
-
-**不建立 `shipping` 欄位。**
-
-不記錄物流狀態、運送方式、集運／空運／急運等資訊或物流備註。
-
-## 6. 售後
-
-| 欄位 | 類型 | 說明 |
-|---|---|---|
-| `status` | string | 售後狀態，可為空 |
-| `note` | string | 售後備註，可為空 |
-
-不納入 `updatedAt`，不建立完整售後歷程系統。
-
-## 7. 圖片
-
-圖片 metadata 屬於 Item 資料的一部分；實體圖片放在該 Item 自己的 `images/` 目錄。
+## 4. Arrival
 
 ```json
-"images": [
-  {
-    "id": "cover",
-    "file": "cover.webp",
-    "alt": "流螢立牌",
-    "isCover": true
-  }
-]
+"arrival": {
+  "expectedDate": "2026-09-20",
+  "receivedDate": null
+}
 ```
 
-`file` 只能是檔名，不得包含路徑。實際檔案位置固定為：
+- `expectedDate`：預計收到日期，可為 `null`。
+- `receivedDate`：實際收到日期，可為 `null`。
+- `arrival` 只描述收藏到貨時間，不取代物流系統。
 
-`data/<work>/<category>/<Item ID>/images/<file>`
+## 5. After-sales
 
-## 8. 類型與路徑
+```json
+"afterSales": {
+  "status": "處理中",
+  "note": "待換貨"
+}
+```
 
-`category` 使用 `ITEM_TYPES.md` 的 code，例如 `b`、`c`、`d`、`f`。
+只記錄目前售後狀態與備註，不建立完整訂單／售後歷程系統。
 
-Item 資料路徑固定為：
+## 6. 明確排除的欄位
 
-`data/<work>/<category>/<Item ID>/data.json`
+正式 Item schema 不包含：
 
-Item 圖片路徑固定為：
+- `material`
+- `shipping`
+- `workName`
+- `workTitle`
+- `createdAt`
+- `updatedAt`
+- 物流追蹤號碼、物流方式、集運資訊
+- 未有明確資料契約的自訂欄位
 
-`data/<work>/<category>/<Item ID>/images/<file>`
+其中 `material` 特別重要：亞克力是材質，不是 category。
 
-Category 的 `index.json` 只保存索引與列表所需的最小 metadata，不取代 Item `data.json`。
+## 7. Image metadata
 
-## 9. 設計原則
+```json
+{
+  "id": "cover",
+  "file": "cover.webp",
+  "alt": "流螢立牌",
+  "isCover": true
+}
+```
 
-1. **以已擁有的周邊為主要管理對象。**
-2. **只保留對收藏管理有實際價值的資料。**
-3. **不建立完整物流或訂單管理功能。**
-4. **不要求使用者提供難以判斷或維護的資訊。**
-5. **欄位可以為空時，不應為了湊完整資料而強迫填寫。**
-6. **後續程式實作應以本文件為 Item schema 基準。**
+規則：
+
+- `file` 只能是檔名，不可包含路徑。
+- 實體檔案位於同一 Item 的 `images/`。
+- 支援格式由目前 image contract 定義：JPG、JPEG、PNG、WebP、GIF、AVIF。
+- `isCover` 用來指定封面；資料應維持最多一個有效封面。
+- Image metadata 是 Item canonical data；圖片 binary 由 R2 提供服務。
+
+## 8. Category index
+
+`data/<work>/<category>/index.json` 是 category 層索引，不取代 Item `data.json`。
+
+它只保存列表、同步與驗證所需的最小 metadata；詳細 Item 資料仍以各 Item `data.json` 為準。
+
+## 9. Compatibility / validation
+
+- 舊資料缺少 `quantity` 時可相容預設為 `1`。
+- 已存在但格式錯誤的 `quantity` 不得靜默轉成 `1`。
+- 所有 API response、static data 與 remote mutation result 在進入 Store 前都必須經 validation。
+- schema 不允許的欄位不得因方便而寫入 canonical data。
+- Item ID、category、workId、path 必須彼此一致。
+
+## 10. 計算語意
+
+- **種類數**：Item 筆數。
+- **持有件數**：`Σ quantity`。
+- **單項消費**：`purchase.price × quantity`。
+- **總消費**：`Σ(purchase.price × quantity)`。
+
+這些語意必須在 Collection、Statistics、Home ranking 與管理頁保持一致。
