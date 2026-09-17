@@ -2,15 +2,20 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.811`。**
-- `RULES.md` 已整理長期架構規則、資料契約、寫入一致性、圖片管理、驗證與版本基線；本文件只保留尚未完成的工作。
+- **目前開發版本：`1.109.812`。**
+- `RULES.md`：長期開發規則。
+- `ITEM_SCHEMA.md`：Item 資料契約。
+- `ITEM_TYPES.md`：Category registry。
+- `PROJECT_ARCHITECTURE.md`：repository 與資料／部署責任邊界。
+- `UI_ARCHITECTURE.md`：共用 UI 與 responsive baseline。
+- 本文件只保留尚未完成的工作。
 
 ## Active work
 
 ### 1. 圖片上傳 API 邊界驗收
-- [ ] 正式 Worker 部署 `1.109.811`，確認正式環境已使用最新 Worker。
+- [ ] 正式 Worker 部署 `1.109.812`，確認正式環境已使用最新 Worker。
 - [ ] 驗收小圖、接近 8 MB 圖片、替換既有圖片三種情境。
-- [ ] 驗證前端單檔 8 MB 上限、base64 約 33% 膨脹，以及 Worker GitHub mutation 10 MB base64 content limit 的邊界行為。
+- [ ] 驗證前端單檔 8 MB 上限、Base64 約 33% 膨脹，以及 Worker GitHub mutation 10 MB Base64 content limit 的邊界行為。
 
 ### 2. 發布前正式環境驗收
 - [ ] 完成上述圖片邊界案例的正式網站驗收。
@@ -18,6 +23,6 @@
 
 ## Maintenance rule
 
-- TODO 只追蹤「現在還沒完成什麼」，已完成的一次性工作不保留。
-- 未來每次修改都必須遵守的長期規則放在 `RULES.md`，不要重新塞回 TODO。
-- 每完成一項工作立即從 TODO 移除；若形成新的長期規則，再同步整理到 `RULES.md`。
+- TODO 只追蹤「現在還沒完成什麼」。
+- 已完成的一次性工作移除；長期規則放 `RULES.md`；資料契約放對應 schema / type 文件。
+- 每完成一項工作立即移除對應 TODO。
