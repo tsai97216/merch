@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "arknights-endfield",
+  "category": "w",
+  "items": [
+    {
+      "id": "AKEw001",
+      "path": "data/arknights-endfield/w/AKEw001/data.json",
+      "title": "管理員 面具 扇子",
+      "characters": [
+        "管理員"
+      ],
+      "manufacturer": "鷹角",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
