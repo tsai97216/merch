@@ -1,10 +1,10 @@
-# UI Architecture / Current Baseline
+# Merch UI Architecture
 
-> 本文件記錄目前 Merch 的共用 UI 架構與已確立的責任邊界。長期不可回歸規則以 `RULES.md` 為準；未完成工作只記錄於 `TODO.md`。
+> 本文件描述目前正式 UI 的責任分層與 layout baseline。不可回歸規則以 `RULES.md` 為準；待完成工作以 `TODO.md` 為準。
 
-## Scope
+## 1. UI scope
 
-目前正式頁面：
+正式頁面：
 
 - Home
 - Collection
@@ -15,7 +15,7 @@
 - Settings
 - Item Detail
 
-共用 UI surface：
+共用 surface：
 
 - Navigation / Header
 - Button
@@ -27,81 +27,211 @@
 - Loading / Empty / Error
 - Sync overlay
 
-## Current architecture
+## 2. Layer model
+
+```text
+Design Tokens
+     │
+     ├── Theme
+     ├── Shared Components / Controls
+     └── Responsive Contract
+              │
+              ▼
+        Page Modules
+              │
+              ▼
+        Store / Router / API
+```
 
 ### Design foundation
 
-- Semantic design tokens 統一色彩、Typography、Spacing、Radius、Border、Surface、Focus、Shadow 等基礎。
-- Light / Dark theme 由 shared theme foundation 管理。
-- Responsive contract 集中於 `src/responsive-refinement.css`。
-- Desktop、Tablet、Mobile 均視為正式 layout，而不是單純縮小 Desktop。
+- `src/design-tokens.css`：semantic color、typography、spacing、radius、border、surface、focus、shadow。
+- `src/theme.ts` / `src/theme.css` / `src/theme-refinement.css`：Light / Dark theme。
+- `src/shared-components.css`：Button、Card、Panel、Modal、Badge、Feedback 等共用視覺基礎。
+- `src/controls.css`：Input、Select、Segmented Control 等控制項。
+- `src/responsive-refinement.css`：Desktop / Tablet / Mobile viewport contract。
 
-### Shared components
+Shared foundation 是唯一共用 UI 層。舊 API 若仍存在，只能 forwarding，不建立第二套視覺實作。
 
-- 共用控制項與容器樣式集中於 `src/shared-components.css`、`src/controls.css`。
-- Modal / Dialog、Feedback、Loading 與同步狀態使用既定 shared foundation。
-- 舊相容 API 若仍存在，只負責轉送至 shared foundation，不建立第二套視覺實作。
+## 3. Page layer
 
-### Page layer
+Page module 負責：
 
-- Page module 負責該頁資料整理、事件與 rendering。
-- Page-specific CSS 只處理該頁真正獨有的布局與視覺，不重新定義 shared component。
-- Viewport breakpoint 規則統一放在 `src/responsive-refinement.css`。
+1. 該頁資料整理。
+2. 該頁事件處理。
+3. 該頁 rendering。
+4. 該頁真正獨有的 layout。
 
-### State and interaction
+Page module 不應：
 
-- Store 是資料與 UI state 的主要來源。
-- Remote mutation 透過 API 與 Store 的統一流程更新，不在頁面建立第二份遠端 state。
-- API mutation 在完成前顯示明確的 blocking sync / upload 狀態。
-- Loading、Empty、Error 三種狀態明確分離。
-- Keyboard focus、focus-visible、disabled、reduced-motion 等狀態由共用基礎處理。
+- 建立第二份 remote state。
+- 直接修改 Store snapshot。
+- 重建 shared Button / Modal / Card 等元件。
+- 在自己的 CSS 宣告 viewport breakpoint 取代 responsive layer。
+- 透過 DOM post-processing 修補 rendering lifecycle。
 
-## Current file responsibilities
+## 4. State and rendering
 
-| Layer | Files | Responsibility |
-|---|---|---|
-| Tokens | `src/design-tokens.css` | Semantic design tokens |
-| Theme | `src/theme.ts`, `src/theme.css`, `src/theme-refinement.css` | Theme initialization and theme-specific foundation |
-| Shared UI | `src/shared-components.css`, `src/controls.css` | Shared controls, cards, panels, modal and feedback foundation |
-| Responsive | `src/responsive-refinement.css` | Desktop / Tablet / Mobile viewport contract |
-| Sync | `src/sync-overlay.ts`, `src/sync-overlay.css` | Blocking API synchronization feedback |
-| Compatibility | `src/utils/toast.ts` | Legacy toast API forwarding to shared feedback |
-| Page | `src/*.ts`, page CSS | Page-specific behavior and unique layout |
+### State
 
-## Responsive baseline
+Store 是資料與 UI state 的主要來源。
+
+```text
+API response
+   ↓ validation
+Store
+   ↓ immutable state
+Page rendering
+```
+
+Remote mutation：
+
+```text
+User action
+   ↓
+API
+   ↓
+remote mutation
+   ↓ authoritative response
+Store remote-apply
+   ↓
+render
+```
+
+Page 不應在 mutation 成功後另外維護一份與 Store 平行的遠端資料。
+
+### Rendering lifecycle
+
+資料驅動區塊至少區分：
+
+- Loading
+- Ready
+- Empty
+- Error
+
+Empty 不是 Error。Error message 必須是安全、可理解的 UI 文案，不直接把原始 exception 當 HTML。
+
+## 5. Shared interaction contract
+
+共用互動至少處理：
+
+- hover
+- focus-visible
+- disabled
+- loading
+- keyboard navigation
+- reduced-motion
+- error / empty feedback
+
+HTML `id` 必須唯一。
+
+動態事件優先使用穩定的事件 delegation；不可在每次 render 重複註冊相同 document listener。
+
+不使用 MutationObserver、`dataset.bound` 或類似標記作為 lifecycle workaround。
+
+## 6. Modal / Dialog
+
+Modal 與 Item Detail 必須維持完整 lifecycle：
+
+- open / close
+- Escape
+- focus trap
+- focus return
+- keyboard interaction
+- `aria-hidden`
+- 正確的 dialog selector
+
+Detail dialog 不可與其他 modal 使用模糊 selector 混淆。
+
+## 7. Navigation
+
+Mobile Navigation 採：
+
+```text
+Brand Header
+     ↓
+Horizontal page navigation
+```
+
+Mobile 不保留 Desktop sidebar 的佔位空間。
+
+Route navigation 與 page rendering 解耦；跨頁搜尋／Filter 必須由 cross-navigation 與 Collection state 一起更新，而不是只修改 hash。
+
+## 8. Responsive baseline
 
 ### Desktop
 
-- 使用完整 Navigation / Header 與內容最大寬度。
-- 多欄資訊應保持清楚的資訊層級與可讀性。
+- 完整 Navigation / Header。
+- 內容保持合理最大寬度。
+- 多欄資訊維持清楚的 hierarchy。
 
 ### Tablet
 
-- 允許 grid 欄位壓縮，但不得讓文字、金額或操作控制項溢出容器。
-- 必要時使用省略、重新分配欄寬或重新排列資訊。
+- Grid 可縮減欄數。
+- 文字、金額與操作控制不可溢出。
+- 必要時重新分配欄寬或排列順序。
 
 ### Mobile
 
-- Navigation 採品牌 Header + 可水平滑動的頁面導覽列。
-- 不保留 Desktop sidebar 的佔位空間。
-- 表單、Modal、排行榜、統計與管理資訊依可用空間重新安排。
+- 導覽採品牌 Header + 水平滑動頁面導覽。
+- 不保留 sidebar 空間。
+- Form、Modal、Ranking、Statistics、Management 依可用寬度重新安排，而不是單純縮小 Desktop。
 
-## Verification baseline
+所有 viewport breakpoint 規則集中於 `src/responsive-refinement.css`。
 
-UI 修改至少需要考慮：
+## 9. Accessibility baseline
+
+正式 UI 必須考慮：
+
+- semantic HTML
+- keyboard navigation
+- visible focus
+- dialog focus lifecycle
+- disabled / loading state 的可理解性
+- 圖片 `alt`
+- reduced-motion
+- 足夠的文字與背景對比
+
+## 10. Current shared UI files
+
+| 檔案 | 責任 |
+|---|---|
+| `src/design-tokens.css` | Design tokens |
+| `src/theme.ts` / `theme.css` / `theme-refinement.css` | Theme |
+| `src/shared-components.css` | Shared visual components |
+| `src/controls.css` | Shared form controls |
+| `src/responsive-refinement.css` | Responsive contract |
+| `src/app-loading.*` | Initial loading |
+| `src/sync-overlay.*` | Blocking sync state |
+| `src/page-auth-status.*` | Page auth status |
+| `src/image-viewer.*` | Image viewer |
+| `src/detail-focus.ts` | Dialog / detail focus lifecycle |
+| `src/utils/toast.ts` | Legacy Toast API forwarding |
+
+## 11. Verification baseline
+
+UI 修改至少檢查：
 
 - Light / Dark
 - Desktop / Tablet / Mobile
 - hover / focus-visible / disabled / loading
-- Empty / Error
+- Loading / Empty / Error
+- keyboard navigation
 - reduced-motion
-- Keyboard navigation
 - Modal / Detail lifecycle
-- Collection search / filter / sort 不回歸
-- Add / Edit / Delete / Shipping 不回歸
+- Collection search / filter / sort
+- Add / Edit / Delete
+- Shipping
+- 圖片 fallback
 
-## Maintenance rule
+## 12. Maintenance boundary
 
-- 不新增與 shared foundation 重複的 page-specific 元件或 token。
-- 發現舊實作與新 foundation 疊加時，先在 `TODO.md` 記錄，再移除或合併舊責任。
-- 本文件只描述目前架構，不保留已完成 redesign 的舊 Phase checklist。
+本文件不保存已完成 redesign 的歷史 checklist，也不保存一次性 bug fix。
+
+當發現舊 UI implementation 與 shared foundation 重複時：
+
+1. 先記錄到 `TODO.md`。
+2. 確認實際 import、selector、rendering 與責任範圍。
+3. 合併到正確的 shared layer。
+4. 移除舊 implementation。
+5. 驗證所有受影響頁面。
