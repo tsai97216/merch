@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "workId": "arknights-endfield",
+  "category": "t",
+  "items": [
+    {
+      "id": "AKEt001",
+      "path": "data/arknights-endfield/t/AKEt001/data.json",
+      "title": "伊馮 貼紙",
+      "characters": [
+        "伊馮"
+      ],
+      "manufacturer": "鷹角",
+      "quantity": 1,
+      "status": "received"
+    }
+  ]
+}
