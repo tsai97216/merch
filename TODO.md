@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.823`。**
+- **目前開發版本：`1.109.824`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -26,7 +26,7 @@
 
 ### 新增作品準備
 
-- [ ] **完整新增作品整合驗證**：目前已完成 Work registry 依賴盤點，首頁、Collection、Statistics、Management、Add、Work identity 與 `generate-collection.mjs` 均已確認以 registry／Store 動態運作，現有 `verify:work-registry` 也會檢查主要入口。剩餘工作是使用隔離／可回復方式新增一個測試作品，實際驗證首頁、統計、圖表、排行榜、Collection、作品 selector 與 generated read model 均會自動納入，且不需手動補資料。
+- [ ] **完整新增作品整合驗證**：目前已完成 Work registry 依賴盤點，首頁、Collection、Statistics、Management、Add、Work identity 與 `generate-collection.mjs` 均已確認以 registry／Store 動態運作；已加入隔離 fixture 驗證腳本，待 CI 實際執行確認後移除此 TODO。
 
 ## Maintenance rule
 
