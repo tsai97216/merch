@@ -12,7 +12,7 @@
 
 ## Active work
 
-目前沒有待處理項目。
+- Deploy workflow 目前與 Verify workflow 平行執行，正式部署沒有以 Verify 成功作為 gate；需修正為只有對應 commit 的 Verify 成功後才能部署。
 
 ## Maintenance rule
 
