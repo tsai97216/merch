@@ -3,7 +3,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const root = process.cwd();
+const root = process.env.MERCH_ROOT ? path.resolve(process.env.MERCH_ROOT) : process.cwd();
 const dataRoot = path.join(root, 'data');
 const publicDataRoot = path.join(root, 'public', 'data');
 const outputPath = path.join(publicDataRoot, 'collection.json');
