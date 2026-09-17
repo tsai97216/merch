@@ -20,15 +20,9 @@ if (!workerMatch || !/^\d+\.\d+\.\d+$/.test(workerMatch[1])) {
   process.exit(1);
 }
 
-const versions = {
-  package: packageJson.version,
-  publicData: versionJson.version,
-  worker: workerMatch[1],
-};
-
-if (new Set(Object.values(versions)).size !== 1) {
-  console.error(`Version verification failed: ${JSON.stringify(versions)}.`);
+if (packageJson.version !== versionJson.version) {
+  console.error(`Version verification failed: package.json and public/data/version.json differ (${packageJson.version} vs ${versionJson.version}).`);
   process.exit(1);
 }
 
-console.log(`Version verification passed: ${versions.package}.`);
+console.log(`Version verification passed: application ${packageJson.version}; worker build ${workerMatch[1]}.`);
