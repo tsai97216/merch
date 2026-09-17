@@ -52,7 +52,8 @@ async function loadRemoteTarget(env: Env, id: string): Promise<RemoteState> {
   const work = base.index.works.find(entry => entry.code === match[1]);
   if (!work) throw new Error(`找不到 Item 所屬作品：${id}`);
   const root = work.path.replace(/\/$/, '');
-  const categoryPaths = await categoryDirs(env, root);
+  let categoryPaths: string[] = [];
+  try { categoryPaths = await categoryDirs(env, root); } catch { categoryPaths = []; }
   const categories = new Map<string, CategoryIndex>();
   const items = new Map<string, ItemRef>();
   const loaded = await Promise.all(categoryPaths.map(async categoryPath => ({ categoryPath, category: await readCategory(env, categoryPath, base.files, base.paths) })));
