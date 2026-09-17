@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.814';
+const WORKER_VERSION = '1.109.815';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -47,7 +47,12 @@ function errorResponse(code: string, message: string, status: number): Response 
 function r2AssetPath(request: Request): string | null {
   const url = new URL(request.url);
   if (!url.pathname.startsWith('/api/assets/')) return null;
-  const path = decodeURIComponent(url.pathname.slice('/api/assets/'.length));
+  let path: string;
+  try {
+    path = decodeURIComponent(url.pathname.slice('/api/assets/'.length));
+  } catch {
+    return null;
+  }
   return ASSET_RE.test(path) && !path.includes('..') ? path : null;
 }
 
@@ -223,8 +228,8 @@ export default {
     }
 
     if (path && request.method === 'DELETE') {
-      const response = await mirrorDelete(request, env, path);
-      return corsResponse(response, origin);
+      const response = await app.fetch(request, env);
+      return corsResponse(await mirrorDelete(request, env, path), origin);
     }
 
     return corsResponse(await app.fetch(request, env), origin);
