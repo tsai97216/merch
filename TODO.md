@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.808`。**
+- **目前開發版本：`1.109.809`。**
 - 主要資料、同步、生命週期、CI、Build、Deploy 與共用 UI 架構已完成整理與驗證。
 - 長期架構規則與不可回歸的基線統一記錄於 `RULES.md`；本文件只保留尚未完成、需要追蹤或準備執行的工作。
 - 目前進入「小幅功能／UI／資料／流程調整」階段，不再進行沒有必要的整體架構重寫。
@@ -18,6 +18,7 @@
 - [x] 修正 Verify workflow 引用了已不存在的 `verify-statistics-contract.mjs`，造成統計年度驗證步驟直接失敗；移除失效的 script 與 workflow 呼叫，保留實際存在且涵蓋年度 contract 的 `verify-statistics-year-contract.mjs`。
 - [x] 清理 scripts 目錄中已無現行責任的舊 batch staging note 與重複 schema notes，正式 schema 規格統一以 `ITEM_SCHEMA.md` 等現行文件為準。
 - [x] 移除 `src/detail-focus.ts` 對統計 modal 的 `MutationObserver` workaround，改由既有全域 focus lifecycle 直接處理動態統計 dialog，避免以 DOM 監看器補救 rendering lifecycle。
+- [x] 合併重複的資料驗證入口：`verify-data.mjs`、`verify-new-data.mjs`、`verify-migration-completion.mjs` 的重疊驗證已整合為單一 `scripts/verify-data-layout.mjs`，Verify workflow 不再重複跑相同資料檢查。
 
 ### 2. 網站初始載入動畫
 - [x] 在資料載入完成前顯示全頁載入過渡。
@@ -48,10 +49,10 @@
 - [x] 正式網站已成功完成一般圖片新增，確認 R2 → GitHub mutation → 前端顯示的基本上傳流程可用。
 - [x] 一般 CRUD／運費 API 的前端 mutation 現已透過全域 queue 序列化，避免同一頁面同時發出多個 GitHub atomic commit 而互相踩 HEAD。
 - [x] 修正 Work／Shipping mutation response contract：前端 mutation validator 現可安全接受 Worker 回傳的 `{ version }` 或完整 authoritative data，避免寫入成功後因 response shape 不一致誤報失敗。
-- [x] 修正 repo 版本同步：`package.json`、`public/data/version.json` 與 Worker source version 已更新至 `1.109.808`，且版本驗證器現在會三方檢查。
+- [x] 修正 repo 版本同步：`package.json`、`public/data/version.json` 與 Worker source version 已更新至 `1.109.809`，且版本驗證器現在會三方檢查。
 - [x] 修正圖片 PUT 的根因：R2 已是圖片 authoritative store；R2 不存在時視為新上傳，不再先讀 GitHub previous-image，避免 `R2_PREVIOUS_READ_FAILED • HTTP 502` 的脆弱依賴。既有 R2 圖片仍保留 rollback 能力。
 - [x] R2 previous-image 讀取加入最多 3 次的短暫重試；只有連續失敗才回傳 `R2_PREVIOUS_READ_FAILED`，不改變既有圖片 rollback 語意。
-- [ ] 正式 Worker 尚需部署 `1.109.808`，並重新驗收新增／替換圖片，確認正式環境不再使用舊 Worker。
+- [ ] 正式 Worker 尚需部署 `1.109.809`，並重新驗收新增／替換圖片，確認正式環境不再使用舊 Worker。
 
 ### 6. 發布前驗證
 - [x] 相關 verification / Build 通過。
