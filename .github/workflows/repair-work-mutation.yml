@@ -1,0 +1,53 @@
+name: Repair work mutation
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/repair-work-mutation.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply minimal repair
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('worker/src/index.ts')
+          s = p.read_text()
+          old = "async function createWork(env: Env, input: unknown, origin: string): Promise<Response> { const work = validateWork((input as { work?: unknown } | null)?.work, true); const remote = await loadRemote(env);"
+          new = "async function createWork(env: Env, input: unknown, origin: string): Promise<Response> { const work = validateWork((input as { work?: unknown } | null)?.work, true); const remote = await baseRemote(env);"
+          if old not in s:
+              raise SystemExit('createWork load path not found')
+          p.write_text(s.replace(old, new, 1))
+
+          replacements = {
+              'package.json': ('"version": "1.109.827"', '"version": "1.109.828"'),
+              'public/data/version.json': ('"version": "1.109.827"', '"version": "1.109.828"'),
+              'worker/src/r2-entry.ts': ('1.109.827', '1.109.828'),
+              'TODO.md': ('`1.109.827`', '`1.109.828`'),
+          }
+          for name, (old, new) in replacements.items():
+              p = Path(name)
+              s = p.read_text()
+              if old not in s:
+                  raise SystemExit(f'version marker not found: {name}')
+              p.write_text(s.replace(old, new, 1))
+          PY
+
+      - name: Commit repair and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/repair-work-mutation.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add worker/src/index.ts worker/src/r2-entry.ts package.json public/data/version.json TODO.md .github/workflows/repair-work-mutation.yml
+          git commit -m 'fix: avoid loading all items for work creation [skip ci]'
+          git push origin HEAD:main
