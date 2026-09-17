@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.828`。**
+- **目前開發版本：`1.109.829`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -11,6 +11,10 @@
 - 本文件只保留尚未完成的工作。
 
 ## Active work
+
+### Work API mutation reliability
+
+- [ ] **作品新增 API 失敗診斷與修復**：目前作品新增請求未產生 Git commit，需要確認 Worker 到 GitHub Git Data API 的實際失敗點；已先讓 GitHub API 錯誤以結構化錯誤回傳，下一步依實際錯誤修正根因。
 
 ### PageSpeed / 效能改善
 
