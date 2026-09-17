@@ -1,6 +1,7 @@
 import './add.css';
 import { buildNextItemId } from './item-id';
 import { getStore } from './store';
+import { CATEGORY_OPTIONS } from './category-label';
 import { showToast } from './utils/toast';
 import { ensureFormErrors, setFormErrors, clearFormErrors } from './utils/form-feedback';
 import type { Item } from './types';
@@ -19,6 +20,19 @@ function setBusy(busy: boolean): void {
   form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | HTMLButtonElement>('input,textarea,select,button').forEach(control => { control.disabled = busy; });
   const button = qs<HTMLButtonElement>('#add-form button[type="submit"]');
   if (button) button.textContent = busy ? '儲存中…' : '＋ 新增收藏';
+}
+
+function populateCategoryOptions(): void {
+  const select = qs<HTMLSelectElement>('#add-category');
+  if (!select) return;
+  const current = select.value;
+  select.replaceChildren(...CATEGORY_OPTIONS.map(([code, name]) => {
+    const option = document.createElement('option');
+    option.value = code;
+    option.textContent = name;
+    return option;
+  }));
+  if (CATEGORY_OPTIONS.some(([code]) => code === current)) select.value = current;
 }
 
 function populateWorkOptions(): void {
@@ -112,6 +126,7 @@ function render(): void {
   const page = qs<HTMLElement>('[data-page="add"]'); if (!page) return;
   mount(page);
   page.hidden = location.hash !== '#/add' && location.hash !== '#add'; if (page.hidden) return;
+  populateCategoryOptions();
   const status = qs<HTMLSelectElement>('#add-status'); if (status) status.value = 'received'; populateWorkOptions();
 }
 
