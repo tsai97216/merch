@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.822`。**
+- **目前開發版本：`1.109.823`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -26,14 +26,14 @@
 
 ### 新增作品準備
 
-- [ ] **建立完整的「新增作品」流程準備**：新增作品後，所有依 Work registry／作品資料產生或統計的功能都必須同步支援新作品，不只建立作品資料本身。需完整盤點並處理主頁、Collection、Statistics、統計圖表、排行榜、篩選／搜尋、作品選擇器、作品相關 read model／generated data、路由或其他依作品清單運作的地方，避免新增作品後只在單一頁面出現、其他頁面漏掉。
-  - [ ] 盤點目前所有以固定作品清單、work code、works registry 或 hard-code series/category 對應的程式與資料。
-  - [ ] 確認首頁各作品統計、近期周邊、排行榜等資料會自動納入新作品。
-  - [ ] 確認 Statistics 各圖表、明細、分類／作品統計會自動納入新作品並正確計算。
-  - [ ] 確認 Collection 的作品篩選、搜尋與數量統計會納入新作品。
-  - [ ] 確認 Management 的作品 selector、Item 新增／編輯流程可正確選擇新作品。
-  - [ ] 確認 build 產生的 `public/data/` read models、index 與其他衍生資料會正確包含新作品。
-  - [ ] 完整新增一個測試作品進行驗證，確認新增作品後各頁面與圖表均能正常顯示，且不需要額外手動補資料。
+- [ ] **建立完整的「新增作品」流程準備**：新增作品後，所有依 Work registry／作品資料產生或統計的功能都必須同步支援新作品，不只建立作品資料本身。目前既有程式已確認首頁、Collection、Statistics、Management、generated collection read model 均以 Work registry／Store 資料動態運作；剩餘工作是完成一次不改動正式資料的新增作品整合驗證。
+  - [x] 盤點目前所有以固定作品清單、work code、works registry 或 hard-code series/category 對應的程式與資料；目前 Work identity 與主要頁面已改為 registry-driven，`verify:work-registry` 亦檢查主要入口。
+  - [x] 確認首頁各作品統計、近期周邊、排行榜等資料會自動納入新作品；首頁作品統計使用 Store `works`，排行榜資料使用 Item／Work identity 動態聚合。
+  - [x] 確認 Statistics 各圖表、明細、分類／作品統計會自動納入新作品並正確計算；Statistics 以 Item 的 `workName` 動態聚合，未硬編碼現有 Work code。
+  - [x] 確認 Collection 的作品篩選、搜尋與數量統計會納入新作品；Collection 使用 Store Work registry 與 Item 集合。
+  - [x] 確認 Management 的作品 selector、Item 新增／編輯流程可正確選擇新作品；Management 與 Add 均使用 Store `works`，並以永久 `work.id` 作為 state key。
+  - [x] 確認 build 產生的 `public/data/` read models、index 與其他衍生資料會正確包含新作品；`generate-collection.mjs` 遍歷 `data/works.json` 的完整 registry。
+  - [ ] 完整新增一個測試作品進行驗證，確認新增作品後各頁面與圖表均能正常顯示，且不需要額外手動補資料；測試必須使用隔離／可回復方式，不直接污染正式收藏資料。
 
 ## Maintenance rule
 
