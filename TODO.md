@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.831`。**
+- **目前開發版本：`1.109.832`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -14,7 +14,7 @@
 
 ### Work API mutation reliability
 
-- [ ] **作品新增 API 失敗診斷與修復**：作品新增本身已能產生 Git commit；目前曾因 runtime mutation 推進 `package.json`／`public/data/version.json`，但 Worker 原始碼版本仍是獨立部署版本，導致 Verify 的版本同步規則誤判並阻止後續部署。已修正版本驗證邏輯，需確認 CI／Deploy 完整通過並驗證網站端作品新增後的 UI 同步。
+- [ ] **作品新增 API 完整生命週期修復**：網站表單與 Worker 已能將 Work registry 寫入 GitHub；目前發現新 Work 只有 `data/works.json` 登錄、尚未建立 `data/<work>/` 資料根目錄，導致 build 的 collection generator 在新作品上遇到 ENOENT。已先讓 generator 對尚無 Item 的 registry-only Work 安全視為空作品，仍需補上 Worker 新 Work 後續第一筆 Item 的資料目錄初始化／讀取邊界，並完成 CI／Deploy 與網站端驗證。
 
 ### PageSpeed / 效能改善
 
