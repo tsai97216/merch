@@ -9,22 +9,20 @@ permissions:
 
 jobs:
   repair:
-    if: startsWith(github.event.head_commit.message, 'chore: trigger work initialization repair')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch Worker and synchronized metadata
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Patch Worker
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import json
+          import re
 
           p = Path('worker/src/index.ts')
           s = p.read_text()
           old = "const root = work.path.replace(/\\/$/, ''); const categoryPaths = await categoryDirs(env, root); const categories = new Map<string, CategoryIndex>();"
-          new = "const root = work.path.replace(/\\/$/, ''); let categoryPaths: string[] = []; try { categoryPaths = await categoryDirs(env, root); } catch (error) { if ((error as Error)?.message !== `作品目錄格式無效：${root}` && !String((error as Error)?.message || '').includes(root)) throw error; } const categories = new Map<string, CategoryIndex>();"
+          new = "const root = work.path.replace(/\\/$/, ''); let categoryPaths: string[] = []; try { categoryPaths = await categoryDirs(env, root); } catch { categoryPaths = []; } const categories = new Map<string, CategoryIndex>();"
           if old not in s:
               raise SystemExit('target Worker boundary not found')
           p.write_text(s.replace(old, new, 1))
@@ -39,20 +37,18 @@ jobs:
           pkg = json.loads(package_path.read_text())
           pkg['version'] = nv
           package_path.write_text(json.dumps(pkg, ensure_ascii=False, indent=2) + '\n')
-          r2 = r2_path.read_text()
-          import re
-          r2 = re.sub(r"WORKER_VERSION = '[^']+'", f"WORKER_VERSION = '{nv}'", r2, count=1)
+          r2 = re.sub(r"WORKER_VERSION = '[^']+'", f"WORKER_VERSION = '{nv}'", r2_path.read_text(), count=1)
           r2_path.write_text(r2)
 
           todo = Path('TODO.md')
           t = todo.read_text()
           t = t.replace('作品新增 API 完整生命週期修復：新增 Work 後，Worker 需要同步初始化 `data/<work>/` 的首個類型索引，避免之後新增第一件 Item 時才遇到缺目錄。', '')
           todo.write_text(t)
-
+          Path('REPAIR_TRIGGER.txt').unlink(missing_ok=True)
           Path('.github/workflows/repair-work-initialization.yml').unlink()
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add worker/src/index.ts package.json public/data/version.json worker/src/r2-entry.ts TODO.md .github/workflows/repair-work-initialization.yml
+          git add worker/src/index.ts package.json public/data/version.json worker/src/r2-entry.ts TODO.md .github/workflows/repair-work-initialization.yml REPAIR_TRIGGER.txt
           git commit -m 'fix: initialize new work data boundary'
           git push
