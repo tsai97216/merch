@@ -12,7 +12,7 @@ interface Env {
 
 type AssetRequest = { path?: unknown; content?: unknown };
 
-const WORKER_VERSION = '1.109.816';
+const WORKER_VERSION = '1.109.817';
 const ASSET_RE = /^data\/[^/]+\/[a-z]\/[^/]+\/images\/[A-Za-z0-9._-]+\.(?:jpg|jpeg|png|webp|gif|avif)$/i;
 
 function assetContentType(path: string): string {
@@ -228,7 +228,6 @@ export default {
     }
 
     if (path && request.method === 'DELETE') {
-      const response = await app.fetch(request, env);
       return corsResponse(await mirrorDelete(request, env, path), origin);
     }
 
