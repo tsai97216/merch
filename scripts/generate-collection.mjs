@@ -36,7 +36,13 @@ try {
 
 const works = [];
 for (const work of worksIndex.works) {
-  const itemFiles = await collectItemFiles(path.join(dataRoot, work.id));
+  const workRoot = path.join(dataRoot, work.id);
+  let itemFiles = [];
+  try {
+    itemFiles = await collectItemFiles(workRoot);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') throw error;
+  }
   const items = [];
   for (const itemFile of itemFiles) {
     const item = await readJson(itemFile);
