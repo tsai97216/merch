@@ -13,7 +13,7 @@ try {
   await fs.mkdir(path.join(fixtureRoot, 'data'), { recursive: true });
   await fs.mkdir(path.join(fixtureRoot, 'public', 'data'), { recursive: true });
 
-  const worksIndex = JSON.parse(await fs.readFile(path.join(root, 'data', 'works.json'), 'utf8'));
+  const sourceWorksIndex = JSON.parse(await fs.readFile(path.join(root, 'data', 'works.json'), 'utf8'));
   const versionData = JSON.parse(await fs.readFile(path.join(root, 'public', 'data', 'version.json'), 'utf8'));
   const fixtureWork = {
     id: 'fixture-work',
@@ -39,10 +39,11 @@ try {
     images: [],
   };
 
-  worksIndex.works.push(fixtureWork);
+  assert.ok(Array.isArray(sourceWorksIndex.works), 'data/works.json works 必須是陣列。');
+  const fixtureWorksIndex = { ...sourceWorksIndex, works: [fixtureWork] };
   await fs.writeFile(
     path.join(fixtureRoot, 'data', 'works.json'),
-    `${JSON.stringify(worksIndex, null, 2)}\n`,
+    `${JSON.stringify(fixtureWorksIndex, null, 2)}\n`,
     'utf8',
   );
   await fs.writeFile(
