@@ -70,6 +70,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "HSRo008",
+      "path": "data/honkai-star-rail/o/HSRo008/data.json",
+      "title": "遐蝶 銀河潮流指南系列亞克力合影棒",
+      "characters": [
+        "遐蝶"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "preorder"
     }
   ]
 }
