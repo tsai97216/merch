@@ -64,6 +64,10 @@ jobs:
         run: npm run verify:api-mutation
       - name: Verify Work identity contract
         run: npm run verify:work-identity
+      - name: Verify Work registry fixture
+        run: npm run verify:work-registry-fixture
+      - name: Verify Work registry contract
+        run: npm run verify:work-registry
       - name: Verify Home ranking contract
         run: npm run verify:home-ranking
       - name: Verify statistics date boundaries
