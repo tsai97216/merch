@@ -6,7 +6,7 @@ import { getRemoteData, putItem, deleteItem as deleteRemoteItem, putShipping, de
 import { isRecord, isStringArray, isValidImage, isValidShipping } from './validation';
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;
-const CATEGORY_CODES = new Set(['b','c','d','e','f','g','h','k','l','m','n','o','p','q','r','s','v','w','y']);
+const CATEGORY_CODES = new Set(['b','c','d','e','f','g','h','k','l','m','n','o','p','q','r','s','t','v','w','y']);
 const STORE_LOAD_MEASURE = 'merch:store-load';
 function startStoreLoadMeasurement(): void { if (typeof performance !== 'undefined' && typeof performance.mark === 'function') performance.mark(`${STORE_LOAD_MEASURE}:start`); }
 function finishStoreLoadMeasurement(): void { if (typeof performance !== 'undefined' && typeof performance.measure === 'function') { try { performance.measure(STORE_LOAD_MEASURE, `${STORE_LOAD_MEASURE}:start`); } catch {} } }
