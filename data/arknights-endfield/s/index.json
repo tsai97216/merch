@@ -6,10 +6,8 @@
     {
       "id": "AKEs001",
       "path": "data/arknights-endfield/s/AKEs001/data.json",
-      "title": "管理員 AR色紙",
-      "characters": [
-        "管理員"
-      ],
+      "title": "明信片",
+      "characters": [],
       "manufacturer": "鷹角",
       "quantity": 1,
       "status": "received"
