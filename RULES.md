@@ -143,9 +143,11 @@
 ### Version
 
 - `package.json` 的 `version` 是唯一正式版本來源。
-- `public/data/version.json`、Worker version 與其他需要版本識別的部署資料必須同步。
-- 任何正式 repository change，包括程式碼、資料、設定、架構規則與正式資料變更，都增加 Patch version。
-- 版本不一致視為錯誤。
+- `public/data/version.json` 是由 `package.json` 產生的部署資料；使用 `npm run version:sync` 同步，不手動維護另一個版本來源。
+- Worker 的 `WORKER_VERSION` 是獨立版本，只代表 Worker 實作／部署版本，不要求與網站版本一致。
+- 只有 Worker 實作或 Worker 部署本身變更時，才需要更新 Worker version；單純前端、資料或文件變更不必更新 Worker version。
+- 任何正式 repository change，包括程式碼、資料、設定、架構規則與正式資料變更，都增加網站 Patch version。
+- 網站版本驗證要求 `package.json` 與 generated `public/data/version.json` 一致；Worker 只驗證自身版本格式，不與網站版本比較。
 
 ### Verification
 

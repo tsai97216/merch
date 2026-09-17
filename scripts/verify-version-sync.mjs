@@ -21,13 +21,8 @@ if (!workerMatch || !/^\d+\.\d+\.\d+$/.test(workerMatch[1])) {
 }
 
 if (packageJson.version !== versionJson.version) {
-  console.error(`Version verification failed: package.json and public/data/version.json differ (${packageJson.version} vs ${versionJson.version}).`);
+  console.error(`Version verification failed: package.json and public/data/version.json differ (${packageJson.version} vs ${versionJson.version}). Run npm run version:sync.`);
   process.exit(1);
 }
 
-if (packageJson.version !== workerMatch[1]) {
-  console.error(`Version verification failed: application and worker versions differ (${packageJson.version} vs ${workerMatch[1]}).`);
-  process.exit(1);
-}
-
-console.log(`Version verification passed: application ${packageJson.version}; worker build ${workerMatch[1]}.`);
+console.log(`Version verification passed: website ${packageJson.version}; worker ${workerMatch[1]} (independent version).`);
