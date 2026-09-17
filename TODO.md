@@ -2,7 +2,7 @@
 
 ## Current state
 
-- **目前開發版本：`1.109.824`。**
+- **目前開發版本：`1.109.826`。**
 - `RULES.md`：長期開發規則。
 - `ITEM_SCHEMA.md`：Item 資料契約。
 - `ITEM_TYPES.md`：Category registry。
@@ -23,10 +23,6 @@
 - [ ] **Mobile 主執行緒負載優化**：在圖片與 CSS 問題處理後重新測量 Mobile TBT 480 ms、main-thread work 2.7 s 與 3 個 long tasks，再決定是否需要拆分 rendering、降低同步計算或調整動畫。Desktop TBT 目前為 0 ms，因此不預設進行大型 `main.ts` 重構。
 - [ ] **Legacy JavaScript / Font display**：評估 PageSpeed 提出的約 11 KiB legacy JavaScript 與 Desktop 約 40 ms font display 問題，確認實際產物後再做必要的最小修改。
 - [ ] **動畫與非 composited animation**：檢查 PageSpeed Diagnostics 的 2 個 Mobile／1 個 Desktop non-composited animations，確認是否為實際效能瓶頸後再調整。
-
-### 新增作品準備
-
-- [ ] **完整新增作品整合驗證**：目前已完成 Work registry 依賴盤點，首頁、Collection、Statistics、Management、Add、Work identity 與 `generate-collection.mjs` 均已確認以 registry／Store 動態運作；已加入隔離 fixture 驗證腳本，待 CI 實際執行確認後移除此 TODO。
 
 ## Maintenance rule
 
