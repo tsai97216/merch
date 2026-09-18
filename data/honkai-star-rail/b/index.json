@@ -4,18 +4,6 @@
   "category": "b",
   "items": [
     {
-      "id": "HSRb001",
-      "path": "data/honkai-star-rail/b/HSRb001/data.json",
-      "title": "發車倒計時系列馬口鐵徽章 姬子款",
-      "characters": [
-        "姬子"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "HSRb001.jpeg"
-    },
-    {
       "id": "HSRb002",
       "path": "data/honkai-star-rail/b/HSRb002/data.json",
       "title": "小不點貓貓系列馬口鐵徽章 黃泉款",
@@ -48,6 +36,18 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "preorder"
+    },
+    {
+      "id": "HSRb001",
+      "path": "data/honkai-star-rail/b/HSRb001/data.json",
+      "title": "發車倒計時系列馬口鐵徽章 姬子款",
+      "characters": [
+        "姬子"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "HSRb001.jpeg"
     }
   ]
 }
