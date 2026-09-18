@@ -4,21 +4,21 @@
   "category": "n",
   "items": [
     {
-      "id": "WWn002",
-      "path": "data/wuthering-waves/n/WWn002/data.json",
-      "title": "鳴潮二周年 明信片",
-      "characters": [],
-      "manufacturer": "庫洛",
-      "quantity": 2,
-      "status": "received"
-    },
-    {
       "id": "WWn001",
       "path": "data/wuthering-waves/n/WWn001/data.json",
       "title": "2.6版本線下 明信片",
       "characters": [],
       "manufacturer": "庫洛",
       "quantity": 3,
+      "status": "received"
+    },
+    {
+      "id": "WWn002",
+      "path": "data/wuthering-waves/n/WWn002/data.json",
+      "title": "鳴潮二週年 明信片",
+      "characters": [],
+      "manufacturer": "庫洛",
+      "quantity": 2,
       "status": "received"
     }
   ]
