@@ -109,8 +109,9 @@
 
 ### Sync UX
 
-- 新增、編輯、刪除與圖片操作在 remote mutation 尚未完成前，必須顯示明確同步／上傳狀態並阻止會造成衝突的操作。
-- 只有收到成功完成結果後才顯示成功狀態。
+- 新增、編輯、刪除、運費與圖片操作在 mutation 尚未送出前，必須顯示明確同步／上傳狀態並阻止會造成衝突的操作。
+- mutation 的 UI「完成」定義為：裝置非離線、管理驗證已完成，且請求已可靠進入送出流程；不要求等待遠端最終 response 才解除 UI 阻塞或顯示已送出。
+- API 最終 response 仍必須在背景完成 validation，並用 authoritative data 做 reconciliation；若遠端 mutation 失敗，需重新同步遠端狀態，不得把錯誤 response 當成未送出的理由。
 - 不使用全域 `fetch` monkey patch 判斷 mutation 狀態。
 
 ## 8. Image Management
@@ -168,7 +169,7 @@
 
 - `data/` 是 canonical Item data。
 - Store 是前端資料與 UI state 的主要來源。
-- Remote mutation 序列化，成功後由 authoritative API response 回寫 Store。
+- Remote mutation 仍須序列化；UI 可在請求送出後先套用 optimistic state，authoritative API response 完成後再回寫 Store，失敗則重新同步遠端狀態。
 - 外部資料必須經 validation boundary。
 - 共用互動採明確 lifecycle 或 delegation，不靠 MutationObserver、重複 listener 或 DOM patch workaround。
 - Responsive contract 集中於共用 responsive layer。
