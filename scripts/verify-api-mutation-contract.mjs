@@ -24,8 +24,12 @@ try {
   await fs.writeFile(path.join(tempDir, 'sync-overlay.mjs'), 'export async function runWithSync(_label, operation) { return operation(); }\n', 'utf8');
   await fs.writeFile(path.join(tempDir, 'api.mjs'), transpile(apiSource, 'api.ts').replace("from './error'", "from './error.mjs'").replace("from './sync-overlay'", "from './sync-overlay.mjs'").replace("from './validation'", "from './validation.mjs'"), 'utf8');
 
+  Object.defineProperty(globalThis, 'navigator', {
+    value: { onLine: true },
+    configurable: true,
+    writable: true,
+  });
   globalThis.window = { setTimeout, clearTimeout };
-  globalThis.navigator = { onLine: true };
   globalThis.sessionStorage = { getItem: key => key === 'merch-admin-secret' ? 'verified-secret' : null, setItem: () => {}, removeItem: () => {} };
 
   const run = async (operation, responses) => {
@@ -83,7 +87,7 @@ try {
 } finally {
   if (originalFetch) globalThis.fetch = originalFetch; else delete globalThis.fetch;
   delete globalThis.window;
-  delete globalThis.navigator;
   delete globalThis.sessionStorage;
+  try { delete globalThis.navigator; } catch {}
   await fs.rm(tempDir, { recursive: true, force: true });
 }
