@@ -43,7 +43,7 @@ if (!deployWorkflow.includes('branches: [main]')) {
 if (!deployWorkflow.includes('MERCH_GITHUB_TOKEN') || !deployWorkflow.includes('secret put GITHUB_TOKEN')) {
   throw new Error('Worker deploy must provision its dedicated GitHub write token.');
 }
-if (!workerSource.includes('createAtomicCommit') || !workerSource.includes('/git/commits') || !workerSource.includes('/git/refs/heads/') || !workerSource.includes('/dispatches') || !workerSource.includes('merch-mutation')) {
+if (!workerSource.includes('createAtomicCommit') || !workerSource.includes('/git/commits') || !workerSource.includes('/git/refs/heads/') || !workerSource.includes('/dispatches') || !workerSource.includes('merch-mutation') || !workerSource.includes('[skip ci]')) {
   throw new Error('Worker mutations must create a Git commit and advance the main branch ref.');
 }
 for (const mutation of ['upsertShipping', 'removeShipping', 'updateItem', 'deleteItem', 'putAsset', 'deleteAsset', 'createWork', 'updateWork', 'deleteWork']) {
