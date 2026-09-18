@@ -27,6 +27,9 @@ const workerSource = fs.readFileSync('worker/src/index.ts', 'utf8');
 if (!deployWorkflow.includes('workflow_run:') || !deployWorkflow.includes('workflows: [Verify]') || !deployWorkflow.includes('types: [completed]')) {
   throw new Error('Deploy workflow must be triggered by the completed Verify workflow.');
 }
+if (!workflow.includes('repository_dispatch') || !workflow.includes('merch-mutation')) {
+  throw new Error('Verify workflow must accept the runtime mutation dispatch event.');
+}
 if (!deployWorkflow.includes("github.event.workflow_run.conclusion == 'success'")) {
   throw new Error('Deploy workflow must require a successful Verify workflow.');
 }
@@ -36,7 +39,7 @@ if (!deployWorkflow.includes('branches: [main]')) {
 if (!deployWorkflow.includes('MERCH_GITHUB_TOKEN') || !deployWorkflow.includes('secret put GITHUB_TOKEN')) {
   throw new Error('Worker deploy must provision its dedicated GitHub write token.');
 }
-if (!workerSource.includes('createAtomicCommit') || !workerSource.includes('/git/commits') || !workerSource.includes('/git/refs/heads/')) {
+if (!workerSource.includes('createAtomicCommit') || !workerSource.includes('/git/commits') || !workerSource.includes('/git/refs/heads/') || !workerSource.includes('/dispatches') || !workerSource.includes('merch-mutation')) {
   throw new Error('Worker mutations must create a Git commit and advance the main branch ref.');
 }
 for (const mutation of ['upsertShipping', 'removeShipping', 'updateItem', 'deleteItem', 'putAsset', 'deleteAsset', 'createWork', 'updateWork', 'deleteWork']) {
