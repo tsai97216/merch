@@ -4,17 +4,6 @@
   "category": "t",
   "items": [
     {
-      "id": "WWt003",
-      "path": "data/wuthering-waves/t/WWt003/data.json",
-      "title": "緋雪貼紙",
-      "characters": [
-        "緋雪"
-      ],
-      "manufacturer": "庫洛",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "WWt001",
       "path": "data/wuthering-waves/t/WWt001/data.json",
       "title": "聲紋貼紙",
@@ -29,6 +18,17 @@
       "title": "愛彌斯貼紙",
       "characters": [
         "愛彌斯"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
+    },
+    {
+      "id": "WWt003",
+      "path": "data/wuthering-waves/t/WWt003/data.json",
+      "title": "緋雪貼紙",
+      "characters": [
+        "緋雪"
       ],
       "manufacturer": "庫洛",
       "quantity": 1,
