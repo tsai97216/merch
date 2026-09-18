@@ -78,11 +78,15 @@ async function replaceImage(file: File, imageId: string): Promise<void> {
     const optimizedFile = await optimizeImage(file);
     const path = imagePath(item, optimizedFile, index);
     const submission = await putAsset(path, await fileToBase64(optimizedFile));
-    void submission.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
     if (path !== currentPath) {
-      try { await deleteAsset(currentPath); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
+      try {
+        const cleanup = await deleteAsset(currentPath);
+        void cleanup.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
+      } catch { showToast('新圖片已送出，但舊圖片清理尚未完成。', 'error'); }
+    } else {
+      void submission.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
     }
-    showToast('圖片已成功替換。', 'success');
+    showToast('圖片已送出替換。', 'success');
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片替換失敗。', 'error'); }
   finally { imageSaving = false; render(); }
 }
