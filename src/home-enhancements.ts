@@ -82,7 +82,7 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
           <div class="ranking-heading"><strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)} · ${count} 件</strong><b class="ranking-value">${escapeHtml(money(spend))}</b></div>
           <div class="ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
         </div>
-      </li>
+      </li>`
     }).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
