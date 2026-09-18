@@ -99,6 +99,7 @@
 - Frontend 不保存或暴露 GitHub Token；GitHub 寫入必須經 API／Worker layer。
 - API、Worker 必須驗證輸入與 response。
 - Remote mutation 必須序列化，避免並行 mutation 造成 stale overwrite。
+- 正式管理 mutation 必須透過 Worker 建立 GitHub commit 並更新 `main`；該 commit 必須觸發 `Verify`，且 `Verify` 成功後由 `Deploy` workflow 發布 GitHub Pages，讓管理操作最終反映到正式網站。
 - mutation 成功後，以 API authoritative response 經 Store 的 remote-apply 流程更新 UI，不由各 Page 自行重建遠端狀態。
 - 共用 Store load promise 失敗後必須清除，使後續操作仍可重新載入或進入既定 fallback。
 - 寫入只修改目標 Item、index 或必要的跨檔案資料，不覆寫無關 Item。
