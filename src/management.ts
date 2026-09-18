@@ -1,5 +1,5 @@
 import './management-images.css';
-import { getAsset, putAsset, deleteAsset } from './api';
+import { getAsset, putAsset, deleteAsset, getAuthoritativeRemoteData } from './api';
 import { resolveAssetUrl } from './image-source';
 import { getStore, type MerchStore } from './store';
 import type { ImageMeta, Item } from './types';
@@ -61,8 +61,9 @@ async function uploadImage(file: File): Promise<void> {
   try {
     const optimizedFile = await optimizeImage(file);
     const path = imagePath(item, optimizedFile, imageList(item).length);
-    const result = await putAsset(path, await fileToBase64(optimizedFile));
-    showToast(result.replaced ? '圖片已替換。' : '圖片已上傳並同步。', 'success');
+    const submission = await putAsset(path, await fileToBase64(optimizedFile));
+    showToast('圖片已送出並同步。', 'success');
+    void submission.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片上傳失敗。', 'error'); }
   finally { imageSaving = false; render(); }
 }
@@ -76,7 +77,8 @@ async function replaceImage(file: File, imageId: string): Promise<void> {
   try {
     const optimizedFile = await optimizeImage(file);
     const path = imagePath(item, optimizedFile, index);
-    await putAsset(path, await fileToBase64(optimizedFile));
+    const submission = await putAsset(path, await fileToBase64(optimizedFile));
+    void submission.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
     if (path !== currentPath) {
       try { await deleteAsset(currentPath); } catch { showToast('新圖片已套用，但舊圖片清理失敗。', 'error'); }
     }
@@ -89,8 +91,9 @@ async function deleteImage(imageId: string): Promise<void> {
   if (!item || !image || saving || imageSaving || !window.confirm(`確定要刪除「${image.file}」？`)) return;
   imageSaving = true; render(); showToast('圖片刪除同步中，請稍候。', 'info');
   try {
-    await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`);
-    showToast('圖片已刪除。', 'success');
+    const submission = await deleteAsset(`data/${item.workId}/${item.category}/${item.id}/images/${image.file}`);
+    showToast('圖片已送出刪除。', 'success');
+    void submission.settled.then(async () => { const data = await getAuthoritativeRemoteData(); storeRef?.replaceData(data.works, data.version, data.shipping); }).catch(() => {});
   } catch (error) { showToast(error instanceof Error ? error.message : '圖片刪除失敗。', 'error'); }
   finally { imageSaving = false; render(); }
 }
