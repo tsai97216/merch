@@ -16,18 +16,6 @@
       "cover": "ZZZc005.jpeg"
     },
     {
-      "id": "ZZZc004",
-      "path": "data/zenless-zone-zero/c/ZZZc004/data.json",
-      "title": "三週年線下 蕾米埃爾 光柵卡",
-      "characters": [
-        "蕾米埃爾"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "ZZZc004.jpeg"
-    },
-    {
       "id": "ZZZc003",
       "path": "data/zenless-zone-zero/c/ZZZc003/data.json",
       "title": "絕區零 星見雅 黏土人 訂金卡",
@@ -117,6 +105,18 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "received"
+    },
+    {
+      "id": "ZZZc004",
+      "path": "data/zenless-zone-zero/c/ZZZc004/data.json",
+      "title": "二週年線下 蕾米埃爾 光柵卡",
+      "characters": [
+        "蕾米埃爾"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "ZZZc004.jpeg"
     }
   ]
 }
