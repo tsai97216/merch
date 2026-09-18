@@ -4,22 +4,22 @@
   "category": "w",
   "items": [
     {
-      "id": "WWw001",
-      "path": "data/wuthering-waves/w/WWw001/data.json",
-      "title": "愛彌斯扇子",
+      "id": "WWw002",
+      "path": "data/wuthering-waves/w/WWw002/data.json",
+      "title": "緋雪扇子",
       "characters": [
-        "愛彌斯"
+        "緋雪"
       ],
       "manufacturer": "庫洛",
       "quantity": 1,
       "status": "received"
     },
     {
-      "id": "WWw002",
-      "path": "data/wuthering-waves/w/WWw002/data.json",
-      "title": "緋雪扇子",
+      "id": "WWw001",
+      "path": "data/wuthering-waves/w/WWw001/data.json",
+      "title": "愛彌斯扇子",
       "characters": [
-        "緋雪"
+        "愛彌斯"
       ],
       "manufacturer": "庫洛",
       "quantity": 1,
