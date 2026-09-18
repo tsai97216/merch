@@ -20,4 +20,30 @@ if (!workflow.includes('npm run build')) {
   throw new Error('CI workflow is missing the production build step.');
 }
 
-console.log(`CI contract OK: ${verifyScripts.length} verification scripts are wired into verify.yml.`);
+
+const deployWorkflow = fs.readFileSync('.github/workflows/deploy.yml', 'utf8');
+const workerSource = fs.readFileSync('worker/src/index.ts', 'utf8');
+
+if (!deployWorkflow.includes('workflow_run:') || !deployWorkflow.includes('workflows: [Verify]') || !deployWorkflow.includes('types: [completed]')) {
+  throw new Error('Deploy workflow must be triggered by the completed Verify workflow.');
+}
+if (!deployWorkflow.includes("github.event.workflow_run.conclusion == 'success'")) {
+  throw new Error('Deploy workflow must require a successful Verify workflow.');
+}
+if (!deployWorkflow.includes('branches: [main]')) {
+  throw new Error('Deploy workflow must be scoped to main for runtime data deployments.');
+}
+if (!deployWorkflow.includes('MERCH_GITHUB_TOKEN') || !deployWorkflow.includes('secret put GITHUB_TOKEN')) {
+  throw new Error('Worker deploy must provision its dedicated GitHub write token.');
+}
+if (!workerSource.includes('createAtomicCommit') || !workerSource.includes('/git/commits') || !workerSource.includes('/git/refs/heads/')) {
+  throw new Error('Worker mutations must create a Git commit and advance the main branch ref.');
+}
+for (const mutation of ['upsertShipping', 'removeShipping', 'updateItem', 'deleteItem', 'putAsset', 'deleteAsset', 'createWork', 'updateWork', 'deleteWork']) {
+  const start = workerSource.indexOf(`async function ${mutation}`);
+  if (start < 0 || workerSource.indexOf('createAtomicCommit', start) < 0) {
+    throw new Error(`Worker mutation ${mutation} must commit through createAtomicCommit.`);
+  }
+}
+
+console.log(`CI/deploy contract OK: ${verifyScripts.length} verification scripts are wired and runtime mutations have a Verify → Deploy path.`);
