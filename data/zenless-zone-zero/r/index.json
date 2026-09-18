@@ -4,17 +4,6 @@
   "category": "r",
   "items": [
     {
-      "id": "ZZZr005",
-      "path": "data/zenless-zone-zero/r/ZZZr005/data.json",
-      "title": "影畫系列雷射票 希希芙",
-      "characters": [
-        "希希芙"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received"
-    },
-    {
       "id": "ZZZr001",
       "path": "data/zenless-zone-zero/r/ZZZr001/data.json",
       "title": "影畫系列雷射票 葉瞬光",
@@ -73,6 +62,17 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZr004.jpeg"
+    },
+    {
+      "id": "ZZZr005",
+      "path": "data/zenless-zone-zero/r/ZZZr005/data.json",
+      "title": "影畫系列雷射票 希希芙",
+      "characters": [
+        "希希芙"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
