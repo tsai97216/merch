@@ -28,22 +28,22 @@
       "cover": "HSRb002.jpeg"
     },
     {
-      "id": "HSRb003",
-      "path": "data/honkai-star-rail/b/HSRb003/data.json",
-      "title": "昔漣 銀河潮流指南系列馬口鐵徽章",
+      "id": "HSRb004",
+      "path": "data/honkai-star-rail/b/HSRb004/data.json",
+      "title": "遐蝶 銀河潮流指南系列馬口鐵徽章",
       "characters": [
-        "昔漣"
+        "遐蝶"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "preorder"
     },
     {
-      "id": "HSRb004",
-      "path": "data/honkai-star-rail/b/HSRb004/data.json",
-      "title": "遐蝶 銀河潮流指南系列馬口鐵徽章",
+      "id": "HSRb003",
+      "path": "data/honkai-star-rail/b/HSRb003/data.json",
+      "title": "昔漣 銀河潮流指南系列馬口鐵徽章",
       "characters": [
-        "遐蝶"
+        "昔漣"
       ],
       "manufacturer": "米哈遊",
       "quantity": 1,
