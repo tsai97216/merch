@@ -76,12 +76,13 @@ function renderCharacterList(list: HTMLElement, rows: CharacterRankingRow[], lim
       const count = counts.get(character) || 0;
       const rank = rankAt(rows, index);
       return `
-      <li class="ranking-line character-ranking-line" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
+      <li class="ranking-line work-ranking-line" data-search-query="${escapeHtml(character)}" role="link" tabindex="0" aria-label="搜尋角色 ${escapeHtml(character)}">
         <span class="ranking-position" aria-hidden="true">${String(rank).padStart(2, '0')}</span>
-        <div class="character-ranking-info"><strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)}</strong><span class="character-ranking-count">${count} 件</span></div>
-        <div class="character-ranking-meter ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
-        <b class="ranking-value">${escapeHtml(money(spend))}</b>
-      </li>`;
+        <div class="ranking-content">
+          <div class="ranking-heading"><strong class="ranking-title" title="${escapeHtml(character)}">${escapeHtml(character)} · ${count} 件</strong><b class="ranking-value">${escapeHtml(money(spend))}</b></div>
+          <div class="ranking-meter" aria-label="消費比例 ${progress}%"><span style="width:${progress}%"></span></div>
+        </div>
+      </li>
     }).join('')
     : '<li class="home-ranking-empty">目前沒有資料</li>';
 }
