@@ -91,7 +91,7 @@ function ensureWorkModal() {
   const modal = document.createElement('div');
   modal.className = 'item-detail-modal';
   modal.hidden = true;
-  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，點擊作品可直接搜尋。</p></div><div id="work-ranking-all" class="work-ranking-list" role="list"></div></section>`;
+  modal.innerHTML = `<div class="item-detail-backdrop" data-work-ranking-close></div><section class="item-detail-dialog work-ranking-dialog" role="dialog" aria-modal="true" aria-labelledby="work-ranking-title"><button type="button" class="item-detail-close" aria-label="關閉" data-work-ranking-close><i class="fa-solid fa-xmark"></i></button><div class="item-detail-heading"><span class="eyebrow">WORK SPENDING RANKING</span><h2 id="work-ranking-title">作品消費總排行</h2><p>依消費金額由高至低排序，點擊作品可直接搜尋。</p></div><ol id="work-ranking-all" class="work-ranking-list"></ol></section>`;
   document.body.appendChild(modal);
   modal.querySelectorAll('[data-work-ranking-close]').forEach((node) => node.addEventListener('click', closeWorkModal));
   workModal = modal;
