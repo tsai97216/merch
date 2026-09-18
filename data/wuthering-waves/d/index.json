@@ -11,6 +11,17 @@
       "manufacturer": "庫洛",
       "quantity": 2,
       "status": "received"
+    },
+    {
+      "id": "WWd002",
+      "path": "data/wuthering-waves/d/WWd002/data.json",
+      "title": "二週年 愛彌斯 立牌",
+      "characters": [
+        "愛彌斯"
+      ],
+      "manufacturer": "庫洛",
+      "quantity": 1,
+      "status": "received"
     }
   ]
 }
