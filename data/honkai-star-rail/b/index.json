@@ -4,18 +4,6 @@
   "category": "b",
   "items": [
     {
-      "id": "HSRb002",
-      "path": "data/honkai-star-rail/b/HSRb002/data.json",
-      "title": "小不點貓貓系列馬口鐵徽章 黃泉款",
-      "characters": [
-        "黃泉"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "HSRb002.jpeg"
-    },
-    {
       "id": "HSRb003",
       "path": "data/honkai-star-rail/b/HSRb003/data.json",
       "title": "昔漣 銀河潮流指南系列馬口鐵徽章",
@@ -48,6 +36,18 @@
       "quantity": 1,
       "status": "received",
       "cover": "HSRb001.jpeg"
+    },
+    {
+      "id": "HSRb002",
+      "path": "data/honkai-star-rail/b/HSRb002/data.json",
+      "title": "小不點貓貓系列馬口鐵徽章 黃泉款",
+      "characters": [
+        "黃泉"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "HSRb002.jpeg"
     }
   ]
 }
