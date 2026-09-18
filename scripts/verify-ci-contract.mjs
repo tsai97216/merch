@@ -31,7 +31,10 @@ if (!deployWorkflow.includes('workflow_run:') || !deployWorkflow.includes('workf
 if (!verifyWorkflow.includes('repository_dispatch') || !verifyWorkflow.includes('merch-mutation')) {
   throw new Error('Verify workflow must accept the runtime mutation dispatch event.');
 }
-if (!deployWorkflow.includes("github.event.workflow_run.conclusion == 'success'")) {
+if (!deployWorkflow.includes('github.event.workflow_run.id') || !deployWorkflow.includes('actions/runs/$run_id')) {
+  throw new Error('Deploy workflow must wait for the triggering Verify run result.');
+}
+if (!deployWorkflow.includes('conclusion') || !deployWorkflow.includes('verified=true')) {
   throw new Error('Deploy workflow must require a successful Verify workflow.');
 }
 if (!deployWorkflow.includes('branches: [main]')) {
