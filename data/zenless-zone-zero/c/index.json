@@ -4,18 +4,6 @@
   "category": "c",
   "items": [
     {
-      "id": "ZZZc005",
-      "path": "data/zenless-zone-zero/c/ZZZc005/data.json",
-      "title": "月曆透卡 葉瞬光",
-      "characters": [
-        "葉瞬光"
-      ],
-      "manufacturer": "米哈遊",
-      "quantity": 1,
-      "status": "received",
-      "cover": "ZZZc005.jpeg"
-    },
-    {
       "id": "ZZZc003",
       "path": "data/zenless-zone-zero/c/ZZZc003/data.json",
       "title": "絕區零 星見雅 黏土人 訂金卡",
@@ -117,6 +105,18 @@
       "quantity": 1,
       "status": "received",
       "cover": "ZZZc004.jpeg"
+    },
+    {
+      "id": "ZZZc005",
+      "path": "data/zenless-zone-zero/c/ZZZc005/data.json",
+      "title": "月曆透卡 葉瞬光",
+      "characters": [
+        "葉瞬光"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "received",
+      "cover": "ZZZc005.jpeg"
     }
   ]
 }
