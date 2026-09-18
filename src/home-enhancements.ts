@@ -20,7 +20,7 @@ function getWorkRows(store: MerchStore) {
   });
   return store.snapshot.works
     .map((work) => ({ name: work.name, spend: spendingByWork.get(work.name) || 0 }))
-    .filter((row) => row.spend > 0)
+    
     .sort((a, b) => b.spend - a.spend || a.name.localeCompare(b.name, 'zh-Hant'));
 }
 
