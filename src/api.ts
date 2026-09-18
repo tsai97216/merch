@@ -69,16 +69,16 @@ function mutationLabel(method: string): string { if (method === 'DELETE') return
 async function mutateSubmitted<T>(method: string, start: () => Promise<T>): Promise<MutationSubmission<T>> {
   const started = mutationQueue.then(async () => {
     await ensureMutationReady();
-    return start();
+    return { settled: start() };
   }, async () => {
     await ensureMutationReady();
     return start();
   });
   mutationQueue = started.then(
-    settled => settled.then(() => undefined, () => undefined),
+    ({ settled }) => settled.then(() => undefined, () => undefined),
     () => undefined,
   );
-  const settled = await runWithSync(mutationLabel(method), () => started);
+  const { settled } = await runWithSync(mutationLabel(method), () => started);
   return { submitted: true, settled };
 }
 export async function putItem(item: Item): Promise<MutationSubmission<ApiData>> { return mutateSubmitted('PUT', () => request(`/items/${encodeURIComponent(item.id)}`, { method: 'PUT', body: JSON.stringify({ item: toStorageItem(item) }) }).then(validateMutationResult).then(() => getAuthoritativeRemoteData())); }
