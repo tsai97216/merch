@@ -72,7 +72,7 @@ async function mutateSubmitted<T>(method: string, start: () => Promise<T>): Prom
     return { settled: start() };
   }, async () => {
     await ensureMutationReady();
-    return start();
+    return { settled: start() };
   });
   mutationQueue = started.then(
     ({ settled }) => settled.then(() => undefined, () => undefined),
