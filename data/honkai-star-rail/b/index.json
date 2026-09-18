@@ -37,6 +37,17 @@
       "manufacturer": "米哈遊",
       "quantity": 1,
       "status": "preorder"
+    },
+    {
+      "id": "HSRb004",
+      "path": "data/honkai-star-rail/b/HSRb004/data.json",
+      "title": "遐蝶 銀河潮流指南系列馬口鐵徽章",
+      "characters": [
+        "遐蝶"
+      ],
+      "manufacturer": "米哈遊",
+      "quantity": 1,
+      "status": "preorder"
     }
   ]
 }
